@@ -1,0 +1,47 @@
+Aug 30 2022   
+
+# ISP Utilization & CTLP  
+
+## Attendees  
+
+ - Mark  
+ - Kim  
+ 
+## Topics  
+
+ - CTLP  
+ - ISP Utilization  
+ 
+## Files Viewed    
+
+isp/isp_utilization/01 background/Analysis_Specifications.xlsx
+ctlp/Analysis_Specifications.xlsx
+
+## ISP Utilization Notes  
+
+ - Data specs tab: everyone 0-64 in that state fiscal year (& only that FY - not 1920 if they turned 65 in 19-20)   
+ - Step one will be identifying the targpop, then step 2 is pulling claims from 2015+    
+ - Question of Interest will be how we define 'attributed' for the model, but for now it's anyone with 1 month in medlong  
+ - ISP PCMPs vs non-ISP PCMPs  
+ - Carter has definitions of what we consider 'primary care'  
+ - given that ISP had this telehealth focus, we want to do that as well  
+	- place of service
+	- FQ's is a modifier for procedure codes
+ - row 14: not quite sure how we'll operationalize that yet  
+ - Carter has code for:  
+	- hospitalizations  
+	- pharmacy  
+	- BH  
+ - Jake has budget groups / rules we've been using  
+ 
+ ## CTLP  
+ 
+  - yellow section needs to be updated  
+  - CU Med practices  
+  - CU Med adds a 9000 in front of each pcmp  
+  - AF Williams, Lowry are the two sites  
+  - row 2 is ORG - so should not have any attributed, is only used for billing (420085)  
+  - 164606 however SHOULD have attributed members, even though they never bill (billing is 420085)  
+  - rows 3-14 check for pcmp just using medicaid long file > do asap (KW said today)  
+  - Sara interested in well-child checks and how many preventative health checks: MG not sure how important that is for this analysis but keep in mind  
+  
