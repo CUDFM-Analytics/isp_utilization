@@ -74,7 +74,7 @@ else if month ge '01Jul2021'd and month le '30Jun2022'd then SFY=2122;
 run; 
 *51524899, 3;
 
-*change pcmp to numeric so these'll merge;
+*change pcmp to numeric ;
 data medlong2;
 set medlong2;
 pcmp_loc_id2 = input(pcmp_loc_id, 12.);
