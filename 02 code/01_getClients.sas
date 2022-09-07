@@ -15,10 +15,11 @@
 
 * global paths, settings  ---------------------------;
   %let hcpf = S:/FHPC/DATA/HCPF_Data_files_SECURE;
-  %let proj = &hcpf/Kim;
-  %let util = &proj/isp/isp_utilization/04 data;
-  libname util "&util";
-/*  %include format file when complete; */
+  %let util = &hcpf/Kim/isp/isp_utilization;
+  %let code = &util/02 code;
+  %let out = &util/04 data;
+  libname out "&out";
+  %include "&code/00_formats.sas"; *has age range; 
 
 * proc freq format; 
   %include "C:/Users/wigginki/OneDrive - The University of Colorado Denver/Documents/projects/00_sas_formats/procFreq_pct.sas";
@@ -58,7 +59,14 @@ keep_sfy1819 = input(age_sfy1819, age_range.);
 keep_sfy1920 = input(age_sfy1920, age_range.);
 keep_sfy2021 = input(age_sfy2021, age_range.);
 keep_sfy2122 = input(age_sfy2122, age_range.);
-run;
+run;  
+
+* Checking 1819 ; 
+proc freq data = meddemog3;
+tables age_sfy1819*keep_sfy1819; 
+run; *perfect; 
+
+
 
 
 * MEDLONG ----------------------------------------------------; 
