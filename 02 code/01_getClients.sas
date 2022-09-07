@@ -34,18 +34,39 @@
 options nofmterr
         fmtsearch =(bhjt, ids, work, varlen);
 ***********************************************************************************************;
-*Init: June 03 2022;
+*Init: Sept 2022;
 
 data medlong1; set bhjt.medicaidlong_bidm; run;
-*[170496617];
+data meddemog1; set bhjt.medicaiddemog_bidm; run; *2991591, 7; 
 
+proc contents data = meddemog1; run;
 
-data medlong2; set medlong1 (keep=clnt_id pcmp_loc_ID month); 
-where /*managedCare=0 and*/ month ge '01Jul2018'd and month le '01May2022'd and pcmp_loc_ID ne ' ';
-if month ge '01Jul2018'd and month le '30Jun2019'd then FY=1;
-else if month ge '01Jul2019'd and month le '30Jun2020'd then FY=2;
-else if month ge '01Jul2020'd and month le '30Jun2021'd then FY=3;
-else if month ge '01Jul2021'd and month le '30Jun2022'd then FY=4;
+* Get variables from meddemog1 needed;
+data meddemog2 (keep=clnt_id dob gender county rethnic_hcpf);
+set  meddemog1;
+run; * dropped to 5 variables; 
+
+proc contents data = medlong1 varnum ; run;
+
+* MEDLONG: Subset & create SFY variables, select variables, filter managedCare = 0; 
+data medlong2; 
+set  medlong1 (keep=clnt_id 
+					pcmp_loc_ID 
+					month 
+					enr_cnty
+					eligGrp
+					aid_cd
+					budget_group
+					pcmp_loc_type_cd
+					rae_assign); 
+
+where managedCare=0 and 
+	  month ge '01Jul2018'd and month le '30Jun2022'd and pcmp_loc_ID ne ' ';
+
+if 		month ge '01Jul2018'd and month le '30Jun2019'd then SFY=1819;
+else if month ge '01Jul2019'd and month le '30Jun2020'd then SFY=1920;
+else if month ge '01Jul2020'd and month le '30Jun2021'd then SFY=2021;
+else if month ge '01Jul2021'd and month le '30Jun2022'd then SFY=2122;
 run; 
 *51524899, 3;
 
