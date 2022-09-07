@@ -6,7 +6,7 @@
  PURPOSE			: Get client ID's for members 0-64 in SFY's 18/19 through 21/22
  INPUT FILE(S)		: 
  OUTPUT FILE(S)		: 
- ABBREV				: 
+ ABBREV				: bhjt, hcpf (include bdmconnect file has varlen)
 
  MODIFICATION HISTORY:
  Date	   	Author   	Description of Change
@@ -16,21 +16,18 @@
 * global paths, settings  ---------------------------;
   %let hcpf = S:/FHPC/DATA/HCPF_Data_files_SECURE;
   %let util = &hcpf/Kim/isp/isp_utilization;
-  %let code = &util/02 code;
-  %let out = &util/04 data;
+  	%let code = &util/02 code;
+  	%let out = &util/04 data;
+  %include "&code/00_formats.sas"; *use age range; 
+
   libname out "&out";
-  %include "&code/00_formats.sas"; *has age range; 
 
 * proc freq format; 
   %include "C:/Users/wigginki/OneDrive - The University of Colorado Denver/Documents/projects/00_sas_formats/procFreq_pct.sas";
 
-* Connect to bdm for medlong and meddemog;
-  %include "&proj/BDMConnect.sas";
-
-* VARLEN  -----------------------------;
-  %include "&varlen\MACRO_charLenMetadata.sas";
-  %getlen(library=varlen, data=AllVarLengths);
-
+* Connect to bdm for medlong and meddemog, get varlen;
+  %include "&hcpf/kim/BDMConnect.sas";
+	
 * BHJT --------------------------------;
   %let bhjt = &hcpf/HCPF_SqlServer/queries;
   libname bhjt   "&bhjt";
@@ -76,17 +73,9 @@ proc contents data = out.meddemog;
 run;
 
 
-
 * MEDLONG ----------------------------------------------------; 
 
-data medlong1; set bhjt.medicaidlong_bidm; run;
-
-proc freq data = medlong1;
-tables managedCare;
-run;  
-
-* MEDLONG: Subset & create SFY variables, select variables, filter managedCare = 0; 
-data medlong2 (keep=clnt_id 
+data medlong1 (keep=clnt_id 
 					pcmp_loc_ID 
 					month 
 					enr_cnty
@@ -97,25 +86,27 @@ data medlong2 (keep=clnt_id
 					rae_assign
 					SFY
 					managedCare); 
-set  medlong1 ; 
-
-where /*managedCare = 0 and */
-	  month ge '01Jul2018'd and month le '30Jun2022'd and pcmp_loc_ID ne ' ';
+set  bhjt.medicaidlong_bidm; 
+where /*managedCare = 0 and*/
+	  month ge '01Jul2018'd and month le '30Jun2022'd and 
+	  pcmp_loc_ID ne ' ' and 
+	  BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
 
 if 		month ge '01Jul2018'd and month le '30Jun2019'd then SFY=1819;
 else if month ge '01Jul2019'd and month le '30Jun2020'd then SFY=1920;
 else if month ge '01Jul2020'd and month le '30Jun2021'd then SFY=2021;
 else if month ge '01Jul2021'd and month le '30Jun2022'd then SFY=2122;
-run; 
-*51524899, 3;
+run;  *09/07/2022 55641948, 11;  
+
 
 *change pcmp to numeric ;
 data medlong2;
-set medlong2;
+set  medlong1;
 pcmp_loc_id2 = input(pcmp_loc_id, 12.);
 drop pcmp_loc_id;
 rename pcmp_loc_id2 = pcmp_loc_id; 
-run; *51524899;  
+run; *55641948; 
+
 
 
 
