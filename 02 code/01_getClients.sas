@@ -58,7 +58,7 @@ age_sfy2122 = floor((intck('month', dob, '30Jun2021'd) - (day('30Jun2021'd) < da
 keep_sfy1819 = input(age_sfy1819, age_range.);
 keep_sfy1920 = input(age_sfy1920, age_range.);
 keep_sfy2021 = input(age_sfy2021, age_range.);
-keep_sfy2122 = input(age_sfy2122, age_range.);
+keep_sfy2122 = input(age_sfy2122, age_range.); 
 run;  
 
 * Checking 1819 ; 
@@ -66,6 +66,14 @@ proc freq data = meddemog3;
 tables age_sfy1819*keep_sfy1819; 
 run; *perfect; 
 
+* Get members aged 0-64 in at least one of the SFY's only, save to out.; 
+data out.meddemog;
+set  meddemog3;
+where keep_sfy1819 = 1 OR keep_sfy1920 = 1 OR keep_sfy2021 = 1 OR keep_sfy2122 = 1; 
+run;  
+
+proc contents data = out.meddemog; 
+run;
 
 
 
