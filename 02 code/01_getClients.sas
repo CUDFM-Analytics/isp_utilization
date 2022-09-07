@@ -17,7 +17,11 @@
   %let hcpf = S:/FHPC/DATA/HCPF_Data_files_SECURE;
   %let proj = &hcpf/Kim;
   %let util = &proj/isp/isp_utilization/04 data;
-/*  %include "&attr/00_paths.sas";*/
+  libname util "&util";
+/*  %include format file when complete; */
+
+* proc freq format; 
+  %include "C:/Users/wigginki/OneDrive - The University of Colorado Denver/Documents/projects/00_sas_formats/procFreq_pct.sas";
 
 * Connect to bdm for medlong and meddemog;
   %include "&proj/BDMConnect.sas";
@@ -32,21 +36,34 @@
 
 * OPTIONS ---------------------------; 
 options nofmterr
-        fmtsearch =(bhjt, ids, work, varlen);
+        fmtsearch =(bhjt, util, work, varlen);
 ***********************************************************************************************;
 *Init: Sept 2022;
 
-data medlong1; set bhjt.medicaidlong_bidm; run;
 data meddemog1; set bhjt.medicaiddemog_bidm; run; *2991591, 7; 
-
-proc contents data = meddemog1; run;
 
 * Get variables from meddemog1 needed;
 data meddemog2 (keep=clnt_id dob gender county rethnic_hcpf);
 set  meddemog1;
 run; * dropped to 5 variables; 
 
-proc contents data = medlong1 varnum ; run;
+* Get age from meddemog;
+data meddemog3;
+set  meddemog2;
+age_sfy1819 = floor((intck('month', dob, '30Jun2018'd) - (day('30Jun2018'd) < day(dob))) / 12); 
+age_sfy1920 = floor((intck('month', dob, '30Jun2019'd) - (day('30Jun2019'd) < day(dob))) / 12); 
+age_sfy2021 = floor((intck('month', dob, '30Jun2020'd) - (day('30Jun2020'd) < day(dob))) / 12); 
+age_sfy2122 = floor((intck('month', dob, '30Jun2021'd) - (day('30Jun2021'd) < day(dob))) / 12); 
+keep_sfy1819 = input(age_sfy1819, age_range.);
+keep_sfy1920 = input(age_sfy1920, age_range.);
+keep_sfy2021 = input(age_sfy2021, age_range.);
+keep_sfy2122 = input(age_sfy2122, age_range.);
+run;
+
+
+* MEDLONG ----------------------------------------------------; 
+
+data medlong1; set bhjt.medicaidlong_bidm; run;
 
 proc freq data = medlong1;
 tables managedCare;
@@ -61,10 +78,12 @@ data medlong2 (keep=clnt_id
 					aid_cd
 					budget_group
 					pcmp_loc_type_cd
-					rae_assign); 
+					rae_assign
+					SFY
+					managedCare); 
 set  medlong1 ; 
 
-where managedCare = 0 and 
+where /*managedCare = 0 and */
 	  month ge '01Jul2018'd and month le '30Jun2022'd and pcmp_loc_ID ne ' ';
 
 if 		month ge '01Jul2018'd and month le '30Jun2019'd then SFY=1819;
@@ -80,4 +99,8 @@ set medlong2;
 pcmp_loc_id2 = input(pcmp_loc_id, 12.);
 drop pcmp_loc_id;
 rename pcmp_loc_id2 = pcmp_loc_id; 
-run; *51524899;
+run; *51524899;  
+
+
+
+
