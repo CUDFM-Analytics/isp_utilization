@@ -1,6 +1,7 @@
 # Data folders
-/05 Data/
-/04 Data Raw/
+*/05 Data/*
+*/04 Data Raw/*
+.sas7bdat
 
 # History files
 .Rhistory
