@@ -1,0 +1,70 @@
+Sept 07, 2022
+
+Attended	: Carter, Mark, Miriam, Kim  
+
+Topics		: clustering, attribution, time units, estimation technique, risk adjustment
+Files		: Analysis_Specifications.xlsx
+
+Notes		
+
+Dealing with Clustering: 
+- Carter's macro: 
+	doesn't adjust for clustering within practice
+	uses genmod, which only allows one random effect / idea more of a population approach  
+- Discussed potentially using practice / clinic as fixed effect rather than random since it's a closed / complete group
+- wouldn't impact standard errors as the random effect would
+- could bootstrap clinics
+- wouldn't think of it as a random effect if I didn't have to... 
+- if bootstrapping: would do it as 1:1 or proportionate to practice size? 
+- if you sample on clinic vs patient & keep clinic as fixed effect, not all clinics would be represented, but model would be more stable (as would include all pts within that prac) 
+- since we're not interested in clinic fixed effects it's okay that we wouldn't be using all clinics (if bootstrapping etc)
+- INFERENCE more directed at predicted effect / practices / population of patients in ISP vs non-ISP anyways...
+- Discussed if bootstrapping do you use bootstrap mean or observed mean / same with SD...
+- Carter usually uses observed mean in bootstrapping 
+- Pivoted to jacknife: would have half the the iterations > would lose sampling dn but if you don't need it, that's fine
+
+Decisions: 
+- Jacknife technique for resampling at clinic level (clinic as fixed effect)
+- time unit: quarter
+- model is quarter nested within person, person nested within clinic
+- 'resampling at the top of that nesting should be okay...' 
+
+RISK ADJUSTMENT:
+- risk adjustment to put in for each person: adults (18+) use Charlson Comorbidity Index, peds use PMCA 
+	Jake has code for CCI, CS has code for PMCA
+	1: flag adult or peds
+	2: one composite variable: high, medium, or low complexity
+	3: in
+
+
+
+
+--------------------------------------------------------------------------------------
+
+Aug 30 2022   
+
+Attendees: Mark, Kim
+ 
+Topics	: CTLP  
+		: ISP Utilization  
+ 
+Files Viewed for ISP
+isp/isp_utilization/01 background/Analysis_Specifications.xlsx
+
+
+ISP Utilization Notes  
+ - Data specs tab: everyone 0-64 in that state fiscal year (& only that FY - not 1920 if they turned 65 in 19-20)   
+ - Step one will be identifying the targpop, then step 2 is pulling claims from 2015+    
+ - Question of Interest will be how we define 'attributed' for the model, but for now it's anyone with 1 month in medlong  
+ - ISP PCMPs vs non-ISP PCMPs  
+ - Carter has definitions of what we consider 'primary care'  
+ - given that ISP had this telehealth focus, we want to do that as well  
+	- place of service
+	- FQ's is a modifier for procedure codes
+ - row 14: not quite sure how we'll operationalize that yet  
+ - Carter has code for:  
+	- hospitalizations  
+	- pharmacy  
+	- BH  
+ - Jake has budget groups / rules we've been using  
+ 

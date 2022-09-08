@@ -98,14 +98,34 @@ else if month ge '01Jul2020'd and month le '30Jun2021'd then SFY=2021;
 else if month ge '01Jul2021'd and month le '30Jun2022'd then SFY=2122;
 run;  *09/07/2022 55641948, 11;  
 
-
 *change pcmp to numeric ;
-data medlong2;
+data out.medlong;
 set  medlong1;
 pcmp_loc_id2 = input(pcmp_loc_id, 12.);
 drop pcmp_loc_id;
 rename pcmp_loc_id2 = pcmp_loc_id; 
-run; *55641948; 
+run; *55641948;     
+
+* combine members from meddemog to medlong1; 
+data meddemog_1819;
+set  out.meddemog;
+where keep_sfy1819 = 1; 
+run;
+
+proc sql; 
+create table out.sfy_medlong_1819 as 
+select t1.*
+	   t2.client_id
+from out.medlong as t1
+left join out.meddemog as t2
+where t1.sfy = 1819 and t2.keep_sfy1819 = 1
+
+
+data medlong_managedcare1;
+set  medlong2; 
+where managedcare = 1;
+run;
+
 
 
 
