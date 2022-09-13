@@ -17,11 +17,8 @@
 * ISP NPI file, updated to recode two NPI's on 09/2022;
 %let isp_npi = "S:/FHPC/DATA/HCPF_Data_files_SECURE/UPL-ISP/Copy of FULL ISP Practice Report 20220828.xlsx";
 
-
-
 data medlong1; set bhjt.medicaidlong_bidm; run;
 *[170496617];
-
 
 data medlong2; set medlong1 (keep=clnt_id pcmp_loc_ID month); 
 where /*managedCare=0 and*/ month ge '01Jul2018'd and month le '01May2022'd and pcmp_loc_ID ne ' ';

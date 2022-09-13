@@ -11,30 +11,14 @@
  MODIFICATION HISTORY:
  Date	   	Author   	Description of Change
  --------  	-------  	-----------------------------------------------------------------------
- 08/18/22	KTW			Copied this from 00_ISP_Counts in NPI_Matching - Documents;
+ 08/18/22	KTW			Copied this from 00_ISP_Counts in NPI_Matching - Documents
+ 09/13/22	KTW			Ran;
 
 * global paths, settings  ---------------------------;
-  %let hcpf = S:/FHPC/DATA/HCPF_Data_files_SECURE;
-  %let util = &hcpf/Kim/isp/isp_utilization;
-  	%let code = &util/02 code;
-  	%let out = &util/04 data;
-  %include "&code/00_formats.sas"; *use age range; 
+  %include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_paths_formats.sas"; *use age range; 
+* Includes formats, connect to bdm, setting libnames, options, bhjt, varlen;
 
-  libname out "&out";
 
-* proc freq format; 
-  %include "C:/Users/wigginki/OneDrive - The University of Colorado Denver/Documents/projects/00_sas_formats/procFreq_pct.sas";
-
-* Connect to bdm for medlong and meddemog, get varlen;
-  %include "&hcpf/kim/BDMConnect.sas";
-	
-* BHJT --------------------------------;
-  %let bhjt = &hcpf/HCPF_SqlServer/queries;
-  libname bhjt   "&bhjt";
-
-* OPTIONS ---------------------------; 
-options nofmterr
-        fmtsearch =(bhjt, util, work, varlen);
 ***********************************************************************************************;
 *Init: Sept 2022;
 
