@@ -1,9 +1,9 @@
 **********************************************************************************************
  PROGRAM NAME		: ISP Utilization
  PROGRAMMER			: K Wiggins
- DATE CREATED		: 08 18 2022
+ DATE CREATED		: 09/13/2022
  PROJECT			: ISP
- PURPOSE			: Get client ID's for members 0-64 in SFY's 18/19 through 21/22
+ PURPOSE			: Get data for 2018 to current months with ISP vs non-ISP
  INPUT FILE(S)		: 
  OUTPUT FILE(S)		: 
  ABBREV				: 
@@ -14,28 +14,10 @@
  08/18/22	KTW			Copied this from 00_ISP_Counts in NPI_Matching - Documents
  09/13/22 	ktw			last ran;
 
-* global paths, settings  ---------------------------;
-  %let hcpf = S:/FHPC/DATA/HCPF_Data_files_SECURE;
-  %let proj = &hcpf/Kim;
-  %let  out = &proj/isp/isp_utilization/04 data;
-/*  %include "&attr/00_paths.sas";*/
+* ISP NPI file, updated to recode two NPI's on 09/2022;
+%let isp_npi = "S:/FHPC/DATA/HCPF_Data_files_SECURE/UPL-ISP/Copy of FULL ISP Practice Report 20220828.xlsx";
 
-* Connect to bdm for medlong and meddemog;
-  %include "&proj/BDMConnect.sas";
 
-* VARLEN  -----------------------------;
-  %include "&varlen\MACRO_charLenMetadata.sas";
-  %getlen(library=varlen, data=AllVarLengths);
-
-* BHJT --------------------------------;
-  %let bhjt = &hcpf/HCPF_SqlServer/queries;
-  libname bhjt   "&bhjt";
-
-* OPTIONS ---------------------------; 
-options nofmterr
-        fmtsearch =(bhjt, ids, work, varlen);
-***********************************************************************************************;
-*Init: June 03 2022;
 
 data medlong1; set bhjt.medicaidlong_bidm; run;
 *[170496617];
@@ -66,6 +48,12 @@ by pcmp_loc_id;
 run; *116; 
 *The only 2 splitIDS that share a pcmp_loc_ID are 3388  and 3465 (162015, 107169)
 3353 would if it had the same as 2004;
+
+* ISP NPI file, updated to recode two NPI's on 09/2022;
+%let isp_npi = "S:/FHPC/DATA/HCPF_Data_files_SECURE/UPL-ISP/Copy of FULL ISP Practice Report 20220828.xlsx";
+
+
+* UPDATE ALL BELOW TO USE NEW FILE _ don't use sas7bdats until updated - ;
 
 ** QUESTION 1**;
 data simisp.isp_medlong; 
