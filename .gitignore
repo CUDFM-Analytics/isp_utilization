@@ -2,6 +2,8 @@
 */05 Data/*
 */04 Data Raw/*
 *.sas7bdat
+04_data/*
+*/04 data/*
 
 # History files
 .Rhistory

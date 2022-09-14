@@ -1,8 +1,9 @@
 %let hcpf     = S:/FHPC/DATA/HCPF_Data_files_SECURE;
   %let util   = &hcpf/Kim/isp/isp_utilization;
-  	%let code = &util/02_code;
-  	%let out  = &util/04_data;
-	%let in   = &util/03_data_raw;
+  	%let code = &util/02 code;
+  	%let out  = &util/04 data;
+	%let in   = &util/03 data raw;
+	%let reports = &util/05 reports; 
 
   libname out "&out";
 
@@ -11,8 +12,14 @@
 
 * Connect to bdm for medlong and meddemog, get varlen;
   %include "&hcpf/kim/BDMConnect.sas";
-	
-* BHJT --------------------------------;
+
+* varlen; 
+ %let varlen = \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengths;
+ libname varlen "&varlen";
+ %include "&varlen\MACRO_charLenMetadata.sas";
+ %getlen(library=varlen, data=AllVarLengths);
+
+ * BHJT --------------------------------;
   %let bhjt = &hcpf/HCPF_SqlServer/queries;
   libname bhjt   "&bhjt";
 
@@ -20,8 +27,6 @@
 options nofmterr
         fmtsearch =(bhjt, out, util, work, varlen);
 
-* ISP NPI file;
-%let isp_npi = "S:/FHPC/DATA/HCPF_Data_files_SECURE/UPL-ISP/Copy of FULL ISP Practice Report 20220828.xlsx";
 
 * FORMATS  ---------------------------; 
 proc format ;  

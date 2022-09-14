@@ -14,28 +14,13 @@
  08/18/22	KTW			Copied this from 00_ISP_Counts in NPI_Matching - Documents
  09/13/22 	ktw			last ran;
 
-* global paths, settings  ---------------------------;
-  %let hcpf = S:/FHPC/DATA/HCPF_Data_files_SECURE;
-  %let proj = &hcpf/Kim;
-  %let  out = &proj/isp/isp_utilization/04 data;
-/*  %include "&attr/00_paths.sas";*/
-
-* Connect to bdm for medlong and meddemog;
-  %include "&proj/BDMConnect.sas";
-
-* VARLEN  -----------------------------;
-  %include "&varlen\MACRO_charLenMetadata.sas";
-  %getlen(library=varlen, data=AllVarLengths);
-
-* BHJT --------------------------------;
-  %let bhjt = &hcpf/HCPF_SqlServer/queries;
-  libname bhjt   "&bhjt";
-
-* OPTIONS ---------------------------; 
-options nofmterr
-        fmtsearch =(bhjt, ids, work, varlen);
 ***********************************************************************************************;
 *Init: June 03 2022;
+%include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_paths_formats.sas"; *use age range; 
+
+
+
+
 
 data medlong1; set bhjt.medicaidlong_bidm; run;
 *[170496617];
