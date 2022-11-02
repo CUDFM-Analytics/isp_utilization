@@ -15,7 +15,8 @@
  09/13/22	KTW			Ran;
 
 * global paths, settings  ---------------------------;
-  %include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_paths_formats.sas"; *use age range; 
+  %include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_paths_formats.sas"; 
+  *use age range; 
 * Includes formats, connect to bdm, setting libnames, options, bhjt, varlen;
 
 

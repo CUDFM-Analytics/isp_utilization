@@ -27,7 +27,6 @@
 options nofmterr
         fmtsearch =(bhjt, out, util, work, varlen);
 
-
 * FORMATS  ---------------------------; 
 proc format ;  
 invalue age_range
