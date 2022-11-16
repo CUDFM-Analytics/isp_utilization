@@ -23,7 +23,7 @@
 ***********************************************************************************************;
 *Init: Sept 2022;
 
-data meddemog1; set bhjt.medicaiddemog_bidm; run; *2991591, 7; 
+data meddemog1; set bhjt.medicaiddemog_bidm; run; *2,991,591; 7; 
 
 * Get variables from meddemog1 needed;
 data meddemog2 (keep=clnt_id dob gender county rethnic_hcpf);
@@ -33,10 +33,10 @@ run; * dropped to 5 variables;
 * Get age from meddemog;
 data meddemog3;
 set  meddemog2;
-age_sfy1819 = floor((intck('month', dob, '30Jun2018'd) - (day('30Jun2018'd) < day(dob))) / 12); 
-age_sfy1920 = floor((intck('month', dob, '30Jun2019'd) - (day('30Jun2019'd) < day(dob))) / 12); 
-age_sfy2021 = floor((intck('month', dob, '30Jun2020'd) - (day('30Jun2020'd) < day(dob))) / 12); 
-age_sfy2122 = floor((intck('month', dob, '30Jun2021'd) - (day('30Jun2021'd) < day(dob))) / 12); 
+age_sfy1819 = floor((intck('month', dob, '01Jul2018'd) - (day('01Jul2018'd) < day(dob))) / 12); 
+age_sfy1920 = floor((intck('month', dob, '01Jul2019'd) - (day('01Jul2019'd) < day(dob))) / 12); 
+age_sfy2021 = floor((intck('month', dob, '01Jul2020'd) - (day('01Jul2020'd) < day(dob))) / 12); 
+age_sfy2122 = floor((intck('month', dob, '01Jul2021'd) - (day('01Jul2021'd) < day(dob))) / 12); 
 keep_sfy1819 = input(age_sfy1819, age_range.);
 keep_sfy1920 = input(age_sfy1920, age_range.);
 keep_sfy2021 = input(age_sfy2021, age_range.);
@@ -81,7 +81,7 @@ if 		month ge '01Jul2018'd and month le '30Jun2019'd then SFY=1819;
 else if month ge '01Jul2019'd and month le '30Jun2020'd then SFY=1920;
 else if month ge '01Jul2020'd and month le '30Jun2021'd then SFY=2021;
 else if month ge '01Jul2021'd and month le '30Jun2022'd then SFY=2122;
-run;  *09/07/2022 55641948, 11;  
+run;  *09/07/2022 55,641,948; 11;  
 
 *change pcmp to numeric ;
 data out.medlong;
