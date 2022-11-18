@@ -12,11 +12,11 @@
  Date       Author      Description of Change
  --------   -------     -----------------------------------------------------------------------
  08/18/22   KTW         Copied this from 00_ISP_Counts in NPI_Matching - Documents
- 09/13/22   ktw         last ran;
+ 11/18/22   ktw         last ran;
 
 ***********************************************************************************************;
 *Init: June 03 2022;
-%include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_paths_formats.sas"; *use age range; 
+%include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_global.sas"; 
 
 
 * MEDLONG ----------------------------------------------------; 
@@ -41,7 +41,7 @@ if      month ge '01Jul2018'd and month le '30Jun2019'd then SFY=1819;
 else if month ge '01Jul2019'd and month le '30Jun2020'd then SFY=1920;
 else if month ge '01Jul2020'd and month le '30Jun2021'd then SFY=2021;
 else if month ge '01Jul2021'd and month le '30Jun2022'd then SFY=2122;
-run;  *09/07/2022 55,641,948; 11;  
+run;  *09/07/2022 	obs 55,641,948 		vars 11;  
 
 *change pcmp to numeric ;
 data out.medlong;
