@@ -3,7 +3,7 @@
  PROGRAMMER         : K Wiggins
  DATE CREATED       : 08 18 2022
  PROJECT            : ISP
- PURPOSE            : Get claims for members FY 2015-16 through 2017-18
+ PURPOSE            : Get attr for members FY 2015-16 through 2017-18
  INPUT FILE(S)      : bhjt.medicaidlong_bidm, out.mem_list
  OUTPUT FILE(S)     : out.mem_claims_1518
 
@@ -21,7 +21,7 @@
 * MEDLONG ----------------------------------------------------; 
 * GET CLAIMS FOR MEMBERS in out.mem_list for FY's 2015-16 through 2017-18;
 proc sql; 
-create table mem_claims as 
+create table mem_attr as 
 select *
 from bhjt.medicaidlong_bidm
 where (clnt_id IN 
@@ -34,7 +34,7 @@ where (clnt_id IN
 quit; * 25146142;  
 
 * Create SFY column, keep columns, make pcmp numeric; 
-data out.mem_claims_1518
+data out.mem_attr_1518
 	(
 	keep=clnt_id 
 	    pcmp_loc_ID 
@@ -48,7 +48,7 @@ data out.mem_claims_1518
 	    SFY
 	    managedCare
 	); 
-set  mem_claims;
+set  mem_attr;
 
 if      month ge '01Jul2015'd and month le '30Jun2016'd THEN SFY=1516;
 else if month ge '01Jul2016'd and month le '30Jun2017'd THEN SFY=1617;
@@ -61,5 +61,5 @@ rename pcmp_loc_id2 = pcmp_loc_id;
 run; * 25146142;
 
 
-proc sort data=out.mem_claims_1518; by pcmp_loc_id; run;
+proc sort data=out.mem_attr_1518; by pcmp_loc_id; run;
 

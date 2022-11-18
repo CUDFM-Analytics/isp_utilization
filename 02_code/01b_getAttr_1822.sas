@@ -3,26 +3,21 @@
  PROGRAMMER         : K Wiggins
  DATE CREATED       : 08 18 2022
  PROJECT            : ISP
- PURPOSE            : Get claims for members 2018-2022
- INPUT FILE(S)      : 
- OUTPUT FILE(S)     : 
- ABBREV             : 
-
- MODIFICATION HISTORY:
- Date       Author      Description of Change
- --------   -------     -----------------------------------------------------------------------
- 08/18/22   KTW         Copied this from 00_ISP_Counts in NPI_Matching - Documents
- 11/18/22   ktw         last ran;
+ PURPOSE            : Get pcmp attribution for members 2018-2022
+ INPUT FILE(S)      : bhjt.medicaidlong_bidm, out.mem_list
+ OUTPUT FILE(S)     : out.mem_attr_1819
+					  out.mem_attr_1920
+					  out.mem_attr_2021
+					  out.mem_attr_2122
 
 ***********************************************************************************************;
 *Init: June 03 2022;
 %include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_global.sas"; 
 
+* MEDLONG ----------------------------------------------------; 
 
-* MEDLONG ----------------------------------------------------; 
-* MEDLONG ----------------------------------------------------; 
-* GET CLAIMS FOR MEMBERS in out.mem_list for FY's 2018-19 through 2021-22;
-%macro getClaims(table=,fy=,month_ge=,month_le=);
+* GET PCMP attribution FOR MEMBERS in out.mem_list for FY's 2018-19 through 2021-22;
+%macro getAttr (table=,fy=,month_ge=,month_le=);
 proc sql; 
 create table &table as 
 select *
@@ -42,60 +37,39 @@ where (clnt_id IN
 quit; 
 %mend;
 
-%getClaims
+%getAttr
 		(
-		table=out.mem_claims_1819,
+		table=out.mem_attr_1819,
 		fy=fy1819,
 		month_ge = '01Jul2018'd,
 		month_le = '30Jun2019'd
 		);   * 12291756;
 
-%getClaims
+%getAttr
 		(
-		table=out.mem_claims_1920,
+		table=out.mem_attr_1920,
 		fy=fy1920,
 		month_ge = '01Jul2019'd,
 		month_le = '30Jun2020'd
 		); *11803174;
 
-%getClaims
+%getAttr
 		(
-		table=out.mem_claims_2021,
+		table=out.mem_attr_2021,
 		fy=fy1819,
 		month_ge = '01Jul2020'd,
 		month_le = '30Jun2021'd
 		); *13150502;
 
-%getClaims
+%getAttr
 		(
-		table=out.mem_claims_2122,
+		table=out.mem_attr_2122,
 		fy=fy2122,
 		month_ge = '01Jul2021'd,
 		month_le = '30Jun2022'd
 		); *15277119;
 		
 
-data medlong1 (keep=clnt_id 
-                    pcmp_loc_ID 
-                    month 
-                    enr_cnty
-                    eligGrp
-                    aid_cd
-                    budget_group
-                    pcmp_loc_type_cd
-                    rae_assign
-                    SFY
-                    managedCare); 
-set  bhjt.medicaidlong_bidm; 
-where /*managedCare = 0 and*/
-      month ge '01Jul2018'd and month le '30Jun2022'd and 
-      pcmp_loc_ID ne ' ' and 
-      BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
-if      month ge '01Jul2018'd and month le '30Jun2019'd then SFY=1819;
-else if month ge '01Jul2019'd and month le '30Jun2020'd then SFY=1920;
-else if month ge '01Jul2020'd and month le '30Jun2021'd then SFY=2021;
-else if month ge '01Jul2021'd and month le '30Jun2022'd then SFY=2122;
-run;  *09/07/2022 	obs 55,641,948 		vars 11;  
 
 *change pcmp to numeric ;
 data out.medlong;
@@ -105,27 +79,6 @@ drop pcmp_loc_id;
 rename pcmp_loc_id2 = pcmp_loc_id; 
 run; *55641948;     
 
-
-data medlong1; set bhjt.medicaidlong_bidm; run;
-*[170496617];
-
-
-data medlong2; set medlong1 (keep=clnt_id pcmp_loc_ID month); 
-where /*managedCare=0 and*/ month ge '01Jul2018'd and month le '01May2022'd and pcmp_loc_ID ne ' ';
-if month ge '01Jul2018'd and month le '30Jun2019'd then FY=1;
-else if month ge '01Jul2019'd and month le '30Jun2020'd then FY=2;
-else if month ge '01Jul2020'd and month le '30Jun2021'd then FY=3;
-else if month ge '01Jul2021'd and month le '30Jun2022'd then FY=4;
-run; 
-*51524899, 3;
-
-*change pcmp to numeric so these'll merge;
-data medlong2;
-set medlong2;
-pcmp_loc_id2 = input(pcmp_loc_id, 12.);
-drop pcmp_loc_id;
-rename pcmp_loc_id2 = pcmp_loc_id; 
-run; *51524899;
 
 proc sort data=medlong2; by pcmp_loc_id; 
 
