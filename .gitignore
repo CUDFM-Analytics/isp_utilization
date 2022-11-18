@@ -1,5 +1,6 @@
 # Data folders
-*/05 Data/*
+*/05_Results/*
+*/03_data/*
 */04 Data Raw/*
 *.sas7bdat
 */04_data/*
