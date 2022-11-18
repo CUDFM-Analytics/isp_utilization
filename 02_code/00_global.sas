@@ -1,9 +1,9 @@
 %let hcpf     = S:/FHPC/DATA/HCPF_Data_files_SECURE;
   %let util   = &hcpf/Kim/isp/isp_utilization;
-  	%let code = &util/02 code;
-  	%let out  = &util/04 data;
-	%let in   = &util/03 data raw;
-	%let reports = &util/05 reports; 
+    %let code = &util/02_code;
+    %let out  = &util/04_data;
+    %let in   = &util/03_data raw;
+    %let reports = &util/05 reports; 
 
   libname out "&out";
 
@@ -36,13 +36,13 @@ run;
 
 /**/
 /*value pcmp_orgtyp;*/
-/*'Clinic - Practitioner' 			= Other*/
+/*'Clinic - Practitioner'           = Other*/
 /*'Federally Qualified Health Center' = FQHC*/
-/*'Rural Health Clinic'				= RHC*/
+/*'Rural Health Clinic'             = RHC*/
 /*'Non-Physician Practitioner - Group'= Other*/
-/*'Physician'							= Other*/
-/*'Indian Health Services - FQHC'		= IHS*/
-/*'Hospital - General'				= Other*/
-/*'Clinic - Dental'					= Dental*/
-/*'Nurse Practitioner'				= Other;*/
+/*'Physician'                           = Other*/
+/*'Indian Health Services - FQHC'       = IHS*/
+/*'Hospital - General'              = Other*/
+/*'Clinic - Dental'                 = Dental*/
+/*'Nurse Practitioner'              = Other;*/
 
