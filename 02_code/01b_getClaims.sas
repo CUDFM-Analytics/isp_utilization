@@ -3,7 +3,7 @@
  PROGRAMMER         : K Wiggins
  DATE CREATED       : 08 18 2022
  PROJECT            : ISP
- PURPOSE            : Get client ID's for members 0-64 in SFY's 18/19 through 21/22
+ PURPOSE            : Get claims for members 2018-2022
  INPUT FILE(S)      : 
  OUTPUT FILE(S)     : 
  ABBREV             : 
@@ -20,6 +20,60 @@
 
 
 * MEDLONG ----------------------------------------------------; 
+* MEDLONG ----------------------------------------------------; 
+* GET CLAIMS FOR MEMBERS in out.mem_list for FY's 2018-19 through 2021-22;
+%macro getClaims(table=,fy=,month_ge=,month_le=);
+proc sql; 
+create table &table as 
+select *
+from bhjt.medicaidlong_bidm
+where (clnt_id IN 
+		(
+		  SELECT clnt_id
+		  FROM out.mem_list
+		  WHERE &fy = 1
+		 )
+		) 
+	AND
+	month ge &month_ge  AND
+	month le &month_le  AND
+	pcmp_loc_id ne ' '     AND
+	budget_group not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
+quit; 
+%mend;
+
+%getClaims
+		(
+		table=out.mem_claims_1819,
+		fy=fy1819,
+		month_ge = '01Jul2018'd,
+		month_le = '30Jun2019'd
+		);   * 12291756;
+
+%getClaims
+		(
+		table=out.mem_claims_1920,
+		fy=fy1920,
+		month_ge = '01Jul2019'd,
+		month_le = '30Jun2020'd
+		); *11803174;
+
+%getClaims
+		(
+		table=out.mem_claims_2021,
+		fy=fy1819,
+		month_ge = '01Jul2020'd,
+		month_le = '30Jun2021'd
+		); *13150502;
+
+%getClaims
+		(
+		table=out.mem_claims_2122,
+		fy=fy2122,
+		month_ge = '01Jul2021'd,
+		month_le = '30Jun2022'd
+		); *15277119;
+		
 
 data medlong1 (keep=clnt_id 
                     pcmp_loc_ID 
