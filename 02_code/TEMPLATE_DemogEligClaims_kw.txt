@@ -125,7 +125,7 @@ proc sort data = out.clm_header_1519_group1(keep = ICN_NBR) out=out.icns_group1_
 run;  
 
 data MyIcnFmt;
-   set icns (keep = ICN_NBR);
+   set out.clm_header_1519_group1 (keep = ICN_NBR);
 
    retain hlo " ";
    fmtname = "$MyIcns" ;
@@ -146,7 +146,7 @@ run;
 
 * diagnoses ;
 proc sql;
-create table OUT.diagTable_1519_group1 as
+create table OUT.diagTable_1519 as
   select distinct 
          a.ICN_NBR length = &ICN_NBR,
          a.DIAG_PRSNT_ON_ADMSN_CD  length = &DIAG_PRSNT_ON_ADMSN_CD,
@@ -165,7 +165,7 @@ quit;
 
 * claim lines ;
  
-data out.clm_lines_1519_group1;
+data out.clm_lines_1519;
 
   length mcaid_id $ &mcaid_id
          ICN_NBR $ &ICN_NBR

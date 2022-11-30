@@ -59,4 +59,116 @@ run;   *68458900;
 data out.clm_header_1819_SFY;
 set  out.clm_header_1819;
 if '01Jul2018'd <= FRST_SVC_DT <= '30Jun2019'd;
-run;   *22406479;
+run;   *22406479;  
+
+proc print data = out.clm_header_1819_SFY (obs=100);
+run;  
+
+data out.clm_header_1519_group1;
+set  out.clm_header_1819_SFY
+	 out.clm_header_1518_grp1819;
+run; *90865379;  
+
+proc sort data = out.clm_header_1819_SFY (keep=ICN_NBR) out=out.icns_1819 nodupkey; 
+by ICN_NBR;
+run; *90865379;
+
+
+data MyIcnFmt;
+   set out.icns_1819 (keep = ICN_NBR);
+
+   retain hlo " ";
+   fmtname = "$MyIcns" ;
+   type    = "c" ;
+   start   = ICN_NBR;
+   label   = 'KEEP';
+   output ;
+   if eof then do ;
+      start = " " ;
+      label = " " ;
+      hlo   = "o" ;
+      output ;
+   end ;
+run;
+
+proc format cntlin = MyIcnFmt;
+run;
+
+* diagnoses ;
+proc sql;
+create table OUT.diagTable_1519 as
+  select distinct 
+         a.ICN_NBR length = &ICN_NBR,
+         a.DIAG_PRSNT_ON_ADMSN_CD  length = &DIAG_PRSNT_ON_ADMSN_CD,
+         a.DIAG_CD length = &DIAG_CD,
+         a.DIAG_DESC length = &DIAG_DESC,
+         a.CD_SET_CD length = &CD_SET_CD,
+         a.CD_SET_VER_NBR length = &CD_SET_VER_NBR,
+         a.DIAG_SEQ_CD length = &DIAG_SEQ_CD,
+         a.DIAG_SEQ_DESC length = &DIAG_SEQ_DESC
+  from db.CLM_DIAG_FACT_V as a  
+  where a.CURR_REC_IND = 'Y'
+    and a.SRC_REC_DEL_IND = 'N'
+    and put(ICN_NBR, $MyIcns. ) = "KEEP"
+;
+quit;
+
+* claim lines ;
+ 
+data out.clm_lines_1519;
+
+  length mcaid_id $ &mcaid_id
+         ICN_NBR $ &ICN_NBR
+         RVN_CD $ &RVN_CD
+         CLM_TYP_CD $ &CLM_TYP_CD 
+         pos_cd $ &pos_cd
+         DIAG_1_CD $ &DIAG_1_CD
+         DIAG_2_CD $ &DIAG_2_CD
+         DIAG_3_CD $ &DIAG_3_CD
+         DIAG_4_CD $ &DIAG_4_CD
+         proc_cd   $ &proc_cd
+         PROC_MOD_1_CD $ &PROC_MOD_1_CD 
+         PROC_MOD_2_CD  $ &PROC_MOD_2_CD
+         PROC_MOD_3_CD  $ &PROC_MOD_3_CD
+         PROC_MOD_4_CD $ &PROC_MOD_4_CD
+         ATTD_PROV_LOC_ID $ &ATTD_PROV_LOC_ID
+         BILL_PROV_MCAID_ID $ &BILL_PROV_MCAID_ID
+         BILL_PROV_NPI_ID   $ &BILL_PROV_NPI_ID
+
+         BILL_PROV_LOC_ID   $ &BILL_PROV_LOC_ID
+         REND_PROV_LOC_ID   $ &REND_PROV_LOC_ID
+         REND_PROV_MCAID_ID $ &REND_PROV_MCAID_ID
+         REND_PROV_NPI_ID   $ &REND_PROV_NPI_ID
+
+         BILL_PROV_TYP_CD   $ &BILL_PROV_TYP_CD 
+         REND_PROV_TYP_CD   $ &REND_PROV_TYP_CD 
+
+         FAC_PROV_LOC_ID    $ &FAC_PROV_LOC_ID
+         SUPV_PROV_LOC_ID    $ &SUPV_PROV_LOC_ID
+;
+
+  set db.clm_lne_fact_v ( keep = mcaid_id ICN_NBR lne_nbr LNE_FRST_SVC_DT LNE_LST_SVC_DT RVN_CD CLM_TYP_CD proc_cd 
+								 BILL_PROV_MCAID_ID  BILL_PROV_NPI_ID  BILL_PROV_LOC_ID REND_PROV_LOC_ID REND_PROV_MCAID_ID 
+								 REND_PROV_NPI_ID  ATTD_PROV_LOC_ID BILL_PROV_TYP_CD REND_PROV_TYP_CD FAC_PROV_LOC_ID 
+								 SUPV_PROV_LOC_ID CURR_REC_IND SRC_REC_DEL_IND pos_cd CLM_STS_CD lne_sts_cd enc_ind 
+								 most_rcnt_clm_ind PROC_MOD_1_CD PROC_MOD_2_CD PROC_MOD_3_CD PROC_MOD_4_CD DIAG_1_CD 
+								 DIAG_2_CD DIAG_3_CD DIAG_4_CD BILL_UNT_QTY
+						 );
+  where CURR_REC_IND = 'Y'
+    and SRC_REC_DEL_IND = 'N'
+    and CLM_STS_CD = 'P'
+    and lne_sts_cd = 'P'
+    and most_rcnt_clm_ind = 'Y'
+    and enc_ind = 'N'
+	and put(ICN_NBR, $MyIcns. ) = "KEEP"
+;
+             /* variables to ensure the claim is valid and paid: conditioned on in the where statement */
+  drop   CURR_REC_IND 
+         SRC_REC_DEL_IND 
+         CLM_STS_CD 
+         lne_sts_cd 
+         enc_ind 
+         most_rcnt_clm_ind
+;
+
+run;
