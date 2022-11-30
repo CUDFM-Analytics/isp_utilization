@@ -70,6 +70,15 @@ quit;
 		); *15277119;
 		
 
+proc print data = out.mem_attr_2122 (obs = 200);
+run;
+
+
+
+
+
+
+*** NOT SURE IF NEEDED BUT AFRAID TO LET GO OF CODE *********---------;
 
 *change pcmp to numeric ;
 data out.medlong;
@@ -88,6 +97,8 @@ by pcmp_loc_id;
 run; *116; 
 *The only 2 splitIDS that share a pcmp_loc_ID are 3388  and 3465 (162015, 107169)
 3353 would if it had the same as 2004;
+
+
 
 ** QUESTION 1**;
 data simisp.isp_medlong; 

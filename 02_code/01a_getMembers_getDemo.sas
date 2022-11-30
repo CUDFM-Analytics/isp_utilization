@@ -4,8 +4,10 @@
  DATE OF CREATION   : 08 18 2022
  PROJECT            : ISP
  PURPOSE            : Get client ID's for members 0-64 in SFY's 18/19 through 21/22
- INPUT FILE(S)      : 
- OUTPUT FILE(S)     : 
+ INPUT FILE(S)      : bhjt.medicaiddemog_bidm
+					  macro: %keep_age
+					  
+ OUTPUT FILE(S)     : out.mem_list_demo
  ABBREV             : bhjt, hcpf (include bdmconnect file has varlen)
 
  MODIFICATION HISTORY:
@@ -125,9 +127,3 @@ quit;  *2759411, 15 cols';
 
 proc print data = out.mem_list_demo (obs = 200); 
 run;
-
-
-proc freq data = out.meddemog;
-tables age_:;
-run; * it keps 65-67... 
-

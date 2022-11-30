@@ -1,0 +1,297 @@
+*
+PURPOSE: template for creating monlthly utilization
+       : assumes that eligibility and claims have been extracted to
+       : a library names 'raw'
+       : basic, creates categories for:
+       : clmType  1 = 'Pharmacy' 2='Hospitalizations' 3 = 'ER' 4 = 'Primary care'  100='Other'
+       : dental is excluded and records within hospitalizations are rolled up
+
+AUTHOR : Carter Sevick
+;
+
+
+* input from raw folder ;
+libname raw "";
+
+* output to folder;
+libname out "";
+%let outFile = clm_count_pay_amt;
+
+
+* connection to the BIDM data repo ;
+libname db odbc complete="driver=SQL Server; database=BIDM; server=SOMD-S-SQLDB.ucdenver.pvt" access=readonly schema="ro";/**/
+
+proc format; 
+** pcmp loc ids for intervention; 
+value $ ispPCMP
+'124753','132415','139247','130389','156924','166478','164771','101608','123589',
+'105469','107729','16150','113975','124830','124232','129283','113579','100612',
+'100723','121492','100950','28208','133736','134243','134762','8256','148256',
+'133165','135284','130714','26803','110225','182889','107111','133277','24825',
+'26737','103320','164764','164768','164769','100942','149287','136546','124753',
+'132415','139247','143623','118862','197279','125292','125496','159720','2385',
+'144048','29650','29651','147562','147763','117216','119566','107087','132105',
+'124672','136514','105559','119625','119629','117507','133936','25868','148546',
+'130389','156924','166478','164771','101608','123589','105469','107729','16150',
+'113975','124830','124232','129283','113579','100612','100723','121492','100950',
+'28208','133736','134243','134762','8256','148256','133165','135284','130714',
+'26803','110225','182889','107111','133277','24825','26737','103320','164764',
+'164768','164769','100942','149287','136546','143623','118862','197279','125292','125496' = 'ISP'
+other = 'nonISP';
+run;  
+
+proc format;
+
+** codes that assist in defining primary care records (HCPF defn)**;
+value $ primProc
+'36415','36416','59400','59425','59426','59510','59610','59618','77052','77055',
+ '77057','77080','82951','82952','87086','90378','90384','90385','90386','90460',
+ '90461','90471','90472','90473','90474','90632','90633','90636','90645','90647',
+ '90648','90649','90650','90654','90655','90656','90657','90658','90660','90661',
+ '90669','90670','90672','90680','90681','90686','90688','90696','90698','90700',
+ '90702','90703','90704','90705','90707','90708','90710','90713','90714',
+ '90715','90716','90718','90721','90723','90732','90733','90734','90736','90740',
+ '90743','90744','90746','90747','92551','92552','92553','92558','92585','92586',
+ '92587','92588','96110','99173','99174','D0120','D0140','D0145','D0150','D0190',
+ 'D1110','D1120','D1206','D1208','G0101','G0102','G0124','G0143','G0144','G0145',
+ 'G0147','G0148','G0202','G0432','P3000','P3001','Q0091','Q0111','S0195','S3620',
+ 'T1023','69210','90651','90706','96127','98967','98968','98969','99441','99442',
+ '99443','99444','99446','99447','99448','99449','99487','99489','99495','99496',
+ '99490','G0181','80055','80061','81007','82270','82274','82465','82728','82947','82948','82950',
+ '83020','83036','84030','84153','84478','85013','85014','85018','85660','86580',
+ '86592','86593','86631','86632','86689','86701','86702','86703','86782','86803',
+ '86804','86901','87081','87088','87110','87164','87166','87205','87270','87285',
+ '87320','87340','87341','87350','87380','87390','87391','87490','87491','87520',
+ '87521','87522','87590','87591','87592','87801','87810','87850','90847','90853',
+ '90887','96372','97802','97803','97804','99050','99201','99202','99203','99204',
+ '99205','99211','99212','99213','99214','99215','99304','99305','99306','99307',
+ '99308','99309','99310','99315','99316','99318','99324','99325','99326','99327',
+ '99328','99334','99335','99336','99337','99341','99342','99343','99344','99345',
+ '99347','99348','99349','99350','99355','99363','99364','99367','99368','99381',
+ '99382','99383','99384','99385','99386','99387','99391','99392','99393','99394',
+ '99395','99396','99397','99401','99402','99403','99404','99406','99407','99408',
+ '99409','99411','99412','99420','99429','G0442','G0443','G0444','G0445','G0446',
+ 'G0447','G9006','G9012','H0001','H0002','H0004','H0025','H0031','H0034','H0039',
+ 'H0049','H1010','H1011','T1017','96150','96151','96152','96153','96154','96155',
+ '99398','99497','H0023','S0257','98966','99374','99375','99377','99378','99379',
+ '99380','G0182' = 'YES'
+ other = 'NO';
+
+ run;
+
+ ** FQHC prov ID's for primary care ;
+proc sql;
+create table provIdFmt as
+  select distinct 
+         '$ProvPrimID' as fmtname,
+         PROV_LOC_ID as start,
+         'YES' as label
+  from db.prov_loc_dim_v 
+  where PROV_TYP_CD in ('32','45','61') 
+    and CURR_REC_IND = 'Y'  
+    and SRC_REC_DEL_IND = 'N';
+quit;
+proc format cntlin = provIdFmt;
+run;
+
+
+* querying claim line file;
+data clm_lne;
+
+  set raw.clm_lines;
+  * where ; * may need to modify ;
+ 
+  * flag ER visits ;
+  ER = ((CLM_TYP_CD IN ('C','O') AND RVN_CD IN ('0450','0451','0452','0456','0459','0981')) OR 
+       (CLM_TYP_CD IN ('B','M') AND     '99281'  <= proc_cd <= '99285') OR 
+       (CLM_TYP_CD IN ('B','M') AND POS_CD = '23' AND (  '10021'  <= proc_cd <= '69979' OR PROC_CD = '69990'))
+ );
+
+  ** primary care definition, based on SQL code received in email from alexandra.hoffman on march 18, 2020 ; 
+  primCare = CLM_TYP_CD in ('B','C','M','O') AND
+               (
+                put(ATTD_PROV_LOC_ID, $ProvPrimID.) = 'YES' OR
+                BILL_PROV_TYP_CD in ('16','32','45','51','61') OR /* added ,'32','45','61' on 6/3/21 to pick up FQHC care */
+                REND_PROV_TYP_CD in ('16','26','05','25','39','41','32','45','51')
+               ) AND
+               (
+               ('69210'  <= proc_cd <=  '69250') or
+               put(PROC_CD, $primProc.) = 'YES'
+               );
+
+   * keeping only rows that are ER or primary ;
+  if ER or   PrimCare  ;
+  * keeping only the following fields ;
+  keep ICN_NBR ER   PrimCare ;
+
+run;
+
+* create a file with one row per original icn number, flagged for ER and primary care;
+proc sql;
+create table clm_lne_class   as
+  select ICN_NBR, max(ER) as ER, max(PrimCare) as PrimCare 
+  from clm_lne
+  group by ICN_NBR;
+quit;
+
+
+*** Roll up records into hospitalizations ;
+proc sql;
+
+create table hosp as
+  select *
+  from raw.clm_headers
+  where CLM_TYP_CD in ('I') 
+    and CTG_OF_SVC_CD in ('05')
+  order by mcaid_id, FRST_SVC_DT, LST_SVC_DT;
+quit;
+
+data hospDates ;
+  set hosp ;
+  by mcaid_id FRST_SVC_DT LST_SVC_DT;
+
+  retain start stop;
+
+  if first.mcaid_id =1 then do;
+    start = FRST_SVC_DT;
+    stop = LST_SVC_DT;
+  end;
+  if first.mcaid_id and last.mcaid_id then output;
+
+  if first.mcaid_id =0 then do;
+
+    if start <= FRST_SVC_DT <= stop then stop = max(stop, LST_SVC_DT);
+    else do;
+      output;
+      start = FRST_SVC_DT;
+      stop = LST_SVC_DT;
+    end;
+
+    if last.mcaid_id = 1 then output;
+  end;
+
+  keep mcaid_id start stop;
+run;
+
+data hospDates;
+  set hospDates;
+  recnum = _n_;
+run;
+
+* roll up hospitalizations ;
+proc sql;
+
+create table hospPLus as
+  select a.mcaid_id, 
+         a.recnum, 
+         a.start as FRST_SVC_DT,
+         a.stop as LST_SVC_DT,
+         b.clm_ctg_cd,
+         b.CLM_TYP_CD  , 
+         b.CTG_OF_SVC_CD ,
+         b.ICN_NBR,
+         sum(b.pd_amt) as pd_amt,
+         sum(b.tpl_pd_amt) as tpl_pd_amt
+
+  from hospDates as a inner join hosp as b on a.mcaid_id = b.mcaid_id and b.FRST_SVC_DT between a.start and a.stop
+  group by a.mcaid_id, a.recnum
+  order by a.mcaid_id, a.recnum
+  ;
+
+quit;
+
+data hospFinal;
+  set hospPlus;
+  by mcaid_id recnum;
+  if first.recnum;
+  drop recnum;
+run;
+
+*** roll up non-hospital records within hospitalizations ;
+proc sql;
+
+create table nonhosp as
+  select *
+  from raw.clm_headers
+  where ^(CLM_TYP_CD in ('I') 
+    and CTG_OF_SVC_CD in ('05'));
+
+create table inhosp as
+  select distinct a.*, b.ICN_NBR as hosp_ICN_NBR
+  from nonhosp as a inner join hospFinal as b
+    on a.mcaid_id = b.mcaid_id and a.FRST_SVC_DT between b.FRST_SVC_DT and b.lst_SVC_DT ;
+
+create table NotInHosp as
+  select *
+  from nonHosp
+  except 
+  Select *
+  from inHosp (drop = hosp_ICN_NBR);
+
+create table hospAgg as
+  select distinct 
+         a.ICN_NBR   , 
+         a.mcaid_id  , 
+         a.FRST_SVC_DT,
+         a.LST_SVC_DT,
+         a.clm_ctg_cd ,
+         a.CLM_TYP_CD  , 
+         a.CTG_OF_SVC_CD ,
+        /* a.pd_amt as a_pd,
+         sum(b.pd_amt) as b_pd,*/
+         sum(a.pd_amt, sum(b.pd_amt)) as pd_amt,
+         sum(a.tpl_pd_amt, sum(b.tpl_pd_amt)) as tpl_pd_amt
+
+  from hospFinal as a left join inhosp as b on a.ICN_NBR = b.hosp_ICN_NBR
+  group by a.ICN_NBR;
+
+quit;
+
+data clm_dim_hospAgg;
+  set hospAgg NotInHosp;
+run;
+
+proc sort data = clm_dim_hospAgg out = _null_ nodupkey;
+  by ICN_NBR;
+run;
+
+ 
+ 
+* record category names ;
+option fmtsearch = (out);
+proc format lib = out;
+value clmType  1 = 'Pharmacy' 2='Hospitalizations' 3 = 'ER' 4 = 'Primary care'  100='Other';
+run;
+
+proc sql;
+create table  out.&outFile as
+  select mcaid_id, 
+         month, 
+         clmType, 
+         count(distinct a.FRST_SVC_DT) as N_clm_days,
+         sum(pd_amt) as pd_amt,
+         sum(tpl_pd_amt) as tpl_pd_amt
+  from (
+    select a.mcaid_id,
+         intnx('month',a.FRST_SVC_DT, 0, 'beginning') as month,
+         a.FRST_SVC_DT,
+
+         /* record category logic */
+         case when a.clm_ctg_cd = 'PHARMACY' then 1
+              when a.CLM_TYP_CD in ('I') 
+               and a.CTG_OF_SVC_CD in ('05') then 2
+              when b.ER = 1                  then 3
+              when b.PrimCare = 1            then 4
+                                             else 100
+         end as clmType format = clmType.,
+         pd_amt,
+         tpl_pd_amt
+         
+  from clm_dim_hospAgg as a left join clm_lne_class as b on a.ICN_NBR = b.ICN_NBR
+  where a.clm_ctg_cd ^= 'DENTAL'
+ 
+) 
+group by mcaid_id, month, clmType
+order by mcaid_id, month, clmType
+;
+quit;
