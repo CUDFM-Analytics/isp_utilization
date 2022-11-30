@@ -4,7 +4,8 @@
  DATE CREATED       : 08 18 2022
  PROJECT            : ISP
  PURPOSE            : Get attr for members FY 2015-16 through 2017-18
- INPUT FILE(S)      : bhjt.medicaidlong_bidm, out.mem_list
+ INPUT FILE(S)      : bhjt.medicaidlong_bidm
+					  out.mem_list
  OUTPUT FILE(S)     : out.mem_claims_1518
 
  MODIFICATION HISTORY:

@@ -14,19 +14,19 @@
 proc print data = out.clm_1819;
 var drug_dspn_dt;
 run;
-* claim headers 1819;
+* claim headers 1819 - I took out some to speed it up... add in if needed;
 proc sql;
-create table out.clm_header_1819 as
+create table out.clm_header_all as
   select ICN_NBR  length = &ICN_NBR , 
          mcaid_id length = &mcaid_id, 
 		 ATTD_PROV_LOC_ID length = &ATTD_PROV_LOC_ID,
-		 ATTD_PROV_LOC_NM length = &ATTD_PROV_LOC_NM,
+/*		 ATTD_PROV_LOC_NM length = &ATTD_PROV_LOC_NM,*/
 		 REND_PROV_LOC_ID   length = &REND_PROV_LOC_ID,
-		 REND_PROV_LOC_NM   length = &REND_PROV_LOC_NM,
+/*		 REND_PROV_LOC_NM   length = &REND_PROV_LOC_NM,*/
 		 REND_PROV_TYP_CD   length = &REND_PROV_TYP_CD,
 		 REND_PROV_TYP_DESC length = &REND_PROV_TYP_DESC,
 		 BILL_PROV_LOC_ID   length = &BILL_PROV_LOC_ID,
-		 BILL_PROV_LOC_NM   length = &BILL_PROV_LOC_NM,
+/*		 BILL_PROV_LOC_NM   length = &BILL_PROV_LOC_NM,*/
 		 BILL_PROV_TYP_CD   length = &BILL_PROV_TYP_CD,
          BILL_PROV_TYP_DESC length = &BILL_PROV_TYP_DESC,
          datepart(FRST_SVC_DT)  as FRST_SVC_DT format=yymmddd10.,
@@ -50,54 +50,34 @@ create table out.clm_header_1819 as
   order by mcaid_id;
 quit;
 
-* Get claims for 2015-2019 SFY for 1819 members; 
-data out.clm_header_1518_grp1819;
+* Get claims for 2015-2019 SFY for 1819 members - should be only one, since 1920y = 0 (1819=no) members won't have data before 1819; 
+data out.clm_header_1518;
 set  out.clm_header_1819;
 if '01Jul2015'd <= FRST_SVC_DT <= '30Jun2018'd;
-run;   *68458900;
+run;   *68,458,900;
 
-data out.clm_header_1819_SFY;
-set  out.clm_header_1819;
+data out.clm_header_1819;
+set  out.clm_header_all;
 if '01Jul2018'd <= FRST_SVC_DT <= '30Jun2019'd;
-run;   *22406479;  
+run;   *22,406,479;  
 
-proc print data = out.clm_header_1819_SFY (obs=100);
+proc print data = out.clm_header_1819 (obs=100);
 run;  
 
-data out.clm_header_1519_group1;
-set  out.clm_header_1819_SFY
-	 out.clm_header_1518_grp1819;
-run; *90865379;  
+* Create ICN_NBR; 
+PROC SQL; 
+CREATE TABLE out.icn_nbr_1819 AS 
+SELECT 		 DISTINCT ICN_NBR
+FROM 		 out.clm_header_1819;
+QUIT; 
 
-proc sort data = out.clm_header_1819_SFY (keep=ICN_NBR) out=out.icns_1819 nodupkey; 
-by ICN_NBR;
-run; *90865379;
-
-
-data MyIcnFmt;
-   set out.icns_1819 (keep = ICN_NBR);
-
-   retain hlo " ";
-   fmtname = "$MyIcns" ;
-   type    = "c" ;
-   start   = ICN_NBR;
-   label   = 'KEEP';
-   output ;
-   if eof then do ;
-      start = " " ;
-      label = " " ;
-      hlo   = "o" ;
-      output ;
-   end ;
-run;
-
-proc format cntlin = MyIcnFmt;
-run;
 
 * diagnoses ;
-proc sql;
-create table OUT.diagTable_1519 as
-  select distinct 
+PROC SQL; 
+CREATE 
+	TABLE OUT.diagTable_1519 AS
+SELECT 		 
+	DISTINCT
          a.ICN_NBR length = &ICN_NBR,
          a.DIAG_PRSNT_ON_ADMSN_CD  length = &DIAG_PRSNT_ON_ADMSN_CD,
          a.DIAG_CD length = &DIAG_CD,
@@ -109,7 +89,7 @@ create table OUT.diagTable_1519 as
   from db.CLM_DIAG_FACT_V as a  
   where a.CURR_REC_IND = 'Y'
     and a.SRC_REC_DEL_IND = 'N'
-    and put(ICN_NBR, $MyIcns. ) = "KEEP"
+    and 
 ;
 quit;
 

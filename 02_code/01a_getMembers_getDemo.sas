@@ -7,7 +7,8 @@
  INPUT FILE(S)      : bhjt.medicaiddemog_bidm
 					  macro: %keep_age
 					  
- OUTPUT FILE(S)     : out.mem_list_demo
+ OUTPUT FILE(S)     : out.mem_list
+					  out.mem_list_demo
  ABBREV             : bhjt, hcpf (include bdmconnect file has varlen)
 
  MODIFICATION HISTORY:
