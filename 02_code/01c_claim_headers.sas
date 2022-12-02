@@ -25,7 +25,9 @@ OUTPUT/S	:
 REF/S 		: sas/sas_refs/from carter medicaid templates/TEMPLATE_DemogEligClaims.sas
 
 ***********************************************************************************************;
-%include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_global.sas";  
+%include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_global.sas";    
+
+libname bhjt clear; 
 
 * claim headers 1819 - I took out some to speed it up... add in if needed;
 proc sql;
@@ -104,25 +106,104 @@ FROM 		 db.CLM_DIAG_FACT_V AS a
 WHERE 		 a.CURR_REC_IND = 'Y' 
   AND		 a.SRC_REC_DEL_IND = 'N' 
   AND		 icn_nbr IN ( SELECT icn_nbr
-						  FROM out.icns_1819
+						  FROM   out.icns_1819
 						 );
-QUIT; *34799179, 9;
+QUIT; *34,799,179 / 9;  
 
+proc print data = out.diagTable_1819 (obs=1000);
+run;
 * claim lines ;  
 
 *Get smaller set to test;
-DATA 	short_clm_lne_fact_v;
-SET 	db.clm_lne_fact_v (obs=5000);
+DATA 	short_clm_lne_fact_v ;
+SET 	db.clm_lne_fact_v (keep = ICN_NBR );
 run; 
+
+proc sort data = short_clm_lne_fact_v nodupkey;
+by icn_nbr;
+run;
+
+DATA 	 out.icns_1819;
+LENGTH 	 icn_nbr2 $ 20;
+SET      out.icns_1819;
+FORMAT 	 icn_nbr2 $20.;
+INFORMAT icn_nbr2 $20.;
+icn_nbr2 = put(icn_nbr, 20.);
+run;
+
+proc contents data = out.icns_1819;
+run;
+
+		PROC SQL; 
+		CREATE TABLE testingicn_line AS
+			SELECT 	 a.* 
+			FROM   	 short_clm_lne_fact_v AS a
+			JOIN	 out.icns_1819 as b
+			ON	   	 a.icn_nbr = b.icn_nbr2;
+		QUIT;
+
+		PROC SQL; 
+		CREATE TABLE testingicn_line AS
+			SELECT 	 * 
+			FROM   	 short_clm_lne_fact_v AS a
+			WHERE	 icn_nbr IN (SELECT icn_nbr2
+					  	 		 FROM out.icns_1819); 
+		QUIT;
+
+PROC SQL;
+CREATE TABLE out.clm_lne_fact_1819 AS  
+SELECT 		 MCAID_ID 			length = &mcaid_id			,
+	         ICN_NBR 			length = &ICN_NBR			,
+	         RVN_CD 			length = &RVN_CD			,
+	         CLM_TYP_CD 		length = &CLM_TYP_CD 		,
+	         pos_cd 			length = &pos_cd			,
+	         DIAG_1_CD 			length = &DIAG_1_CD			,
+	         DIAG_2_CD 			length = &DIAG_2_CD			,
+	         DIAG_3_CD 			length = &DIAG_3_CD			,
+	         DIAG_4_CD 			length = &DIAG_4_CD			,
+	         proc_cd   			length = &proc_cd			,
+	         PROC_MOD_1_CD 		length = &PROC_MOD_1_CD 	,
+	         PROC_MOD_2_CD  	length = &PROC_MOD_2_CD		,
+	         PROC_MOD_3_CD  	length = &PROC_MOD_3_CD		,
+	         PROC_MOD_4_CD 		length = &PROC_MOD_4_CD		,
+	         ATTD_PROV_LOC_ID 	length = &ATTD_PROV_LOC_ID	,
+	         BILL_PROV_MCAID_ID length = &BILL_PROV_MCAID_ID,
+	         BILL_PROV_NPI_ID   length = &BILL_PROV_NPI_ID	,
+
+	         BILL_PROV_LOC_ID   length = &BILL_PROV_LOC_ID	,
+	         REND_PROV_LOC_ID   length = &REND_PROV_LOC_ID	,
+	         REND_PROV_MCAID_ID length = &REND_PROV_MCAID_ID,
+	         REND_PROV_NPI_ID   length = &REND_PROV_NPI_ID	,
+
+       		 BILL_PROV_TYP_CD   length = &BILL_PROV_TYP_CD 	,
+       		 REND_PROV_TYP_CD   length = &REND_PROV_TYP_CD 	,
+
+       		 FAC_PROV_LOC_ID    length = &FAC_PROV_LOC_ID	,
+        	 SUPV_PROV_LOC_ID   length = &SUPV_PROV_LOC_ID	
+
+FROM 		db.clm_lne_fact_v 
+			(KEEP = MCAID_ID ICN_NBR lne_nbr LNE_FRST_SVC_DT LNE_LST_SVC_DT RVN_CD CLM_TYP_CD proc_cd 
+				   	BILL_PROV_MCAID_ID  BILL_PROV_NPI_ID  BILL_PROV_LOC_ID REND_PROV_LOC_ID REND_PROV_MCAID_ID 
+				 	REND_PROV_NPI_ID  ATTD_PROV_LOC_ID BILL_PROV_TYP_CD REND_PROV_TYP_CD FAC_PROV_LOC_ID 
+				 	SUPV_PROV_LOC_ID CURR_REC_IND SRC_REC_DEL_IND pos_cd CLM_STS_CD lne_sts_cd enc_ind 
+				 	most_rcnt_clm_ind PROC_MOD_1_CD PROC_MOD_2_CD PROC_MOD_3_CD PROC_MOD_4_CD DIAG_1_CD 
+				 	DIAG_2_CD DIAG_3_CD DIAG_4_CD BILL_UNT_QTY
+			 )
+WHERE 		CURR_REC_IND = 'Y'
+  AND 		SRC_REC_DEL_IND = 'N'
+  AND 		CLM_STS_CD = 'P'
+  AND 		lne_sts_cd = 'P'
+  AND 		most_rcnt_clm_ind = 'Y'
+  AND 		enc_ind = 'N'
+  AND		icn_nbr IN (SELECT icn_nbr2
+			  	 		 FROM out.icns_1819); 
+
+QUIT; 
+
+
+
  
-DATA short_1819_testicnmatch;
-IF   _n_=1 then do;
-	DECLARE HASH h(dataset: 'out.diagTable_1819');
-				 h.definekey('ICN_NBR');
-				 h.defineData('ICN_NBR');
-				 h.definedone();
-				 call missing(icn_nbr);
-	END;
+DATA icn_matches;
 
   LENGTH MCAID_ID 			$ &mcaid_id
          ICN_NBR 			$ &ICN_NBR
@@ -153,8 +234,8 @@ IF   _n_=1 then do;
          FAC_PROV_LOC_ID    $ &FAC_PROV_LOC_ID
          SUPV_PROV_LOC_ID    $ &SUPV_PROV_LOC_ID	
 ;
-* REMAP ********* THIS IS THE SHORT ONE:;
-  SET short_clm_lne_fact_v ( keep = MCAID_ID ICN_NBR lne_nbr LNE_FRST_SVC_DT LNE_LST_SVC_DT RVN_CD CLM_TYP_CD proc_cd 
+
+SET db.clm_lne_fact_v ( keep = MCAID_ID ICN_NBR lne_nbr LNE_FRST_SVC_DT LNE_LST_SVC_DT RVN_CD CLM_TYP_CD proc_cd 
 								 	BILL_PROV_MCAID_ID  BILL_PROV_NPI_ID  BILL_PROV_LOC_ID REND_PROV_LOC_ID REND_PROV_MCAID_ID 
 								 	REND_PROV_NPI_ID  ATTD_PROV_LOC_ID BILL_PROV_TYP_CD REND_PROV_TYP_CD FAC_PROV_LOC_ID 
 								 	SUPV_PROV_LOC_ID CURR_REC_IND SRC_REC_DEL_IND pos_cd CLM_STS_CD lne_sts_cd enc_ind 
@@ -169,8 +250,6 @@ IF   _n_=1 then do;
     AND enc_ind = 'N'
 ;
 
-rc = h.find();
-IF (rc=0) then output;
              /* variables to ensure the claim is valid and paid: conditioned on in the where statement */
 DROP   CURR_REC_IND 
        SRC_REC_DEL_IND 
