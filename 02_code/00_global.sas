@@ -1,9 +1,16 @@
 %let hcpf     = S:/FHPC/DATA/HCPF_Data_files_SECURE;
+  %let subset = S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset;
   %let util   = &hcpf/Kim/isp/isp_utilization;
     %let code = &util/02_code;
     %let out  = &util/04_data;
     %let in   = &util/03_data raw;
     %let reports = &util/05 reports; 
+	
+
+%let subset = "S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset";
+libname subset &subset; 
+
+OPTIONS FMTSEARCH = (subset) ;  
 
   libname out "&out";
 
