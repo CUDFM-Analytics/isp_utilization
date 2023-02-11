@@ -1,3 +1,39 @@
+-------------------------------------------
+
+Email Dec 18, 2022
+Email from Carter
+
+	The two files are in place: qry_longitudinal, qry_demographics
+	The only change I made to the structure was to rename clnt_ID to mcaid_ID to agree with the rest of the BIDM tables.
+	There were a few bumps in the process, so I will do some extra QC this weekend just in case, but these should be good to go.
+	Have a great weekend!
+
+-------------------------------------------
+
+Dec 16, 2022
+
+I requested another meeting with CS because he wrote in the tables to not use subset clnt_dim anymore, and that's what we'd agreed on in our last meeting
+I asked how to go about the template flow: 
+- He said those are no longer needed, he added back into the document var_source_... the old datasets (medicaidlong, meddemog)
+- Then said he would add those to subset folder. 
+
+Discussed copying the sets onto C computer/ SAS 'doesn't use RAM'? not sure. 
+
+-------------------------------------------
+
+
+Dec 01, 2022
+Meeting with Carter: 
+- He told me if I didn't mind re-doing the code, to switch to 'subset analytics'
+- I re-did the code, asked him to review the template steps becuase I didn't see how they aligned now
+
+------------------------------------------------------------
+
+Email from Mark to ISP Team: 
+Looking at outcomes: see file saved in 01_background
+Added to analytic plan 
+
+------------------------------------------------------------
 Sept 07, 2022
 
 Attended	: Carter, Mark, Miriam, Kim  

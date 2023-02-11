@@ -5,17 +5,17 @@
  PROJECT            : ISP
  PURPOSE            : Get client ID's for members 0-64 in SFY's 18/19 through 21/22
  INPUT FILE(S)      : bhjt.medicaiddemog_bidm
-					  macro: %keep_age
-					  
+                      macro: %keep_age
+                      
  OUTPUT FILE(S)     : out.mem_list
-					  out.mem_list_demo
+                      out.mem_list_demo
  ABBREV             : bhjt, hcpf (include bdmconnect file has varlen)
 
  MODIFICATION HISTORY:
  Date       Author      Description of Change
  --------   -------     -----------------------------------------------------------------------
  08/18/22   KTW         Copied this FROM 00_ISP_Counts in NPI_Matching - Documents
- 12/04/22	KTW			Changed source data from bhjt.medicaiddemog_bidm to clnt_dim_v (spoke w Carter)
+ 12/04/22   KTW         Changed source data from bhjt.medicaiddemog_bidm to clnt_dim_v (spoke w Carter)
 
 * global paths, settings  ---------------------------;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilizatiON/02_code/00_global.sas"; 
@@ -34,9 +34,9 @@ DATA clnt_dim_v;
 SET  subset.clnt_dim_v; 
 dob  = datepart(brth_dt);
 FORMAT dob yymmdd10.;
-IF 	   datepart(brth_dt) ge "01JUL1954"d
-	   AND datepart(brth_dt) le "01JUL2022"D
-	   THEN OUTPUT; 
+IF     datepart(brth_dt) ge "01JUL1954"d
+       AND datepart(brth_dt) le "01JUL2022"D
+       THEN OUTPUT; 
 RUN; 
 /*NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.*/
 /*NOTE: The data set WORK.CLNT_DIM_V has 2815913 observations and 7 variables.*/
@@ -57,22 +57,22 @@ RUN;
 
 PROC SQL; 
 CREATE TABLE medlong_y15_y22_2 as
-SELECT 		 a.*,
-			 b.dob,
-			 b.gndr_cd,
-			 b.race_cd,
-			 b.rsdnc_cnty_cd,
-			 b.ethnc_cd
-FROM    	 medlong_y15_y22 AS a 
-LEFT JOIN 	 clnt_dim_v AS b 
-ON 			 a.clnt_id=b.mcaid_id ;
+SELECT       a.*,
+             b.dob,
+             b.gndr_cd,
+             b.race_cd,
+             b.rsdnc_cnty_cd,
+             b.ethnc_cd
+FROM         medlong_y15_y22 AS a 
+LEFT JOIN    clnt_dim_v AS b 
+ON           a.clnt_id=b.mcaid_id ;
 QUIT; 
 /*NOTE: Table WORK.MEDLONG_Y15_Y22_2 created, with 99507799 rows and 22 columns.*/
 
 
 DATA medlong_y15_y22_3; 
 SET  medlong_y15_y22_2;
- IF 	 month ge '01Jul2015'd and month le '30Jun2016'd THEN last_day_fy='30Jun2016'd;
+ IF      month ge '01Jul2015'd and month le '30Jun2016'd THEN last_day_fy='30Jun2016'd;
  ELSE IF month ge '01Jul2016'd and month le '30Jun2017'd THEN last_day_fy='30Jun2017'd;
  ELSE IF month ge '01Jul2017'd and month le '30Jun2018'd THEN last_day_fy='30Jun2018'd;
  ELSE IF month ge '01Jul2018'd and month le '30Jun2019'd THEN last_day_fy='30Jun2019'd;
@@ -95,14 +95,14 @@ RUN;
 
 PROC SORT 
 DATA = medlong_y15_y22_3 
-	   (keep=clnt_id month pcmp_loc_ID rae_assign age_end_fy last_day_fy) 
-	   NODUPKEY
-	   OUT = finalSubjects; 
+       (keep=clnt_id month pcmp_loc_ID rae_assign age_end_fy last_day_fy) 
+       NODUPKEY
+       OUT = finalSubjects; 
 WHERE  pcmp_loc_id ne ' ' 
   AND  rae_assign=1
   AND  month ge '01JUL2018'd 
   AND  month le '30JUN2022'd; 
-BY 	   clnt_id; 
+BY     clnt_id; 
 RUN; 
 /*NOTE: There were 53397827 observations read from the data set WORK.MEDLONG_Y15_Y22_3.*/
 /*      WHERE (pcmp_loc_id not = ' ') and (rae_assign=1) and (month>='01JUL2018'D and*/

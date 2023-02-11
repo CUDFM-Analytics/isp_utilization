@@ -24,14 +24,15 @@ data county_conv; set county_conv; HCPF_County_Code_C=put(HCPF_County_Code,z2.);
 
 
 
-
-
 libname bhjt 'X:\HCPF_SqlServer\queries';
 options fmtsearch=(bhjt);
 
 data medlong1; set bhjt.medicaidlong_bidm; run;  
 data meddemog1; set bhjt.medicaiddemog_bidm; run;
 
+**** **** **** **** **** **** **** 
+**** KW NOT USED - SHOULD I???? ******* 
+**** **** **** **** **** **** **** 
 
 libname bhline 'X:\studies\ShortTermBHServices\rawData';
 data linebh1; set bhline.bh_services_raw_2022_1_20; run;                /*short term BH from Med claims line file (any of the 6 procedure codes) */
