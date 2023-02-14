@@ -1,0 +1,72 @@
+
+******************************************************
+GET ISP info needed from REDCap 
+SAVED as data.redcap
+******************************************************;
+%LET redcap = "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/isp_redcap.csv";
+* select columns and convert id_split to numeric (others??); 
+
+PROC IMPORT 
+     DATAFILE = &redcap
+     OUT      = redcap0 
+     DBMS     = dlm
+     REPLACE;
+DELIMITER     = ",";
+RUN; 
+
+
+PROC FREQ 
+     DATA = redcap0;
+     TABLES dt_prac_start_isp;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'Frequency: Date practices started ISP';
+RUN; * all started on 01's ; 
+
+DATA   data.redcap; 
+SET    redcap0 ( KEEP = id_npi_redcap 
+                        id_npi_pcmp
+                        id_pcmp
+                        id_split 
+                        name_practice 
+                        dt_prac_start_isp 
+                        wave 
+                        pr_county
+                        fct_county_class   /* county classification of frontier, urban, rural. */
+               ); 
+* make pcmp numeric ;
+num_id_pcmp = input(id_pcmp, 8.);
+
+* reformat date variable to match on qry_longitudinal;
+dt_prac_isp = put(dt_prac_start_isp, date9.);
+label dt_prac_isp = "Formatted Date Start ISP";
+RUN;  * 122, 10 on 02/14;
+
+DATA isp_key0 ( KEEP = id_pcmp splitid ) ;
+SET  datasets.isp_masterids;
+id_npi = input(practiceNPI, best12.);
+id_pcmp = input(pcmp_loc_id, best12.);
+RUN; 
+
+PROC SORT DATA = isp_key0    ; BY id_split id_pcmp ; 
+PROC SORT DATA = data.redcap ; BY id_split id_pcmp ; RUN; 
+
+DATA redcap;
+SET  data.redcap ( KEEP = id_split name_practice dt_prac_isp pr_county fct_county_class ) ;  
+RUN; 
+
+PROC SQL;
+CREATE TABLE data.isp_key AS 
+SELECT coalesce ( a.id_split , b.splitID ) as id_split
+     , a.name_practice
+     , a.pr_county
+     , a.fct_county_class
+     , a.dt_prac_isp
+     , b.id_pcmp
+FROM redcap as A
+FULL JOIN isp_key0 as B
+ON  a.id_split = b.splitID;
+QUIT; * 153 ; 
+
+PROC SORT DATA = data.isp_key NODUPKEY; BY _ALL_ ; RUN; 
+* 30 duplicates, 123 remain; 
+
+PROC PRINT DATA = data.isp_key ; RUN; 

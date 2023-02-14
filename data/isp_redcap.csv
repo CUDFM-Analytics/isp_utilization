@@ -1,0 +1,123 @@
+id_record,id_split,id_npi_redcap,name_practice,cd_prac_status,wave,dt_prac_start_isp,cd_prac_county,txt_prac_zip,dt_prac_end,cd_prac_endreason,n_prac_providers,ind_specialty_fm,ind_specialty_im,ind_specialty_ped,ind_specialty_mix,ind_specialty_nurse,ind_specialty_obgyn,txt_specialty_other,ind_larger_org,ind_orgtyp_clinician,ind_orgtyp_hosp,ind_orgtyp_hmo,ind_orgtyp_fqhc,ind_orgtyp_fqhc_alike,ind_orgtyp_nfgc,ind_orgtyp_ahc,ind_orgtyp_fed,ind_orgtyp_rhc,ind_orgtyp_ihc,txt_orgtyp_other,n_pts_medicare,n_pts_medicaid,n_pts_dual,n_pts_private,n_pts_other,n_pts_selfpay,n_pts_total,fct_status,pr_county,fct_county_class,id_npi_pcmp,id_pcmp
+4,2063,1942525902,Colorado Primary Care Clinic,1,wave1_3,3/1/2020,3,80014,NA,NA,4,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,15,50,0,25,NA,10,NA,Active,Arapahoe,Urban,1942525902,28208
+5,2576,1912293374,Castillo Primary Care,1,wave1_3,3/1/2020,52,81001,NA,NA,2,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,10,70,5,10,0,5,100,Active,Pueblo,Urban,1912293374,118862
+5,2576,1912293374,Castillo Primary Care,1,wave1_3,3/1/2020,52,81001,NA,NA,2,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,10,70,5,10,0,5,100,Active,Pueblo,Urban,1912293374,197279
+6,2606,1720511058,Mainstreet Pediatrics,1,wave1_3,3/1/2020,19,80138,NA,NA,3,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,NA,20,NA,70,NA,10,NA,Active,Douglas,Urban,1720511058,147562
+6,2606,1720511058,Mainstreet Pediatrics,1,wave1_3,3/1/2020,19,80138,NA,NA,3,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,NA,20,NA,70,NA,10,NA,Active,Douglas,Urban,1720511058,147763
+8,2199,1497155089,"Thompson River Pediatrics and Urgent Care, LLC",3,wave1_3,3/1/2020,36,80534,6/30/2022,5,4,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,44,0,51,0,5,100,Completed Cohort,Larimer,Urban,1497155089,103320
+9,10,1083717219,Pediatric Partners of the Southwest,3,wave1_3,3/1/2020,35,81301,6/30/2021,5,12,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,31,0,59,8,2,100,Completed Cohort,La Plata,Rural,1083717219,124753
+10,2632,1669078416,Rose Pediatrics,3,wave2_7,7/1/2020,19,80129,6/30/2021,5,3.5,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,30,0,70,0,0,100,Completed Cohort,Douglas,Urban,1669078416,119629
+11,2631,1992971402,Rose Pediatrics,3,wave2_7,7/1/2020,17,80220,6/30/2021,5,3.5,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,40,0,60,0,0,100,Completed Cohort,Denver,Urban,1992971402,119625
+13,3324,1750355210,Alpine Family Practice P.C.,3,wave1_3,3/1/2020,3,80012,6/30/2022,5,2,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,10,15,1,60,NA,14,NA,Completed Cohort,Arapahoe,Urban,1750355210,107729
+14,3319,1902493703,Center Pointe Family Medicine,1,wave1_3,3/1/2020,22,80911,NA,NA,8,0,0,0,1,0,0,0,NA,1,0,0,0,0,0,0,0,0,0,0,15,35,NA,45,NA,5,NA,Active,El Paso,Urban,1902493703,101608
+15,90,1912133356,"Lowry Pediatrics, PC",3,wave1_3,3/1/2020,17,80230,6/30/2021,5,7,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,45,NA,53,1,1,NA,Completed Cohort,Denver,Urban,1912133356,101608
+16,2580,1053654319,Center Pointe Family Medicine,1,wave1_3,3/1/2020,22,80911,NA,NA,7,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,10,40,5,40,0,5,100,Active,El Paso,Urban,1053654319,125292
+17,3310,1154825230,Center Pointe Family Medical Group,1,wave1_3,3/1/2020,19,80104,NA,NA,7,1,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,10,40,5,40,0,5,100,Active,Douglas,Urban,1154825230,156924
+18,2022,1548289614,Castle Rock Pediatrics,1,wave1_3,3/1/2020,19,80104,NA,NA,5,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,50,0,49,0,1,100,Active,Douglas,Urban,1548289614,113579
+19,2359,1639529738,Heartlight Family Clinic,1,wave1_3,3/1/2020,19,80104,NA,NA,5,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,10,55,2,25,0,8,100,Active,Douglas,Urban,1639529738,136546
+21,104,1417162876,Pediatric Partners Valley View,1,wave1_3,3/1/2020,24,81601,NA,NA,7,0,0,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,30,0,53,9,8,100,Active,Garfield,Rural,1417162876,105469
+22,30,1568559748,"MidValley Family Practice, PC",3,wave2_4,4/1/2020,20,81621,6/30/2022,5,3,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,16,13,6,52,5,8,100,Completed Cohort,Eagle,Rural,1568559748,139247
+25,2644,1730295296,The Health and Wellness Center at Centennial High School,5,wave1_3,3/1/2020,36,80524,10/25/2021,2,NA,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,NA,NA,NA,NA,NA,NA,NA,Dropped after finishing 1st Cohort,Larimer,Urban,NA,NA
+27,128,1548261324,Pediatric Associates Prof LLC,6,wave1_3,3/1/2020,44,81401,7/19/2022,2,12,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,NA,55,NA,42,NA,3,NA,Dropped after finishing 2nd Cohort,Montrose,Rural,1548261324,107729
+27,128,1548261324,Pediatric Associates Prof LLC,6,wave1_3,3/1/2020,44,81401,7/19/2022,2,12,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,NA,55,NA,42,NA,3,NA,Dropped after finishing 2nd Cohort,Montrose,Rural,1548261324,16150
+29,2198,1902015860,The Family Practice,3,wave2_5,5/1/2020,22,80919,6/30/2022,5,5,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,8,8,2,70,10,2,100,Completed Cohort,El Paso,Urban,1902015860,26737
+31,3312,1679813851,Lone Tree Pediatrics,3,wave2_7,7/1/2020,19,80124,6/30/2021,5,9,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,14,0,81,0,5,100,Completed Cohort,Douglas,Urban,1679813851,166478
+32,3313,1255957528,Lone Tree Pediatrics,3,wave2_7,7/1/2020,3,80122,6/30/2021,5,9,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,14,0,85,0,1,100,Completed Cohort,Arapahoe,Urban,1255957528,164771
+33,2626,1740235548,Potomac Square family medicine - westminster,1,wave1_3,3/1/2020,1,80031,NA,NA,4,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,25,30,10,30,5,0,100,Active,Adams,Urban,1740235548,136514
+34,2627,1740235548,Potomac Square family practice - aurora,1,wave1_3,3/1/2020,3,80012,NA,NA,5,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,25,30,10,30,5,0,100,Active,Arapahoe,Urban,1740235548,105559
+35,2622,1740235548,Potomac Square Family Practice - boulder,5,wave1_3,3/1/2020,7,80305,12/30/2022,3,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,25,30,10,30,5,0,100,Dropped after finishing 1st Cohort,Boulder,Urban,1740235548,119566
+36,2625,1740235548,Potomac square family practice - smokey hill,2,wave1_3,3/1/2020,3,80015,NA,NA,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,25,30,10,30,5,0,100,Paused,Arapahoe,Urban,1740235548,124672
+37,2623,1740235548,Potomac Square Family Practice - englewood,2,wave1_3,3/1/2020,3,80110,NA,NA,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,25,30,10,30,5,0,100,Paused,Arapahoe,Urban,1740235548,107087
+38,2624,1740235548,Potomac Square family practice - lakewood,6,wave1_3,3/1/2020,31,80227,12/30/2022,3,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,25,30,10,30,5,0,100,Dropped after finishing 2nd Cohort,Jefferson,Urban,1740235548,132105
+40,2154,1063614535,Rocky Mountain Health Centers Pediatrics,3,wave1_3,3/1/2020,3,80014,6/30/2021,5,5,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,55,0,40,0,5,100,Completed Cohort,Arapahoe,Urban,1063614535,110225
+42,3349,1366606709,Rocky Vista Health Center,3,wave4_8,8/1/2021,19,80134,6/30/2022,5,5,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,15,30,2,51,0,2,100,Completed Cohort,Douglas,Urban,1366606709,113975
+43,2114,1639200702,Kids First Health Care,1,wave1_3,3/1/2020,1,80022,NA,NA,10,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,73,0,5,5,17,100,Active,Adams,Urban,1639200702,130714
+46,2589,1073784096,"Elena Anisimova, MD, PC",1,wave1_3,3/1/2020,3,80231,NA,NA,4,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,5,10,45,35,NA,5,NA,Active,Arapahoe,Urban,1073784096,2385
+47,2581,1952443095,Children's Medical Center,3,wave1_3,3/1/2020,17,80218,6/30/2022,5,7,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,NA,20,NA,79,NA,1,NA,Completed Cohort,Denver,Urban,1952443095,125496
+50,2645,1235664707,"Community Dental Clinic, Inc.",3,wave1_3,3/1/2020,44,81401,6/30/2022,5,3,0,0,0,1,0,0,1,0,0,0,0,0,0,1,0,0,0,0,1,10,50,5,5,0,30,100,Completed Cohort,Montrose,Rural,1235664707,148546
+55,2004,1366864241,A Kidz Clinic,3,wave1_3,3/1/2020,16,81416,6/30/2021,5,2,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,75,0,20,0,5,100,Completed Cohort,Delta,Rural,1285043125,124232
+55,2004,1366864241,A Kidz Clinic,3,wave1_3,3/1/2020,16,81416,6/30/2021,5,2,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,75,0,20,0,5,100,Completed Cohort,Delta,Rural,1285043125,129283
+58,3320,1912992801,"Yelena Khayut, MD",6,wave1_3,3/1/2020,31,80033,11/7/2022,5,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,55,0,40,0,5,100,Dropped after finishing 2nd Cohort,Jefferson,Urban,1912992801,123589
+59,68,1912011073,Clinix Health Services of Colorado,1,wave1_3,3/1/2020,3,80112,NA,NA,8,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,20,5,3,50,5,17,100,Active,Arapahoe,Urban,1912011073,156924
+59,68,1912011073,Clinix Health Services of Colorado,1,wave1_3,3/1/2020,3,80112,NA,NA,8,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,20,5,3,50,5,17,100,Active,Arapahoe,Urban,1912011073,166478
+60,3351,1295864833,Lakewood Medical Center,1,wave4_8,8/1/2021,31,80214,NA,NA,2,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,8,40,30,20,0,2,100,Active,Jefferson,Urban,1295864833,124830
+63,3325,1205188794,Highlands Integrative Pediatrics,1,wave1_3,3/1/2020,17,80211,NA,NA,6,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,10,0,88,0,2,100,Active,Denver,Urban,1205188794,16150
+65,2642,1023182292,"Dr Lisa Lewis, PC",1,wave1_3,3/1/2020,31,80215,NA,NA,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,7.5,7.5,1,83,0,1,100,Active,Jefferson,Urban,1861762676,25868
+66,2143,1902176704,"Prairie View Family Care, LLC",1,wave1_3,3/1/2020,22,80831,NA,NA,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,15,30,5,35,5,10,100,Active,El Paso,Urban,1902176704,26803
+67,3321,1326064726,Rocky Mountain Medical & Healthcare,1,wave1_3,3/1/2020,17,80224,NA,NA,6,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,15,45,30,5,0,5,100,Active,Denver,Urban,1326064726,105469
+68,102,1053526541,Broomfield Pediatrics,1,wave1_3,3/1/2020,8,80023,NA,NA,4,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,10,0,85,0,5,100,Active,Broomfield,Urban,1053526541,123589
+69,2612,1619152576,Mountainland Pediatrics,1,wave1_3,3/1/2020,1,80260,NA,NA,5,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,68,0,24,0,8,100,Active,Adams,Urban,1619152576,117216
+70,16,1992709653,"Summit Medical Clinic, PC",3,wave2_5,5/1/2020,22,80907,6/30/2022,5,3,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,25,35,12,20,7,1,100,Completed Cohort,El Paso,Urban,1992709653,132415
+72,2588,1225288749,Dr. Lu Family Medicine,3,wave3_3,3/1/2021,40,81501,6/30/2021,5,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,25,25,20,30,0,0,100,Completed Cohort,Mesa,Urban,1225288749,159720
+73,3353,1225347339,Northside Child Health Center,3,wave2_4,4/1/2020,44,81401,6/30/2022,5,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,45,0,20,0,35,100,Completed Cohort,Montrose,Rural,1225347339,124232
+74,2619,1194854406,Pediatrics at Cherry Creek,5,wave2_5,5/1/2020,17,80209,10/29/2021,2,2,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,14,0,84,NA,2,NA,Dropped after finishing 1st Cohort,Denver,Urban,NA,NA
+76,3355,1063821783,Visiting Medical Clinic,3,wave2_7,7/1/2020,22,80903,6/30/2021,5,1,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,1,20,20,30,5,20,5,100,Completed Cohort,El Paso,Urban,1063821783,129283
+78,3356,1639200702,Kids First Health Care,1,wave1_3,3/1/2020,1,80031,NA,NA,10,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,73,0,5,5,17,100,Active,Adams,Urban,1639200702,113579
+83,2094,1700889151,High Plains Community Health Center,2,wave2_4,4/1/2020,51,81052,NA,NA,10,1,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,12,30,5,20,0,33,100,Paused,Prowers,Rural,1700889151,148256
+84,196,1164662052,"Sunrise Health Care, PC",1,wave2_4,4/1/2020,22,80909,NA,NA,2,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,15,55,24,5,0,1,100,Active,El Paso,Urban,1164662052,113975
+86,51,1508932757,"Rocky ford Family Health center, LLC",3,wave2_4,4/1/2020,46,81067,6/30/2021,5,2,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,25,50,10,5,5,5,100,Completed Cohort,Otero,Rural,1508932757,130389
+88,3360,1700322575,"Champions Family Medical, PLLC",1,wave2_4,4/1/2020,52,81003,NA,NA,2,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,15,30,4,50,0,1,100,Active,Pueblo,Urban,1700322575,100612
+89,2161,1427224948,Sapphire Pediatrics,5,wave2_5,5/1/2020,17,80220,9/28/2021,2,5,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,NA,NA,NA,NA,NA,NA,NA,Dropped after finishing 1st Cohort,Denver,Urban,NA,NA
+90,2090,1275813982,High Plains Community Health Center Lamar Community College,2,wave2_5,5/1/2020,51,81052,NA,NA,1,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,15,30,4,20,2,29,100,Paused,Prowers,Rural,1275813982,134762
+90,2090,1275813982,High Plains Community Health Center Lamar Community College,2,wave2_5,5/1/2020,51,81052,NA,NA,1,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,15,30,4,20,2,29,100,Paused,Prowers,Rural,1275813982,8256
+92,2088,1932596350,High Plains Community Health Center Holly Clinic,2,wave2_5,5/1/2020,51,81047,NA,NA,1,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,18,30,2,25,2,23,100,Paused,Prowers,Rural,1932596350,134243
+93,2087,1770865644,High Plains Community Health Center Adult Center,3,wave2_5,5/1/2020,51,81052,6/30/2022,5,1,1,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,22,34,2,20,2,20,100,Completed Cohort,Prowers,Rural,1770865644,133736
+94,2095,1912349465,High Plains Community Health Center Wiley Clinic,3,wave2_5,5/1/2020,51,81092,6/30/2022,5,1,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,22,24,5,22,2,25,100,Completed Cohort,Prowers,Rural,1912349465,133165
+95,3362,1609240894,High Plains Community Health Center Family Health Center,2,wave2_5,5/1/2020,51,81052,NA,NA,2,1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,10,40,2,30,2,16,100,Paused,Prowers,Rural,1609240894,100723
+96,3364,1194854406,Pediatrics at Cherry Creek,1,wave2_5,5/1/2020,17,80207,NA,NA,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,NA,14,NA,84,NA,2,NA,Active,Denver,Urban,1275186470,121492
+97,3365,1679784342,Boulder Valley Women's Health Center Inc.,1,wave2_5,5/1/2020,7,80301,NA,NA,7,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,21,1,39,0,38,100,Active,Boulder,Urban,1679784342,100950
+99,3366,1780026914,Himalaya family medicine clinic,3,wave2_5,5/1/2020,3,80012,6/30/2021,5,2,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,5,50,5,39,0,1,100,Completed Cohort,Arapahoe,Urban,1780026914,28208
+100,3367,1891993515,"Cisneros of Obstetrics and Gynecology, LLC",3,wave2_5,5/1/2020,1,80229,6/30/2021,5,4,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,10,45,5,35,0,5,100,Completed Cohort,Adams,Urban,1891993515,133736
+102,206,1265634539,Kids First Pediatrics,3,wave2_6,6/1/2020,31,80226,6/30/2021,5,6,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,60,0,32,5,3,100,Completed Cohort,Jefferson,Urban,1265634539,124830
+120,2105,1639200702,Kids First Health Care at Adams City High School,1,wave2_7,7/1/2020,1,80022,NA,NA,2,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,73,0,5,5,17,100,Active,Adams,Urban,1639200702,135284
+121,3388,1639200702,Kids First Health Care at Brighton High School,1,wave2_7,7/1/2020,1,80601,NA,NA,4,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,73,0,5,5,17,100,Active,Adams,Urban,1639200702,134243
+137,2173,1831219328,Summit Community Care Clinic,3,wave2_8,8/1/2020,60,80443,6/30/2022,5,10,1,0,1,1,0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,2.9,22.1,0,27.6,4.6,42.8,100,Completed Cohort,Summit,Rural,1831219328,133277
+137,2173,1831219328,Summit Community Care Clinic,3,wave2_8,8/1/2020,60,80443,6/30/2022,5,10,1,0,1,1,0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,2.9,22.1,0,27.6,4.6,42.8,100,Completed Cohort,Summit,Rural,1831219328,24825
+138,2164,1205451606,SET Family Medical Clinics,1,WAVE4_7,7/1/2021,22,80906,NA,NA,3,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0.5,84,0,0.6,0.2,14.7,100,Active,El Paso,Urban,1205451606,182889
+138,2164,1205451606,SET Family Medical Clinics,1,WAVE4_7,7/1/2021,22,80906,NA,NA,3,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0.5,84,0,0.6,0.2,14.7,100,Active,El Paso,Urban,1326342940,107111
+139,2590,1992878664,"Family Care Specialists, PC",1,wave1_3,3/1/2020,52,81003,NA,NA,3,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,30,35,8,25,1,1,100,Active,Pueblo,Urban,1992878664,144048
+139,2590,1992878664,"Family Care Specialists, PC",1,wave1_3,3/1/2020,52,81003,NA,NA,3,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,30,35,8,25,1,1,100,Active,Pueblo,Urban,1992878664,29650
+139,2590,1992878664,"Family Care Specialists, PC",1,wave1_3,3/1/2020,52,81003,NA,NA,3,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,30,35,8,25,1,1,100,Active,Pueblo,Urban,1992878664,29651
+141,3424,1134766553,Salud Family Health Centers - Aurora Community Health Center,3,wave2_11,11/1/2020,3,80011-0809,6/30/2022,5,NA,1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,NA,NA,NA,NA,NA,NA,NA,Completed Cohort,Arapahoe,Urban,1134766553,134762
+145,2569,1730185323,Akron Clinic,2,wave4_8,8/1/2021,62,80720,NA,NA,3,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0,0,20,20,30,20,0,10,100,Paused,Washington,Frontier,1730185323,132415
+145,2569,1730185323,Akron Clinic,2,wave4_8,8/1/2021,62,80720,NA,NA,3,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0,0,20,20,30,20,0,10,100,Paused,Washington,Frontier,1730185323,139247
+146,2415,1245283134,Ted J Puls MD PC,1,WAVE4_7,7/1/2021,52,81003,NA,NA,2,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,25,25,10,39,0,1,100,Active,Pueblo,Urban,1245283134,124753
+147,3427,1306184056,Affordable Health Clinic,5,wave3_3,3/1/2021,52,81004,11/7/2022,2,2,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,5,80,4,10,0,1,100,Dropped after finishing 1st Cohort,Pueblo,Urban,1306184056,8256
+148,3429,1073561270,"Denver Indian Health and Family Services, Inc.",3,wave3_3,3/1/2021,17,80204,6/30/2022,5,4,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,7,34,1,17,1,40,100,Completed Cohort,Denver,Urban,1073561270,148256
+149,3430,1548761430,Colorado Adult primary care,1,wave4_8,8/1/2021,52,81004,NA,NA,2,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,30,30,20,15,0,5,100,Active,Pueblo,Urban,1548761430,133165
+150,3435,1699043166,Healthy Horizons Clinic,1,wave3_5,5/1/2021,1,80260,NA,NA,2,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,NA,NA,NA,NA,NA,NA,NA,Active,Adams,Urban,1699043166,135284
+151,3190,1801882105,Academy Park Pediatrics - Lakewood,1,wave3_4,4/1/2021,31,80227,NA,NA,7,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,4,0,88,0,8,100,Active,Jefferson,Urban,1801882105,130389
+152,3436,1285256818,Summit Primary Care - Colorado Springs,1,wave3_4,4/1/2021,22,80910,NA,NA,10,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,25,55,5,14,0,1,100,Active,El Paso,Urban,1285256818,130714
+153,3465,1801882105,Academy Park Pediatrics - Highlands Ranch,1,wave3_4,4/1/2021,19,80126,NA,NA,7,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,4,0,87,0,9,100,Active,Douglas,Urban,1801882105,110225
+154,3466,1316561558,Summit Primary Care - Pueblo,1,wave3_4,4/1/2021,52,81004,NA,NA,5,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,25,70,NA,NA,5,NA,NA,Active,Pueblo,Urban,1316561558,182889
+155,3437,1356962849,Summit Primary Care - Denver,1,wave3_4,4/1/2021,17,80210,NA,NA,3,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,55,40,NA,NA,5,NA,NA,Active,Denver,Urban,1356962849,26803
+156,3467,1033377296,"Aspen Park Pediatrics, PC",1,wave3_5,5/1/2021,31,80433,NA,NA,2,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,25,0,70,0,5,100,Active,Jefferson,Urban,1033377296,107111
+156,3467,1033377296,"Aspen Park Pediatrics, PC",1,wave3_5,5/1/2021,31,80433,NA,NA,2,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,25,0,70,0,5,100,Active,Jefferson,Urban,1033377296,133277
+158,2641,1841311867,Step By Step Pediatrics,1,wave3_5,5/5/2021,3,80014,NA,NA,2,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,75,0,24,0,1,100,Active,Arapahoe,Urban,1841311867,133936
+159,3471,1952797292,CHPG Belmar Primary Care,1,WAVE4_7,7/1/2021,31,80226-3205,NA,NA,4,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,17,13,8,58,0,4,100,Active,Jefferson,Urban,1952797292,24825
+160,2036,1477947950,CHPG Golden Primary Care,1,WAVE4_7,7/1/2021,31,80401-5297,NA,NA,5,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,18,13,6,59,0,4,100,Active,Jefferson,Urban,1477947950,100723
+161,3472,1023629961,CHPG SAH Internal Medicine,1,WAVE4_7,7/1/2021,31,80228-1731,NA,NA,3,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,24,11,6,56,0,3,100,Active,Jefferson,Urban,1023629961,26737
+162,2575,1699381350,CHPG Church Ranch Primary Care,1,WAVE4_7,7/1/2021,31,80021-4094,NA,NA,3,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,18,9,4,64,0,5,100,Active,Jefferson,Urban,1699381350,143623
+163,3473,1295346435,CHPG Primary Care West Littleton,1,WAVE4_7,7/1/2021,31,80123-4004,NA,NA,6,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,20,11,4,62,0,3,100,Active,Jefferson,Urban,1295346435,103320
+164,3474,1053923672,CHPG Primary Care Southmoor,1,WAVE4_7,7/1/2021,3,80224-3012,NA,NA,12,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,32,2,5,59,0,2,100,Active,Arapahoe,Urban,1053923672,164764
+165,2047,1396103156,CHPG Primary Care Northglenn,1,WAVE4_7,7/1/2021,1,80234-3090,NA,NA,5,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,19,6,4,66,0,5,100,Active,Adams,Urban,1396103156,121492
+166,2226,1467064964,St Anthony Health Centers Evergreen,1,WAVE4_7,7/1/2021,31,80439-9719,NA,NA,7,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,25,25,0,40,5,5,100,Active,Jefferson,Urban,1053557819,100942
+166,2226,1467064964,St Anthony Health Centers Evergreen,1,WAVE4_7,7/1/2021,31,80439-9719,NA,NA,7,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,25,25,0,40,5,5,100,Active,Jefferson,Urban,1467064964,149287
+167,3475,1124323076,Avista Family Medicine,1,WAVE4_7,7/1/2021,63,80516-5443,NA,NA,4,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,12,9,3,72,0,4,100,Active,Weld,Urban,1124323076,164768
+168,2026,1184060634,CHPG Westminster Internal and Family Medicine,1,WAVE4_7,7/1/2021,1,80023-9206,NA,NA,NA,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,34,1,7,56,0,2,100,Active,Adams,Urban,1184060634,100612
+169,2057,1215346432,CHPG Thornton Primary Care,1,WAVE4_7,7/1/2021,1,80241-2201,NA,NA,8,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,8,23,2,64,0,3,100,Active,Adams,Urban,1215346432,100950
+171,3476,1861003782,CHPG Primary Care Powers,1,WAVE4_7,7/1/2021,22,80922-2402,NA,NA,2,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,22,7,4,65,0,2,100,Active,El Paso,Urban,1861003782,164769
+172,3477,1063023851,CHPG Primary Care St Frances,1,WAVE4_7,7/1/2021,22,80923-2603,NA,NA,NA,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,14,17,3,64,0,2,100,Active,El Paso,Urban,1063023851,100942
+175,3479,1144831074,Penrose Mountain Primary Care,1,WAVE4_7,7/1/2021,61,80863-5008,NA,NA,1,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,15,21,3,51,0,10,100,Active,Teller,Urban,1144831074,149287
+176,3480,1265445977,St Anthony Family Medicine Center North,1,WAVE4_7,7/1/2021,1,80023-9206,NA,NA,20,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,10,27,2,58,0,3,100,Active,Adams,Urban,1265445977,136546
+177,3481,1114538733,St Anthony Family Medicine Center-84th,1,WAVE4_7,7/1/2021,1,80031-3807,NA,NA,16,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,14,39,4,41,0,2,100,Active,Adams,Urban,1114538733,143623
+182,2202,1821578873,UCHealth Boulder Family Medicine,1,WAVE4_7,7/1/2021,7,80303,NA,NA,9,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,17,6,1,68,7,1,100,Active,Boulder,Urban,1821578873,164764
+183,2203,1851871883,UCHealth Family Medicine Westminster,1,WAVE4_7,7/1/2021,31,80021,NA,NA,11,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,16,12,1,54,16,1,100,Active,Jefferson,Urban,1851871883,164768
+184,76,1932703931,UCHealth A.F. Williams Family Medicine Clinic - Stapleton,1,WAVE4_7,7/1/2021,17,80238,NA,NA,28,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,12,14,6,60,7,1,100,Active,Denver,Urban,1073093001,164771
+185,2204,1811528086,UCHealth Lone Tree Primary Care,1,WAVE4_7,7/1/2021,19,80124,NA,NA,13,1,1,0,0,0,0,0,1,0,1,0,0,0,0,1,0,0,0,0,26,5,2,52,14,1,100,Active,Douglas,Urban,1205316239,164769
+187,3482,1841760691,Health Now Medical LLC,1,wave4_8,8/1/2021,3,80112,NA,NA,5,1,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,15,60,NA,25,NA,20,NA,Active,Arapahoe,Urban,1841760691,118862
+187,3482,1841760691,Health Now Medical LLC,1,wave4_8,8/1/2021,3,80112,NA,NA,5,1,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,15,60,NA,25,NA,20,NA,Active,Arapahoe,Urban,1841760691,197279
+188,2637,1659435535,Southern Colorado Clinic,1,wave4_8,8/1/2021,52,81008,NA,NA,13,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,35,10,5,42,3,5,100,Active,Pueblo,Urban,1285613554,117507
+189,3486,1003209727,"Primary Care NPs, INC",1,wave4_9,9/10/2021,31,80228,NA,NA,5,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,40,5,40,15,0,0,100,Active,Jefferson,Urban,1003209727,125292
+193,3489,1083273049,Evans Medical Center,1,WAVE4_11,11/1/2021,17,80222,NA,NA,3,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,10,20,40,20,0,10,100,Active,Denver,Urban,1083273049,125496
+202,28,1447448733,Doctors Care,1,wave5_5,11/1/2022,3,80120,NA,NA,14,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,91,0,0,0,9,100,Active,Arapahoe,Urban,NA,NA

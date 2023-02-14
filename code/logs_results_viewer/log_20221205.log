@@ -1,0 +1,538 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           3.90 seconds
+      cpu time            3.46 seconds
+
+1      %include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_global.sas";
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\04_data
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.07 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: SASUSER.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           1.23 seconds
+      cpu time            0.93 seconds
+
+
+NOTE: Libref DB was successfully assigned as follows:
+      Engine:        ODBC
+      Physical Name:
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLength
+      s
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.98 seconds
+      cpu time            1.25 seconds
+
+
+NOTE: Libref BHJT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLength
+      s
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.24 seconds
+      cpu time            1.25 seconds
+
+
+NOTE: Libref BHJT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries
+NOTE: Informat AGE_RANGE has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+240    %include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_macros.sas";
+
+260  %let subset = "S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset";
+261  libname subset &subset;
+NOTE: Libref SUBSET was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+
+262  OPTIONS FMTSEARCH = (subset) ;
+
+263  PROC CONTENTS
+264  DATA = bhjt.medicaidlong_bidm;
+265  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.28 seconds
+      cpu time            0.17 seconds
+
+
+266  PROC CONTENTS
+267  DATA = bhjt.medicaiddemog_bidm;
+268  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.06 seconds
+
+
+269  PROC CONTENTS
+270  DATA = subset.qry_monthlyutilization;
+271  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.06 seconds
+
+
+272  PROC CONTENTS
+273  DATA = subset.clnt_dim_v;
+274  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.03 seconds
+
+
+275  DATA clnt_dim_v;
+276  SET  subset.clnt_dim_v;
+277  IF   datepart(dob) ge "01JUL1954"D
+278       AND  datepart(dob) le "01JUL2022"D
+279       THEN OUTPUT;
+280  RUN;
+
+NOTE: Variable dob is uninitialized.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      3074445 at 277:6
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set WORK.CLNT_DIM_V has 0 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.20 seconds
+      cpu time            0.85 seconds
+
+
+280!      *2,991,591, 7 (same 11/18);
+
+281  PROC CONTENTS
+282  DATA = subset.clnt_dim_v;
+283  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.07 seconds
+
+
+284  *Get rough age estimate (not exact for FY but cleaning) ;
+285  DATA clnt_dim_v;
+286  SET  subset.clnt_dim_v;
+287  IF   datepart(brth_dt) ge "01JUL1954"D
+288       AND  datepart(brth_dt) le "01JUL2022"D
+289       THEN OUTPUT;
+290  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 287:6
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set WORK.CLNT_DIM_V has 2815913 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.59 seconds
+      cpu time            2.54 seconds
+
+
+291  DATA out.clnt_dim_v;
+292  SET  subset.clnt_dim_v;
+293  IF   datepart(brth_dt) ge "01JUL1954"D
+294       AND  datepart(brth_dt) le "01JUL2022"D
+295       THEN OUTPUT;
+296  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 293:6
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set OUT.CLNT_DIM_V has 2815913 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.68 seconds
+      cpu time            1.06 seconds
+
+
+296!      *2,815,913 ;
+
+297  DATA out.clnt_dim_v_clntid_ages064;
+298  SET  out.clnt_dim_v (KEEP = clnt_id);
+ERROR: The variable clnt_id in the DROP, KEEP, or RENAME list has never been referenced.
+ERROR: Invalid DROP, KEEP, or RENAME option on file OUT.CLNT_DIM_V.
+299  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set OUT.CLNT_DIM_V_CLNTID_AGES064 may be incomplete.  When this step was stopped
+         there were 0 observations and 0 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.04 seconds
+
+
+300  DATA out.clnt_dim_v_clntid_ages064;
+301  SET  out.clnt_dim_v (KEEP = mcaid_id);
+302  RUN;
+
+NOTE: There were 2815913 observations read from the data set OUT.CLNT_DIM_V.
+NOTE: The data set OUT.CLNT_DIM_V_CLNTID_AGES064 has 2815913 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.00 seconds
+      cpu time            0.54 seconds
+
+
+303  DATA out.clnt_dim_v_mdid_ages064;
+304  SET  out.clnt_dim_v (KEEP = mcaid_id);
+305  RUN;
+
+NOTE: There were 2815913 observations read from the data set OUT.CLNT_DIM_V.
+NOTE: The data set OUT.CLNT_DIM_V_MDID_AGES064 has 2815913 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.86 seconds
+      cpu time            0.56 seconds
+
+
+306  DATA out.mem1822_clnt_dim_v;
+307  SET  subset.clnt_dim_v;
+308  IF   datepart(brth_dt) ge "01JUL1954"D
+309       AND  datepart(brth_dt) le "01JUL2022"D
+310       THEN OUTPUT;
+311  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 308:6
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set OUT.MEM1822_CLNT_DIM_V has 2815913 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.26 seconds
+      cpu time            0.93 seconds
+
+
+312  DATA out.clnt_dim_v;
+313  SET  subset.clnt_dim_v;
+314  IF   datepart(brth_dt) ge "01JUL1954"D
+315       AND  datepart(brth_dt) le "01JUL2022"D
+316       THEN OUTPUT;
+317  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 314:6
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set OUT.CLNT_DIM_V has 2815913 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.55 seconds
+      cpu time            1.09 seconds
+
+
+317!      *2,815,913 ;
+
+318
+319  DATA out.mcaid_ids;
+320  SET  out.clnt_dim_v (KEEP = mcaid_id);
+321  RUN;
+
+NOTE: There were 2815913 observations read from the data set OUT.CLNT_DIM_V.
+NOTE: The data set OUT.MCAID_IDS has 2815913 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.99 seconds
+      cpu time            0.67 seconds
+
+
+322  PROC SORT
+323  DATA = out.mcaid_ids
+324         NODUPKEY;
+325  BY   mcaid_id;
+326  RUN;
+
+NOTE: There were 2815913 observations read from the data set OUT.MCAID_IDS.
+NOTE: 0 observations with duplicate key values were deleted.
+NOTE: The data set OUT.MCAID_IDS has 2815913 observations and 1 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1.46 seconds
+      cpu time            2.03 seconds
+
+
+327  DATA clnt_dim_v;
+328  SET  subset.clnt_dim_v;
+329  IF   datepart(brth_dt) ge "01JUL1954"D
+330       AND  datepart(brth_dt) le "01JUL2022"D
+331       THEN OUTPUT;
+332  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 329:6
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set WORK.CLNT_DIM_V has 2815913 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.79 seconds
+      cpu time            2.68 seconds
+
+
+333  *-----------------12/04;
+334  DATA clnt_dim_v2;
+335  SET  clnt_dim_v;
+336  age_sfy1819 = floor((intck('month', dob, '01Jul2018'd) - (day('01Jul2018'd) < day(dob))) / 12);
+337  age_sfy1920 = floor((intck('month', dob, '01Jul2019'd) - (day('01Jul2019'd) < day(dob))) / 12);
+338  age_sfy2021 = floor((intck('month', dob, '01Jul2020'd) - (day('01Jul2020'd) < day(dob))) / 12);
+339  age_sfy2122 = floor((intck('month', dob, '01Jul2021'd) - (day('01Jul2021'd) < day(dob))) / 12);
+340  fy1819 = input(age_sfy1819, age_range.);
+341  fy1920 = input(age_sfy1920, age_range.);
+342  fy2021 = input(age_sfy2021, age_range.);
+343  fy2122 = input(age_sfy2122, age_range.);
+344  run;
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      340:16   341:16   342:16   343:16
+NOTE: Variable dob is uninitialized.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      2815913 at 336:15   2815913 at 336:22   2815913 at 336:56   2815913 at 336:79
+      2815913 at 336:90   2815913 at 337:15   2815913 at 337:22   2815913 at 337:56
+      2815913 at 337:79   2815913 at 337:90   2815913 at 338:15   2815913 at 338:22
+      2815913 at 338:56   2815913 at 338:79   2815913 at 338:90   2815913 at 339:15
+      2815913 at 339:22   2815913 at 339:56   2815913 at 339:79   2815913 at 339:90
+NOTE: There were 2815913 observations read from the data set WORK.CLNT_DIM_V.
+NOTE: The data set WORK.CLNT_DIM_V2 has 2815913 observations and 15 variables.
+NOTE: DATA statement used (Total process time):
+      real time           9.29 seconds
+      cpu time            9.56 seconds
+
+
+345  DATA clnt_dim_v (DROP = brth_dt);
+346  SET  subset.clnt_dim_v;
+347  FORMAT dob yymmdd10.;
+348  IF   datepart(brth_dt) ge "01JUL1954"D
+349       AND  datepart(brth_dt) le "01JUL2022"D
+350       THEN OUTPUT;
+351  dob = datepart(brth_dt);
+352  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 348:6   1 at 351:7
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set WORK.CLNT_DIM_V has 2815913 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.50 seconds
+      cpu time            2.62 seconds
+
+
+352!      *2,815,913 ;
+
+353  DATA clnt_dim_v (DROP = brth_dt);
+354  SET  subset.clnt_dim_v;
+355  dob = datepart(brth_dt);
+356  FORMAT dob yymmdd10.;
+357  IF   datepart(brth_dt) ge "01JUL1954"D
+358       AND  datepart(brth_dt) le "01JUL2022"D
+359       THEN OUTPUT;
+360  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 355:7   1 at 357:6
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set WORK.CLNT_DIM_V has 2815913 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.34 seconds
+      cpu time            2.68 seconds
+
+
+361  * Create age;
+362  DATA clnt_dim_v2;
+363  SET  clnt_dim_v;
+364  age_sfy1819 = floor((intck('month', datepart(dob, '01Jul2018'd) - (day('01Jul2018'd) < day(dob)))
+                                         --------
+-
+                                         72
+79
+                          -----
+                          71
+364!  / 12);
+365  age_sfy1920 = floor((intck('month', datepart(dob, '01Jul2019'd) - (day('01Jul2019'd) < day(dob)))
+                                         --------
+-
+                                         72
+79
+                          -----
+                          71
+365!  / 12);
+366  age_sfy2021 = floor((intck('month', datepart(dob, '01Jul2020'd) - (day('01Jul2020'd) < day(dob)))
+                                         --------
+-
+                                         72
+79
+                          -----
+                          71
+366!  / 12);
+367  age_sfy2122 = floor((intck('month', datepart(dob, '01Jul2021'd) - (day('01Jul2021'd) < day(dob)))
+                                         --------
+-
+                                         72
+79
+                          -----
+                          71
+367!  / 12);
+ERROR 72-185: The DATEPART function call has too many arguments.
+
+ERROR 79-322: Expecting a ).
+
+ERROR 71-185: The INTCK function call does not have enough arguments.
+
+368  fy1819 = input(age_sfy1819, age_range.);
+369  fy1920 = input(age_sfy1920, age_range.);
+370  fy2021 = input(age_sfy2021, age_range.);
+371  fy2122 = input(age_sfy2122, age_range.);
+372  run;
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      368:16   369:16   370:16   371:16
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.CLNT_DIM_V2 may be incomplete.  When this step was stopped there were 0
+         observations and 14 variables.
+WARNING: Data set WORK.CLNT_DIM_V2 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.09 seconds
+
+
+373  * Create age;
+374  DATA clnt_dim_v2;
+375  SET  clnt_dim_v;
+376  age_sfy1819 = floor((intck('month', dob, '01Jul2018'd) - (day('01Jul2018'd) < day(dob))) / 12);
+377  age_sfy1920 = floor((intck('month', dob, '01Jul2019'd) - (day('01Jul2019'd) < day(dob))) / 12);
+378  age_sfy2021 = floor((intck('month', dob, '01Jul2020'd) - (day('01Jul2020'd) < day(dob))) / 12);
+379  age_sfy2122 = floor((intck('month', dob, '01Jul2021'd) - (day('01Jul2021'd) < day(dob))) / 12);
+380  fy1819 = input(age_sfy1819, age_range.);
+381  fy1920 = input(age_sfy1920, age_range.);
+382  fy2021 = input(age_sfy2021, age_range.);
+383  fy2122 = input(age_sfy2122, age_range.);
+384  run;
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      380:16   381:16   382:16   383:16
+NOTE: There were 2815913 observations read from the data set WORK.CLNT_DIM_V.
+NOTE: The data set WORK.CLNT_DIM_V2 has 2815913 observations and 14 variables.
+NOTE: DATA statement used (Total process time):
+      real time           13.11 seconds
+      cpu time            13.09 seconds
+
+
+385  PROC PRINT
+386  DATA = clnt_dim_v2 (obs = 200);
+387  run;
+
+NOTE: There were 200 observations read from the data set WORK.CLNT_DIM_V2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.30 seconds
+      cpu time            0.28 seconds
+
+
+388  PROC CONTENTS
+389  DATA = bhjt.medicaiddemog_bidm;
+390  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.06 seconds
+
+
+391  PROC CONTENTS
+392  DATA = bhjt.medicaidlong_bidm;
+393  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.06 seconds
+
+
+394  DATA out.clnt_dim_v;
+395  SET  clnt_dim_v;
+396  age_sfy1819 = floor((intck('month', dob, '01Jul2018'd) - (day('01Jul2018'd) < day(dob))) / 12);
+397  age_sfy1920 = floor((intck('month', dob, '01Jul2019'd) - (day('01Jul2019'd) < day(dob))) / 12);
+398  age_sfy2021 = floor((intck('month', dob, '01Jul2020'd) - (day('01Jul2020'd) < day(dob))) / 12);
+399  age_sfy2122 = floor((intck('month', dob, '01Jul2021'd) - (day('01Jul2021'd) < day(dob))) / 12);
+400  fy1819 = input(age_sfy1819, age_range.);
+401  fy1920 = input(age_sfy1920, age_range.);
+402  fy2021 = input(age_sfy2021, age_range.);
+403  fy2122 = input(age_sfy2122, age_range.);
+404  run;
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      400:16   401:16   402:16   403:16
+NOTE: There were 2815913 observations read from the data set WORK.CLNT_DIM_V.
+NOTE: The data set OUT.CLNT_DIM_V has 2815913 observations and 14 variables.
+NOTE: DATA statement used (Total process time):
+      real time           10.12 seconds
+      cpu time            7.49 seconds
+
+
+405  PROC SQL;
+406  CREATE TABLE medlong1 AS
+407  SELECT *
+408  FROM   bhjt.medicaidlong_bidm
+409  WHERE  clnt_id IN (SELECT mcaid_id
+410                     FROM   clnt_dim_v2)
+411    AND  budget_group not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
+412    AND  managedCare = 0;
+NOTE: Table WORK.MEDLONG1 created, with 137226720 rows and 25 columns.
+
+413  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           8:54.25
+      cpu time            5:21.93
+
+
+414  PROC CONTENTS
+415  DATA = medlong1;
+416  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.07 seconds
+
+
+417  PROC CONTENTS
+418  DATA = medlong1;
+419  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.07 seconds
+
+

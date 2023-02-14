@@ -1,0 +1,252 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.05 seconds
+      cpu time            0.87 seconds
+
+1      %LET datasets = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/datasets;
+2      LIBNAME datasets "&datasets";
+NOTE: Libref DATASETS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\datasets
+3
+4      * Data_tmp are intermediate data sets that are used later;
+5
+6      * Results store outputs as well as final datasets that were results of the analysis;
+7      %LET results = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results;
+8      LIBNAME results "&results";
+NOTE: Libref RESULTS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\results
+9
+10     %LET hcpf = S:/FHPC/DATA/HCPF_Data_files_SECURE;
+11     %LET ana  = S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset;
+12     LIBNAME ana "&ana";
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+13
+14   * VARLEN;
+15     %LET varlen =
+15 ! \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengt
+15 ! hs;
+16     LIBNAME varlen "&varlen";
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLeng
+      ths
+17     %INCLUDE "&varlen\MACRO_charLenMetadata.sas";
+93     %getlen(library=varlen, data=AllVarLengths);
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.97 seconds
+      cpu time            0.35 seconds
+
+
+94
+95   * OPTIONS ---------------------------;
+96     OPTIONS NOFMTERR
+97             MPRINT MLOGIC SYMBOLGEN
+98             FMTSEARCH =(ana, data, interim, varlen, work);
+
+99     * contains #'s 1,2,3 (isp attr, change from 03/2020, telehealth pcmp count) from analytic
+99 ! plan for hcpf presentation specifically;
+100    %LET feb     = &results/20230200_hcpf_presentation;
+SYMBOLGEN:  Macro variable RESULTS resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results
+101    LIBNAME feb  = "&feb";
+ERROR: Libref in LIBNAME statement must be followed either by quoted string or engine name or
+       semicolon; "=" found.
+ERROR: Error in the LIBNAME statement.
+SYMBOLGEN:  Macro variable FEB resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presen
+            tation
+102    %LET results = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results;
+103    LIBNAME results "&results";
+SYMBOLGEN:  Macro variable RESULTS resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results
+NOTE: Libref RESULTS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\results
+104
+105    * contains #'s 1,2,3 (isp attr, change from 03/2020, telehealth pcmp count) from analytic
+105! plan for hcpf presentation specifically;
+106    %LET feb     = &results/20230200_hcpf_presentation;
+SYMBOLGEN:  Macro variable RESULTS resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results
+107    LIBNAME feb  = "&feb";
+ERROR: Libref in LIBNAME statement must be followed either by quoted string or engine name or
+       semicolon; "=" found.
+ERROR: Error in the LIBNAME statement.
+SYMBOLGEN:  Macro variable FEB resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presen
+            tation
+108    %LET feb     =
+108! S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presentation;
+109    LIBNAME feb  = "&feb";
+ERROR: Libref in LIBNAME statement must be followed either by quoted string or engine name or
+       semicolon; "=" found.
+ERROR: Error in the LIBNAME statement.
+SYMBOLGEN:  Macro variable FEB resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presen
+            tation
+110    * Results store outputs as well as final datasets that were results of the analysis;
+111    %LET results = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results;
+112    LIBNAME results "&results";
+SYMBOLGEN:  Macro variable RESULTS resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results
+NOTE: Libref RESULTS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\results
+113
+114    * contains #'s 1,2,3 (isp attr, change from 03/2020, telehealth pcmp count) from analytic
+114! plan for hcpf presentation specifically;
+115    %LET feb     =
+115! S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presentation;
+116    LIBNAME feb  = "&feb";
+ERROR: Libref in LIBNAME statement must be followed either by quoted string or engine name or
+       semicolon; "=" found.
+ERROR: Error in the LIBNAME statement.
+SYMBOLGEN:  Macro variable FEB resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presen
+            tation
+117    * contains #'s 1,2,3 (isp attr, change from 03/2020, telehealth pcmp count) from analytic
+117! plan for hcpf presentation specifically;
+118    %LET feb     =
+118! S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presentation;
+119    LIBNAME feb  = "&feb";
+ERROR: Libref in LIBNAME statement must be followed either by quoted string or engine name or
+       semicolon; "=" found.
+ERROR: Error in the LIBNAME statement.
+SYMBOLGEN:  Macro variable FEB resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presen
+            tation
+120   %LET    feb     =
+120! S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presentation;
+121    LIBNAME feb  "&feb";
+SYMBOLGEN:  Macro variable FEB resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presen
+            tation
+NOTE: Libref FEB was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\results\20230200_hcpf_presentation
+122  %let isp = datasets.isp_masterids;
+123  PROC SORT DATA = datasets.isp_masterids; BY splitID;
+124
+125  * --- 02 unique pcmp id list -----------------------------------------------
+126  keep only pmcp id so you don't mismatch the ones with >1 splitID or npi / transpose later  ;
+
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+127  PROC SORT DATA = datasets.isp_masterids
+128       NODUPKEY
+129       OUT       = results.unique_pcmps_isp;
+130       BY        pcmp_loc_id;
+131  RUN;
+
+NOTE: There were 119 observations read from the data set DATASETS.ISP_MASTERIDS.
+NOTE: 2 observations with duplicate key values were deleted.
+NOTE: The data set RESULTS.UNIQUE_PCMPS_ISP has 117 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.01 seconds
+
+
+131!      * removed 2 > from 119 to 117;
+132
+133  DATA unique_pcmps_isp;
+134  SET  unique_pcmps_isp ( KEEP = pcmp_loc_id ) ;
+ERROR: File WORK.UNIQUE_PCMPS_ISP.DATA does not exist.
+135  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.UNIQUE_PCMPS_ISP may be incomplete.  When this step was stopped there
+         were 0 observations and 0 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+136  PROC SORT DATA = datasets.isp_masterids
+137       NODUPKEY
+138       OUT       = unique_pcmps_isp;
+139       BY        pcmp_loc_id;
+140  RUN;
+
+NOTE: There were 119 observations read from the data set DATASETS.ISP_MASTERIDS.
+NOTE: 2 observations with duplicate key values were deleted.
+NOTE: The data set WORK.UNIQUE_PCMPS_ISP has 117 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+140!      * removed 2 > from 119 to 117;
+
+141  DATA unique_pcmps_isp;
+142  SET  unique_pcmps_isp ( KEEP = pcmp_loc_id ) ;
+143  RUN;
+
+NOTE: There were 117 observations read from the data set WORK.UNIQUE_PCMPS_ISP.
+NOTE: The data set WORK.UNIQUE_PCMPS_ISP has 117 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+144  * === 03 HCPF qry_longitudinal records in timeframe
+144! =============================================== ;
+145  DATA  qry_long_y19_22_0;
+146  SET   ana.qry_longitudinal ( KEEP = mcaid_id pcmp_loc_id month ) ;
+147
+148    * convert pcmp to numeric > create new var, drop old one, rename new one;
+149    pcmp_loc_id2 = input(pcmp_loc_id, 8.);
+150    DROP pcmp_loc_id;
+151    RENAME pcmp_loc_id2 = pcmp_loc_id;
+152
+153  WHERE month ge '01Jul2019'd
+154  AND   month le '30Jun2022'd
+155  AND   pcmp_loc_ID ne ' ';
+156  RUN;
+
+NOTE: There were 42737078 observations read from the data set ANA.QRY_LONGITUDINAL.
+      WHERE (month>='01JUL2019'D and month<='30JUN2022'D) and (pcmp_loc_ID not = ' ');
+NOTE: The data set WORK.QRY_LONG_Y19_22_0 has 42737078 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7:56.22
+      cpu time            22.25 seconds
+
+
+156!      *[42737078, 3];
+157
+158  PROC CONTENTS DATA = qry_long_y19_22_0;
+NOTE: Writing HTML Body file: sashtml.htm
+159  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.47 seconds
+      cpu time            0.32 seconds
+
+

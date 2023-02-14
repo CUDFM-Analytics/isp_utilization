@@ -1,0 +1,798 @@
+955   %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilizatiON/02_code/00_global.sas";
+NOTE: Libref SUBSET was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\04_data
+NOTE: Libref DB was successfully assigned as follows:
+      Engine:        ODBC
+      Physical Name:
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLength
+      s
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.56 seconds
+      cpu time            1.28 seconds
+
+
+NOTE: Libref BHJT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLength
+      s
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.18 seconds
+      cpu time            1.17 seconds
+
+
+NOTE: Libref BHJT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: SASUSER.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Informat AGE_RANGE has been output.
+NOTE: Format AGECAT has been output.
+NOTE: Format AGEHCPF has been output.
+NOTE: Format AGE7CAT has been output.
+NOTE: Format FY has been output.
+NOTE: Format NSERVE has been output.
+NOTE: Format FHQC has been output.
+NOTE: Format CAPVSH has been output.
+NOTE: Format MATCHN has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+
+
+1212  %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilizatiON/02_code/00_macros.sas";
+
+1232  OPTIONS fmtsearch=(bhjt);
+1233  DATA medlong1;
+1234  SET  bhjt.medicaidlong_bidm;
+1235  RUN;
+
+NOTE: There were 177234990 observations read from the data set BHJT.MEDICAIDLONG_BIDM.
+NOTE: The data set WORK.MEDLONG1 has 177234990 observations and 25 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7:35.95
+      cpu time            3:45.04
+
+
+1236
+1237  DATA meddemog1;
+1238  SET  bhjt.medicaiddemog_bidm;
+1239  RUN;
+
+NOTE: There were 2991591 observations read from the data set BHJT.MEDICAIDDEMOG_BIDM.
+NOTE: The data set WORK.MEDDEMOG1 has 2991591 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7.16 seconds
+      cpu time            2.60 seconds
+
+
+1240  DATA   medlong_y15_y22;
+1241  LENGTH clnt_id $11;
+1242  SET    medlong1 (drop=aid_cd_1-aid_cd_5 title19: FED_POV_LVL_PC);
+1243  WHERE  month ge '01JUL2015'd
+1244    AND  month le '30JUN2022'd
+1245    AND  BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
+1246  RUN;
+
+NOTE: There were 110867577 observations read from the data set WORK.MEDLONG1.
+      WHERE (month>='01JUL2015'D and month<='30JUN2022'D) and BUDGET_GROUP not in (-1, 16, 17, 18,
+      19, 20, 21, 22, 23, 24, 25, 26, 27);
+NOTE: The data set WORK.MEDLONG_Y15_Y22 has 110867577 observations and 17 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:57.21
+      cpu time            1:57.56
+
+
+1247
+1248  PROC SQL;
+1249  CREATE TABLE medlong_y15_y22_2 as
+1250  SELECT  a.*,
+1251          b.dob,
+1252          b.gender,
+1253          b.county,
+1254          b.rethnic_hcpf
+1255  FROM    medlong_y15_y22 AS a
+1256  LEFT JOIN meddemog1 AS b
+1257  ON      a.clnt_id=b.clnt_id ;
+NOTE: Table WORK.MEDLONG_Y15_Y22_2 created, with 110867577 rows and 21 columns.
+
+1258  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           4:54.78
+      cpu time            5:53.18
+
+
+1259  DATA medlong_y15_y22_3;
+1260  SET  medlong_y15_y22_2;
+1261   IF      month ge '01Jul2015'd and month le '30Jun2016'd THEN last_day_fy='30Jun2016'd;
+1262   ELSE IF month ge '01Jul2016'd and month le '30Jun2017'd THEN last_day_fy='30Jun2017'd;
+1263   ELSE IF month ge '01Jul2017'd and month le '30Jun2018'd THEN last_day_fy='30Jun2018'd;
+1264   ELSE IF month ge '01Jul2018'd and month le '30Jun2019'd THEN last_day_fy='30Jun2019'd;
+1265   ELSE IF month ge '01Jul2019'd and month le '30Jun2020'd THEN last_day_fy='30Jun2020'd;
+1266   ELSE IF month ge '01Jul2020'd and month le '30Jun2021'd THEN last_day_fy='30Jun2021'd;
+1267   ELSE IF month ge '01Jul2021'd and month le '30Jun2022'd THEN last_day_fy='30Jun2022'd;
+1268
+1269   age_end_fy = floor( (intck('month', dob, last_day_fy) - (day(last_day_fy) < min(day(dob),
+1269! day(intnx ('month', last_day_fy, 1) -1)))) /12 );
+1270
+1271   IF age_end_fy lt 0 or age_end_fy gt 64 THEN DELETE;
+1272   FORMAT last_day_fy date9.;
+1273  RUN;
+
+NOTE: There were 110867577 observations read from the data set WORK.MEDLONG_Y15_Y22_2.
+NOTE: The data set WORK.MEDLONG_Y15_Y22_3 has 106260558 observations and 23 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3:39.79
+      cpu time            3:39.70
+
+
+1274
+1275  PROC DATASETS nolist lib=work;
+1276  DELETE medlong_y15_y22_2;
+1277  QUIT;
+
+NOTE: Deleting WORK.MEDLONG_Y15_Y22_2 (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           3.23 seconds
+      cpu time            3.28 seconds
+
+
+1278  RUN;
+
+1279  PROC SORT
+1280  DATA = medlong_y15_y22_3
+1281         (keep=clnt_id month pcmp_loc_ID rae_assign managedCare)
+1282         NODUPKEY
+1283         OUT = finalSubjects;
+1284  WHERE  pcmp_loc_id ne ' '
+1285    AND  rae_assign=1
+1286    AND  managedCare=0
+1287    AND  month ge '01JUL2018'd
+1288    AND  month le '30JUN2022'd;
+1289  BY     clnt_id;
+1290  RUN;
+
+NOTE: There were 53398459 observations read from the data set WORK.MEDLONG_Y15_Y22_3.
+      WHERE (pcmp_loc_id not = ' ') and (rae_assign=1) and (managedCare=0) and (month>='01JUL2018'D
+      and month<='30JUN2022'D);
+NOTE: 51608401 observations with duplicate key values were deleted.
+NOTE: The data set WORK.FINALSUBJECTS has 1790058 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           38.46 seconds
+      cpu time            53.90 seconds
+
+
+1291  PROC PRINT
+1292  DATA = medlong_y15_y22_3 (obs=100);
+1293  RUN;
+
+NOTE: There were 100 observations read from the data set WORK.MEDLONG_Y15_Y22_3.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.36 seconds
+      cpu time            0.29 seconds
+
+
+1294  PROC CONTENTS
+1295  DATA = medlong_y15_y22_3;
+1296  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.07 seconds
+
+
+1297
+1298  PROC SORT
+1299  DATA = out.medlong_y15_y22_3
+1300         (keep=clnt_id month pcmp_loc_ID rae_assign managedCare)
+1301         NODUPKEY
+ERROR: File OUT.MEDLONG_Y15_Y22_3.DATA does not exist.
+1302         OUT = out.finalSubjects;
+1303  WHERE  pcmp_loc_id ne ' '
+1304    AND  rae_assign=1
+1305    AND  managedCare=0
+1306    AND  month ge '01JUL2018'd
+1307    AND  month le '30JUN2022'd;
+WARNING: No data sets qualify for WHERE processing.
+1308  BY     clnt_id;
+1309  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set OUT.FINALSUBJECTS may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.09 seconds
+
+1310  /*NOTE: There were 53,398,459 observations read from the data set WORK.MEDLONG_Y15_Y22_3.*/
+1311  /*      WHERE (pcmp_loc_id not = ' ') and (rae_assign=1) and (managedCare=0) and
+1311! (month>='01JUL2018'D*/
+1312  /*      and month<='30JUN2022'D);*/
+1313  /*NOTE: 51,608,401 observations with duplicate key values were deleted.*/
+1314  /*NOTE: The data set WORK.FINALSUBJECTS has 1,790,058 observations and 5 variables.*/
+1315
+
+
+1316  DATA out.medlong_y15_y22;
+1317  SET  medlong_y15_y22_3;
+1318  RUN;
+
+NOTE: There were 106260558 observations read from the data set WORK.MEDLONG_Y15_Y22_3.
+NOTE: The data set OUT.MEDLONG_Y15_Y22 has 106260558 observations and 23 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3:21.58
+      cpu time            1:02.06
+
+
+1319
+1320  PROC PRINT
+1321  DATA = medlong_y15_y22 (obs=100);
+1322  RUN;
+
+NOTE: There were 100 observations read from the data set WORK.MEDLONG_Y15_Y22.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.29 seconds
+      cpu time            0.23 seconds
+
+
+1323
+1324  PROC CONTENTS
+1325  DATA = medlong_y15_y22;
+1326  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+
+
+1327  PROC PRINT
+1328  DATA = out.finalSubjects (obs=100);
+1329  RUN;
+
+NOTE: No variables in data set OUT.FINALSUBJECTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+1330  DATA out.finalsubjects;
+1331  SET  finalsubjects;
+1332  RUN;
+
+NOTE: There were 1790058 observations read from the data set WORK.FINALSUBJECTS.
+NOTE: The data set OUT.FINALSUBJECTS has 1790058 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.71 seconds
+      cpu time            0.64 seconds
+
+
+1333
+1334  PROC PRINT
+1335  DATA = out.finalSubjects (obs=100);
+1336  RUN;
+
+NOTE: There were 100 observations read from the data set OUT.FINALSUBJECTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.09 seconds
+
+
+1337
+1338  PROC SORT
+1339  DATA = out.medlong_y15_y22_3
+1340         (keep=clnt_id month pcmp_loc_ID rae_assign managedCare age_end_fy)
+1341         NODUPKEY
+ERROR: File OUT.MEDLONG_Y15_Y22_3.DATA does not exist.
+1342         OUT = finalSubjects;
+1343  WHERE  pcmp_loc_id ne ' '
+1344    AND  rae_assign=1
+1345    AND  managedCare=0
+1346    AND  month ge '01JUL2018'd
+1347    AND  month le '30JUN2022'd;
+WARNING: No data sets qualify for WHERE processing.
+1348  BY     clnt_id;
+1349  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.FINALSUBJECTS may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+WARNING: Data set WORK.FINALSUBJECTS was not replaced because this step was stopped.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+
+
+1350
+1351  PROC SQL;
+1352  CREATE TABLE medlong_y15_y22_2 as
+1353  SELECT  a.*,
+1354          b.dob,
+1355          b.gender,
+1356          b.county,
+1357          b.rethnic_hcpf
+1358  FROM    medlong_y15_y22 AS a
+1359  LEFT JOIN meddemog1 AS b
+1360  ON      a.clnt_id=b.clnt_id ;
+NOTE: Table WORK.MEDLONG_Y15_Y22_2 created, with 110867577 rows and 21 columns.
+
+1361  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           6:42.54
+      cpu time            7:49.84
+
+
+1362  PROC PRINT
+1363  DATA = medlong_y15_y22_2 (obs=100);
+1364  RUN;
+
+NOTE: There were 100 observations read from the data set WORK.MEDLONG_Y15_Y22_2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.35 seconds
+      cpu time            0.29 seconds
+
+
+1365  DATA clnt_dim_v;
+1366  SET  subset.clnt_dim_v;
+1367  RUN;
+
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set WORK.CLNT_DIM_V has 3074445 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           5.36 seconds
+      cpu time            2.42 seconds
+
+
+1368
+1369  DATA   medlong_y15_y22;
+1370  LENGTH clnt_id $11;
+1371  SET    medlong1 (drop=aid_cd_1-aid_cd_5 title19: FED_POV_LVL_PC);
+1372  WHERE  month ge '01JUL2015'd
+1373    AND  month le '30JUN2022'd
+1374    AND  BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
+1375  RUN;
+
+NOTE: The DATA step has been abnormally terminated.
+NOTE: There were 21290224 observations read from the data set WORK.MEDLONG1.
+      WHERE (month>='01JUL2015'D and month<='30JUN2022'D) and BUDGET_GROUP not in (-1, 16, 17, 18,
+      19, 20, 21, 22, 23, 24, 25, 26, 27);
+WARNING: The data set WORK.MEDLONG_Y15_Y22 may be incomplete.  When this step was stopped there were
+         21290224 observations and 17 variables.
+WARNING: Data set WORK.MEDLONG_Y15_Y22 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           40.43 seconds
+      cpu time            37.87 seconds
+
+
+1376
+1377  DATA   medlong_y15_y22;
+1378  LENGTH clnt_id $11;
+1379  SET    medlong1 (drop=aid_cd_1-aid_cd_5 title19: FED_POV_LVL_PC);
+1380  WHERE  month ge '01JUL2015'd
+1381    AND  month le '30JUN2022'd
+1382    AND  BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
+1383    AND  managedCare = 0;
+1384  RUN;
+
+NOTE: There were 99507799 observations read from the data set WORK.MEDLONG1.
+      WHERE (month>='01JUL2015'D and month<='30JUN2022'D) and BUDGET_GROUP not in (-1, 16, 17, 18,
+      19, 20, 21, 22, 23, 24, 25, 26, 27) and (managedCare=0);
+NOTE: The data set WORK.MEDLONG_Y15_Y22 has 99507799 observations and 17 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:40.85
+      cpu time            2:41.98
+
+
+1385  DATA clnt_dim_v;
+1386  SET  subset.clnt_dim_v;
+1387  dob  = datepart(brth_dt);
+1388  FORMAT dob yymmdd10.;
+1389  IF     datepart(brth_dt) ge "01JUL1954"d
+1390         AND datepart(brth_dt) le "01JUL2022"D
+1391         THEN OUTPUT;
+1392  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 1387:8   1 at 1389:8
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set WORK.CLNT_DIM_V has 2815913 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.82 seconds
+      cpu time            2.92 seconds
+
+
+1393  PROC CONTENTS
+1394  DATA = clnt_dim_v;
+1395  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.04 seconds
+
+
+1396  PROC SQL;
+1397  CREATE TABLE medlong_y15_y22_2 as
+1398  SELECT       a.*,
+1399               b.dob,
+1400               b.gndr_cd,
+1401               b.race_cd,
+1402               b.rsdnc_cnty_cd,
+1403               b.ethn_cd
+1404  FROM         medlong_y15_y22 AS a
+1405  LEFT JOIN    clnt_dim_v AS b
+1406  ON           a.clnt_id=b.mcaid_id ;
+ERROR: Column ethn_cd could not be found in the table/view identified with the correlation name B.
+1407  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+1408  PROC SQL;
+1409  CREATE TABLE medlong_y15_y22_2 as
+1410  SELECT       a.*,
+1411               b.dob,
+1412               b.gndr_cd,
+1413               b.race_cd,
+1414               b.rsdnc_cnty_cd,
+1415               b.ethnc_cd
+1416  FROM         medlong_y15_y22 AS a
+1417  LEFT JOIN    clnt_dim_v AS b
+1418  ON           a.clnt_id=b.mcaid_id ;
+NOTE: Table WORK.MEDLONG_Y15_Y22_2 created, with 99507799 rows and 22 columns.
+
+1419  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           4:21.20
+      cpu time            5:21.14
+
+
+1420
+1421  DATA medlong_y15_y22_3;
+1422  SET  medlong_y15_y22_2;
+1423   IF      month ge '01Jul2015'd and month le '30Jun2016'd THEN last_day_fy='30Jun2016'd;
+1424   ELSE IF month ge '01Jul2016'd and month le '30Jun2017'd THEN last_day_fy='30Jun2017'd;
+1425   ELSE IF month ge '01Jul2017'd and month le '30Jun2018'd THEN last_day_fy='30Jun2018'd;
+1426   ELSE IF month ge '01Jul2018'd and month le '30Jun2019'd THEN last_day_fy='30Jun2019'd;
+1427   ELSE IF month ge '01Jul2019'd and month le '30Jun2020'd THEN last_day_fy='30Jun2020'd;
+1428   ELSE IF month ge '01Jul2020'd and month le '30Jun2021'd THEN last_day_fy='30Jun2021'd;
+1429   ELSE IF month ge '01Jul2021'd and month le '30Jun2022'd THEN last_day_fy='30Jun2022'd;
+1430
+1431   age_end_fy = floor( (intck('month', dob, last_day_fy) - (day(last_day_fy) < min(day(dob),
+1431! day(intnx ('month', last_day_fy, 1) -1)))) /12 );
+1432
+1433   IF age_end_fy lt 0 OR age_end_fy gt 64 THEN DELETE;
+1434   FORMAT last_day_fy date9.;
+1435  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      3925990 at 1431:15    3925990 at 1431:23    3925990 at 1431:56    3925990 at 1431:82
+      3925990 at 1431:135
+NOTE: There were 99507799 observations read from the data set WORK.MEDLONG_Y15_Y22_2.
+NOTE: The data set WORK.MEDLONG_Y15_Y22_3 has 95112495 observations and 24 variables.
+NOTE: DATA statement used (Total process time):
+      real time           5:11.10
+      cpu time            5:14.70
+
+
+1436  PROC DATASETS nolist lib=work;
+1437  DELETE medlong_y15_y22_2;
+1438  QUIT;
+
+NOTE: Deleting WORK.MEDLONG_Y15_Y22_2 (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           2.42 seconds
+      cpu time            2.45 seconds
+
+
+1439  RUN;
+
+1440  PROC SORT
+1441  DATA = out.medlong_y15_y22_3
+1442         (keep=clnt_id month pcmp_loc_ID rae_assign age_end_fy)
+1443         NODUPKEY
+ERROR: File OUT.MEDLONG_Y15_Y22_3.DATA does not exist.
+1444         OUT = finalSubjects;
+1445  WHERE  pcmp_loc_id ne ' '
+1446    AND  rae_assign=1
+1447    AND  month ge '01JUL2018'd
+1448    AND  month le '30JUN2022'd;
+WARNING: No data sets qualify for WHERE processing.
+1449  BY     clnt_id;
+1450  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.FINALSUBJECTS may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+WARNING: Data set WORK.FINALSUBJECTS was not replaced because this step was stopped.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+
+
+1451  PROC SORT
+1452  DATA = medlong_y15_y22_3
+1453         (keep=clnt_id month pcmp_loc_ID rae_assign age_end_fy)
+1454         NODUPKEY
+1455         OUT = finalSubjects;
+1456  WHERE  pcmp_loc_id ne ' '
+1457    AND  rae_assign=1
+1458    AND  month ge '01JUL2018'd
+1459    AND  month le '30JUN2022'd;
+1460  BY     clnt_id;
+1461  RUN;
+
+NOTE: There were 53397827 observations read from the data set WORK.MEDLONG_Y15_Y22_3.
+      WHERE (pcmp_loc_id not = ' ') and (rae_assign=1) and (month>='01JUL2018'D and
+      month<='30JUN2022'D);
+NOTE: 51607779 observations with duplicate key values were deleted.
+NOTE: The data set WORK.FINALSUBJECTS has 1790048 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           38.19 seconds
+      cpu time            53.15 seconds
+
+
+1462  PROC SORT
+1463  DATA = medlong_y15_y22_3
+1464         (keep=clnt_id month pcmp_loc_ID rae_assign age_end_fy last_day_fy)
+1465         NODUPKEY
+1466         OUT = finalSubjects;
+1467  WHERE  pcmp_loc_id ne ' '
+1468    AND  rae_assign=1
+1469    AND  month ge '01JUL2018'd
+1470    AND  month le '30JUN2022'd;
+1471  BY     clnt_id;
+1472  RUN;
+
+NOTE: There were 53397827 observations read from the data set WORK.MEDLONG_Y15_Y22_3.
+      WHERE (pcmp_loc_id not = ' ') and (rae_assign=1) and (month>='01JUL2018'D and
+      month<='30JUN2022'D);
+NOTE: 51607779 observations with duplicate key values were deleted.
+NOTE: The data set WORK.FINALSUBJECTS has 1790048 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           31.73 seconds
+      cpu time            46.70 seconds
+
+
+1473  PROC FREQ
+1474  DATA = finalsubjects;
+1475  TABLES last_day_fy*age_end_fy;
+1476  RUN;
+
+NOTE: There were 1790048 observations read from the data set WORK.FINALSUBJECTS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.95 seconds
+      cpu time            0.86 seconds
+
+
+1477  DATA out.medlong_y15_y22;
+1478  SET  medlong_y15_y22_3;
+1479  RUN;
+
+NOTE: There were 95112495 observations read from the data set WORK.MEDLONG_Y15_Y22_3.
+NOTE: The data set OUT.MEDLONG_Y15_Y22 has 95112495 observations and 24 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:57.47
+      cpu time            59.04 seconds
+
+
+1480
+1481  DATA out.finalsubjects;
+1482  SET  finalsubjects;
+1483  RUN;
+
+NOTE: There were 1790048 observations read from the data set WORK.FINALSUBJECTS.
+NOTE: The data set OUT.FINALSUBJECTS has 1790048 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.86 seconds
+      cpu time            0.71 seconds
+
+
+1484  PROC FREQ
+1485  DATA = out.finalsubjects;
+1486  TABLES age_end_fy*last_day_fy;
+1487  RUN;
+
+NOTE: There were 1790048 observations read from the data set OUT.FINALSUBJECTS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           2.00 seconds
+      cpu time            0.93 seconds
+
+
+1488  PROC FREQ
+1489  DATA = out.finalsubjects;
+1490  TITLE  "out.finalsubjects list table";
+1491  TABLES age_end_fy*last_day_fy;
+1492  RUN;
+
+NOTE: There were 1790048 observations read from the data set OUT.FINALSUBJECTS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.68 seconds
+      cpu time            0.98 seconds
+
+
+1493  TITLE;
+
+1494  PROC CONTENTS
+1495  DATA = medlong_y15_y22;
+1496  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.04 seconds
+
+
+1497  PROC CONTENTS
+1498  DATA = out.finalsubjects;
+1499  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.06 seconds
+
+
+1500
+1501  *instead of meddemog_
+1502  filter to get ages between 0-64 in those years (roughly);
+1503  DATA clnt_dim_v;
+1504  SET  subset.clnt_dim_v;
+1505  dob  = datepart(brth_dt);
+1506  FORMAT dob yymmdd9.;
+1507  /*IF       datepart(brth_dt) ge "01JUL1954"d*/
+1508  /*     AND datepart(brth_dt) le "01JUL2022"D*/
+1509  /*     THEN OUTPUT; */
+1510  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      1 at 1505:8
+NOTE: There were 3074445 observations read from the data set SUBSET.CLNT_DIM_V.
+NOTE: The data set WORK.CLNT_DIM_V has 3074445 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.80 seconds
+      cpu time            2.89 seconds
+
+
+1511  PROC SQL;
+1512  CREATE TABLE medlong_y15_y22_2 as
+1513  SELECT       a.*,
+1514               b.dob,
+1515               b.gndr_cd,
+1516               b.race_cd,
+1517               b.rsdnc_cnty_cd,
+1518               b.ethnc_cd
+1519  FROM         medlong_y15_y22 AS a
+1520  LEFT JOIN    clnt_dim_v AS b
+1521  ON           a.clnt_id=b.mcaid_id ;
+NOTE: Table WORK.MEDLONG_Y15_Y22_2 created, with 99507799 rows and 22 columns.
+
+1522  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           6:04.96
+      cpu time            7:05.39
+
+
+1523  DATA medlong_y15_y22_3;
+1524  SET  medlong_y15_y22_2;
+1525   IF      month ge '01Jul2015'd and month le '30Jun2016'd THEN last_day_fy='30Jun2016'd;
+1526   ELSE IF month ge '01Jul2016'd and month le '30Jun2017'd THEN last_day_fy='30Jun2017'd;
+1527   ELSE IF month ge '01Jul2017'd and month le '30Jun2018'd THEN last_day_fy='30Jun2018'd;
+1528   ELSE IF month ge '01Jul2018'd and month le '30Jun2019'd THEN last_day_fy='30Jun2019'd;
+1529   ELSE IF month ge '01Jul2019'd and month le '30Jun2020'd THEN last_day_fy='30Jun2020'd;
+1530   ELSE IF month ge '01Jul2020'd and month le '30Jun2021'd THEN last_day_fy='30Jun2021'd;
+1531   ELSE IF month ge '01Jul2021'd and month le '30Jun2022'd THEN last_day_fy='30Jun2022'd;
+1532
+1533   age_end_fy = floor( (intck('month', dob, last_day_fy) - (day(last_day_fy) < min(day(dob),
+1533! day(intnx ('month', last_day_fy, 1) -1)))) /12 );
+1534
+1535   IF age_end_fy lt 0 OR age_end_fy gt 64 THEN DELETE;
+1536   FORMAT last_day_fy date9.;
+1537  RUN;
+
+NOTE: There were 99507799 observations read from the data set WORK.MEDLONG_Y15_Y22_2.
+NOTE: The data set WORK.MEDLONG_Y15_Y22_3 has 95667661 observations and 24 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4:56.29
+      cpu time            4:56.18
+
+
+1538
+1539  PROC DATASETS nolist lib=work;
+NOTE: Writing HTML Body file: sashtml1.htm
+1540  DELETE medlong_y15_y22_2;
+1541  QUIT;
+
+NOTE: Deleting WORK.MEDLONG_Y15_Y22_2 (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           3.59 seconds
+      cpu time            3.12 seconds
+
+
+1542  RUN;
+
+1543  PROC SORT
+1544  DATA = medlong_y15_y22_3
+1545         (keep=clnt_id month pcmp_loc_ID rae_assign age_end_fy last_day_fy)
+1546         NODUPKEY
+1547         OUT = finalSubjects;
+1548  WHERE  pcmp_loc_id ne ' '
+1549    AND  rae_assign=1
+1550    AND  month ge '01JUL2018'd
+1551    AND  month le '30JUN2022'd;
+1552  BY     clnt_id;
+1553  RUN;
+
+NOTE: There were 53397827 observations read from the data set WORK.MEDLONG_Y15_Y22_3.
+      WHERE (pcmp_loc_id not = ' ') and (rae_assign=1) and (month>='01JUL2018'D and
+      month<='30JUN2022'D);
+NOTE: 51607779 observations with duplicate key values were deleted.
+NOTE: The data set WORK.FINALSUBJECTS has 1790048 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           38.80 seconds
+      cpu time            53.93 seconds
+
+
+1554  PROC CONTENTS
+1555  DATA = subset.enrl_fact_v;
+ERROR: File SUBSET.ENRL_FACT_V.DATA does not exist.
+1556  RUN;
+
+NOTE: Statements not processed because of errors noted above.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+NOTE: The SAS System stopped processing this step because of errors.
+
+1557  PROC CONTENTS
+1558  DATA = subset.clnt_enrl_fact_v;
+1559  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.25 seconds
+      cpu time            0.03 seconds
+
+
+1560  PROC SQL;
+1561  CREATE TABLE subset_dict as
+1562  SELECT name AS variable
+1563      , memname AS table_name
+1564  FROM dictionary.columns
+1565  WHERE libname = "SUBSET"
+1566  ;
+NOTE: Table WORK.SUBSET_DICT created, with 145 rows and 2 columns.
+
+1567  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.32 seconds
+      cpu time            0.04 seconds
+
+
+1568  %INCLUDE "C:/Users/wigginki/OneDrive - The University of Colorado
+1568! Denver/sas/sas_macros/data_specs.sas";
+
