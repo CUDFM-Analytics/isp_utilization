@@ -1,14 +1,17 @@
 **********************************************************************************************
- PROGRAM NAME       : ISP Utilization
- PROGRAMMER         : K Wiggins
- DATE CREATED       : 09/13/2022
- PROJECT            : ISP Utilization, question 1
- PURPOSE            : Per ISP_Utilization_Analytic_Plan_20221118.docx #1: 
-                        Attributed member trends, monthly 7/2019-6/2022: above in the title it specifies (all for ISP and non-ISP PMCPs)
- INPUT FILE(S)      : datasets.isp_masterids.sas7bdat
-                    : ana.qry_longitudinal
- OUTPUT FILE(S)     : 
- ABBREV             : 
+ PROGRAM NAME   : ISP Utilization
+ PROGRAMMER     : K Wiggins
+ DATE CREATED   : 09/13/2022
+ PROJECT        : ISP Utilization, question 1
+ PURPOSE        : Per ISP_Utilization_Analytic_Plan_20221118.docx #1: 
+                     Attributed member trends, monthly 7/2019-6/2022: above in the title it specifies (all for ISP and non-ISP PMCPs)
+ INPUT FILE/S   : datasets.isp_masterids.sas7bdat
+                : ana.qry_longitudinal
+ OUTPUT FILE/S  : 
+;
+* PROJECT PATHS, MAPPING; 
+%LET ROOT = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization;
+%INCLUDE "&ROOT./code/00_global.sas";
 
 * Regular attribution / nothing re: members, etc
 * previously was using Copy of full ISP Practice Report 20220828.xlsx - update, make sure this is right... #DO#;
