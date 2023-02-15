@@ -1,9 +1,13 @@
 PROC CONTENTS 
-     DATA = qry_bho_monthlyutil_working VARNUM;
+     DATA = data.qrylong_y15_22 VARNUM;
+RUN;
+
+PROC CONTENTS 
+     DATA = data.qrylong_y15_22 VARNUM;
 RUN;
 
 PROC PRINT 
-     DATA = data.rae (OBS = 1000);
+     DATA = data.memlist (OBS = 1000);
 RUN; 
 
 PROC FREQ 

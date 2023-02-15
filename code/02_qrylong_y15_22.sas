@@ -3,7 +3,7 @@
  DATE INIT        : 
  PROJECT          : ISP Util
  PURPOSE          : merge qry_longitudinal and qry_demographics
- INPUT FILE(S)    : qry_longitudinal, qry_demographics
+ INPUT FILE(S)    : qry_longitudinal, qry_demographics, rae
  OUTPUT FILE(S)   : data.qrylong_y15_22
  LAST RAN/STATUS  : 20230214
  SEE              : ISP_Utilization_Analytic_Plan_20221118.docx, data_specs.xlsx     
@@ -67,7 +67,7 @@ ON     a.mcaid_id=b.mcaid_id ;
 QUIT; 
 * 81494187, 22;
 
-DATA data.qrylong_y15_22; 
+DATA qrylong_y15_22b; 
 SET  qrylong_y15_22a;
 
   * create age variable;
@@ -99,4 +99,17 @@ proc datasets nolist lib=work; delete qrylong_y15_22; quit; run;
 
 PROC CONTENTS 
      DATA = data.qrylong_y15_22 VARNUM;
-RUN;
+RUN;  
+
+PROC SQL; 
+CREATE TABLE data.qrylong_y15_22 AS 
+SELECT a.*
+     , b.county_rating_area_id
+     , b.rae_id
+     , b.hcpf_county_code_c
+FROM qrylong_y15_22b AS A
+LEFT JOIN data.rae AS b
+ON a.enr_cnty = b.hcpf_county_code_c; 
+QUIT; 
+
+
