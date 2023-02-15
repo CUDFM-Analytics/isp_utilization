@@ -62,7 +62,6 @@ GROUP BY mcaid_id, clmClass_r, month;
 QUIT;  
 
 
-
 /**/
 /**/
 /**/

@@ -1,93 +1,20 @@
 **********************************************************************************************
  PROGRAM NAME       : ISP Utilization
  PROGRAMMER         : K Wiggins
- DATE CREATED       : 08 18 2022
+ DATE CREATED       : 11 19 2022
  PROJECT            : ISP
- PURPOSE            : Get pcmp attribution for members 2018-2022
- INPUT FILE(S)      : bhjt.medicaidlong_bidm, out.mem_list
- OUTPUT FILE(S)     : out.mem_attr_1819
-					  out.mem_attr_1920
-					  out.mem_attr_2021
-					  out.mem_attr_2122
+ PURPOSE            : Using template for demographics eligibility claims and diagnoses from SQL server
+ INPUT FILE(S)      : 
+ OUTPUT FILE(S)     : 
+ ABBREV             : 
 
+ MODIFICATION HISTORY:
+ Date       Author      Description of Change
+ --------   -------     -----------------------------------------------------------------------
+ 08/18/22   KTW         Copied this from TEMPLATE_DemogEligClaims.sas
 ***********************************************************************************************;
 *Init: June 03 2022;
 %include "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/02_code/00_global.sas"; 
-
-* MEDLONG ----------------------------------------------------; 
-
-* GET PCMP attribution FOR MEMBERS in out.mem_list for FY's 2018-19 through 2021-22;
-%macro getAttr (table=,fy=,month_ge=,month_le=);
-proc sql; 
-create table &table as 
-select *
-from bhjt.medicaidlong_bidm
-where (clnt_id IN 
-		(
-		  SELECT clnt_id
-		  FROM out.mem_list
-		  WHERE &fy = 1
-		 )
-		) 
-	AND
-	month ge &month_ge  AND
-	month le &month_le  AND
-	pcmp_loc_id ne ' '     AND
-	budget_group not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
-quit; 
-%mend;
-
-%getAttr
-		(
-		table=out.mem_attr_1819,
-		fy=fy1819,
-		month_ge = '01Jul2018'd,
-		month_le = '30Jun2019'd
-		);   * 12291756;
-
-%getAttr
-		(
-		table=out.mem_attr_1920,
-		fy=fy1920,
-		month_ge = '01Jul2019'd,
-		month_le = '30Jun2020'd
-		); *11803174;
-
-%getAttr
-		(
-		table=out.mem_attr_2021,
-		fy=fy1819,
-		month_ge = '01Jul2020'd,
-		month_le = '30Jun2021'd
-		); *13150502;
-
-%getAttr
-		(
-		table=out.mem_attr_2122,
-		fy=fy2122,
-		month_ge = '01Jul2021'd,
-		month_le = '30Jun2022'd
-		); *15277119;
-		
-
-proc print data = out.mem_attr_2122 (obs = 200);
-run;
-
-
-
-
-
-
-*** NOT SURE IF NEEDED BUT AFRAID TO LET GO OF CODE *********---------;
-
-*change pcmp to numeric ;
-data out.medlong;
-set  medlong1;
-pcmp_loc_id2 = input(pcmp_loc_id, 12.);
-drop pcmp_loc_id;
-rename pcmp_loc_id2 = pcmp_loc_id; 
-run; *55641948;     
-
 
 proc sort data=medlong2; by pcmp_loc_id; 
 
@@ -97,8 +24,6 @@ by pcmp_loc_id;
 run; *116; 
 *The only 2 splitIDS that share a pcmp_loc_ID are 3388  and 3465 (162015, 107169)
 3353 would if it had the same as 2004;
-
-
 
 ** QUESTION 1**;
 data simisp.isp_medlong; 

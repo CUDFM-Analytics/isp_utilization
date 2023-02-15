@@ -10,53 +10,11 @@
  OUTPUT FILE(S)     : 
  ABBREV             : 
 
- MODIFICATION HISTORY:
- Date       Author      Description of Change
- --------   -------     -----------------------------------------------------------------------
- 02/10/23   ktw         Copied from 99_...20220922 and changed a lot;
-
- *SEARCH TERM: #DO#;
-
-* PROJECT PATHS, MAPPING; 
-* These are datasets saved from previous matching with Mark and/or permanent datasets that are sourced in;
-  %LET    datasets = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/datasets;
-  LIBNAME datasets "&datasets"; * for isp_masterids;
-
-* contains #'s 1,2,3 (isp attr, change from 03/2020, telehealth pcmp count) datasets for hcpf presentation specifically
-  contains rae, telecare_monthly, qry_long_y19_22.sas7bdat; 
-  %LET    data     = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data;
-  LIBNAME data  "&data"; 
-
-* RESULTS, Feb2023, HCPF Presentation
-  contains #'s 1,2,3 (isp attr, change from 03/2020, telehealth pcmp count) from analytic plan for hcpf presentation specifically; 
-  %LET    feb     = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presentation;
-  LIBNAME feb  "&feb";
-
-* analytic subset; 
-  %LET    hcpf = S:/FHPC/DATA/HCPF_Data_files_SECURE;
-  %LET    ana  = S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset;
-  LIBNAME ana "&ana"; 
-
-* VARLEN; 
-  %LET varlen = \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengths;
-  LIBNAME varlen "&varlen";
-  %INCLUDE "&varlen\MACRO_charLenMetadata.sas";
-  %getlen(library=varlen, data=AllVarLengths);
-
-* DATASETS ---------------------------; 
-  %LET isp = datasets.isp_masterids   ; 
-  %LET rae = data.rae                 ;
-  %LET tele = data.telecare_monthly   ;
- 
-* OPTIONS ---------------------------; 
-  OPTIONS NOFMTERR
-          MPRINT MLOGIC SYMBOLGEN
-          FMTSEARCH =(ana, data, interim, varlen, work);
-
+* Regular attribution / nothing re: members, etc
 * previously was using Copy of full ISP Practice Report 20220828.xlsx - update, make sure this is right... #DO#;
 PROC SORT DATA = &isp ; BY splitID; RUN; 
 
-*====== 02 unique pcmp id list ========================================         
+*====== unique pcmp id list ========================================         
 keep only pmcp id so you don't mismatch the ones with >1 splitID or npi / transpose later  ;
 PROC SORT DATA = datasets.isp_masterids 
      NODUPKEY 
@@ -68,11 +26,10 @@ DATA data.un_isp_pcmps;
 SET  unique_pcmps_isp ( KEEP = pcmp_loc_id ) ;
 RUN;  *117 02/14;
 
-
-* === 03 HCPF qry_longitudinal records in timeframe =============================================== ;        
+* === QUESTION 1: Attributed Member Trends, monthly 7/2019-6/2022 =============================================== ;        
 DATA  qry_long_y19_22_0; 
-SET   ana.qry_longitudinal ( KEEP = mcaid_id pcmp_loc_id month ) ;
-
+SET   ana.qry_longitudinal (drop=aid_cd_1-aid_cd_5 title19: FED_POV_LVL_PC); 
+LENGTH mcaid_id $11; 
   * convert pcmp to numeric > create new var, drop old one, rename new one; 
   pcmp_loc_id2 = input(pcmp_loc_id, 8.);
   DROP pcmp_loc_id;

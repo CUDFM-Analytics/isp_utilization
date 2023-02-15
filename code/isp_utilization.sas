@@ -13,57 +13,6 @@
 %LET ROOT = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization;
 %INCLUDE "&ROOT./code/00_global.sas";
 
-
-* ### SEARCH TERM #DO for questions and do tasks ###
-******************************************************
-FORMATS addt'l, from Jake's file cost anal_part1 as of 01/30 
-(check to see if updated #DO)
-******************************************************;
-
-* RAE; 
-DATA data.rae; 
-SET  data.rae; 
-HCPF_County_Code_C = put(HCPF_County_Code,z2.); 
-RUN; 
-
-* Dynamic Files, sourced from analytic subset --------------------------; 
-DATA qry_monthly_utilization;     SET ana.qry_monthlyutilization;      RUN; *02/09/23 [111,221,842   :  7];
-
-******************************************************
-Get monthly utilization
-******************************************************;
-
-* Re-factor clmClass as clmClass_r ;
-proc format;
-value clmClass_recode  
-  1 = 'Pharmacy' 
-  2 ='Hospitalizations' 
-  3 = 'ER' 
-  4 = 'Primary care'  
-  100='Other';
-run;
-
-DATA  util_monthly_fy7_0;
-SET   qry_monthly_utilization;  
-WHERE month ge '01Jul2015'd and month le '30Jun2022'd; 
-IF      clmClass = 1 then clmClass_r = 1;
-ELSE IF clmClass = 2 then clmClass_r = 2;
-ELSE IF clmClass = 3 then clmClass_r = 3;
-ELSE IF clmClass = 4 then clmClass_r = 4;
-ELSE                      clmClass_r = 100; 
-format clmClass_r clmClass_recode.;
-RUN; 
-
-proc freq data = util_monthly_fy7_0;
-tables clmclass_r; 
-run; 
-
-data util_monthly_fy7_1; 
-set  util_monthly_fy7_0; 
-format month date9.;
-fy7=year(intnx('year.7', month, 0, 'BEGINNING')); 
-run;
-
 * join members and monthly util - monthly util is 2015-2022, memlist is 19-22; 
 PROC SQL;
 CREATE TABLE util_monthly_fy7_2 as
@@ -82,16 +31,6 @@ FROM tmp.util_monthly_fy7_0 as a
 LEFT JOIN data.telecare_monthly as b
 on a.mcaid_id = b.mcaid_id;
 QUIT; *NOTE: Table TMP.FINALSUBJ_MONTHLY_UTIL_1 created, with 66272914 rows and 9 columns.;
-
-* add rae info; 
-/*PROC SQL; */
-/*CREATE TABLE tmp.finalSubj_monthly_util_2 AS */
-/*SELECT a.**/
-/*    , b.**/
-/*FROM tmp.finalSubj_monthly_util_1 as a*/
-/*LEFT JOIN data.rae as b*/
-/*on a.enr_county = b.county;*/
-/*QUIT;*/
 
         * HOLD on this - Sum the month? What about clmclass then? ;
         proc sql;

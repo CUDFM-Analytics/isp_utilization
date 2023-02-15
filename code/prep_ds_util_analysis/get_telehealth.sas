@@ -112,3 +112,26 @@ SELECT *
 FROM   data.teleCare_monthly
 WHERE  mcaid_id IN ( SELECT mcaid_id FROM data.memlist ) ; 
 QUIT; 
+
+proc contents data = data.teleCare_monthly; run;
+
+proc sort data = data.teleCare_monthly; run;
+
+
+proc print data = data.teleCare_monthly (obs = 10000) ;
+var month n_tele pd_tele ; 
+format month date9.;
+run;
+
+data teleCare_monthly;
+set  data.teleCare_monthly;
+format month date9.;
+run; 
+
+PROC FREQ 
+     DATA = teleCare_monthly;
+     TABLES month ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'Frequency month';
+RUN; 
+TITLE; 
+
