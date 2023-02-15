@@ -24,7 +24,7 @@
   * for intermediate files - files that are just for creating future tables but still want to keep
   proc contents, freqs too: ;
   %LET data_interim = C:/Data/isp_util2/data/data_interim;
-  LIBNAME interim "&data_interim"; 
+  LIBNAME tmp "&data_interim"; 
 
   %LET hcpf     = S:/FHPC/DATA/HCPF_Data_files_SECURE;
   %LET ana = S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset;
@@ -39,7 +39,7 @@
 * OPTIONS ---------------------------; 
   OPTIONS NOFMTERR
           MPRINT MLOGIC SYMBOLGEN
-          FMTSEARCH =(ana, data, interim, raw, varlen, work);
+          FMTSEARCH =(ana, data, tmp, raw, varlen, work);
 
 proc format;
 value agecat  1="0-19" 2="20-64" 3="65+";

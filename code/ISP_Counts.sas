@@ -59,23 +59,23 @@ run; *6155304  ;
 proc sql; 
 create table simisp.AA_Question1_notmissing as
 select FY
-	, pcmp_loc_ID
-	, clinicname
-	, count(distinct clnt_ID) as n_client_IDs
-	from ISP_Medlong
-	where FY ne .
-	group by FY, clinicname, pcmp_loc_id;
+    , pcmp_loc_ID
+    , clinicname
+    , count(distinct clnt_ID) as n_client_IDs
+    from ISP_Medlong
+    where FY ne .
+    group by FY, clinicname, pcmp_loc_id;
 quit; 
 
 proc sql; 
 create table simisp.AA_Question1_Unmatched as
 select FY
-	, pcmp_loc_ID
-	, clinicname
-	, count(distinct clnt_ID) as n_client_IDs
-	from ISP_Medlong
-	where FY = .
-	group by FY, clinicname, pcmp_loc_id;
+    , pcmp_loc_ID
+    , clinicname
+    , count(distinct clnt_ID) as n_client_IDs
+    from ISP_Medlong
+    where FY = .
+    group by FY, clinicname, pcmp_loc_id;
 quit; 
 
 
@@ -83,28 +83,28 @@ quit;
 
 proc sql;
 create table distinctIDS_ISP as
-	select count(distinct splitID) as distinct_splitIDs
-	 , count(splitID) as total_split
-	 , count(distinct practiceNPI) as distinct_npis
-	 , count(PracticeNPI) as total_NPI
-	 , count(distinct pcmp_loc_id) as distinct_pcmp
-	 , count(pcmp_loc_id) as total_PCMP
-	 , count(distinct clnt_id) as distinct_clientID
-	 , count(clnt_id) as total_clientIDS
-	 , count(distinct month) as distinct_month
-	 , count(month) as n_months
-	from isp_medlong;
+    select count(distinct splitID) as distinct_splitIDs
+     , count(splitID) as total_split
+     , count(distinct practiceNPI) as distinct_npis
+     , count(PracticeNPI) as total_NPI
+     , count(distinct pcmp_loc_id) as distinct_pcmp
+     , count(pcmp_loc_id) as total_PCMP
+     , count(distinct clnt_id) as distinct_clientID
+     , count(clnt_id) as total_clientIDS
+     , count(distinct month) as distinct_month
+     , count(month) as n_months
+    from isp_medlong;
 quit;
 
 proc sql; 
 create table countsNPI_PCMP_perSplit
 select splitID
-	, practiceNPI
-	, count(practiceNPI) as NPIperSplit
-	, pcmp_loc_id
-	, count(PCMP_LOC_ID) as pmcppersplit
-	from simisp.isp_masterIDS_names
-	group by splitID;
+    , practiceNPI
+    , count(practiceNPI) as NPIperSplit
+    , pcmp_loc_id
+    , count(PCMP_LOC_ID) as pmcppersplit
+    from simisp.isp_masterIDS_names
+    group by splitID;
 quit;
 
 
@@ -125,9 +125,9 @@ tables FY; run;
 proc sql;
 create table ispcount1 as
 select pcmp_loc_ID
-	, clinicname
-	, month
-	, count(distinct clnt_id) as n_client_id
+    , clinicname
+    , month
+    , count(distinct clnt_id) as n_client_id
 from ISP_MEDLONG group by pcmp_loc_ID, clinicname, month;
 quit;  *3992, 3 (got 20 more than the other day... );
 
@@ -190,9 +190,9 @@ where N >= 6;
 run; *555446;
 
 proc format;
-VALUE SixMos_	0 = "No"
-				1 = "Yes"
-				Other ='';
+VALUE SixMos_   0 = "No"
+                1 = "Yes"
+                Other ='';
 PICTURE pct (ROUND) low-high='009%';
 RUN;
 
@@ -204,18 +204,18 @@ SixMonths_f = put(SixMonths, SixMos_.);
 run;
 
 *Use to delete if re-running: ;
-/*		proc datasets library=work nolist;*/
-/*		delete Months6b;*/
-/*		quit;*/
+/*      proc datasets library=work nolist;*/
+/*      delete Months6b;*/
+/*      quit;*/
 
 proc print data = Months6b (obs=50); run;
 
 proc format; 
 value FY
-	1 = "FY 1"
-	2 = "FY 2"
-	3 = "FY 3"
-	4 = "FY 4";
+    1 = "FY 1"
+    2 = "FY 2"
+    3 = "FY 3"
+    4 = "FY 4";
 run;
 
 proc freq data = Months6b;
@@ -225,28 +225,28 @@ run; *1=matches 555446;
 
 
 proc report data = Months6b nowd split='~'
-	style(summary)=header;
-	title "FY: Member ID in Practice >= 6 months~___";
-	column pcmp_loc_id FY FY,SixMonths_F,(n pctFY) Delta4Y ;
-	define pcmp_loc_id 		/  group style(column)=Header;
-	define FY 				/ group across format = FY.;
-	define SixMonths_F 		/ across;
-	define n				/ 'n' f=comma6.;
-	define pctFY			/ '%'  COMPUTED format=percent9.1;
-	define Delta4Y			/ 'FY4-FY1' computed style(column)=Header;
-	compute pctFY;
-		_c7_=_c6_/_c2_;
-		_c9_=_c8_/_c2_;
-		_c11_=_c10_/_c3_;
-		_c13_=_c12_/_c3_;
-		_c15_=_c14_/_c4_;
-		_c17_=_c16_/_c4_;
-		_c19_=_c18_/_c5_;
-		_c21_=_c20_/_c5_;
-	endcomp;
-	compute Delta4Y;
-		_c22_=_c5_-_c2_;
-	endcomp;
+    style(summary)=header;
+    title "FY: Member ID in Practice >= 6 months~___";
+    column pcmp_loc_id FY FY,SixMonths_F,(n pctFY) Delta4Y ;
+    define pcmp_loc_id      /  group style(column)=Header;
+    define FY               / group across format = FY.;
+    define SixMonths_F      / across;
+    define n                / 'n' f=comma6.;
+    define pctFY            / '%'  COMPUTED format=percent9.1;
+    define Delta4Y          / 'FY4-FY1' computed style(column)=Header;
+    compute pctFY;
+        _c7_=_c6_/_c2_;
+        _c9_=_c8_/_c2_;
+        _c11_=_c10_/_c3_;
+        _c13_=_c12_/_c3_;
+        _c15_=_c14_/_c4_;
+        _c17_=_c16_/_c4_;
+        _c19_=_c18_/_c5_;
+        _c21_=_c20_/_c5_;
+    endcomp;
+    compute Delta4Y;
+        _c22_=_c5_-_c2_;
+    endcomp;
 rbreak after / summarize;
 run;
 
@@ -280,28 +280,28 @@ proc print data = ispcount2 noobs; run;
 ods excel options(sheet_interval= "now" sheet_name = "Months_FYs");
 
 proc report data = Months6b nowd split='~'
-	style(summary)=header;
-	title "FY: Member ID in Practice >= 6 months~___";
-	column pcmp_loc_id FY FY,SixMonths_F,(n pctFY) Delta4Y ;
-	define pcmp_loc_id 		/  group style(column)=Header;
-	define FY 				/ group across format = FY.;
-	define SixMonths_F 		/ across;
-	define n				/ 'n' f=comma6.;
-	define pctFY			/ '%'  COMPUTED format=percent9.1;
-	define Delta4Y			/ 'FY4-FY1' computed style(column)=Header;
-	compute pctFY;
-		_c7_=_c6_/_c2_;
-		_c9_=_c8_/_c2_;
-		_c11_=_c10_/_c3_;
-		_c13_=_c12_/_c3_;
-		_c15_=_c14_/_c4_;
-		_c17_=_c16_/_c4_;
-		_c19_=_c18_/_c5_;
-		_c21_=_c20_/_c5_;
-	endcomp;
-	compute Delta4Y;
-		_c22_=_c5_-_c2_;
-	endcomp;
+    style(summary)=header;
+    title "FY: Member ID in Practice >= 6 months~___";
+    column pcmp_loc_id FY FY,SixMonths_F,(n pctFY) Delta4Y ;
+    define pcmp_loc_id      /  group style(column)=Header;
+    define FY               / group across format = FY.;
+    define SixMonths_F      / across;
+    define n                / 'n' f=comma6.;
+    define pctFY            / '%'  COMPUTED format=percent9.1;
+    define Delta4Y          / 'FY4-FY1' computed style(column)=Header;
+    compute pctFY;
+        _c7_=_c6_/_c2_;
+        _c9_=_c8_/_c2_;
+        _c11_=_c10_/_c3_;
+        _c13_=_c12_/_c3_;
+        _c15_=_c14_/_c4_;
+        _c17_=_c16_/_c4_;
+        _c19_=_c18_/_c5_;
+        _c21_=_c20_/_c5_;
+    endcomp;
+    compute Delta4Y;
+        _c22_=_c5_-_c2_;
+    endcomp;
 rbreak after / summarize;
 run;
 
@@ -340,7 +340,7 @@ run;
 /*proc sql; */
 /*create table provData as*/
 /*  select distinct PROV_NPI_ID length = &PROV_NPI_ID*/
-/*	, PROV_LOC_ID length = &PROV_LOC_ID*/
+/*  , PROV_LOC_ID length = &PROV_LOC_ID*/
 /*  from db.PROV_LOC_DIM_V*/
 /*where prov_NPI_ID ne ' ';*/
 /*quit; *137680;*/
@@ -400,13 +400,13 @@ run;
 /*proc sql; */
 /*create table simisp.compareProv as */
 /*select a.prov_NPI_ID*/
-/*	, a.pcmp_loc_id*/
-/*	, b.splitID*/
-/*	, b.practiceNPI*/
-/*	, b.pcmp_loc_id*/
-/*	from simisp.isp_provdata_FromBDM as a*/
-/*	left join simisp.isp_masterIDS as b*/
-/*	on a.prov_NPI_ID=b.practiceNPI;*/
+/*  , a.pcmp_loc_id*/
+/*  , b.splitID*/
+/*  , b.practiceNPI*/
+/*  , b.pcmp_loc_id*/
+/*  from simisp.isp_provdata_FromBDM as a*/
+/*  left join simisp.isp_masterIDS as b*/
+/*  on a.prov_NPI_ID=b.practiceNPI;*/
 /*quit; *185, 4; */
 /**/
 /*proc sort data = simisp.compareProv nodupkey; by _all_; run; *158;*/

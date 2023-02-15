@@ -197,9 +197,7 @@ ID  month;
 VAR n_diff_mar2020 pct_diff_mar2020;
 run; *;
 
-* ------ 03 table: Telehealth PCMP count only ---------------------------------------; 
 
-proc print data = 
 
 
 

@@ -106,3 +106,9 @@ WHERE month ge '01Jul2015'd
 AND   month le '30Jun2022'd; 
 RUN; 
 
+PROC SQL; 
+CREATE TABLE data.memlist_tele_monthly AS
+SELECT *
+FROM   data.teleCare_monthly
+WHERE  mcaid_id IN ( SELECT mcaid_id FROM data.memlist ) ; 
+QUIT; 

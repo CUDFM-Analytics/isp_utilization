@@ -4,10 +4,9 @@ Create member list from qrylong_y15_22
 ******************************************************;
 
 PROC SORT 
-DATA  = data.qrylong_y15_22 ( keep= mcaid_id month pcmp_loc_ID rae_assign ) NODUPKEY
+DATA  = data.qrylong_y15_22 ( keep= mcaid_id month pcmp_loc_ID ) NODUPKEY
 OUT   = memlist_0; 
 WHERE pcmp_loc_ID ne ' ' 
-AND   rae_assign = 1 
 AND   month ge '01Jul2019'd 
 AND   month le '30Jun2022'd;
 BY    mcaid_id; 

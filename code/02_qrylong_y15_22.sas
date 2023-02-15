@@ -38,20 +38,9 @@ WHERE  month ge '01Jul2015'd
 AND    month le '30Jun2022'd 
 AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
 AND    managedCare = 0
-AND    pcmp_loc_id ne '';
+AND    pcmp_loc_id ne ''
+AND    rae_assign = 1;
 RUN;  * 81494187, 18;
-
-PROC FREQ 
-     DATA = qrylong_y15_22;
-     TABLES pcmp_type / ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-     TITLE  'Frequency pcmp_type all records';
-RUN; 
-TITLE; 
-
-PROC FREQ 
-     DATA = qry_longitudinal;
-     TABLES pcmp_loc_type_cd ;
-RUN; 
 
 * ; 
 PROC SQL; 
@@ -97,9 +86,7 @@ RUN; * 20230214 FEB.QRYLONG_Y15_22 has 78680146 observations and 25 variables.
 
 proc datasets nolist lib=work; delete qrylong_y15_22; quit; run; 
 
-PROC CONTENTS 
-     DATA = data.qrylong_y15_22 VARNUM;
-RUN;  
+* join rae info ; 
 
 PROC SQL; 
 CREATE TABLE data.qrylong_y15_22 AS 
@@ -111,5 +98,7 @@ FROM qrylong_y15_22b AS A
 LEFT JOIN data.rae AS b
 ON a.enr_cnty = b.hcpf_county_code_c; 
 QUIT; 
+
+
 
 

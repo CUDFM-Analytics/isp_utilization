@@ -85,3 +85,90 @@ NOTE: DATA statement used (Total process time):
 *=====================================================
 Get ISP records from redcap 
 ======================================================;
+
+
+
+
+
+             FORMAT NAME: $PROV_TYP_CD LENGTH: 47                   ‚            
+            ‚   MIN LENGTH:   1  MAX LENGTH:  47  DEFAULT LENGTH:  47  FUZZ:        0  ‚            
+            ‡ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ…ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ…ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ‰            
+            ‚START           ‚END             ‚LABEL  (VER. 9.4     08FEB2023:14:22:15)‚            
+            ‡ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒˆƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒˆƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ‰            
+            ‚01              ‚01              ‚Hospital - General                      ‚            
+            ‚02              ‚02              ‚Hospital - Mental                       ‚            
+            ‚04              ‚04              ‚Dentist                                 ‚            
+            ‚05              ‚05              ‚Physician                               ‚            
+            ‚06              ‚06              ‚Podiatrist                              ‚            
+            ‚07              ‚07              ‚Optometrist                             ‚            
+            ‚08              ‚08              ‚Optical Outlet                          ‚            
+            ‚09              ‚09              ‚Pharmacy                                ‚            
+            ‚10              ‚10              ‚Home Health                             ‚            
+            ‚11              ‚11              ‚Case Management Agency                  ‚            
+            ‚12              ‚12              ‚Independent Laboratory                  ‚            
+            ‚13              ‚13              ‚Transportation                          ‚            
+            ‚14              ‚14              ‚Supply                                  ‚            
+            ‚16              ‚16              ‚Clinic  - Practitioner                  ‚            
+            ‚17              ‚17              ‚Physical Therapist                      ‚            
+            ‚18              ‚18              ‚Chiropractor-QMB                        ‚            
+            ‚19              ‚19              ‚Audiologist                             ‚            
+            ‚20              ‚20              ‚Nursing Facility                        ‚            
+            ‚21              ‚21              ‚Nursing Facility - ICF/IID              ‚            
+            ‚22              ‚22              ‚Nurse Midwife                           ‚            
+            ‚23              ‚23              ‚HMO/PPO                                 ‚            
+            ‚24              ‚24              ‚Non-Physician Practitioner - Individual ‚            
+            ‚25              ‚25              ‚Non-Physician Practitioner - Group      ‚            
+            ‚26              ‚26              ‚Osteopath                               ‚            
+            ‚27              ‚27              ‚Speech Therapist                        ‚            
+            ‚28              ‚28              ‚Occupational Therapist                  ‚            
+            ‚29              ‚29              ‚Family Planning Clinic                  ‚            
+            ‚30              ‚30              ‚Psychiatric Residential Treatment Facili‚            
+            ‚31              ‚31              ‚BHO                                     ‚            
+            ‚32              ‚32              ‚Federally Qualified Health Center       ‚            
+            ‚33              ‚33              ‚Dialysis Center                         ‚            
+            ‚35              ‚35              ‚Community Mental Health Center          ‚            
+            ‚36              ‚36              ‚Home & Community Based Services (HCBS)  ‚            
+            ‚37              ‚37              ‚Licensed Psychologist                   ‚            
+            ‚38              ‚38              ‚Licensed Behavioral Health Clinician    ‚            
+            ‚39              ‚39              ‚Physician Assistant                     ‚            
+            ‚40              ‚40              ‚Certified Registered Nurse Anesthetist (‚            
+            ‚41              ‚41              ‚Nurse Practitioner                      ‚            
+            ‚44              ‚44              ‚Ambulatory Surgical Center              ‚            
+            ‚45              ‚45              ‚Rural Health Clinic                     ‚            
+            ‚46              ‚46              ‚Development Evaluation Clinic           ‚            
+            ‚47              ‚47              ‚Clinic  - Dental                        ‚            
+            ‚48              ‚48              ‚Rehabilitation Agency                   ‚            
+            ‚49              ‚49              ‚X-Ray Facility                          ‚            
+            ‚50              ‚50              ‚Hospice                                 ‚            
+            ‚51              ‚51              ‚School Health Services                  ‚            
+            ‚52              ‚52              ‚Residential Child Care Facility         ‚            
+            „ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒˆƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒˆƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ†            
+            ‚                   FORMAT NAME: $PROV_TYP_CD LENGTH: 47                   ‚            
+            ‚   MIN LENGTH:   1  MAX LENGTH:  47  DEFAULT LENGTH:  47  FUZZ:        0  ‚            
+            ‡ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ…ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ…ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ‰            
+            ‚START           ‚END             ‚LABEL                           (CONT'D)‚            
+            ‡ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒˆƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒˆƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ‰            
+            ‚53              ‚53              ‚Billing Agent                           ‚            
+            ‚54              ‚54              ‚Nursing Faci Oxygen Supplier - OBSOLETE ‚            
+            ‚55              ‚55              ‚Medicare Buy In - OBSOLETE              ‚            
+            ‚56              ‚56              ‚Health Insurance Buy In - OBSOLETE      ‚            
+            ‚57              ‚57              ‚Regional Care Collaborative Organization‚            
+            ‚58              ‚58              ‚Birthing Center                         ‚            
+            ‚60              ‚60              ‚Personal Care Agency                    ‚            
+            ‚61              ‚61              ‚Indian Health Services - FQHC           ‚            
+            ‚62              ‚62              ‚Indian Health Services - Pharmacy       ‚            
+            ‚63              ‚63              ‚Substance Use Disorder - Individuals    ‚            
+            ‚64              ‚64              ‚Substance Use Disorder - Clinics        ‚            
+            ‚65              ‚65              ‚Foreign Teaching Physician              ‚            
+            ‚66              ‚66              ‚Dental Hygienist                        ‚            
+            ‚68              ‚68              ‚Qualified Residential Treatment Programs‚            
+            ‚73              ‚73              ‚Transportation                          ‚            
+            ‚74              ‚74              ‚Supply                                  ‚            
+            ‚75              ‚75              ‚Pharmacist                              ‚            
+            ‚76              ‚76              ‚Genetic Counselor                       ‚            
+            ‚81              ‚81              ‚Administrative Services Organization (AS‚            
+            ‚83              ‚83              ‚Behavioral Therapy Clinic               ‚            
+            ‚84              ‚84              ‚Behavioral Therapist                    ‚            
+            ‚85              ‚85              ‚Regional Accountable Entity             ‚            
+            ‚86              ‚86              ‚Community Clinic                        ‚            
+            ‚87              ‚87              ‚Alternative Living Residence (ALR)    

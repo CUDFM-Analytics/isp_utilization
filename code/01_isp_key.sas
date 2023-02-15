@@ -5,13 +5,18 @@ SAVED as data.redcap
 ******************************************************;
 %LET redcap = "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/isp_redcap.csv";
 * select columns and convert id_split to numeric (others??); 
+proc import datafile = &redcap
+	out  = redcap0
+	dbms = csv
+	replace;
+run;
+
 
 PROC IMPORT 
      DATAFILE = &redcap
      OUT      = redcap0 
-     DBMS     = dlm
+     DBMS     = csv
      REPLACE;
-DELIMITER     = ",";
 RUN; 
 
 
@@ -70,3 +75,12 @@ PROC SORT DATA = data.isp_key NODUPKEY; BY _ALL_ ; RUN;
 * 30 duplicates, 123 remain; 
 
 PROC PRINT DATA = data.isp_key ; RUN; 
+
+ODS GRAPHICS ON;
+PROC FREQ 
+     DATA = data.isp_key;
+     TABLES _all_ ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'Frequency isp_key';
+RUN; 
+TITLE; 
+ODS GRAPHICS OFF;
