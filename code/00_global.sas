@@ -32,7 +32,7 @@
 
   * exports / excel files out, reports; 
   %LET report = &util/reports;
-
+  %put &report;
   * interim / temporary files like proc contents output for eda mid-processing, etc. 
   proc contents, freqs too: ;
   %LET tmp = &util/tmp;
@@ -79,4 +79,9 @@ VALUE capvsh
       ;
 VALUE matchn  
       1="Both match" 2="Billing match" 3="Rendering match" 4="Neither match";
+
+VALUE pcmp_type_rc
+      32 = "FQHC"    45 = "RHC"     51 = "SHS"      61 = "IHS"      62 = "IHS"      Other = "Other"; 
+
 RUN;
+

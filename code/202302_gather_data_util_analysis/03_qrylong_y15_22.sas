@@ -8,6 +8,9 @@
  LAST RAN/STATUS  : 20230214
  SEE              : ISP_Utilization_Analytic_Plan_20221118.docx, data_specs.xlsx     
 ***********************************************************************************************;
+* PROJECT PATHS, MAPPING; 
+%INCLUDE "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/code/00_global.sas";
+* uses formats ;
 
 DATA qry_longitudinal;            SET ana.qry_longitudinal;            RUN; *02/09/23 [1,177,273,652 : 25];
 DATA qry_demographics;            SET ana.qry_demographics;            RUN; *02/09/23 [  3008709     :  7];
@@ -15,16 +18,6 @@ DATA qry_demographics;            SET ana.qry_demographics;            RUN; *02/
 ******************************************************
 Initial Datasteps before merging
 ******************************************************;
-proc format ; 
-value pcmp_type_rc
-32 = "FQHC"
-45 = "RHC" 
-51 = "SHS"
-61 = "IHS"
-62 = "IHS"
-Other = "Other"; 
-run; 
-* ;
 
 DATA   qrylong_y15_22   ( DROP = managedCare ); 
 LENGTH mcaid_id $11; 
@@ -86,8 +79,7 @@ RUN; * 20230214 FEB.QRYLONG_Y15_22 has 78680146 observations and 25 variables.
 
 proc datasets nolist lib=work; delete qrylong_y15_22; quit; run; 
 
-* join rae info ; 
-
+* ====join rae info ========================================; 
 PROC SQL; 
 CREATE TABLE data.qrylong_y15_22 AS 
 SELECT a.*

@@ -1,10 +1,12 @@
 * PROJECT PATHS, MAPPING; 
 %LET ROOT = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization;
 %INCLUDE "&ROOT./code/00_global.sas";
+
 ******************************************************
 GET ISP info needed from REDCap 
 SAVED as data.redcap
 ******************************************************;
+
 %LET redcap = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/isp_redcap.csv;
 * select columns and convert id_split to numeric (others??); 
 proc import datafile = "&redcap"
@@ -84,11 +86,4 @@ PROC FREQ
 RUN; 
 TITLE; 
 ODS GRAPHICS OFF;
-
-* meeting with MG 02/15
-* Use isp_key and qry_longitudinal to create a list of ISP_pcmps and non-isp_pcmps; 
-
-DATA isp_key;
-SET  data.isp_key; 
-
 

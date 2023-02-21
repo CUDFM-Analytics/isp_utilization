@@ -31,3 +31,12 @@ PROC SQL;
 from bho_1
 group by MCAID_ID, month;
 quit; 
+
+* ==== add format FY7 to bho dataset 02/21 =======================; 
+data  data.bho_fy15_22; 
+set   data.bho_fy15_22; 
+format month date9.;
+fy7=year(intnx('year.7', month, 0, 'BEGINNING')); 
+run; 
+
+proc contents data = data.bho_fy15_22; run;

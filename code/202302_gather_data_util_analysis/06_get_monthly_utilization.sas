@@ -61,7 +61,8 @@ WHERE mcaid_id in ( SELECT mcaid_id FROM data.memlist )
 GROUP BY mcaid_id, clmClass_r, month;
 QUIT;  
 
-
+proc print data = data.util_month_y15_22 (obs = 5000) ; run; 
+proc freq data = data.util_month_y15_22 ; tables month*fy7 ; run; 
 /**/
 /**/
 /**/

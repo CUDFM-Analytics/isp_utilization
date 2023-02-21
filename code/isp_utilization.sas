@@ -13,15 +13,48 @@
 %LET ROOT = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization;
 %INCLUDE "&ROOT./code/00_global.sas";
 
-* join members and monthly util - monthly util is 2015-2022, memlist is 19-22; 
-PROC SQL;
-CREATE TABLE util_monthly_fy7_2 as
-SELECT a.*
-    , b.*
-FROM memlist as A
-LEFT JOIN util_monthly_fy7_1 as b
-ON a.mcaid_id = b.mcaid_id;
-QUIT;  
+* Combine datasets into monthly files;  
+proc sort data = data.qrylong_y15_22 ; by mcaid_id ;   *53384196; 
+proc sort data = data.memlist        ; by mcaid_id ; run ; 
+
+* ==== reduce qrylong to memlist ids =======================================;
+data  analysis_data0;
+merge data.qrylong_y15_22 ( in = a ) data.memlist ( in = b keep = mcaid_id ) ; 
+by    mcaid_id ; 
+run ;
+*NOTE: There were 53384196 observations read from the data set DATA.QRYLONG_Y15_22.
+NOTE: There were 1594687 observations read from the data set DATA.MEMLIST.
+NOTE: The data set WORK.ANALYSIS_DATA0 has 53384196 observations and 28 variables.;
+
+data analysis_data0; 
+set  analysis_data0; 
+format month date9.;
+fy7=year(intnx('year.7', month, 0, 'BEGINNING')); 
+run; 
+
+proc contents data = analysis_data0 varnum ; run; 
+
+
+
+* ==== merge ================================================================;
+proc sql; 
+create table analysis_data1 as 
+select a.*
+/*     join memlist variables */
+     , b.pcmp_loc_id
+     , b.id_split
+     , b.dt_prac_isp
+     , b.ind_isp
+/*     join bh utilization  */
+     , c.bh_n_er
+     , c.bh_n_other
+/*     join telehealth utilization  */
+     , d.
+from analysis_data0 as a
+left join data.memlist as b
+on a.mcaid_id = b.mcaid_id and a.month = b.month
+left join 
+quit;  
 
 PROC SQL; 
 CREATE TABLE tmp.util_monthly_fy7_2 AS 

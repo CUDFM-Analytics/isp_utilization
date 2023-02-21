@@ -19,7 +19,8 @@ PROC FREQ
 RUN; 
 
 PROC PRINT 
-     DATA = data.memlist (OBS = 1000);
+     DATA = data.qrylong_y19_22 (OBS = 1000);
+     WHERE flag = 1;
 RUN; 
 
 PROC FREQ 

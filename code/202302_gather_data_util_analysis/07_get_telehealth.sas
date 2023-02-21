@@ -95,16 +95,16 @@ quit;
 
 DATA  data.teleCare_monthly;
 SET   teleCare_monthly;
-DATA data.teleCare_FINAL;
-SET  teleCare_FINAL;
 RUN;
 
 * Get FY7 years ;
-DATA  data.teleCare_monthly;
-SET   data.teleCare_monthly;
+DATA  data.teleCare_monthly ;
+SET   data.teleCare_monthly ;
 WHERE month ge '01Jul2015'd 
-AND   month le '30Jun2022'd; 
-RUN; 
+AND   month le '30Jun2022'd ; 
+format month date9.;
+fy7=year(intnx('year.7', month, 0, 'BEGINNING')) ; 
+RUN; *932892, 5; 
 
 PROC SQL; 
 CREATE TABLE data.memlist_tele_monthly AS
@@ -113,23 +113,10 @@ FROM   data.teleCare_monthly
 WHERE  mcaid_id IN ( SELECT mcaid_id FROM data.memlist ) ; 
 QUIT; 
 
-proc contents data = data.teleCare_monthly; run;
-
-proc sort data = data.teleCare_monthly; run;
-
-
-proc print data = data.teleCare_monthly (obs = 10000) ;
-var month n_tele pd_tele ; 
-format month date9.;
-run;
-
-data teleCare_monthly;
-set  data.teleCare_monthly;
-format month date9.;
-run; 
+proc print data = data.memlist_tele_monthly ( obs = 1000) ; run;
 
 PROC FREQ 
-     DATA = teleCare_monthly;
+     DATA = data.teleCare_monthly;
      TABLES month ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
      TITLE  'Frequency month';
 RUN; 
