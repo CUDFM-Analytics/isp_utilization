@@ -111,10 +111,24 @@ RUN; *101, 955;
 * --- Total unique member ids for each pcmp, all flags ----------------------------------------------- ;        
 PROC SQL;
 CREATE TABLE n_members AS 
-SELECT pcmp_loc_id
-     , count ( distinct mcaid_id ) as n_members
+SELECT count ( distinct mcaid_id ) as n_members
+FROM data.qrylong_y19_22;
+QUIT; *1657892; 
+
+PROC SQL;
+CREATE TABLE n_members_isp AS 
+SELECT count ( distinct mcaid_id ) as n_members
 FROM data.qrylong_y19_22
-GROUP BY pcmp_loc_id; 
+WHERE pcmp_loc_id IN ( SELECT id_pcmp FROM data.isp_key ) ;
+QUIT; *286609; 
+
+
+PROC SQL;
+CREATE TABLE n_pcmp AS 
+SELECT count ( pcmp_loc_id ) as n_isp_pcmp
+FROM   data.qrylong_y19_22
+WHERE  pcmp_loc_id IN ( SELECT id_pcmp FROM data.isp_key ) 
+GROUP BY pcmp_loc_id;
 QUIT; *1056, 2; 
 
 PROC PRINT DATA = n_members;

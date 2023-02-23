@@ -1,45 +1,15 @@
+-------------------------------------------
+Feb 21, 2023 
+Meeting Mark, Miriam, Kim
+
+need quarter variable 1:16
+need ind_isp EVER - not just time varying covariate
+Looked at Carter's new AVP program for hurdle model. Have ready for 2/23 meeting with MD. 
 
 
-Data log: Meeting with MG / ISP util to be complete by 1:00: Tasks: 
+-------------------------------------------
 
-1) Find meeting notes from 02/01 meeting
-2) Review isp_util_vars_20230209.xlsx (renamed to find most recent version) 
-------------------------------------------------------------------------------------------------------------------
-
-Variable Change: 20230207 re: RACE, Carter and Mark emails: add here -- > 
-
-------------------------------------------------------------------------------------------------------------------
-Meeting Notes
-
-Jan 13 2023
-
-Mark/Kim
-Re: Purple parts of ISP Utilization Analysis Plan (might be for ISP HCPF pres too)
-pg 5 Analytic Plan 
-
-re: 1 ) already have
-re: 2 ) change to relative to 2020
-re: 3 & 4 ) telehealth > pcmp's delivering it > get from Carter
-		    doesn't matter WHO MEMBER IS: if attrib to that , then calc; really looking for any tlh claim for that pcmp
-			clm_line probably line file or clm_dimension
-			not worry about n_tlh visits per month - just if they ARE / AREN'T 
-			hopefully it's in the header file bc that's pcmp  
-			pcmp-level measures  
-			
-re: 5 ) now looking at members attributed BY QUARTER 
-		need to assign member to unique pcmp per quarter 
-		kind of like line 1 but calculate quarters (not monthly)
-		assign to the latest one if >1
-		
-Quarterly but PMPM average for any months eligible in that quarter: 
-	if only 1 month/q, use that number
-	if >=2, average the PMPM Total FFS
-	
-------------------------------------------------------------------------------------------------------------------
-
-Carter: see var sources
-use COUNTY var from LONGITUDINAL > not other one
-qry_monthly_utilization > one row pmpm > take longit., subset months with eligibility, join to util & take rows that match 
+Emails from Carter re: race - check them
 
 -------------------------------------------
 

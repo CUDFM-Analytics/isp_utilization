@@ -3,13 +3,17 @@ PROC CONTENTS
 RUN;
 
 PROC CONTENTS 
-     DATA = data.memlist VARNUM;
+     DATA = analysis_data0 VARNUM;
+RUN;
+
+PROC CONTENTS 
+     DATA = data.util_month_y15_22 VARNUM;
 RUN;
 
 PROC FREQ 
-     DATA = data.redcap;
-     TABLES dt_start_isp;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-     TITLE  'Frequency dt_start_isp';
+     DATA = analysis_data0;
+     TABLES fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'Frequency fy';
 RUN; 
 TITLE; 
 
@@ -19,8 +23,7 @@ PROC FREQ
 RUN; 
 
 PROC PRINT 
-     DATA = data.qrylong_y19_22 (OBS = 1000);
-     WHERE flag = 1;
+     DATA = analysis_data0 (OBS = 1000);
 RUN; 
 
 PROC FREQ 

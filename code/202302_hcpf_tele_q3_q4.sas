@@ -1,7 +1,7 @@
 **********************************************************************************************
  PROJECT       : ISP 
- PROGRAMMER    : KTW / Carter Sevick
- DATE RAN      : 01-26-2023
+ PROGRAMMER    : KTW 
+ DATE RAN      : 02-21-2023
  PURPOSE       : Get telehealth for ISP Utilization
  INPUT FILE/S  : 
                                   
@@ -60,22 +60,19 @@ data telecare;
 run; *There were 509386139 observations read from the data set ANA.CLM_LNE_FACT_V.
 NOTE: The data set WORK.TELECARE has 70872713 observations and 32 variables.;
 
-proc print data = telecare (obs = 1000); run; 
-proc contents data = telecare varnum; run; 
+proc contents data = telecare; run; 
 
 data  telecare2;
 set   telecare  ( keep = bill_prov_loc_id rend_prov_loc_id icn_nbr mcaid_id teleCare teleElig lne_frst_svc_dt) ;
 bill_prov_loc_id_num = input(bill_prov_loc_id, best12.);
 rend_prov_loc_id_num = input(rend_prov_loc_id, best12.);
 
-lne_frst_svc_dt = put(datepart(lne_frst_svc_dt), yymmdd10.);
-format lne_frst_svc_dt date9.;
-where  lne_frst_svc_dt ge '01JUL2019'd
-and    lne_frst_svc_dt le '01JUN2022'd;
+where datepart(lne_frst_svc_dt) ge '01JUL2019'd
+and   datepart(lne_frst_svc_dt) le '01JUN2022'd;
 run; 
 
 proc sql; 
-create table telecare2 as 
+create table telecare3 as 
 select bill_prov_loc_id
      , rend_prov_loc_id 
      , icn_nbr 
@@ -83,28 +80,29 @@ select bill_prov_loc_id
      , teleCare 
      , teleElig 
      , lne_frst_svc_dt
-from telecare; 
+from telecare2; 
 quit; 
 
-data telecare2;
-set  telecare2; 
+data telecare3;
+set  telecare3; 
 lne_svc_new = datepart(lne_frst_svc_dt);
 format lne_svc_new date9.;
-run;  *70872713;
+run;  
 
-data telecare3;
-set  telecare2; 
+data telecare4;
+set  telecare3; 
 where  lne_svc_new ge '01JUL2019'd
 and    lne_svc_new le '01JUN2022'd;
 bill2 = input(bill_prov_loc_id, best8.);
 rend2 = input(rend_prov_loc_id, best8.);
-run;  *The data set WORK.TELECARE3 has 23324748 observations and 8 variables;
+run;  *The data set WORK.TELECARE3 has 23324748 observations and 8 variables
+Errors are due to the N/A's in the character columns;
 
 proc contents data = telecare3 varnum; run; 
 
 * Get lists of isp / non-isp id's, add flag;
 proc sql; 
-create table telecare4 as 
+create table telecare5 as 
 select bill_prov_loc_id
      , rend_prov_loc_id
      , bill2 in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_bill_isp
@@ -116,12 +114,12 @@ select bill_prov_loc_id
      , teleElig
      , lne_svc_new
      , lne_frst_svc_dt
-FROM telecare3;
+FROM telecare4;
 QUIT; 
 
-
-data telecare5 ;
-set  telecare4;
+* prioritize the rend_ columns; 
+data telecare6;
+set  telecare5;
 IF flag_rend_isp = 1 then flag_bill_isp = .;
 IF flag_rend_nonisp = 1 then flag_bill_nonisp = . ; 
 flag_sum = sum(flag_bill_isp, flag_rend_isp, flag_bill_nonisp, flag_rend_nonisp); 
@@ -129,21 +127,37 @@ IF rend_prov_loc_id = "N/A" then rend_prov_loc_id = "";
 IF bill_prov_loc_id = "N/A" then bill_prov_loc_id = "";
 run; 
 
-proc freq data = telecare5; tables flag:  ; run ;
+* copy the loc_id to a new column based on the match; 
+data telecare7; 
+set  telecare6; 
+IF flag_rend_isp = 1    then pcmp = rend_prov_loc_id;
+IF flag_bill_isp = 1    then pcmp = bill_prov_loc_id; 
+IF flag_rend_nonisp = 1 then pcmp = rend_prov_loc_id;
+IF flag_bill_nonisp = 1 then pcmp = bill_prov_loc_id; 
+run; 
+
+proc freq data = telecare7; tables flag_rend_isp ; run; 
+proc print data = telecare7 ; where flag_rend_isp = 1 ; run ;  
 
 * Find missing values; 
 proc sql; 
 select nmiss(bill_prov_loc_id) as missing_bill
     , nmiss(rend_prov_loc_id) as missing_rend
-from telecare5; 
+from telecare7; 
 quit; 
 
-data telecare6 ( keep = pcmp bill_prov_loc_id rend_prov_loc_id icn_nbr telecare teleElig lne_svc_new isp non_isp ) ; 
-set  telecare5 ; 
-ISP     = sum(flag_bill_isp, flag_rend_isp);
-non_isp = sum(flag_bill_nonisp, flag_rend_nonisp);
-PCMP    = sum(ISP, non_isp); 
+proc format ; 
+value ind_isp_
+0 = "non-ISP"
+1 = "ISP";
 run; 
+
+data telecare8 ( keep = pcmp ind_pcmp bill_prov_loc_id rend_prov_loc_id icn_nbr telecare teleElig lne_svc_new isp non_isp ) ; 
+set  telecare7 ; 
+ISP      = sum(flag_bill_isp, flag_rend_isp);
+non_isp  = sum(flag_bill_nonisp, flag_rend_nonisp);
+ind_PCMP = sum(ISP, non_isp); 
+run; *23324748;
 
 * indicators of telehealth and tele-eligible care ;
 proc sql;
@@ -152,11 +166,11 @@ proc sql;
            max(teleCare) as telecare,
            max(teleElig) as teleElig,
            isp,
-           PCMP,
+           ind_PCMP,
            non_isp,
-           bill_prov_loc_id
-    from telecare6
-    group by icn_nbr, bill_prov_loc_id;
+           pcmp
+    from telecare8
+    group by icn_nbr, pcmp;
 quit; *23324748;
 
 * telehealth is: primary care, tele eligible and a telehealth service ;
@@ -169,23 +183,31 @@ create table teleCare_FINAL as
     on a.icn_nbr = b.icn_nbr 
   where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
 
-quit; *: Table WORK.TELECARE_FINAL created, with 1170229 rows and 25 columns.; 
+quit; *: Table WORK.TELECARE_FINAL created, with 1190785 rows and 31 columns.; 
 
 proc print data = teleCare_final (obs=1000); run; 
 
-data tbl.teleCare_final;
+proc format ; 
+value ind_isp_
+0 = "non-ISP"
+1 = "ISP";
+run; 
+
+data data.pcmps_tele;
 set  teleCare_final; 
+format isp ind_isp_.;
 run; 
 
 
 * ==== QUESTION 3: monthy telehealth encounters and costs, per client ===================;
+
 proc sql;
 create table tbl.n_pcmp_tele as
   select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
-         count ( distinct bill_prov_loc_id ) as n_pcmp,
-         isp
-  from tbl.teleCare_FINAL
-  where pcmp = 1
+         count ( distinct pcmp ) as n_pcmp,
+         isp format ind_isp_.
+  from data.pcmps_tele
+  where ind_pcmp = 1
   group by month, isp;
 quit; *65, 3 cols; 
 
@@ -196,63 +218,42 @@ PROC TRANSPOSE DATA = tbl.n_pcmp_tele
 BY  ISP; 
 ID  month; 
 VAR n_pcmp;
-run; *;
+run; *;  
 
 
 * ==== QUESTION 4: percentage of pcmps delivering any telehealth service ==========================;
-proc sql;
-create table pct_pcmp_tele as
-  select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
-         count ( distinct bill_prov_loc_id ) as n_prov_loc_id,
-         pcmp
-  from teleCare_FINAL
-  group by month, pcmp;
-quit; *65, 3 cols; 
+proc sql; 
+create table tbl.n_total_isp as
+select count ( distinct pcmp_loc_id ) as n_total
+from data.ll_fy1922_pcmp_isp;
+quit; *101;
 
-proc format ; 
-value pcmp_
-0 = "non-PCMP"
-1 = "PCMP";
+proc sql; 
+create table tbl.n_total_nonISP as
+select count ( distinct pcmp_loc_id ) as n_total
+from data.ll_fy1922_pcmp_nonisp;
+quit;  *955;
+
+data tbl.pct_tele ; 
+set  tbl.n_pcmp_tele;
+IF isp = 1 then n_total = 101;
+IF isp = 0 then n_total = 955; 
+pct_tele = n_pcmp / n_total;
+format pct_tele percent8.1;
 run; 
 
-proc sql; 
-create table tbl.pct_pcmp_tele as 
-    select month
-         , pcmp format pcmp_.
-         , n_prov_loc_id 
-         , n_prov_loc_id / sum(n_prov_loc_id) as pct format=percent8.1
-         , sum (n_prov_loc_id) as n_prov_month
-from pct_pcmp_tele 
-where month ge '01Jul2019'd
-group by month;
-quit; 
-
-proc sql; 
-create table tbl.n_prov_month_tele as 
-    select month
-         , sum (n_prov_loc_id) as n_prov_month
-from pct_pcmp_tele 
-where month ge '01Jul2019'd
-group by month;
-quit; 
-
-proc sort data = tbl.pct_pcmp_tele ; by PCMP ; run ; 
-
-PROC TRANSPOSE DATA = tbl.pct_pcmp_tele
-                OUT = tbl.pct_pcmp_tele_t (drop=_name_);
-BY  PCMP; 
+PROC TRANSPOSE DATA = tbl.pct_tele 
+                OUT = tbl.pct_tele_t (drop=_name_);
+BY  ISP; 
 ID  month; 
-VAR n_prov_loc_id pct;
-run; *;
-
+VAR pct_tele n_pcmp;
+run; *;  
 
 * ===============Export ==========================;
 
 ods excel file = "&report/hcpf_q3_q4_telehealth.xlsx"
     options (   sheet_name = "q3_n_pcmp" 
-                sheet_interval = "none"
-                frozen_headers = "yes"
-                autofilter = "all");
+                sheet_interval = "none");
 
 proc print data = tbl.n_pcmp_tele_t;
 run;
@@ -273,17 +274,17 @@ refline '_01MAR2020'd /
 run; 
 TITLE; 
 
-ods excel options ( sheet_interval = "now" sheet_name = "pct_pcmp_tele") ;
+ods excel options ( sheet_interval = "now" sheet_name = "pct_tele") ;
 
-proc print data = tbl.pct_pcmp_tele_t; run;  
+proc print data = tbl.pct_tele_t; run;  
 
 ods excel options ( sheet_interval = "now" sheet_name = "pct_plot") ;
 
 TITLE "Percentage of PCMPs Delivering Any Telehealth Service";
-proc sgplot data = tbl.pct_pcmp_tele;
+proc sgplot data = tbl.pct_tele;
 yaxis label = " ";
 styleattrs datacontrastcolors =(purple steel); 
-series x = month y=n_prov_loc_id / group = pcmp;
+series x = month y=pct_tele / group = isp;
 refline '_01MAR2020'd / 
         axis = x 
         lineattrs = ( thickness = 2 color=grey pattern=dash ) 
@@ -292,6 +293,11 @@ refline '_01MAR2020'd /
         label = "March 2020";
 run; 
 TITLE; 
+
+proc print data = tbl.n_total_isp ; 
+title "Count ISP PCMPs" ; run; 
+proc print data = tbl.n_total_nonISP ; 
+title "Count nonISP PCMPS" ; run; 
 
 ods excel close; 
 run;

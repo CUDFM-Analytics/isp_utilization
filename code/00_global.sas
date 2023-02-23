@@ -83,5 +83,8 @@ VALUE matchn
 VALUE pcmp_type_rc
       32 = "FQHC"    45 = "RHC"     51 = "SHS"      61 = "IHS"      62 = "IHS"      Other = "Other"; 
 
+VALUE clmClass_recode  
+  1 = 'Pharmacy'     2 ='Hospitalizations'          3 = 'ER'        4 = 'Primary care'   100='Other';
+
 RUN;
 
