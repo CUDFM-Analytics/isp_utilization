@@ -3,54 +3,52 @@
  DATE INIT        : 02/2023
  PROJECT          : ISP Util
  PURPOSE          : 
- INPUT FILE(S)    : 
- OUTPUT FILE(S)   : 
- LAST RAN/STATUS  : 20230209
+ INPUT FILE/S     : 
+ OUTPUT FILE/S    : SECTION01 > 
  SPECS            : ISP_Utilization_Analytic_Plan_20221118.docx, 
-
-### DO - add ISP ever indicator , not just time-varying covariate ; 
-
 ***********************************************************************************************;
 * PROJECT PATHS, MAPPING; 
-%LET ROOT = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization;
-%INCLUDE "&ROOT./code/00_global.sas";
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_params.sas"; 
 
-* Combine datasets into monthly files;  
+
+* ==== Combine datasets into monthly files ==================================;  
 proc sort data = data.qrylong_y15_22 ; by mcaid_id ;   *53384196; 
 proc sort data = data.memlist        ; by mcaid_id ; run ; 
 
-
-* ==== reduce qrylong to 19-22 only =======================================;
+* ==== Reduce qrylong to 19-22 only ==========================================;
 data  analysis0;
 set   data.qrylong_y15_22;
 where month ge '01JUL2019'd 
 and   month le '30JUN2022'd ;
 run; 
-*NOTE: There were 40999955 observations read from the data set DATA.QRYLONG_Y15_22.
-      WHERE (month>='01JUL2019'D and month<='30JUN2022'D)
-NOTE: The data set WORK.ANALYSIS0 has 40999955 observations and 28 variables.;
-
-* ==== reduce qrylong to memlist ids  =======================================;
-data analysis1; 
-merge analysis0 ( in=a ) data.memlist (in = b ) ; by mcaid_id ; if a and b ; 
-run ; 
-*NOTE: The data set WORK.ANALYSIS1 has 40999956 observations and 28 variables
+* 02/24: [40999955 : 28 variables];
 
 * ==== join isp_key info  =======================================;
+proc sort data = analysis0 ; by pcmp_loc_id ;           *[123];
+proc sort data = data.isp_key ; by pcmp_loc_id ; run ;
+
 * including the numeric id_pcmp; 
 proc sql; 
-create table analysis2 as 
+create table analysis1 as 
 select a.*
      , b.id_split
-     , b.fct_county_class
      , b.dt_prac_isp
-     , b.id_pcmp 
-from analysis1 as a 
+from analysis0 as a 
 left join data.isp_key as b
 on a.pcmp_loc_id = b.pcmp_loc_id; 
-quit; 
+quit; *NOTE: Table WORK.ANALYSIS1 created, with 41009765 rows and 30 columns.;
 
-proc sort data = analysis2 ; by mcaid_id ; run; 
+proc print data = analysis1 (obs = 1000) ; where id_split ne . ; run ;
+proc sort data = analysis1 ; by mcaid_id ; run; 
+
+* set date to numeric 9 FUUUUUUUU; 
+data analysis2;
+set  analysis1; 
+dt_prac_isp2 = input(dt_prac_isp, date9.);
+FORMAT dt_prac_isp2 date9.;
+DROP   dt_prac_isp;
+RENAME dt_prac_isp2 = dt_prac_isp;
+RUN; 
 
 * ==== create ind_isp and ind_isp_ever vars =======================================;
 DATA analysis3;
@@ -60,14 +58,45 @@ ELSE ind_isp = 0;
 IF   id_split ne . then ind_isp_ever = 1;
 ELSE ind_isp_ever = 0; 
 RUN;
-*NOTE: There were 40999956 observations read from the data set WORK.ANALYSIS2.
-NOTE: The data set WORK.ANALYSIS3 has 40999956 observations and 34 variables.;
+**NOTE: Table WORK.ANALYSIS1 created, with 41009765 rows and 30 columns.;
 
+proc print data = analysis3 (obs = 1000) ; where ind_isp = 0 AND ind_isp_ever = 1 ; run ; *WOOOT!!!  
 
-* ==== save as MONTHLY before changing to quarters ==================================;  
-data data.qrylong_months_19_22;
-set  analysis3; 
-run; 
+        * ==== save progress / delete later ===========================================;  
+        data tmp.analysis3;
+        set  analysis3; 
+        run; 
+
+proc sort data = analysis3 ; by mcaid_id month ; run ;
+
+proc sql; 
+/*create table data.ind_isp_counts_19_22 as */
+select sum (ind_isp) as n_ind_isp
+     , sum (ind_isp_ever) as ind_isp_ever
+from analysis3;
+quit;
+
+* ==== Quarter format / question  ==================================;  
+* Number of unique attributed members in calendar quarter – quarterly 3Q2019 – 2Q2022 
+(assign members to PCMP with the most months in a quarter and 
+if there is an equal number assign to PCMP with attribution in last month eligible in the quarter) ; 
+
+* using a format wouldn't let me sum them (it wouldn't group by them? idk why) ; 
+data analysis4;
+set  analysis3;
+if month in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then q = 1;
+if month in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then q = 2;
+if month in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then q = 3;
+if month in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then q = 4;
+if month in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then q = 5;
+if month in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then q = 6;
+if month in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then q = 7;
+if month in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then q = 8;
+if month in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then q = 9;
+if month in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then q = 10;
+if month in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then q = 11;
+if month in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then q = 12;
+run;
 
 * ==== create quarter variable =======================================;  
 * import the csv I made to cheat; 

@@ -23,7 +23,8 @@ PROC FREQ
 RUN; 
 
 PROC PRINT 
-     DATA = analysis_data0 (OBS = 1000);
+     DATA = analysis0a (OBS = 1000);
+     where flag = 1;
 RUN; 
 
 PROC FREQ 

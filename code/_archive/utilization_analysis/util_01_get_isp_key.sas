@@ -87,3 +87,12 @@ RUN;
 TITLE; 
 ODS GRAPHICS OFF;
 
+data data.isp_key; 
+set  data.isp_key; 
+pcmp_loc_id = put(id_pcmp, best.-L); 
+run ;
+
+data data.isp_key ; 
+set  data.isp_key ( drop = pcmp_loc_id ) ; 
+run ; 
+
