@@ -70,11 +70,13 @@ proc print data = analysis3 (obs = 1000) ; where ind_isp = 0 AND ind_isp_ever = 
 proc sort data = analysis3 ; by mcaid_id month ; run ;
 
 proc sql; 
-/*create table data.ind_isp_counts_19_22 as */
+create table data.ind_isp_counts_19_22 as 
 select sum (ind_isp) as n_ind_isp
      , sum (ind_isp_ever) as ind_isp_ever
 from analysis3;
 quit;
+
+proc print data = data.ind_isp_counts_19_22 ; run ; 
 
 * ==== Quarter format / question  ==================================;  
 * Number of unique attributed members in calendar quarter – quarterly 3Q2019 – 2Q2022 
@@ -97,6 +99,76 @@ if month in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then q = 10;
 if month in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then q = 11;
 if month in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then q = 12;
 run;
+
+proc freq data = analysis4; tables q ; run ;
+
+* ... (assign members to PCMP with the most months in a quarter and 
+if there is an equal number assign to PCMP with attribution in last month eligible in the quarter) ; 
+
+* a) add count to pcmp and get max month; 
+proc sql; 
+create table n as 
+select mcaid_id
+     , q
+     , pcmp_loc_id
+     , count (pcmp_loc_id) as n_pcmp_per_q
+     , max ( month ) format date9.
+from analysis4
+group by mcaid_id, q, pcmp_loc_id
+order by mcaid_id, q;
+quit; * 14286652 rows and 3 columns.;
+
+proc print data = n ( obs = 1000 ) ; run ;
+
+* b) get max n_pc START HERE AND ADD YOUR CODE!!! ; 
+proc sql ;
+create table fake3 as 
+select mc
+     , max(q) as q
+     , pc
+     , max(month) as month format date9.
+from fake2
+group by mc, q, month
+having n_pc=max(n_pc);
+quit;
+
+proc print data = fake3 ; run ; 
+
+* c) count pcmp by id and quarter again to get the ones with multiple values
+where 1 means it was the pcmp sole winner, 
+where two or three means take max month; 
+proc sql; 
+create table fake4 as
+select *
+    , count ( distinct pc ) as n_pc
+from fake3
+group by mc, q; 
+quit;
+
+proc print data = fake4 ; run ; 
+
+proc sort data = fake4 ; by mc q pc ; run ;
+
+proc sql;
+create table fake5 as 
+select mc, q, pc, month 
+from fake4
+group by mc, q
+having max(month)=month;
+quit; 
+
+
+proc print data = fake5; run ; 
+
+
+
+
+
+
+
+
+
+
 
 * ==== create quarter variable =======================================;  
 * import the csv I made to cheat; 
