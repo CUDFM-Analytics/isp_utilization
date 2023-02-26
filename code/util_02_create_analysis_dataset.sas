@@ -84,8 +84,8 @@ proc print data = data.ind_isp_counts_19_22 ; run ;
 if there is an equal number assign to PCMP with attribution in last month eligible in the quarter) ; 
 
 * using a format wouldn't let me sum them (it wouldn't group by them? idk why) ; 
-data analysis4;
-set  analysis3;
+data tmp.analysis4;
+set  tmp.analysis3;
 if month in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then q = 1;
 if month in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then q = 2;
 if month in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then q = 3;
@@ -112,53 +112,12 @@ select mcaid_id
      , q
      , pcmp_loc_id
      , count (pcmp_loc_id) as n_pcmp_per_q
-     , max ( month ) format date9.
+     , max ( month ) as max_month format date9.
 from analysis4
 group by mcaid_id, q, pcmp_loc_id
 order by mcaid_id, q;
 quit; * 14286652 rows and 3 columns.;
 
-proc print data = n ( obs = 1000 ) ; run ;
-
-* b) get max n_pc START HERE AND ADD YOUR CODE!!! ; 
-proc sql ;
-create table fake3 as 
-select mc
-     , max(q) as q
-     , pc
-     , max(month) as month format date9.
-from fake2
-group by mc, q, month
-having n_pc=max(n_pc);
-quit;
-
-proc print data = fake3 ; run ; 
-
-* c) count pcmp by id and quarter again to get the ones with multiple values
-where 1 means it was the pcmp sole winner, 
-where two or three means take max month; 
-proc sql; 
-create table fake4 as
-select *
-    , count ( distinct pc ) as n_pc
-from fake3
-group by mc, q; 
-quit;
-
-proc print data = fake4 ; run ; 
-
-proc sort data = fake4 ; by mc q pc ; run ;
-
-proc sql;
-create table fake5 as 
-select mc, q, pc, month 
-from fake4
-group by mc, q
-having max(month)=month;
-quit; 
-
-
-proc print data = fake5; run ; 
 
 
 

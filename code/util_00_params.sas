@@ -26,6 +26,9 @@
   %LET data = &util/data/util_analysis;
   LIBNAME data "&data"; 
 
+  %LET feb = &util/data/hcpf_pres;
+  LIBNAME feb "&feb";
+
   * exports / excel files out, reports; 
   %LET reports = &util/reports_util;
 
@@ -44,6 +47,25 @@
   OPTIONS NOFMTERR
           MPRINT MLOGIC SYMBOLGEN
           FMTSEARCH =(ana, datasets, data, tmp, varlen, work);
+
+ods path work.templat(update) sashelp.tmplmst(read); 
+proc format;
+    picture pctfmt low-high='000.00%';
+run; 
+proc template; 
+ edit Base.Freq.OneWayList; 
+ edit Percent; 
+ header="; Relative Frequency ;"; 
+ format= pctfmt.; 
+ just = r; 
+ end; 
+ edit CumPercent; 
+ header = ";Cumulative; Relative Frequency;"; 
+ format= pctfmt.; 
+ just =r; 
+ end; 
+ end; 
+run; 
 
 PROC FORMAT;
 VALUE agecat  

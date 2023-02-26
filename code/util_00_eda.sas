@@ -8,7 +8,4 @@
  NOTES         : Date / Note
 
 * global paths, settings  ---------------------------;
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilizatiON/02_code/00_global.sas"; 
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilizatiON/02_code/00_macros.sas"; 
-* Includes formats, connect to bdm, setting libnames, options, bhjt, varlen;
 ***********************************************************************************************;

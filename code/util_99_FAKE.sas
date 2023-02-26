@@ -27,77 +27,97 @@ run ;
 data fake ; 
 set  fake ; 
 format month date9. ; 
+where mc = "A363167";
 run ; 
 
-* a; 
+* a) add count to pcmp and get max month; 
 proc sql; 
 create table fake2 as 
 select mc
-    , max(q) as q
+    , q
     , pc
     , count (pc) as n_pc
     , max (month ) as month format date9. 
 from fake
 group by mc, q, pc
-order by mc, q
-having n_pc=max(n_pc);
+order by mc, q;
 quit;
 
 proc print data = fake2; run ; 
 
-* b ; 
+* b) get max n_pc ; 
 proc sql ;
 create table fake3 as 
 select mc
-     , max(q) as max_q
+     , max(q) as q
      , pc
-     , max(month) as max_month format date9.
+     , max(month) as month format date9.
 from fake2
-group by mc, q
+group by mc, q, month
 having n_pc=max(n_pc);
 quit;
 
 proc print data = fake3 ; run ; 
 
-* c ; 
+* c) count pcmp by id and quarter again to get the ones with multiple values
+where 1 means it was the pcmp sole winner, 
+where two or three means take max month; 
 proc sql; 
 create table fake4 as
 select *
     , count ( distinct pc ) as n_pc
 from fake3
-group by mc, max_q; 
+group by mc, q; 
 quit;
 
 proc print data = fake4 ; run ; 
 
+proc sort data = fake4 ; by mc q pc ; run ;
 
-data sample; 
-    input id x; 
-datalines; 
-18  1 
-18  1 
-18  2 
-18  1 
-18  2 
-369 2 
-369 3 
-369 3 
-361 1 
-; 
-run; 
+proc sql;
+create table fake5 as 
+select mc, q, pc, month 
+from fake4
+group by mc, q
+having max(month)=month;
+quit; 
 
-data want;
-  do until(last.ID);
-    set sample;
-    by ID;
-    xmax = max(x, xmax);
-  end;
-  x = xmax;
-  drop xmax;
+
+proc print data = fake5; run ; 
+
+
+data have;
+  input id date :mmddyy10. value;
+  format date date9.;
+datalines;
+1      1/20/2018            45
+1      1/31/2018           100
+1      2/20/2018            20
+1      2/25/2018            87
+2      1/17/2018            36
+2      1/27/2018             45
+2      2/02/2018             54
+2      2/28/2018             68
 run;
 
-proc means data=sample noprint max nway missing; 
-   class id;
-   var x;
-   output out=sample_max (drop=_type_ _freq_) max=;
-run; 
+data want (drop=nxt_date);
+  set have nobs=nrecs;
+  by id;
+  if _n_<nrecs then set have (firstobs=2 keep=date rename=(date=nxt_date));
+  if last.id or intck('month',date,nxt_date)>0;
+run;
+
+
+data _null_;
+if _n_=1 then do;
+if 0 then set have;
+dcl hash H (ordered:'y') ;
+   h.definekey  ("id","month") ;
+   h.definedata ("id","date","value") ;
+   h.definedone () ;
+end;
+set have end=last;
+month=month(date);
+h.replace();
+if last then h.output(dataset:'want');
+run;
