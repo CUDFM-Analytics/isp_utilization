@@ -48,24 +48,6 @@
           MPRINT MLOGIC SYMBOLGEN
           FMTSEARCH =(ana, datasets, data, tmp, varlen, work);
 
-ods path work.templat(update) sashelp.tmplmst(read); 
-proc format;
-    picture pctfmt low-high='000.00%';
-run; 
-proc template; 
- edit Base.Freq.OneWayList; 
- edit Percent; 
- header="; Relative Frequency ;"; 
- format= pctfmt.; 
- just = r; 
- end; 
- edit CumPercent; 
- header = ";Cumulative; Relative Frequency;"; 
- format= pctfmt.; 
- just =r; 
- end; 
- end; 
-run; 
 
 PROC FORMAT;
 VALUE agecat  
@@ -100,9 +82,6 @@ VALUE matchn
 
 VALUE pcmp_type_rc
       32 = "FQHC"    45 = "RHC"     51 = "SHS"      61 = "IHS"      62 = "IHS"      Other = "Other"; 
-
-VALUE clmClass_recode  
-      1 = 'Pharmacy'     2 ='Hospitalizations'          3 = 'ER'        4 = 'Primary care'   100='Other';
 
 RUN;
 

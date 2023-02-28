@@ -2,7 +2,7 @@
  PROJECT       : ISP HCPF Question 5
  PROGRAMMER    : KTW 
  DATE RAN      : 02-21-2023
- PURPOSE       : 5)	Number of unique attributed members in calendar quarter – quarterly 3Q2019 – 2Q2022 
+ PURPOSE       : 5) Number of unique attributed members in calendar quarter – quarterly 3Q2019 – 2Q2022 
                     (assign members to PCMP with the most months in a quarter and if there is an equal 
                     number assign to PCMP with attribution in last month eligible in the quarter)
  INPUT FILE/S  : 
@@ -54,61 +54,149 @@ quit;  *14890607 : 5;
 
 proc print data = q1 ( obs = 1000 ) ; run ;
 
-* b) get member count per quarter ;
+proc print data = q2 ; where mcaid_id in ("A089085", "A005917","A258441") ; run ; 
+
 proc sql; 
 create table q2 as 
 select mcaid_id
     , q
     , pcmp_loc_id
-    , count (pcmp_loc_id) as n_pcmp_per_q
+    , n_pcmp_per_q
     , max_month format date9.
 from q1
 group by mcaid_id, q
 order by mcaid_id, q;
 quit;
 
-proc print data = q2 (obs = 500); run ; 
+            * CHECKING) get member count per quarter ;
+            proc sql; 
+            create table q2 as 
+            select mcaid_id
+                , q
+                , pcmp_loc_id
+                , count (pcmp_loc_id) as n_pcmp_per_q
+                , max_month format date9.
+            from q1
+            group by mcaid_id, q
+            order by mcaid_id, q;
+            quit;
 
-proc freq data = q2 ; tables n_pcmp_per_q ; run ; 
+        proc print data = q2 (obs = 500); run ; 
 
-proc print data = q2 (obs = 1000) ; 
-where n_pcmp_per_q > 2 ; 
-run ;  * many had 3 - get max month now; 
+        proc freq data = q2 ; tables n_pcmp_per_q ; run ; 
 
-* b) now get max month from group by mcaid, q; 
+        proc print data = q2 (obs = 1000) ; 
+        where n_pcmp_per_q > 2 ; 
+        run ;  * many had 3 - get max month now; 
+
+* b) get max pcmp count; 
 proc sql ;
-create table n3 as 
-select mcaid_id
-     , q
-     , pcmp_loc_id
-     , max_month format date9.
-from n2
+create table q3 as 
+select *
+from q2
+group by mcaid_id, q
+having n_pcmp_per_q = max(n_pcmp_per_q);
+quit; *14666776: 4;
+
+proc print data = q3 ; where mcaid_id in ("A089085", "A005917","A258441") ; run ; 
+
+* c) now get max month; 
+proc sql ;
+create table q4 as 
+select *
+from q3
 group by mcaid_id, q
 having max_month = max(max_month);
-quit; *14053127 : 4;
+quit; *14649660; 
 
-proc print data = n3 (obs = 10000) ; run ; 
+proc print data = q4 ; where mcaid_id in ("A089085", "A005917","A258441") ; run ; 
 
 * c) check to make sure all pcmp=1// add count for mcaid, q; 
 proc sql; 
-create table n4 as
+create table q5 as
 select *
-    , count ( distinct pc ) as n_pc
-from fake3
-group by mc, q; 
+    , count ( distinct pcmp_loc_id ) as n_pc
+from q4
+group by mcaid_id, q; 
 quit;
 
-proc print data = fake4 ; run ; 
+proc freq data = q5 ; tables n_pc ; run ; 
 
-proc sort data = fake4 ; by mc q pc ; run ;
+proc sql ;
+create table feb.unique_mem_quarter as 
+select *
+    , pcmp_loc_id in (select pcmp_loc_id from feb.ll_fy1922_pcmp_isp ) as ind_isp
+    , pcmp_loc_id in (select pcmp_loc_id from feb.ll_fy1922_pcmp_nonisp ) as ind_nonisp 
+from q4; 
+quit; 
 
-proc sql;
-create table fake5 as 
-select mc, q, pc, month 
-from fake4
-group by mc, q
-having max(month)=month;
+proc freq data = feb.unique_mem_quarter ; 
+tables ind_isp ind_nonisp ; 
+run ; 
+
+proc contents data = feb.unique_mem_quarter  ; run ; 
+
+proc freq data = feb.unique_mem_quarter; 
+tables q*ind_isp; 
+run ; 
+
+proc format ; 
+value qrtr_
+1 = "2019_Q3"
+2 = "2019_Q4"
+3 = "2020_Q1"
+4 = "2020_Q2"
+5 = "2020_Q3"
+6 = "2020_Q4"
+7 = "2021_Q1"
+8 = "2021_Q2"
+9 = "2021_Q3"
+10 = "2021_Q4"
+11 = "2022_Q1"
+12 = "2022_Q2";
+run ; 
+
+proc format ; 
+value ind_isp_
+0 = "non-ISP"
+1 = "ISP"; 
+run ; 
+
+proc sql ; 
+create table feb.n_quarter as 
+select count ( mcaid_id ) as n_unique_mem
+     , ind_isp format ind_isp_.
+     , q format qrtr_. 
+from feb.unique_mem_quarter
+group by ind_isp, q;
 quit; 
 
 
-proc print data = fake5; run ; 
+proc print data = feb.n_quarter noobs ; run ; 
+
+*********  EXPORT  **********************;
+ods excel file = "&util/reports_hcpf_pres_march2023/hcpf_attr_quarterly.xlsx"
+    options (   sheet_name = "attr_quarter" 
+                sheet_interval = "none"
+                frozen_headers = "no"
+                autofilter = "all");
+
+proc print data = feb.n_quarter noobs ; run ; 
+
+ods excel options ( sheet_interval = "now" sheet_name = "plot") ;
+
+TITLE "Unique Attributed Members per Quarter, ISP / non-ISP: 07/2019-06/2022";
+proc sgplot data = feb.n_quarter;
+yaxis label = " ";
+styleattrs datacontrastcolors =(purple steel); 
+series x = q y = n_unique_mem / group = ind_isp ;
+refline '_01MAR2020'd / 
+        axis = x 
+        lineattrs = ( thickness = 2 color=grey pattern=dash ) 
+        label = ("March 2020")
+        labelloc = inside
+        label = "March 2020";
+run; 
+TITLE; 
+
+ods excel close ; 

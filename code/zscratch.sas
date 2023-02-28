@@ -3,17 +3,17 @@ PROC CONTENTS
 RUN;
 
 PROC CONTENTS 
-     DATA = analysis_data0 VARNUM;
+     DATA = qry_monthly_utilization VARNUM;
 RUN;
 
 PROC CONTENTS 
-     DATA = data.util_month_y15_22 VARNUM;
+     DATA = util0 VARNUM;
 RUN;
 
 PROC FREQ 
-     DATA = analysis_data0;
-     TABLES fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-     TITLE  'Frequency fy';
+     DATA = qry_monthly_utilization;
+     TABLES clmClass;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'qry_monthly_utilization clmClass';
 RUN; 
 TITLE; 
 
@@ -23,8 +23,8 @@ PROC FREQ
 RUN; 
 
 PROC PRINT 
-     DATA = analysis0a (OBS = 1000);
-     where flag = 1;
+     DATA = util0 (OBS = 1000);
+     where mcaid_id = "A000405";
 RUN; 
 
 PROC FREQ 

@@ -1,0 +1,1109 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.94 seconds
+      cpu time            0.73 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_params.sas";
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Libref DATASETS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\datasets
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\util_analysis
+NOTE: Libref TMP was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\tmp
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLeng
+      ths
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.74 seconds
+      cpu time            0.37 seconds
+
+
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.46 seconds
+      cpu time            0.28 seconds
+
+
+NOTE: Format AGECAT has been output.
+NOTE: Format AGEHCPF has been output.
+NOTE: Format AGE7CAT has been output.
+NOTE: Format FY3_ has been output.
+NOTE: Format FY7_ has been output.
+NOTE: Format NSERVE has been output.
+NOTE: Format CAPVSH has been output.
+NOTE: Format MATCHN has been output.
+NOTE: Format PCMP_TYPE_RC has been output.
+NOTE: Format CLMCLASS_RECODE has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+182  data analysis4;
+183  set  tmp.analysis3;
+184  if month in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then q = 1;
+185  if month in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then q = 2;
+186  if month in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then q = 3;
+187  if month in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then q = 4;
+188  if month in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then q = 5;
+189  if month in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then q = 6;
+190  if month in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then q = 7;
+191  if month in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then q = 8;
+192  if month in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then q = 9;
+193  if month in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then q = 10;
+194  if month in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then q = 11;
+195  if month in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then q = 12;
+196  run;
+
+NOTE: There were 41009765 observations read from the data set TMP.ANALYSIS3.
+NOTE: The data set WORK.ANALYSIS4 has 41009765 observations and 33 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:22.49
+      cpu time            10.34 seconds
+
+
+197
+198  proc freq data = analysis4; tables q ; run ;
+
+NOTE: There were 41009765 observations read from the data set WORK.ANALYSIS4.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           3.25 seconds
+      cpu time            3.21 seconds
+
+
+
+199  proc sql;
+200  create table n as
+201  select mcaid_id
+202       , q
+203       , pcmp_loc_id
+204       , count (pcmp_loc_id) as n_pcmp_per_q
+205       , max ( month ) as max_month format date9.
+206  from analysis4
+207  group by mcaid_id, q, pcmp_loc_id
+208  order by mcaid_id, q;
+NOTE: Table WORK.N created, with 14286652 rows and 5 columns.
+
+209  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           9.34 seconds
+      cpu time            15.46 seconds
+
+
+210  proc print data = n ( obs = 1000 ) ; run ;
+
+NOTE: There were 1000 observations read from the data set WORK.N.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.16 seconds
+      cpu time            0.15 seconds
+
+
+
+211  proc sql;
+212  create table n2 as
+213  select mcaid_id
+214      , q
+215      , pcmp_loc_id
+216      , count (pcmp_loc_id) as n_pcmp_per_q
+217      , max_month format date9.
+218  from n
+219  group by mcaid_id, q
+220  order by mcaid_id, q;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.N2 created, with 14286652 rows and 5 columns.
+
+221  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.34 seconds
+      cpu time            2.35 seconds
+
+
+222  proc print data = n2 (obs = 500); run ;
+
+NOTE: There were 500 observations read from the data set WORK.N2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.06 seconds
+
+
+
+223    %LET feb = &util/data/hcpf_pres;
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+224    LIBNAME feb "&feb";
+SYMBOLGEN:  Macro variable FEB resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/hcpf_pres
+NOTE: Libref FEB was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\hcpf_pres
+225  data tmp.analysis4;
+226  set  tmp.analysis3;
+227  if month in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then q = 1;
+228  if month in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then q = 2;
+229  if month in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then q = 3;
+230  if month in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then q = 4;
+231  if month in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then q = 5;
+232  if month in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then q = 6;
+233  if month in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then q = 7;
+234  if month in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then q = 8;
+235  if month in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then q = 9;
+236  if month in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then q = 10;
+237  if month in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then q = 11;
+238  if month in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then q = 12;
+239  run;
+
+NOTE: There were 41009765 observations read from the data set TMP.ANALYSIS3.
+NOTE: The data set TMP.ANALYSIS4 has 41009765 observations and 33 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:51.05
+      cpu time            12.56 seconds
+
+
+240  PROC CONTENTS
+241       DATA = data.qrylong_y19_22 VARNUM;
+242  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.37 seconds
+      cpu time            0.00 seconds
+
+
+243  data q0;
+244  set  data.qrylong_y19_22;
+245
+246  if month in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then q = 1;
+247  if month in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then q = 2;
+248  if month in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then q = 3;
+249  if month in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then q = 4;
+250  if month in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then q = 5;
+251  if month in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then q = 6;
+252  if month in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then q = 7;
+253  if month in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then q = 8;
+254  if month in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then q = 9;
+255  if month in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then q = 10;
+256  if month in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then q = 11;
+257  if month in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then q = 12;
+258
+259  run;
+
+NOTE: There were 42737078 observations read from the data set DATA.QRYLONG_Y19_22.
+NOTE: The data set WORK.Q0 has 42737078 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           28.45 seconds
+      cpu time            6.87 seconds
+
+
+260  proc freq data = q0; tables q ; run ;
+
+NOTE: There were 42737078 observations read from the data set WORK.Q0.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.64 seconds
+      cpu time            1.57 seconds
+
+
+
+261  proc sql;
+262  create table q1 as
+263  select mcaid_id
+264       , q
+265       , pcmp_loc_id
+266       , count (pcmp_loc_id) as n_pcmp_per_q
+267       , max ( month ) as max_month format date9.
+268  from q0
+269  group by mcaid_id, q, pcmp_loc_id
+270  order by mcaid_id, q;
+NOTE: Table WORK.Q1 created, with 14890607 rows and 5 columns.
+
+271  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           8.33 seconds
+      cpu time            15.60 seconds
+
+
+272  proc print data = q1 ( obs = 1000 ) ; run ;
+
+NOTE: There were 1000 observations read from the data set WORK.Q1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.12 seconds
+
+
+
+273  proc sql;
+274  create table q2 as
+275  select mcaid_id
+276      , q
+277      , pcmp_loc_id
+278      , count (pcmp_loc_id) as n_pcmp_per_q
+279      , max_month format date9.
+280  from q1
+281  group by mcaid_id, q
+282  order by mcaid_id, q;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.Q2 created, with 14890607 rows and 5 columns.
+
+283  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.36 seconds
+      cpu time            2.35 seconds
+
+
+284  proc print data = n2 (obs = 500); run ;
+
+NOTE: There were 500 observations read from the data set WORK.N2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.06 seconds
+
+
+285
+286  proc freq data = n2 ; tables n_pcmp_per_q ; run ;
+
+NOTE: There were 14286652 observations read from the data set WORK.N2.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.53 seconds
+      cpu time            0.46 seconds
+
+
+
+287  proc print data = n2 (obs = 1000) ;
+288  where n_pcmp_per_q > 1 ;
+289  run ;
+
+NOTE: There were 1000 observations read from the data set WORK.N2.
+      WHERE n_pcmp_per_q>1;
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.14 seconds
+
+
+289!        * many had 3 - get max month now;
+
+290  proc print data = n2 (obs = 1000) ;
+291  where n_pcmp_per_q > 2 ;
+292  run ;
+
+NOTE: There were 1000 observations read from the data set WORK.N2.
+      WHERE n_pcmp_per_q>2;
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.22 seconds
+      cpu time            0.18 seconds
+
+
+293  proc print data = q2 (obs = 500); run ;
+
+NOTE: There were 500 observations read from the data set WORK.Q2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.06 seconds
+
+
+294
+295  proc freq data = q2 ; tables n_pcmp_per_q ; run ;
+
+NOTE: There were 14890607 observations read from the data set WORK.Q2.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.54 seconds
+      cpu time            0.48 seconds
+
+
+
+296  proc print data = q2 (obs = 1000) ;
+297  where n_pcmp_per_q > 2 ;
+298  run ;
+
+NOTE: There were 1000 observations read from the data set WORK.Q2.
+      WHERE n_pcmp_per_q>2;
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.20 seconds
+
+
+299  proc sql ;
+300  create table q3 as
+301  select mcaid_id
+302       , q
+303       , pcmp_loc_id
+304       , max_month format date9.
+305  from q2
+306  group by mcaid_id, q
+307  having max_month = max(max_month);
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.Q3 created, with 14649660 rows and 4 columns.
+
+308  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.27 seconds
+      cpu time            2.26 seconds
+
+
+309  proc print data = n3 (obs = 10000) ; run ;
+ERROR: File WORK.N3.DATA does not exist.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+310  proc print data = q3 (obs = 10000) ; run ;
+
+NOTE: There were 10000 observations read from the data set WORK.Q3.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           1.13 seconds
+      cpu time            1.10 seconds
+
+
+
+311  proc sql;
+312  create table q4 as
+313  select *
+314      , count ( distinct pcmp_loc_id ) as n_pc
+315  from q3
+316  group by mcaid_id, q;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.Q4 created, with 14649660 rows and 5 columns.
+
+317  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           24.74 seconds
+      cpu time            24.75 seconds
+
+
+318  proc freq data = q4 ; tables n_pc ; run ;
+
+NOTE: There were 14649660 observations read from the data set WORK.Q4.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.74 seconds
+      cpu time            0.46 seconds
+
+
+
+319  proc print data = q4 (obs = 1000) ; run ;
+
+NOTE: There were 1000 observations read from the data set WORK.Q4.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.12 seconds
+
+
+
+320  proc print data = q2 (obs = 500); run ;
+
+NOTE: There were 500 observations read from the data set WORK.Q2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.06 seconds
+
+
+
+321  proc sql;
+322  create table q2 as
+323  select mcaid_id
+324      , q
+325      , pcmp_loc_id
+326      , count (pcmp_loc_id) as n_pcmp_per_q
+327      , max_month format date9.
+328  from q1
+329  group by mcaid_id, q
+330  order by mcaid_id, q
+331  having n_pcmp_per_q = max(n_pcmp_per_q);
+     ------
+     22
+     202
+ERROR 22-322: Syntax error, expecting one of the following: ;, !, !!, &, (, *, **, +, ',', -, '.',
+              /, <, <=, <>, =, >, >=, ?, AND, ASC, ASCENDING, BETWEEN, CONTAINS, DESC, DESCENDING,
+              EQ, EQT, GE, GET, GT, GTT, IN, IS, LE, LET, LIKE, LT, LTT, NE, NET, NOT, NOTIN, OR,
+              ^, ^=, |, ||, ~, ~=.
+
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+
+332  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+333  proc sql;
+334  create table q2 as
+335  select mcaid_id
+336      , q
+337      , pcmp_loc_id
+338      , n_pcmp_per_q
+339      , max_month format date9.
+340  from q1
+341  group by mcaid_id, q
+342  order by mcaid_id, q
+343  having n_pcmp_per_q = max(n_pcmp_per_q);
+     ------
+     22
+     202
+ERROR 22-322: Syntax error, expecting one of the following: ;, !, !!, &, (, *, **, +, ',', -, '.',
+              /, <, <=, <>, =, >, >=, ?, AND, ASC, ASCENDING, BETWEEN, CONTAINS, DESC, DESCENDING,
+              EQ, EQT, GE, GET, GT, GTT, IN, IS, LE, LET, LIKE, LT, LTT, NE, NET, NOT, NOTIN, OR,
+              ^, ^=, |, ||, ~, ~=.
+
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+
+344  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.03 seconds
+
+
+345  proc print data = q1 ( obs = 1000 ) ; run ;
+
+NOTE: There were 1000 observations read from the data set WORK.Q1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.15 seconds
+
+
+
+346  proc print data = q1 ; where mcaid_id in ("A089085", "A005917","A258441") ; run ;
+
+NOTE: There were 38 observations read from the data set WORK.Q1.
+      WHERE mcaid_id in ('A005917', 'A089085', 'A258441');
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+
+347  proc sql;
+348  create table q2 as
+349  select mcaid_id
+350      , q
+351      , pcmp_loc_id
+352      , max(n_pcmp_per_q) as max_n_pcmp
+353      , max_month format date9.
+354  from q1
+355  group by mcaid_id, q
+356  order by mcaid_id, q;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.Q2 created, with 14890607 rows and 5 columns.
+
+357  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.56 seconds
+      cpu time            2.46 seconds
+
+
+358  proc print data = q2 ; where mcaid_id in ("A089085", "A005917","A258441") ; run ;
+
+NOTE: There were 38 observations read from the data set WORK.Q2.
+      WHERE mcaid_id in ('A005917', 'A089085', 'A258441');
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+
+359  proc sql;
+360  create table q2 as
+361  select mcaid_id
+362      , q
+363      , pcmp_loc_id
+364      , n_pcmp_per_q
+365      , max_month format date9.
+366  from q1
+367  group by mcaid_id, q
+368  order by mcaid_id, q
+369  having max(n_pcmp_per_q);
+     ------
+     22
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, (, *, **, +, ',', -, '.', /,
+              <, <=, <>, =, >, >=, ?, AND, BETWEEN, CONTAINS, EQ, EQT, GE, GET, GT, GTT, LE, LET,
+              LIKE, LT, LTT, NE, NET, OR, ^=, |, ||, ~=.
+
+370  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+371
+372  proc sql;
+373  create table q2 as
+374  select mcaid_id
+375      , q
+376      , pcmp_loc_id
+377      , n_pcmp_per_q
+378      , max_month format date9.
+379  from q1
+380  group by mcaid_id, q
+381  order by mcaid_id, q
+382  having n_pcmp_per_q=max(n_pcmp_per_q);
+     ------
+     22
+     202
+ERROR 22-322: Syntax error, expecting one of the following: ;, !, !!, &, (, *, **, +, ',', -, '.',
+              /, <, <=, <>, =, >, >=, ?, AND, ASC, ASCENDING, BETWEEN, CONTAINS, DESC, DESCENDING,
+              EQ, EQT, GE, GET, GT, GTT, IN, IS, LE, LET, LIKE, LT, LTT, NE, NET, NOT, NOTIN, OR,
+              ^, ^=, |, ||, ~, ~=.
+
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+
+383  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+384
+385  proc sql;
+386  create table q2 as
+387  select mcaid_id
+388      , q
+389      , pcmp_loc_id
+390      , n_pcmp_per_q
+391      , max_month format date9.
+392  from q1
+393  group by mcaid_id, q
+394  order by mcaid_id, q;
+NOTE: A GROUP BY clause has been discarded because neither the SELECT clause nor the optional
+      HAVING clause of the associated table-expression referenced a summary function.
+NOTE: Table WORK.Q2 created, with 14890607 rows and 5 columns.
+
+395  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.07 seconds
+      cpu time            1.01 seconds
+
+
+396          proc print data = q2 (obs = 500); run ;
+
+NOTE: There were 500 observations read from the data set WORK.Q2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.07 seconds
+
+
+
+397  proc sql ;
+398  create table q3 as
+399  select *
+400  from q2
+401  group by mcaid_id, q
+402  having n_pcmp_per_q = max(n_pcmp_per_q);
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.Q3 created, with 14666776 rows and 5 columns.
+
+403  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.42 seconds
+      cpu time            2.43 seconds
+
+
+404  proc print data = q3 ; where mcaid_id in ("A089085", "A005917","A258441") ; run ;
+
+NOTE: There were 37 observations read from the data set WORK.Q3.
+      WHERE mcaid_id in ('A005917', 'A089085', 'A258441');
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+
+405  proc sql ;
+406  create table q4 as
+407  select *
+408  from q3
+409  group by mcaid_id, q
+410  having month = max(month);
+ERROR: The following columns were not found in the contributing tables: month.
+411  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+412  * c) now get max month;
+413  proc sql ;
+414  create table q4 as
+415  select *
+416  from q3
+417  group by mcaid_id, q
+418  having max_month = max(max_month);
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.Q4 created, with 14649660 rows and 5 columns.
+
+419  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.34 seconds
+      cpu time            2.36 seconds
+
+
+420  proc print data = q4 ; where mcaid_id in ("A089085", "A005917","A258441") ; run ;
+
+NOTE: There were 33 observations read from the data set WORK.Q4.
+      WHERE mcaid_id in ('A005917', 'A089085', 'A258441');
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+
+421  proc sql;
+422  create table q5 as
+423  select *
+424      , count ( distinct pcmp_loc_id ) as n_pc
+425  from q4
+426  group by mcaid_id, q;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.Q5 created, with 14649660 rows and 6 columns.
+
+427  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           24.94 seconds
+      cpu time            24.95 seconds
+
+
+428  proc freq data = q5 ; tables n_pc ; run ;
+
+NOTE: There were 14649660 observations read from the data set WORK.Q5.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.62 seconds
+      cpu time            0.48 seconds
+
+
+
+429  proc sql ;
+430  create table feb.unique_mem_quarter as
+431  select *
+432      , pcmp_loc_id in (select pcmp_loc_id from feb.ll_fy1922_pcmp_isp ) as ind_isp
+433      , pcmp_loc_id in (select pcmp_loc_id from feb.ll_fy1922_pcmp_nonisp ) as ind_nonisp
+434  from q4;
+NOTE: Table FEB.UNIQUE_MEM_QUARTER created, with 14649660 rows and 7 columns.
+
+435  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           14.33 seconds
+      cpu time            3.65 seconds
+
+
+436  proc freq data = feb.unique_mem_quarter ;
+437  tables ind_isp ind_nonisp ;
+438  run ;
+
+NOTE: There were 14649660 observations read from the data set FEB.UNIQUE_MEM_QUARTER.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           8.77 seconds
+      cpu time            0.48 seconds
+
+
+439  proc contents data = feb.unique_mem_quarter  ; run ;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+440  proc print data = feb.unique_mem_quarter (obs = 1000) ;
+441  var mcaid_id;
+442  run ;
+
+NOTE: There were 1000 observations read from the data set FEB.UNIQUE_MEM_QUARTER.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.04 seconds
+
+
+443  proc sql ;
+444  create table feb.n_quarter as
+445  select mcaid_id
+446       , ind_isp
+447       , ind_nonisp
+448       , pcmp_loc_id
+449       , q
+450  from feb.unique_mem_quarter
+451  group by ind_isp, q;
+WARNING: A GROUP BY clause has been transformed into an ORDER BY clause because neither the SELECT
+         clause nor the optional HAVING clause of the associated table-expression referenced a
+         summary function.
+NOTE: Table FEB.N_QUARTER created, with 14649660 rows and 5 columns.
+
+452  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           19.50 seconds
+      cpu time            6.36 seconds
+
+
+453  proc sql ;
+454  create table feb.n_quarter as
+455  select ind_isp
+456       , q
+457  from feb.unique_mem_quarter
+458  group by ind_isp, q;
+WARNING: A GROUP BY clause has been transformed into an ORDER BY clause because neither the SELECT
+         clause nor the optional HAVING clause of the associated table-expression referenced a
+         summary function.
+NOTE: Table FEB.N_QUARTER created, with 14649660 rows and 2 columns.
+
+459  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           12.69 seconds
+      cpu time            4.25 seconds
+
+
+460  proc freq data = feb.n_quarter ;
+461  tables q*ind_isp ;
+462  run ;
+
+NOTE: There were 14649660 observations read from the data set FEB.N_QUARTER.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           2.65 seconds
+      cpu time            0.57 seconds
+
+
+463  proc sql ;
+464  create table n_check_quarter as
+465  select count(mcaid_id)
+466       , q
+467       , ind_isp
+468  from feb.n_quarter
+469  group by q, ind_isp;
+ERROR: The following columns were not found in the contributing tables: mcaid_id.
+470  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+471  proc sql ;
+472  create table n_check_quarter as
+473  select count(mcaid_id)
+474       , q
+475       , ind_isp
+476  from feb.n_quarter
+477  group by q, ind_isp;
+ERROR: The following columns were not found in the contributing tables: mcaid_id.
+478  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+479  proc freq data = feb.unique_mem_quarter;
+480  tables q*ind_isp;
+481  run ;
+
+NOTE: There were 14649660 observations read from the data set FEB.UNIQUE_MEM_QUARTER.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           9.06 seconds
+      cpu time            0.73 seconds
+
+
+482  proc format ;
+483  value qrtr_
+484  1 = "2019_Q3"
+485  2 = "2019_Q4"
+486  3 = "2020_Q1"
+487  4 = "2020_Q2"
+488  5 = "2020_Q3"
+489  6 = "2020_Q4"
+490  7 = "2021_Q1"
+491  8 = "2021_Q2"
+492  9 = "2021_Q3"
+493  10 = "2021_Q4"
+494  11 = "2022_Q1"
+495  12 = "2022_Q2";
+NOTE: Format QRTR_ has been output.
+496  run ;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+497  data feb.n_quarter;
+498  set  feb.n_quarter;
+499  format q qrtr_. ;
+500  run ;
+
+NOTE: There were 14649660 observations read from the data set FEB.N_QUARTER.
+NOTE: The data set FEB.N_QUARTER has 14649660 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           5.76 seconds
+      cpu time            0.56 seconds
+
+
+501  proc print report = feb.n_quarter ; run ;
+                ------
+                22
+                76
+
+ERROR 22-322: Syntax error, expecting one of the following: ;, BLANKLINE, CONTENTS, DATA, DOUBLE,
+              GRANDTOTAL_LABEL, GRANDTOT_LABEL, GRAND_LABEL, GTOTAL_LABEL, GTOT_LABEL, HEADING,
+              LABEL, N, NOOBS, NOSUMLABEL, OBS, ROUND, ROWS, SPLIT, STYLE, SUMLABEL, UNIFORM,
+              WIDTH.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+502  proc report = feb.n_quarter ; run ;
+                 -
+                 22
+                 76
+
+ERROR 22-322: Syntax error, expecting one of the following: DATA, HELP, OUT, OUTREPT, PROFILE,
+              REPORT, STYLE.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE REPORT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+
+
+503  proc report data = feb.n_quarter ; run ;
+
+NOTE: There were 14649660 observations read from the data set FEB.N_QUARTER.
+NOTE: PROCEDURE REPORT used (Total process time):
+      real time           2.47 seconds
+      cpu time            1.65 seconds
+
+
+
+504  proc format ;
+505  value ind_isp_
+506  0 = "non-ISP"
+507  1 = "ISP";
+NOTE: Format IND_ISP_ has been output.
+508  run ;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+509  proc freq data = feb.n_quarter;
+510  output out feb.freq_quarter;
+                ----------------
+                73
+ERROR 73-322: Expecting an =.
+511  tables q*ind_isp;
+512  format q qrtr_. ind_isp ind_isp_.;
+513  run ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set FEB.FREQ_QUARTER may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.00 seconds
+
+
+514  proc freq data = feb.n_quarter;
+515  tables q*ind_isp;
+516  format q qrtr_. ind_isp ind_isp_.;
+517  run ;
+
+NOTE: There were 14649660 observations read from the data set FEB.N_QUARTER.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           2.65 seconds
+      cpu time            0.65 seconds
+
+
+518
+519  proc sql ;
+520  create table feb.n_quarter as
+521  select count ( mcaid_id )
+522       , ind_isp
+523       , q
+524  from feb.unique_mem_quarter
+525  group by ind_isp, q;
+NOTE: Table FEB.N_QUARTER created, with 24 rows and 3 columns.
+
+526  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           12.10 seconds
+      cpu time            4.76 seconds
+
+
+527  proc sql ;
+528  create table feb.n_quarter as
+529  select count ( mcaid_id )
+530       , ind_isp format ind_isp_.
+531       , q format qrtr_.
+532  from feb.unique_mem_quarter
+533  group by ind_isp, q;
+NOTE: Table FEB.N_QUARTER created, with 24 rows and 3 columns.
+
+534  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           10.24 seconds
+      cpu time            4.95 seconds
+
+
+535  proc print data = feb.n_quarter ; run ;
+
+NOTE: There were 24 observations read from the data set FEB.N_QUARTER.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.00 seconds
+
+
+
+536  proc sql ;
+537  create table feb.n_quarter as
+538  select count ( mcaid_id ) as n_unique_mem
+539       , ind_isp format ind_isp_.
+540       , q format qrtr_.
+541  from feb.unique_mem_quarter
+542  group by ind_isp, q;
+NOTE: Table FEB.N_QUARTER created, with 24 rows and 3 columns.
+
+543  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           10.22 seconds
+      cpu time            4.64 seconds
+
+
+544  proc print data = feb.n_quarter noobs ; run ;
+
+NOTE: There were 24 observations read from the data set FEB.N_QUARTER.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+
+545  TITLE "Unique Attributed Members per Quarter, ISP / non-ISP: 07/2019-06/2022";
+546  proc sgplot data = feb.n_quarter;
+547  yaxis label = " ";
+548  styleattrs datacontrastcolors =(purple steel);
+549  series x = q y = n_unique_mem / group = ind_isp datalabel = label ;
+ERROR: Variable LABEL not found.
+550  refline '_01MAR2020'd /
+551          axis = x
+552          lineattrs = ( thickness = 2 color=grey pattern=dash )
+553          label = ("March 2020")
+554          labelloc = inside
+555          label = "March 2020";
+556  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+557  TITLE;
+
+
+558
+559  TITLE "Unique Attributed Members per Quarter, ISP / non-ISP: 07/2019-06/2022";
+560  proc sgplot data = feb.n_quarter;
+561  yaxis label = " ";
+562  styleattrs datacontrastcolors =(purple steel);
+563  series x = q y = n_unique_mem / group = ind_isp ;
+564  refline '_01MAR2020'd /
+565          axis = x
+566          lineattrs = ( thickness = 2 color=grey pattern=dash )
+567          label = ("March 2020")
+568          labelloc = inside
+569          label = "March 2020";
+570  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.79 seconds
+      cpu time            0.32 seconds
+
+NOTE: There were 24 observations read from the data set FEB.N_QUARTER.
+
+571  TITLE;
+
+572  ods excel file = "&util/reports_hcpf_pres_march2023/quarterly_attr.xlsx"
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+573      options (   sheet_name = "attr_quarter"
+574                  sheet_interval = "none"
+575                  frozen_headers = "no"
+576                  autofilter = "all");
+577
+578  proc print data = feb.n_quarter noobs ; run ;
+
+NOTE: There were 24 observations read from the data set FEB.N_QUARTER.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.04 seconds
+
+
+579
+580  ods excel options ( sheet_interval = "now" sheet_name = "plot") ;
+581
+582  TITLE "Unique Attributed Members per Quarter, ISP / non-ISP: 07/2019-06/2022";
+583  proc sgplot data = feb.n_quarter;
+584  yaxis label = " ";
+585  styleattrs datacontrastcolors =(purple steel);
+586  series x = q y = n_unique_mem / group = ind_isp ;
+587  refline '_01MAR2020'd /
+588          axis = x
+589          lineattrs = ( thickness = 2 color=grey pattern=dash )
+590          label = ("March 2020")
+591          labelloc = inside
+592          label = "March 2020";
+593  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.63 seconds
+      cpu time            0.31 seconds
+
+NOTE: There were 24 observations read from the data set FEB.N_QUARTER.
+
+594  TITLE;
+595
+596  ods excel close ;
+NOTE: Writing EXCEL file:
+      S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports_hcpf_pres_march2023\quarte
+      rly_attr.xlsx

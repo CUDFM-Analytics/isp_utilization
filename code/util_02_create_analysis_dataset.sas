@@ -10,82 +10,150 @@
 * PROJECT PATHS, MAPPING; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_params.sas"; 
 
-
 * ==== Combine datasets into monthly files ==================================;  
 proc sort data = data.qrylong_y15_22 ; by mcaid_id ;   *53384196; 
 proc sort data = data.memlist        ; by mcaid_id ; run ; 
 
 * ==== Reduce qrylong to 19-22 only ==========================================;
-data  analysis0;
+data  analysis0 ( drop = fy ) ;
 set   data.qrylong_y15_22;
 where month ge '01JUL2019'd 
 and   month le '30JUN2022'd ;
 run; 
 * 02/24: [40999955 : 28 variables];
 
-* ==== join isp_key info  =======================================;
-proc sort data = analysis0 ; by pcmp_loc_id ;           *[123];
-proc sort data = data.isp_key ; by pcmp_loc_id ; run ;
-
-* including the numeric id_pcmp; 
+* ==== Subset memlist (just to see) ==========================================;
+* Probaby don't need to do this but IDK; 
 proc sql; 
 create table analysis1 as 
+select *
+from analysis0
+where mcaid_id in (select mcaid_id from data.memlist) ; 
+quit; *2/27 > 40999955 : 28 ;
+
+                * count unique members in analysis1;
+                proc sql; 
+                create table n_mem_analysis1 as 
+                select count ( distinct mcaid_id ) as n_mcaid_id 
+                from analysis1; 
+                quit; 
+
+                proc print data = n_mem_analysis1 ; run; * 1594348; 
+
+* ==== Join the three utilization files ==========================================;
+proc contents data = data.util_19_22;
+proc contents data = data.bho_19_22 ; 
+proc contents data = data.memlist_tele_monthly; 
+run ; 
+
+proc sql; 
+create table analysis2 as 
 select a.*
-     , b.id_split
-     , b.dt_prac_isp
-from analysis0 as a 
-left join data.isp_key as b
-on a.pcmp_loc_id = b.pcmp_loc_id; 
-quit; *NOTE: Table WORK.ANALYSIS1 created, with 41009765 rows and 30 columns.;
+     /* join monthly */
+     , b.pd_amt_pc
+     , b.pd_amt_rx
+     , b.pd_amt_total
+     , b.n_pc
+     , b.n_er
+     , b.n_total
 
-proc print data = analysis1 (obs = 1000) ; where id_split ne . ; run ;
-proc sort data = analysis1 ; by mcaid_id ; run; 
+     /* join bho  */
+     , c.bh_n_er
+     , c.bh_n_other
 
-* set date to numeric 9 FUUUUUUUU; 
-data analysis2;
-set  analysis1; 
+     /* join telehealth utilization  */
+     , d.n_tele
+     , d.pd_tele
+
+FROM analysis1 AS a
+
+LEFT JOIN data.util_19_22 AS b
+ON a.mcaid_id = b.mcaid_id AND a.month = b.month
+
+LEFT JOIN data.bho_19_22 AS c
+ON a.mcaid_id = c.mcaid_id AND a.month = c.month
+
+LEFT JOIN data.memlist_tele_monthly AS d
+ON a.mcaid_id = d.mcaid_id AND a.month = d.month;
+
+QUIT;   * 40999955: 36 same when merged on pcmp_loc_id as when not;  
+
+proc print data = analysis2 (obs = 5000) ; run ; 
+
+*********** SAVE PROGRESS **********************; 
+            data tmp.analysis2;
+            set  analysis2; 
+            run ; 
+************************************************;
+
+* ==== join isp_key info  =======================================;
+proc sort data = tmp.analysis2 ;
+BY pcmp_loc_id ;      
+
+* get unique values for ISP pcmp_loc_id's and then remove where .; 
+PROC SORT DATA = data.isp_key NODUPKEY out =isp (KEEP = dt_prac_isp pcmp_loc_id); 
+BY pcmp_loc_id dt_prac_isp ; 
+RUN ;
+
+DATA isp;
+SET  isp (WHERE = (pcmp_loc_id ne '.' )) ; 
 dt_prac_isp2 = input(dt_prac_isp, date9.);
 FORMAT dt_prac_isp2 date9.;
 DROP   dt_prac_isp;
 RENAME dt_prac_isp2 = dt_prac_isp;
-RUN; 
+RUN  ;  *118;
+
+* there was a duplicate pcmp_loc_id with two different start dates: pcmp 162015 
+* kids first id_split 3356 dt_start 01Mar2020 & their brighton high school id_split 3388 start date 01Jul2020
+* I chose the 01Mar one for this and will ask Mark;
+data isp;
+set  isp;
+if   pcmp_loc_id = "162015" and dt_prac_isp = '01JUL2020'd then delete ; 
+run ; *117;
+
+* join to analysis2; 
+proc sql; 
+create table analysis3 as 
+select a.*
+     , b.dt_prac_isp
+     , b.pcmp_loc_id in (select pcmp_loc_id from isp ) as ind_isp_ever
+from tmp.analysis2 as a 
+left join isp as b
+on a.pcmp_loc_id = b.pcmp_loc_id; 
+quit; *BOOM same number PHEW!;
+
 
 * ==== create ind_isp and ind_isp_ever vars =======================================;
-DATA analysis3;
-SET  analysis2; 
-IF   id_split ne . and month >= dt_prac_isp then ind_isp = 1;
-ELSE ind_isp = 0; 
-IF   id_split ne . then ind_isp_ever = 1;
-ELSE ind_isp_ever = 0; 
+DATA analysis4;
+SET  analysis3; 
+IF   ind_isp_ever = 1 and month >= dt_prac_isp then ind_isp_dtd = 1;
+ELSE ind_isp_dtd = 0; 
 RUN;
-**NOTE: Table WORK.ANALYSIS1 created, with 41009765 rows and 30 columns.;
 
-proc print data = analysis3 (obs = 1000) ; where ind_isp = 0 AND ind_isp_ever = 1 ; run ; *WOOOT!!!  
+        proc print data = analysis4 (obs = 1000) ; 
+        var mcaid_id month dt_prac_isp ind_isp_ever ind_isp_dtd;
+        where dt_prac_isp ne . ;
+        run ; 
 
         * ==== save progress / delete later ===========================================;  
-        data tmp.analysis3;
-        set  analysis3; 
+        data tmp.analysis_draft;
+        set  analysis4; 
         run; 
+                
+                * WHAat was this? probably remove later?? ; 
+                proc sql; 
+                create table data.ind_isp_counts_19_22 as 
+                select sum (ind_isp) as n_ind_isp
+                     , sum (ind_isp_ever) as ind_isp_ever
+                from analysis3;
+                quit;
 
-proc sort data = analysis3 ; by mcaid_id month ; run ;
+                proc print data = data.ind_isp_counts_19_22 ; run ; 
 
-proc sql; 
-create table data.ind_isp_counts_19_22 as 
-select sum (ind_isp) as n_ind_isp
-     , sum (ind_isp_ever) as ind_isp_ever
-from analysis3;
-quit;
+* ==== Add q var  ==================================;  
 
-proc print data = data.ind_isp_counts_19_22 ; run ; 
-
-* ==== Quarter format / question  ==================================;  
-* Number of unique attributed members in calendar quarter – quarterly 3Q2019 – 2Q2022 
-(assign members to PCMP with the most months in a quarter and 
-if there is an equal number assign to PCMP with attribution in last month eligible in the quarter) ; 
-
-* using a format wouldn't let me sum them (it wouldn't group by them? idk why) ; 
-data tmp.analysis4;
-set  tmp.analysis3;
+data analysis5;
+set  analysis4;
 if month in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then q = 1;
 if month in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then q = 2;
 if month in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then q = 3;
@@ -100,194 +168,97 @@ if month in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then q = 11;
 if month in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then q = 12;
 run;
 
-proc freq data = analysis4; tables q ; run ;
 
-* ... (assign members to PCMP with the most months in a quarter and 
-if there is an equal number assign to PCMP with attribution in last month eligible in the quarter) ; 
+proc contents data = analysis5 ; run ; 
 
-* a) add count to pcmp and get max month; 
-proc sql; 
-create table n as 
-select mcaid_id
-     , q
-     , pcmp_loc_id
-     , count (pcmp_loc_id) as n_pcmp_per_q
-     , max ( month ) as max_month format date9.
-from analysis4
-group by mcaid_id, q, pcmp_loc_id
-order by mcaid_id, q;
-quit; * 14286652 rows and 3 columns.;
+* add labels and save:; 
+data data.analytic_dataset ;
+set  data.analytic_dataset ; 
 
+if n_pc = . then n_pc = 0;
+if n_er = . then n_er = 0;
+if n_total = . then n_total = 0;
+if bh_n_er = . then bh_n_er = 0;
+if bh_n_other = . then bh_n_other = 0;
+if n_tele = . then n_tele = 0;
+if pd_tele = . then pd_tele = 0;
+if pd_amt_pc = . then pd_amt_pc = 0;
+if pd_amt_rx = . then pd_amt_rx = 0;
+if pd_amt_total = . then pd_amt_total = 0;
 
-
-
-
-
-
-
-
-
-
-
-* ==== create quarter variable =======================================;  
-* import the csv I made to cheat; 
-PROC IMPORT 
-     DATAFILE = "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/quarter_months_years_analysis.csv"
-     OUT      = quarters
-     DBMS     = dlm
-     REPLACE;
-DELIMITER     = ",";
+label FY           = "Fiscal Year"
+      RAE_ID       = "RAE ID" 
+      age_end_fy   = "Age on Last Day FY"
+      bh_n_er      = "BH visits: ER"
+      bh_n_other   = "BH visits: Other"
+      dob          = "Date of Birth" 
+      dt_prac_isp  = "Date ISP Enrollment"
+      ind_isp_dtd  = "ISP: Time-Varying"
+      ind_isp_ever = "ISP: Time-Invariant"
+      last_day_fy  = "Last Day of FY"
+      n_er         = "Visits: ER"
+      n_pc         = "Visits: PC"
+      n_tele       = "Visits: Tele"
+      n_total      = "Visits: Total in Monthly File"
+      pcmp_type    = "PCMP type, recoded"
+      pd_amt_pc    = "Cost: PC"
+      pd_amt_rx    = "Cost: Prescriptions"
+      pd_tele      = "Cost: Telehealth"
+      q            = "Quarter"
+      pd_amt_total = "Total FFS Cost of Care"
+      ;
 RUN; 
 
-
+* join the `unique_mem_quarter` to get the pcmp used there: ; 
 proc sql; 
-create table quarters1 as 
-select a.mcaid_id 
-     , b.sas
-     , b.quarter
-from data.memlist as a
-full join quarters as b
-on a.month = b.sas;
-quit; 
-
-
-*NOTE: Table WORK.ANALYSIS1 created, with 41000294 rows and 32 columns.;
-proc sort data = analysis1 ; by mcaid_id month ; run; 
-proc print data = analysis1 (obs=5000) ; run; 
-
-*NOTE: There were 53384196 observations read from the data set DATA.QRYLONG_Y15_22.
-NOTE: There were 1594687 observations read from the data set DATA.MEMLIST.
-NOTE: The data set WORK.ANALYSIS_DATA0 has 53384196 observations and 28 variables.;
-
-proc print data = analysis_data0 (obs = 1000) ; run; 
-
-* count unique members in analysis_data0;
-proc sql; 
-create table n_mem_analysis_data0 as 
-select count ( distinct mcaid_id ) as n_mcaid_id 
-from analysis_data0; 
-quit; 
-
-proc print data = n_mem_analysis_data0 ; run; 
-
-* ==== merge them all ================================================================;
-proc sql; 
-create table analysis_data1 as 
+create table analysis6 as 
 select a.*
-     /* join memlist utilization  */
-     , b.pcmp_loc_id
-     , b.id_split
-     , b.dt_prac_isp
-     , b.ind_isp
+     , b.pcmp_loc_id as pcmp_id_qrtr
+from  data.analytic_dataset as a
+left join feb.unique_mem_quarter as b
+on a.mcaid_id = b.mcaid_id and a.q = b.q; 
+quit;
 
-     /* join memlist utilization  */
-     , c.bh_n_er
-     , c.bh_n_other
-     /* join telehealth utilization  */
-     , d.n_tele
-     , d.pd_tele
-     /* join monthly utilization  */
-     , e.clmClass_r
-     , e.tot_n_month
-     , e.tot_pd_month
+* NEXT GET MAX for ind_isp_quarter if it's in the month; 
+/*proc sql; */
+/*create table analysis7 as */
+/*select **/
+/*     , max(ind_isp_dtd) as ind_isp_dtd_qrtr*/
+/*from analysis6*/
+/*group by mcaid_id, q;*/
+/*quit; */
+* ABOVE DIDN"T WORK because if member switched mid-quarter to a NONISP practice= see example A020536; 
+*row  mcaid_id month    q ind_isp_dtd_qrtr ind_isp_dtd ind_isp_ever pcmp_loc_id pcmp_id_qrtr
+*2175 A020536 01AUG2021 9  1 1 1 118862 118862  --ISSUE HERE
+ 2176 A020536 01SEP2021 9  1 0 0 19358 118862 
+ 2177 A020536 01DEC2021 10 0 0 0 19358 19358 ; 
 
-FROM analysis_data0 AS a
-
-LEFT JOIN data.memlist as b
-ON a.mcaid_id = b.mcaid_id AND a.month = b.month
-
-LEFT JOIN data.bho_fy15_22 AS c
-ON a.mcaid_id = c.mcaid_id AND a.month = c.month
-
-LEFT JOIN data.memlist_tele_monthly AS d
-ON a.mcaid_id = d.mcaid_id AND a.month = d.month
-
-LEFT JOIN data.util_month_y15_22 AS e
-ON a.mcaid_id = e.mcaid_id AND a.month = e.month;
-
-QUIT;   * 53384535 : 31 same when merged on pcmp_loc_id as when not;  
-
-proc print data = analysis_data1 (obs = 10000) ; run; 
-
-proc contents data = analysis_data1 varnum ; run ; 
-*NOTE: Table WORK.ANALYSIS_DATA1 created, with 73.000.396 rows and 38 columns.; 
-
-proc print data = ANALYSIS_DATA1 ( obs = 1000 ) ; run; 
-
-proc freq data = analysis_data1 ; tables ind_isp ; run ;
-
-PROC SQL; 
-CREATE TABLE tmp.util_monthly_fy7_2 AS 
-SELECT a.*
-    , b.*
-FROM tmp.util_monthly_fy7_0 as a
-LEFT JOIN data.telecare_monthly as b
-on a.mcaid_id = b.mcaid_id;
-QUIT; *NOTE: Table TMP.FINALSUBJ_MONTHLY_UTIL_1 created, with 66272914 rows and 9 columns.;
-
-        * HOLD on this - Sum the month? What about clmclass then? ;
-        proc sql;
-         create table util_monthly_fy7_2 as
-         select MCAID_ID
-              , month
-              , sum(pd_amt) as tot_pd_amt
-              , sum(count ) as tot_count
-        from util_monthly_fy7_1
-        group by MCAID_ID, month;
-        quit; 
-
-* Get unique number of client ID's per pcmp_loc_id;
 proc sql; 
-create table n_un_members as 
-select pcmp_loc_id
-    , count(distinct mcaid_id) as n_mcaid_id
-from tmp.util_monthly_fy7_2
-GROUP BY pcmp_loc_id;
-run;
+create table analysis7 as 
+select *
+     , case when ind_isp_ever = 1 then max(ind_isp_dtd) else 0 end as ind_isp_dtd_qrtr
+from analysis6
+group by mcaid_id, q;
+quit;  
 
-PROC PRINT DATA = n_un_mcaidid;
-RUN; 
 
-proc sql;
-create table n_members_cu as
-select pcmp_cu
-    , month
-    , count(distinct mcaid_id) as n_mcaid_id
-from qrylong_y19_y22_4 group by pcmp_cu, month;
-quit; *01/20: 396, 4;
+        * find examples ; 
+        proc print data = analysis7 (obs = 500) ; 
+        var mcaid_id month q ind_isp_dtd_qrtr ind_isp_dtd ind_isp_ever ; 
+        where ind_isp_dtd_qrtr = 1 and ind_isp_dtd = 0;
+        run ; 
 
-PROC PRINT DATA = n_members_cu;
-RUN; 
+        proc print data = analysis7;
+        where mcaid_id in ("A020536", "A020916", "A023159","A027267"); 
+        var mcaid_id month q ind_isp_dtd_qrtr ind_isp_dtd ind_isp_ever pcmp_loc_id ; 
+        run ; 
 
-proc transpose DATA = n_members_cu
-                out = n_members_cu_1 (drop=_name_);
-by pcmp_cu; 
-id month; 
-var n_mcaid_id;
-run;
+        proc print data = analysis7;
+        where mcaid_id in ("A020536","A023159", "A027267", "A044973","A027267"); 
+        var mcaid_id month q ind_isp_dtd_qrtr ind_isp_dtd ind_isp_ever pcmp_loc_id ; 
+        run ; 
 
-PROC SQL ;
-CREATE TABLE attr_mrnfile0 AS 
-SELECT a.pcmp_cu
-    , a.n_mcaid_id as n_total
-    , b.*
-FROM n_un_mcaidid as a
-JOIN n_members_cu_1 as b
-ON   a.pcmp_cu = b.pcmp_cu;
-QUIT; 
-
-PROC SQL;
-CREATE TABLE attr_mrnfile AS 
-SELECT a.pcmp_loc_id
-    , a.name_location as practice_name
-    , b.*
-FROM out.cu_pcmp AS a
-FULL JOIN attr_mrnfile0 as b
-ON a.pcmp_loc_id = b.pcmp_cu;
-QUIT; 
-
-DATA out.attr_mrn_cls;
-SET  attr_mrnfile (DROP = pcmp_loc_id);
-RUN; 
-
+        * appears fixed: 2674 A023159 01JUL2021 9 1 0 1 117507 
+                         2675 A023159 01AUG2021 9 1 1 1 117507 
+                         2676 A023159 01SEP2021 9 1 1 1 117507 ;
 
