@@ -233,8 +233,10 @@ quit;
  2176 A020536 01SEP2021 9  1 0 0 19358 118862 
  2177 A020536 01DEC2021 10 0 0 0 19358 19358 ; 
 
+** ALSO order by month before crying - if they're out of order Kim you'll think you messed it all up ; 
+
 proc sql; 
-create table analysis7 as 
+create table data.analytic_dataset as 
 select *
      , case when ind_isp_ever = 1 then max(ind_isp_dtd) else 0 end as ind_isp_dtd_qrtr
 from analysis6
@@ -243,17 +245,12 @@ quit;
 
 
         * find examples ; 
-        proc print data = analysis7 (obs = 500) ; 
+        proc print data = data.analytic_dataset (obs = 500) ; 
         var mcaid_id month q ind_isp_dtd_qrtr ind_isp_dtd ind_isp_ever ; 
         where ind_isp_dtd_qrtr = 1 and ind_isp_dtd = 0;
         run ; 
 
-        proc print data = analysis7;
-        where mcaid_id in ("A020536", "A020916", "A023159","A027267"); 
-        var mcaid_id month q ind_isp_dtd_qrtr ind_isp_dtd ind_isp_ever pcmp_loc_id ; 
-        run ; 
-
-        proc print data = analysis7;
+        proc print data = data.analytic_dataset;
         where mcaid_id in ("A020536","A023159", "A027267", "A044973","A027267"); 
         var mcaid_id month q ind_isp_dtd_qrtr ind_isp_dtd ind_isp_ever pcmp_loc_id ; 
         run ; 
@@ -261,4 +258,48 @@ quit;
         * appears fixed: 2674 A023159 01JUL2021 9 1 0 1 117507 
                          2675 A023159 01AUG2021 9 1 1 1 117507 
                          2676 A023159 01SEP2021 9 1 1 1 117507 ;
+
+proc contents data = data.analytic_dataset; 
+run ; 
+
+* create abbreviated file for Miriam to test; 
+proc sql; 
+create table data.analytic_ds_q_only as 
+select mcaid_id
+     , FY
+     , age_end_fy
+     , ind_isp_dtd_qrtr
+     , ind_isp_ever
+     , q
+     , pcmp_id_qrtr
+     , sum(n_pc) as n_pc_qrtr
+     , sum(pd_amt_pc) as amt_pc_qrtr
+     , sum(n_total) as n_total_qrtr
+     , sum(pd_amt_total) as amt_total_qrtr
+from data.analytic_dataset 
+group by mcaid_id, q
+having q = max(q);
+quit; 
+
+proc sort data = data.analytic_ds_q_only nodupkey ; by _all_ ; run ; 
+
+* take first 50000 and send to miriam; 
+proc sql; 
+create table data.test as
+select * 
+from   data.analytic_ds_q_only (OBS = 10000)
+where ind_isp_ever = 0;
+quit; 
+
+proc sql; 
+create table test2 as
+select * 
+from   data.analytic_ds_q_only (OBS = 10000)
+where ind_isp_ever = 1;
+quit; 
+
+
+
+proc contents data = data.test; 
+run ; 
 
