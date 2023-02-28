@@ -363,22 +363,40 @@ select a.mcaid_id
      , a.amt_pc_qrtr 
      , a.n_total_qrtr 
      , a.amt_total_qrtr 
-     , b.ind_isp_dtd_qrtr
-     , b.ind_isp_ever
-     , b.pcmp_id_qrtr
+     , b.ind_isp as ind_isp_ever
+     , b.pcmp_loc_id 
 from match as a
 left join feb.unique_mem_quarter as b
 on a.mcaid_id = b.mcaid_id and a.q = b.q;
 quit;  
 
+proc sql; 
+create table data.test as 
+select *
+     , case when ind_isp_ever = 1 then max(ind_isp_ever) else 0 end as ind_isp_qrtr
+from data.test
+group by mcaid_id, q; 
+quit; 
+
         proc sql; 
         create table check_ids_test as 
         select mcaid_id
              , count(mcaid_id) as n_mcaid_id
-        from data.test
+        from test2
         group by mcaid_id; 
         quit ; * 2502; 
 
         proc print data = data.test ; where mcaid_id = "A000405" ; run ; 
 
 proc freq data = check_ids_test ; tables n_mcaid_id ; run ; 
+
+proc print data = data.test (obs = 100); run ; 
+
+
+data data.test; 
+set  data.test;
+if n_pc_qrtr = . then n_pc_qrtr = 0;
+if amt_pc_qrtr = . then amt_pc_qrtr = 0;
+if n_total_qrtr = . then n_total_qrtr = 0;
+if amt_total_qrtr = . then amt_total_qrtr = 0; 
+run ; 
