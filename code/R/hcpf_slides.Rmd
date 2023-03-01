@@ -46,36 +46,46 @@ attr2 <- attr %>%
 ```  
 
 ```{r attr_plot}
+# range n: min=12092 max=1203140  
 
-# range for n = min 12092 max 1203140  
 theme_set(theme_minimal(base_family = "Lato"))
 
 theme_update(
-  # Remove title for both x and y axes
-  axis.title = element_blank(),
+
   # Axes labels are grey
   axis.text = element_text(color = "grey40"),
-  # Also, the ticks have a very light grey color
-  axis.ticks = element_line(color = "grey91", linewidth = .5),
-  # Remove default grid lines (so the annotation part won't have)
+  # ticks light grey
+  axis.ticks = element_line(color = "grey91", size = .5),
+  # Remove the grid lines 
   panel.grid = element_blank(),
   # Customize margin values (top, right, bottom, left)
-  plot.margin = margin(20, 20, 20, 20),
-  # make background transparent for slide
-  plot.background = element_rect(
-  	fill = "transparent", color = "grey98"),
-  panel.background = element_rect(
-  	fill = "transparent", color = "grey98"),
-  # plot.title.position = "plot", 
-  		#(don't add title so it can be changed in ppt by them)
-  # Align caption 
+  plot.margin = margin(20, 40, 20, 40),
+  # Use a light grey color for the background of both the plot and the panel
+  plot.background = element_rect(fill = "grey98", color = "grey98"),
+  panel.background = element_rect(fill = "grey98", color = "grey98"),
+  # Customize title appearence
+  plot.title = element_text(
+    color = "grey10", 
+    size = 28, 
+    face = "bold",
+    margin = margin(t = 15)
+  ),
+  # Customize subtitle appearence
+  plot.subtitle = element_markdown(
+    color = "grey30", 
+    size = 16,
+    lineheight = 1.35,
+    margin = margin(t = 15, b = 40)
+  ),
+  # Title and caption are going to be aligned
+  plot.title.position = "plot",
   plot.caption.position = "plot",
   plot.caption = element_text(
     color = "grey30", 
     size = 13,
-    #lineheight = 1.2, 
+    lineheight = 1.2, 
     hjust = 0,
-    margin = margin(t = 15) # slight margin on top of caption.
+    margin = margin(t = 40) # Large margin on the top of the caption.
   ),
   # Remove legend
   legend.position = "none"
@@ -86,19 +96,40 @@ labs <- list(
 	y = "Unique Members (n)"
 )
 
-ggplot(
+attr_plt <- ggplot(
 	attr2,
 	aes(row, n, group = flag)
 	)+
+	# vertical gridlines
+	geom_vline(
+		xintercept = seq(0,36,by = 3),
+		color = "grey91",
+		size = .6
+	)+
+	# dotted line for March 2020: 
 	geom_vline(
 		aes(xintercept = 9),
 		color = "grey40",
 		linetype = "dotted",
 		size = .8
 	  )+
+	# horizontal gridlines
+	geom_segment(
+		data = tibble(y = seq(100000, 1400000, by = 100000), 
+									x1 = 0, x2 = 36),
+		aes(x=x1, xend = x2, y = y, yend = y),
+		inherit.aes = FALSE,
+		color = "grey91",
+		size = .6
+	)+
+	# data points lines
 	geom_line(
-		aes(color = flag)
-		)+
+		aes(color = flag))
+
+attr_plt
+
+attr_plt +
+	# add the March text annotation 
 	annotate(
 	  "text", x = 9, y = 1300000,
 	  label = "March\n2020",
@@ -108,6 +139,7 @@ ggplot(
   	hjust = 1.1,
 	  lineheight = .7
   	) + 
+	# add values at the end of the graph, without grid lines
 	geom_text_repel(
 		aes(color = flag,
 				label = label_max),
@@ -131,7 +163,7 @@ ggplot(
 	)+
 	scale_x_continuous(
 		expand = c(0,0),
-		limits = c(0,46),
+		limits = c(0,42),
 		breaks = seq(0,36, by = 3)
 	)+
 	scale_y_continuous(
@@ -148,23 +180,3 @@ attr_plt
 
 ```
 
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
