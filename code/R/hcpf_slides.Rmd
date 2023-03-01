@@ -32,34 +32,46 @@ attr2 <- attr %>%
 											names_to = "month",
 											values_to = "n"
 											)  %>% 
+	mutate(flag = factor(flag,
+													levels = c(0,1),
+													labels = c("Non-ISP",
+																		 "ISP"))) %>% 
 	mutate(month = stringr::str_replace_all(month, "_","")) %>% 
-	mutate(month = lubridate::dmy(month)) %>% 
-	mutate(quarter = lubridate::quarter(
-		month, type="year.quarter", fiscal_start = 7)) %>% 
-	# add label at max 
 	group_by(flag) %>% 
-	mutate(label_max = if_else(month == max(month), n, NA_real_)) %>% 
-	mutate(label_max = scales::comma(label_max)) %>% 
 	mutate(row = row_number()) %>% 
+	mutate(month = lubridate::dmy(month)) %>% 
+	mutate(x_txt = format(month, format = "%b '%y")) %>% 
+	# mutate(x_text = case_when(
+	# 	row %% 3 == 0 ~ format(month, format = "%b %Y"))) %>% 
+	# add label at max 
+	mutate(label0 = if_else(month == max(month), n, NA_real_)) %>% 
+	mutate(label0 = scales::comma(label0)) %>% 
+	mutate(label_max = if_else(!is.na(label0), 
+														 glue::glue("{flag}\n(n={label0})"),
+														 NA_character_)) %>% 
+
 	ungroup()
 
 ```  
 
 ```{r attr_plot}
 # range n: min=12092 max=1203140  
+library(ggsci)
 
 theme_set(theme_minimal(base_family = "Lato"))
 
 theme_update(
-
-  # Axes labels are grey
-  axis.text = element_text(color = "grey40"),
+  # Axes labels are grey, angled for x, and give margin for readability
+  axis.text.x = element_text(color = "grey40", 
+  													 angle = 45,
+  													 margin = margin(t=15)),
+  axis.text.y = element_text(color = "grey40"),
   # ticks light grey
   axis.ticks = element_line(color = "grey91", size = .5),
   # Remove the grid lines 
   panel.grid = element_blank(),
   # Customize margin values (top, right, bottom, left)
-  plot.margin = margin(20, 40, 20, 40),
+  plot.margin = margin(20, 10, 20, 10),
   # Use a light grey color for the background of both the plot and the panel
   plot.background = element_rect(fill = "grey98", color = "grey98"),
   panel.background = element_rect(fill = "grey98", color = "grey98"),
@@ -96,13 +108,13 @@ labs <- list(
 	y = "Unique Members (n)"
 )
 
-attr_plt <- ggplot(
+attr_plt0 <- ggplot(
 	attr2,
 	aes(row, n, group = flag)
 	)+
 	# vertical gridlines
 	geom_vline(
-		xintercept = seq(0,36,by = 3),
+		xintercept = seq(1,36,by = 3),
 		color = "grey91",
 		size = .6
 	)+
@@ -116,7 +128,7 @@ attr_plt <- ggplot(
 	# horizontal gridlines
 	geom_segment(
 		data = tibble(y = seq(100000, 1400000, by = 100000), 
-									x1 = 0, x2 = 36),
+									x1 = 1, x2 = 36),
 		aes(x=x1, xend = x2, y = y, yend = y),
 		inherit.aes = FALSE,
 		color = "grey91",
@@ -126,16 +138,18 @@ attr_plt <- ggplot(
 	geom_line(
 		aes(color = flag))
 
-attr_plt
+x_labels <- attr2 %>%
+	select(row, x_txt) %>% 
+	filter(row %%3 == 0)
 
-attr_plt +
+attr_plt <- attr_plt0 + 
 	# add the March text annotation 
 	annotate(
-	  "text", x = 9, y = 1300000,
+	  "text", x = 9, y = 1350000,
 	  label = "March\n2020",
 	  family = "Lato",
   	size = 4,
-  	color = "grey40",
+  	color = "grey20",
   	hjust = 1.1,
 	  lineheight = .7
   	) + 
@@ -145,7 +159,7 @@ attr_plt +
 				label = label_max),
 		family = "Lato",
 		fontface = "bold",
-		size = 5,
+		size = 4,
 		direction = "y",
 		xlim = c(36.8, NA),
 		hjust = 0,
@@ -155,7 +169,8 @@ attr_plt +
 		box.padding = .4,
     segment.curvature = -0.1,
     segment.ncp = 3,
-    segment.angle = 20
+    segment.angle = 20,
+		lineheight = .7
 	) + 
 	coord_cartesian(
 		clip = "off",
@@ -163,9 +178,15 @@ attr_plt +
 	)+
 	scale_x_continuous(
 		expand = c(0,0),
-		limits = c(0,42),
-		breaks = seq(0,36, by = 3)
+		limits = c(1,50),
+		breaks = x_labels$row,
+		labels = x_labels$x_txt
 	)+
+	# scale_x_continuous(
+	# 	expand = c(0,0),
+	# 	limits = c(1,50),
+	# 	breaks = seq(1,36, by = 3)
+	# )+
 	scale_y_continuous(
 		labels = scales::comma,
 		expand = c(0,0),
@@ -174,7 +195,8 @@ attr_plt +
 	labs(
 		y = labs$y,
 		x = labs$x
-	)
+	)+
+	scale_color_jama()
 
 attr_plt
 
