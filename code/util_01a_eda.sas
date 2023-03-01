@@ -9,3 +9,7 @@
 
 * global paths, settings  ---------------------------;
 ***********************************************************************************************;
+proc contents data = data.util_19_22;
+proc contents data = data.bho_19_22 ; 
+proc contents data = data.memlist_tele_monthly; 
+run ; 

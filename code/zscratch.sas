@@ -1,13 +1,15 @@
 PROC CONTENTS 
-     DATA = merge0 VARNUM;
+     DATA =  VARNUM;
 RUN;
 
 PROC CONTENTS 
-     DATA = qry_monthly_utilization VARNUM;
+     DATA = analysis6 VARNUM;
 RUN;
 
+proc print data = analysis (obs = 500) ; run ; 
+
 PROC CONTENTS 
-     DATA = util0 VARNUM;
+     DATA = data.qrylong_y15_22 VARNUM;
 RUN;
 
 PROC FREQ 

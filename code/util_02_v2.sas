@@ -11,8 +11,8 @@
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_params.sas"; 
 
 * ==== Combine datasets into monthly files ==================================;  
-proc sort data = data.qrylong_y15_22 ; by mcaid_id ;   *53384196; 
-proc sort data = data.memlist        ; by mcaid_id ; run ; 
+proc sort data = data.qrylong_y15_22 ; by mcaid_id ;       *53384196; 
+proc sort data = data.memlist        ; by mcaid_id ; run ;  *1594686; 
 
 * ==== Reduce qrylong to 19-22 only ==========================================;
 data  analysis0 ( drop = fy ) ;
@@ -22,32 +22,18 @@ and   month le '30JUN2022'd ;
 run; 
 * 02/24: [40999955 : 28 variables];
 
-* ==== Subset memlist (just to see) ==========================================;
-* Probaby don't need to do this but IDK; 
-proc sql; 
-create table analysis1 as 
-select *
-from analysis0
-where mcaid_id in (select mcaid_id from data.memlist) ; 
-quit; *2/27 > 40999955 : 28 ;
-
                 * count unique members in analysis1;
                 proc sql; 
                 create table n_mem_analysis1 as 
                 select count ( distinct mcaid_id ) as n_mcaid_id 
-                from analysis1; 
+                from analysis0; 
                 quit; 
 
-                proc print data = n_mem_analysis1 ; run; * 1594348; 
+                proc print data = n_mem_analysis1 ; run; * 1594348 2/28; 
 
 * ==== Join the three utilization files ==========================================;
-proc contents data = data.util_19_22;
-proc contents data = data.bho_19_22 ; 
-proc contents data = data.memlist_tele_monthly; 
-run ; 
-
 proc sql; 
-create table analysis2 as 
+create table analysis1 as 
 select a.*
      /* join monthly */
      , b.pd_amt_pc
@@ -65,7 +51,7 @@ select a.*
      , d.n_tele
      , d.pd_tele
 
-FROM analysis1 AS a
+FROM analysis0 AS a
 
 LEFT JOIN data.util_19_22 AS b
 ON a.mcaid_id = b.mcaid_id AND a.month = b.month
@@ -77,26 +63,44 @@ LEFT JOIN data.memlist_tele_monthly AS d
 ON a.mcaid_id = d.mcaid_id AND a.month = d.month;
 
 QUIT;   * 40999955: 36 same when merged on pcmp_loc_id as when not;  
+      
+        * CHECK counts to see if all = 12; 
+        proc sql; 
+        create table check_mcaid_n as 
+        select count(mcaid_id) as n_mcaid_id
+        from data.memlist
+        group by mcaid_id; 
+        quit ; * 1594348 ; 
 
-proc print data = analysis2 (obs = 5000) ; run ; 
+        proc freq data = check_mcaid_n ; tables n_mcaid_id ; run ; * all had 12!! ;
 
-*********** SAVE PROGRESS **********************; 
-            data tmp.analysis2;
-            set  analysis2; 
-            run ; 
-************************************************;
+                ****** save progress ****** ;
+                data tmp.analysis2; 
+                set  analysis2; 
+                run ; 
+                ****************************;  
 
-* ==== join isp_key info  =======================================;
-proc sort data = tmp.analysis2 ;
-BY pcmp_loc_id ;      
+* Add month count per quarter (to create pmpm n's, amt's) ;
+proc sql; 
+create table analysis3 as 
+select *
+     , count (month) as n_month
+from tmp.analysis2
+group by mcaid_id, q ; 
+quit;  *40999955; 
 
-* get unique values for ISP pcmp_loc_id's and then remove where .; 
-PROC SORT DATA = data.isp_key NODUPKEY out =isp (KEEP = dt_prac_isp pcmp_loc_id); 
+proc freq data = analysis3 ; tables n_month ; run ; 
+
+* add dt_prac_isp from isp to feb.unique_mem_quarter; 
+* get unique values for ISP pcmp_loc_id's and then remove where . ; 
+
+PROC SORT DATA = data.isp_key (WHERE = (pcmp_loc_id ne '.' ))  
+     NODUPKEY out =isp (KEEP = dt_prac_isp pcmp_loc_id)    ; 
 BY pcmp_loc_id dt_prac_isp ; 
-RUN ;
+RUN ; *119; 
 
 DATA isp;
-SET  isp (WHERE = (pcmp_loc_id ne '.' )) ; 
+SET  isp ; 
 dt_prac_isp2 = input(dt_prac_isp, date9.);
 FORMAT dt_prac_isp2 date9.;
 DROP   dt_prac_isp;
@@ -105,86 +109,93 @@ RUN  ;  *118;
 
 * there was a duplicate pcmp_loc_id with two different start dates: pcmp 162015 
 * kids first id_split 3356 dt_start 01Mar2020 & their brighton high school id_split 3388 start date 01Jul2020
-* I chose the 01Mar one for this and will ask Mark;
-data isp;
-set  isp;
+* I chose the 01Mar one for this
+PER MARK G 2/28 = OK;
+data data.isp_un_pcmp;
+set  data.isp_un_pcmp ;
 if   pcmp_loc_id = "162015" and dt_prac_isp = '01JUL2020'd then delete ; 
+pcmp2 = input(pcmp_loc_id, 8.); 
+drop pcmp_loc_id;
+rename pcmp2 = pcmp_loc_id; 
 run ; *117;
 
-* join to analysis2; 
-proc sql; 
-create table analysis3 as 
-select a.*
-     , b.dt_prac_isp
-     , b.pcmp_loc_id in (select pcmp_loc_id from isp ) as ind_isp_ever
-from tmp.analysis2 as a 
-left join isp as b
-on a.pcmp_loc_id = b.pcmp_loc_id; 
-quit; *BOOM same number PHEW!;
+* left join unique_mem_quarter (don't want all attr, only the memlist) 
+* left join isp_un_pcmp for dt_prac_isp; 
+PROC SQL; 
+CREATE TABLE analysis4 AS 
+SELECT a.*
+     , b.pcmp_loc_id AS pcmp_attr_qrtr
+     , b.ind_isp AS ind_isp_ever
+FROM analysis3 AS a
+LEFT JOIN feb.unique_mem_quarter AS b
+ON a.mcaid_id = b.mcaid_id AND a.q = b.q ;
+QUIT ; 
+
+PROC SQL; 
+CREATE TABLE analysis5 as 
+SELECT a.*
+     , b.dt_prac_isp 
+FROM analysis4 AS a
+LEFT JOIN data.isp_un_pcmp AS b
+ON a.pcmp_attr_qrtr = b.pcmp_loc_id; 
+QUIT; *40999955 : 42; 
+
+            proc print data = analysis5 (obs=250) ; 
+            var dt_prac_isp ind_isp_ever mcaid_id; 
+            where ind_isp_ever = 1 ; 
+            run ; 
+
+            proc print data = analysis5 ;
+            var  mcaid_id dt_prac_isp ind_isp_ever pcmp_loc_id pcmp_attr_qrtr month; 
+            where mcaid_id in ("P861019", "L155867"); 
+            run ; 
 
 
 * ==== create ind_isp and ind_isp_ever vars =======================================;
-DATA analysis4;
-SET  analysis3; 
+DATA analysis6;
+SET  analysis5; 
 IF   ind_isp_ever = 1 and month >= dt_prac_isp then ind_isp_dtd = 1;
 ELSE ind_isp_dtd = 0; 
 RUN;
 
-        proc print data = analysis4 (obs = 1000) ; 
-        var mcaid_id month dt_prac_isp ind_isp_ever ind_isp_dtd;
-        where dt_prac_isp ne . ;
-        run ; 
-
         * ==== save progress / delete later ===========================================;  
-        data tmp.analysis_draft;
-        set  analysis4; 
+        data tmp.analysis6;
+        set  analysis6; 
         run; 
                 
-                * WHAat was this? probably remove later?? ; 
-                proc sql; 
-                create table data.ind_isp_counts_19_22 as 
-                select sum (ind_isp) as n_ind_isp
-                     , sum (ind_isp_ever) as ind_isp_ever
-                from analysis3;
-                quit;
+proc print data = analysis6 (obs = 100) ; run ;           
+proc contents data = analysis6 varnum; run ; 
 
-                proc print data = data.ind_isp_counts_19_22 ; run ; 
+proc sql; 
+create table data.analytic_dataset as 
+select *
+     , case when ind_isp_ever = 1 then max(ind_isp_dtd) else 0 end as ind_isp_dtd_qrtr
+from analysis6
+group by mcaid_id, q;
+quit;  
 
-* ==== Add q var  ==================================;  
+proc print data = data.analytic_dataset (obs = 1000) ; 
+var mcaid_id pcmp:  ind_isp_ever dt_prac_isp month q ind_isp_dtd ind_isp_dtd_qrtr n_: ; 
+where mcaid_id = "A005156";   *was dt_prac_isp ne . ; 
+run ; * Looks good!! 
 
-data analysis5;
-set  analysis4;
-if month in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then q = 1;
-if month in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then q = 2;
-if month in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then q = 3;
-if month in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then q = 4;
-if month in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then q = 5;
-if month in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then q = 6;
-if month in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then q = 7;
-if month in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then q = 8;
-if month in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then q = 9;
-if month in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then q = 10;
-if month in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then q = 11;
-if month in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then q = 12;
-run;
-
-
-proc contents data = analysis5 ; run ; 
-
-* add labels and save:; 
+* Combine capitated and FFS er, Roll up quarters, add labels and save:; 
 data data.analytic_dataset ;
-set  data.analytic_dataset ; 
+set  data.analytic_dataset ;
 
-if n_pc = . then n_pc = 0;
-if n_er = . then n_er = 0;
-if n_total = . then n_total = 0;
-if bh_n_er = . then bh_n_er = 0;
-if bh_n_other = . then bh_n_other = 0;
-if n_tele = . then n_tele = 0;
-if pd_tele = . then pd_tele = 0;
-if pd_amt_pc = . then pd_amt_pc = 0;
-if pd_amt_rx = . then pd_amt_rx = 0;
+if pd_amt_pc    = . then pd_amt_pc = 0;
+if pd_amt_rx    = . then pd_amt_rx = 0;
 if pd_amt_total = . then pd_amt_total = 0;
+if n_pc         = . then n_pc = 0;
+if n_er         = . then n_er = 0;
+if n_total      = . then n_total = 0;
+if bh_n_er      = . then bh_n_er = 0;
+if bh_n_other   = . then bh_n_other = 0;
+if n_tele       = . then n_tele = 0;
+if pd_tele      = . then pd_tele = 0;
+if dt_prac_isp  = . then dt_prac_isp = 0; 
+
+fy3=year(intnx('year.7', month, 0, 'BEGINNING'));
 
 label FY           = "Fiscal Year"
       RAE_ID       = "RAE ID" 
@@ -209,41 +220,6 @@ label FY           = "Fiscal Year"
       ;
 RUN; 
 
-* join the `unique_mem_quarter` to get the pcmp used there: ; 
-proc sql; 
-create table analysis6 as 
-select a.*
-     , b.pcmp_loc_id as pcmp_id_qrtr
-from  data.analytic_dataset as a
-left join feb.unique_mem_quarter as b
-on a.mcaid_id = b.mcaid_id and a.q = b.q; 
-quit;
-
-* NEXT GET MAX for ind_isp_quarter if it's in the month; 
-/*proc sql; */
-/*create table analysis7 as */
-/*select **/
-/*     , max(ind_isp_dtd) as ind_isp_dtd_qrtr*/
-/*from analysis6*/
-/*group by mcaid_id, q;*/
-/*quit; */
-* ABOVE DIDN"T WORK because if member switched mid-quarter to a NONISP practice= see example A020536; 
-*row  mcaid_id month    q ind_isp_dtd_qrtr ind_isp_dtd ind_isp_ever pcmp_loc_id pcmp_id_qrtr
-*2175 A020536 01AUG2021 9  1 1 1 118862 118862  --ISSUE HERE
- 2176 A020536 01SEP2021 9  1 0 0 19358 118862 
- 2177 A020536 01DEC2021 10 0 0 0 19358 19358 ; 
-
-** ALSO order by month before crying - if they're out of order Kim you'll think you messed it all up ; 
-
-proc sql; 
-create table data.analytic_dataset as 
-select *
-     , case when ind_isp_ever = 1 then max(ind_isp_dtd) else 0 end as ind_isp_dtd_qrtr
-from analysis6
-group by mcaid_id, q;
-quit;  
-
-
         * find examples ; 
         proc print data = data.analytic_dataset (obs = 500) ; 
         var mcaid_id month q ind_isp_dtd_qrtr ind_isp_dtd ind_isp_ever ; 
@@ -262,141 +238,17 @@ quit;
 proc contents data = data.analytic_dataset; 
 run ; 
 
-* create abbreviated file for Miriam to test; 
-proc sql; 
-create table data.analytic_ds_q_only as 
-select mcaid_id
-     , FY
-     , age_end_fy
-     , ind_isp_dtd_qrtr
-     , ind_isp_ever
-     , q
-     , pcmp_id_qrtr
-     , sum(n_pc) as n_pc_qrtr
-     , sum(pd_amt_pc) as amt_pc_qrtr
-     , sum(n_total) as n_total_qrtr
-     , sum(pd_amt_total) as amt_total_qrtr
-from data.analytic_dataset 
-group by mcaid_id, q
-having q = max(q);
-quit; 
+proc freq data = data.analytic_dataset ; tables fy3; run ; 
 
-* get memlist of mcaid_id's with FY and q to add 0's;
-proc sql; 
-create table data.memlist as 
-select *
-from memlist
-cross join join_q_fy;
-quit; * 19132716 : 3 > added lots of rows which is perfect!! ;
-        
-        * CHECK counts to see if all = 12; 
-        proc sql; 
-        create table check_mcaid_n as 
-        select count(mcaid_id) as n_mcaid_id
-        from memlist2
-        group by mcaid_id; 
-        quit ; * 1594348 ; 
-
-        proc freq data = check_mcaid_n ; tables n_mcaid_id ; run ; * all had 12!! ;
-
-proc sort data = data.analytic_ds_q_only nodupkey ; by _all_ ; run ; 
-
-* take first 50000 and send to miriam; 
-proc sql; 
-create table test1 as
-select * 
-from   data.analytic_ds_q_only (OBS = 120000)
-where ind_isp_ever = 0;
-quit; 
-
-proc sql; 
-create table test2 as
-select * 
-from   data.analytic_ds_q_only (OBS = 120000)
-where ind_isp_ever = 1;
-quit; 
-
-* append; 
-proc datasets;
-append base = test1
-DATA        = test2;
+* roll it up ; 
+data test_sum; 
+set  data.analytic_dataset (obs = 20000) ; 
 run ; 
 
-proc sort data = test1 ; by fy q ; run ; 
-proc sort data = data.memlist ; by mcaid_id fy q ; run ;
-
-proc sql; 
-create table mem_short as 
-select *
-from data.memlist 
-where mcaid_id in ( select mcaid_id from test1 ) ;
+PROC SQL; 
+CREATE TABLE q_util AS 
+SELECT *
+     , sum(bh_n_er, n_er) as n_er_total
+from test_sum; 
 quit; 
 
-proc print data = data.analytic_ds_q_only (obs = 10) ; 
-run ; 
-
-proc sql; 
-select count(mcaid_id) as n_id 
-from mem_short
-group by mcaid_id ; 
-quit; * all had 12; 
-
-proc sort data = mem_short ; by mcaid_id q ;
-proc sort data = test1 ; by mcaid_id   q; run ; 
-
-data match; 
-merge mem_short test1;
-by mcaid_id q; 
-run; 
-
-proc print data = match (obs = 1000) ; run ; 
-
-proc contents data = feb.unique_mem_quarter; run ; 
-
-proc sql; 
-create table data.test as 
-select a.mcaid_id
-     , a.q
-     , a.FY
-     , a.age_end_fy
-     , a.n_pc_qrtr 
-     , a.amt_pc_qrtr 
-     , a.n_total_qrtr 
-     , a.amt_total_qrtr 
-     , b.ind_isp as ind_isp_ever
-     , b.pcmp_loc_id 
-from match as a
-left join feb.unique_mem_quarter as b
-on a.mcaid_id = b.mcaid_id and a.q = b.q;
-quit;  
-
-proc sql; 
-create table data.test as 
-select *
-     , case when ind_isp_ever = 1 then max(ind_isp_ever) else 0 end as ind_isp_qrtr
-from data.test
-group by mcaid_id, q; 
-quit; 
-
-        proc sql; 
-        create table check_ids_test as 
-        select mcaid_id
-             , count(mcaid_id) as n_mcaid_id
-        from test2
-        group by mcaid_id; 
-        quit ; * 2502; 
-
-        proc print data = data.test ; where mcaid_id = "A000405" ; run ; 
-
-proc freq data = check_ids_test ; tables n_mcaid_id ; run ; 
-
-proc print data = data.test (obs = 100); run ; 
-
-
-data data.test; 
-set  data.test;
-if n_pc_qrtr = . then n_pc_qrtr = 0;
-if amt_pc_qrtr = . then amt_pc_qrtr = 0;
-if n_total_qrtr = . then n_total_qrtr = 0;
-if amt_total_qrtr = . then amt_total_qrtr = 0; 
-run ; 

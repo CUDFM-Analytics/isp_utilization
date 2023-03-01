@@ -1,0 +1,184 @@
+---
+title: "HCPF slides"
+output: html_document
+date: "2023-02-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+{
+	library(here)
+  library(tidyverse) 
+  library(readxl)
+	library(ggrepel)
+	library(ggtext)
+	library(showtext)
+}
+
+font_add_google("Lato")
+showtext_auto()
+
+```  
+
+```{r attr}
+path <- readxl::read_excel(here("reports_hcpf_pres_march2023/hcpf_attr.xlsx"))
+
+attr <- path %>% 
+	select(-Obs) 
+
+attr2 <- attr %>% 
+	pivot_longer(cols = -flag,
+											names_to = "month",
+											values_to = "n"
+											)  %>% 
+	mutate(month = stringr::str_replace_all(month, "_","")) %>% 
+	mutate(month = lubridate::dmy(month)) %>% 
+	mutate(quarter = lubridate::quarter(
+		month, type="year.quarter", fiscal_start = 7)) %>% 
+	# add label at max 
+	group_by(flag, quarter) %>% 
+	mutate(label_q   = if_else(month == max(month), n, NA_real_)) %>% 
+	group_by(flag) %>% 
+	mutate(label_max = if_else(month == max(month), n, NA_real_)) %>% 
+	mutate(row = row_number()) %>% 
+	ungroup()
+
+theme_set(theme_minimal(base_family = "Lato"))  
+
+# range for n = min 12092 max 1203140  
+
+theme_update(
+  # Remove title for both x and y axes
+  axis.title = element_blank(),
+  # Axes labels are grey
+  axis.text = element_text(color = "grey40"),
+  # The size of the axes labels are different for x and y.
+  axis.text.x = element_text(size = 12),
+  axis.text.y = element_text(size = 12),
+  # Also, the ticks have a very light grey color
+  axis.ticks = element_line(color = "grey91", size = .2),
+  # The length of the axis ticks is increased.
+  axis.ticks.length.x = unit(.5, "lines"),
+  axis.ticks.length.y = unit(.5, "lines"),
+  # Remove the grid lines that come with ggplot2 plots by default
+  panel.grid = element_blank(),
+  # Customize margin values (top, right, bottom, left)
+  plot.margin = margin(20, 5, 20, 5),
+  # Use a light grey color for the background of both the plot and the panel
+  plot.background = element_rect(fill = "grey98", color = "grey98"),
+  panel.background = element_rect(fill = "grey98", color = "grey98"),
+  # Customize title appearence
+  plot.title = element_text(
+    color = "grey10", 
+    size = 16, 
+    face = "bold",
+    margin = margin(t = 15)
+  ),
+  # Customize subtitle appearence
+  plot.subtitle = element_markdown(
+    color = "grey30", 
+    size = 12,
+    lineheight = 1.35,
+    margin = margin(t = 15, b = 40)
+  ),
+  # Title and caption are going to be aligned
+  plot.title.position = "plot",
+  plot.caption.position = "plot",
+  plot.caption = element_text(
+    color = "grey30", 
+    size = 9,
+    lineheight = 1.2, 
+    hjust = 0,
+    margin = margin(t = 40) # Large margin on the top of the caption.
+  ),
+  # Remove legend
+  legend.position = "none"
+)
+
+attr_plt <- ggplot(
+	attr2,
+	aes(row, n, group = flag)
+	)+
+	geom_vline(
+		xintercept = seq(0,36,by = 6),
+		color = "grey91",
+		size = .6
+	)+
+	geom_vline(
+		aes(xintercept = 9),
+		color = "grey40",
+		linetype = "dotted",
+		size = .8
+	)+
+	geom_segment(
+		data = tibble(y = seq(100000,1400000,by = 100000),
+									x1 = 0,x2 = 36),
+		aes(x = x1, xend = x2, y = y, yend = y),
+		inherit.aes = FALSE,
+		color = "grey91",
+		size = .5
+	)+
+	geom_line(aes(color = flag))
+
+attr_plt +
+	annotate(
+		"text", x = 9, y = 1300000,
+		label = "March 2020",
+		family = "Lato",
+		size = 5,
+		color = "grey40",
+		hjust = -.1
+	) + 
+	geom_text_repel(
+		aes(color = flag,
+				label = label_max),
+		family = "Lato",
+		fontface = "bold",
+		size = 6,
+		direction = "y",
+		xlim = c(36.8, NA),
+		hjust = 0,
+		segment.size = .7,
+		segment.alpha = .5, 
+		segment.linetype = "dotted",
+		box.padding = .4,
+    segment.curvature = -0.1,
+    segment.ncp = 3,
+    segment.angle = 20
+	) + 
+	coord_cartesian(
+		clip = "off",
+		ylim = c(100000,1400000)
+	)+
+	scale_x_continuous(
+		expand = c(0,0),
+		limits = c(0,46),
+		breaks = seq(0,36, by = 3)
+	)+
+	scale_y_continuous(
+		labels = scales::comma,
+		expand = c(0,0),
+		breaks = seq(100000,1400000, by = 100000))
+
+```
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

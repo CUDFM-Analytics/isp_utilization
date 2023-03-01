@@ -29,31 +29,6 @@ Last updated 20230221
 	Variables	   : mcaid_id, month, bh_n_er, bh_n_other, fy7  
     Relationship/s : [List relationships to any other files in directory]
     References     : [Copy from previous code file? used references? Links etc?]
-	
-|-- 06_get_monthly_utilization.sas	------------------------------------------------  
-    Description    : From ana.qry_monthly_utilization,
-						adds format to clmClass {clmClass_recode} to get Pharmacy / Hosp / ER / Primary Care / Other
-						adds format fy7 to get FYs from 01JulXXXX through 01JUNXXXX+1 (read through all proc freq and counted it's good) 
-						sum count, pd_amt to get tot_n_month and tot_pd_month by clmClass_r
-    Last Ran On    : 2023-02-21
-    Input          : ana.qry_monthly_utilization [] 
-    Output         : data.util_month_y15_22 [61939211 : 6] 
-	Variables	   : mcaid_id, month, clmClass_r, tot_n_month, tot_pd_month, fy7  
-    Relationship/s : [List relationships to any other files in directory]
-    References     : [Copy from previous code file? used references? Links etc?]  
-	
-|-- 07_get_telehealth.sas	------------------------------------------------  
-    Description    : Creates tmp ds `pc` from ana.qry_clm_dim_class where hosp_episode NE 1 and ER NE 1 and primCare = 1 [43044039 : xx]
-				   : Creates tmp ds `telecare` from ana.clm_lne_fact_v with lots of pos_cd / proc_mod_X_cd and format 
-					 > margTele grouped by icn_nbr
-					 > teleCare_FINAL joins pc
-					 > NB No records before 01DEC2016 in this dataset
-    Last Ran On    : 2023-02-21
-    Input          : ana.qry_monthly_utilization [] 
-    Output 1       : data.util_month_y15_22 [61939211 : 6] 
-	Output 2       : data.tele_memlist [  ]
-	Variables	   : mcaid_id, month, clmClass_r, tot_n_month, tot_pd_month, fy7  
-    Relationship/s : [List relationships to any other files in directory]
-        References     : [Copy from previous code file? used references? Links etc?]
+
 
 
