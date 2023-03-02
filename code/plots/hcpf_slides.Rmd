@@ -14,63 +14,120 @@ knitr::opts_chunk$set(echo = FALSE)
 	library(ggtext)
 	library(showtext)
 	library(ragg)
+	library(ggsci)
 }
 
 FONT <- "Lato"
 showtext_auto()
 sysfonts::font_add_google("Lato")
 
+# import theme code: 
+source(here("code/plots/hcpf_slides_plot_theme.R"))
+
 ```  
 
+```{r get} 
+
+# Unique Attributed members 01Jul2019-01Jul2022
+attr0 <- readxl::read_excel(here("reports_hcpf_pres_march2023/hcpf_attr.xlsx"))
+
+# Change in member attr relative to March 2020: 
+rel0 <- read_excel(here("reports_hcpf_pres_march2023/hcpf_attr.xlsx"), 
+  sheet = "relative_change_t") %>% 
+	# to use the same function as attr, flag has to be numeric
+	mutate(flag = if_else(flag == "ISP", 1, 0))
+```
 
 
-```{r attr_data}
-path <- readxl::read_excel(here("reports_hcpf_pres_march2023/hcpf_attr.xlsx"))
+```{r attr_prep}
 
-attr <- path %>% 
-	select(-Obs) 
+fn_prep <- function(df, df2){
+	
+	df2 <- df %>% 
+		select(-Obs) %>% 
+		pivot_longer(cols = -flag,
+								 names_to = "month",
+								 values_to = "n"
+								 )  %>% 
+		mutate(flag = factor(flag,
+												 levels = c(0,1),
+												 labels = c("Non-ISP","ISP"))) %>% 
+	  mutate(month = stringr::str_replace_all(month, "_","")) %>% 
+	  group_by(flag) %>% 
+	  mutate(row = as.numeric(row_number())) %>% 
+		
+		# make month into date var, then extract month, year, q for grouping
+	  mutate(month = lubridate::dmy(month)) %>% 
+		mutate(month_abbrev = format(month, format = "%b")) %>% 
+	  mutate(year  = format(month, format = "%Y")) %>% 
+	  mutate(qrtr = quarter(month, with_year = FALSE)) %>% 
+		
+	  # add label for max at end of line graph 
+	  mutate(label0 = if_else(month == max(month), n, NA_real_)) %>% 
+	  mutate(label0 = scales::comma(label0)) %>% 
+	  mutate(label_max = if_else(!is.na(label0), 
+	  													 glue::glue("{flag}\n(n={label0})"),
+	  													 NA_character_)) %>% 
+		ungroup() %>% 
+		select(-label0) %>% 
+		
+		# create x_label col indicator to subset outside function
+		group_by(year, qrtr) %>% 
+	  mutate(q_beg = ifelse(row == min(row), 1, 0)) %>%
+		ungroup() %>% 
+	  group_by(year) %>% 
+	  mutate(
+	  	x_txt = case_when(
+	  		row == min(row) ~ format(month, format = "%b\n%Y"),
+	  		TRUE ~ month_abbrev)) %>% 
+	  ungroup() 
+	
+	return(df2)
 
-attr2 <- attr %>% 
-	pivot_longer(cols = -flag,
-											names_to = "month",
-											values_to = "n"
-											)  %>% 
-	mutate(flag = factor(flag,
-													levels = c(0,1),
-													labels = c("Non-ISP",
-																		 "ISP"))) %>% 
-	mutate(month = stringr::str_replace_all(month, "_","")) %>% 
-	group_by(flag) %>% 
-	mutate(row = row_number()) %>% 
-	mutate(month = lubridate::dmy(month)) %>% 
-	mutate(year  = format(month, format = "%Y")) %>% 
-	mutate(qrtr = quarter(month, with_year = FALSE)) %>% 
-	mutate(x_txt = format(month, format = "%b\n%Y")) %>% 
-	# mutate(x_text = case_when(
-	# 	row %% 3 == 0 ~ format(month, format = "%b %Y"))) %>% 
-	# add label at max 
-	mutate(label0 = if_else(month == max(month), n, NA_real_)) %>% 
-	mutate(label0 = scales::comma(label0)) %>% 
-	mutate(label_max = if_else(!is.na(label0), 
-														 glue::glue("{flag}\n(n={label0})"),
-														 NA_character_)) %>% 
+}
 
-	ungroup() 
+attr <- fn_prep(attr0, attr)
+
+# rel has to be split first before using function: 
+rel_n0  <- rel0 %>% 
+	filter(delta == "n_diff") %>%
+	select(-delta) 
+
+rel_pct0 <- rel0 %>% 
+	filter(delta == "pct_diff") %>%
+	select(-delta) 
+
+rel_n <- fn_prep(rel_n0, rel_n)
+rel_pct <- fn_prep(rel_pct0, rel_pct)
+
+# function to create and subset the x_labels
+fn_x_labels <- function(df_in){
+	
+	# make final: 
+	final <- c(row = 36,
+					 x_txt2 = "Jun")
+	
+	out <- df_in %>% 
+		filter(q_beg == 1) %>% 
+		select(row, x_txt) %>% 
+		rbind(final)
+	
+	return(out)
+}
+
+attr_xlabs  <- fn_x_labels(attr)
+rel_n_xlabs <- fn_x_labels(rel_n)
+rel_pct_xlabs <- fn_x_labels(rel_pct)
+
+rm(rel_n0, attr0, rel_pct0, rel0)
 
 ```  
 
 ```{r attr_plot}
 # range n: min=12092 max=1203140  
-library(ggsci)
-
-
-labs <- list(
-	x = "Month",
-	y = "Unique Members (n)"
-)
 
 attr_plt0 <- ggplot(
-	attr2,
+	attr,
 	aes(row, n, group = flag)
 	)+
 	# vertical gridlines
@@ -99,24 +156,6 @@ attr_plt0 <- ggplot(
 	geom_line(
 		aes(color = flag))
 
-# get final x to rbind to x_labels next:
-final <- c(row = 36,
-					 x_txt2 = "Jun")
-
-x_labels <- attr2 %>%
-	mutate(month_abbrev = format(month, format = "%b")) %>% 
-	group_by(year, qrtr) %>% 
-	filter(row == min(row)) %>% 
-	group_by(year) %>% 
-	mutate(x_txt2 = case_when(
-		row == min(row) ~ format(month, format = "%b\n%Y"),
-		TRUE ~ month_abbrev)) %>% 
-	ungroup() %>% 
-	select(row, x_txt2) %>% 
-	unique() %>% 
-	# add final x month so x shows full month range
-	rbind(final) %>% 
-	mutate(row = as.numeric(row))
 
 attr_plt <- attr_plt0 + 
 	# add the March text annotation 
@@ -176,10 +215,10 @@ attr_plt <- attr_plt0 +
 
 attr_plt
 
-```
-```{r}
-rel_change <- read_excel("reports_hcpf_pres_march2023/hcpf_attr.xlsx", 
-    sheet = "relative_change_t")
-View(rel_change)
+```  
+
+```{r rel_change_get}
+
+#
 ```
 
