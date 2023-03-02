@@ -45,7 +45,7 @@ rel0 <- read_excel(here("reports_hcpf_pres_march2023/hcpf_attr.xlsx"),
 
 ```{r attr_prep}
 
-fn_prep <- function(df, df2){
+fn_prep_data <- function(df, df2){
 	
 	df2 <- df %>% 
 		select(-Obs) %>% 
@@ -90,7 +90,7 @@ fn_prep <- function(df, df2){
 
 }
 
-attr <- fn_prep(attr0, attr)
+attr <- fn_prep_data(attr0, attr)
 
 # rel has to be split first before using function: 
 rel_n0  <- rel0 %>% 
@@ -99,11 +99,14 @@ rel_n0  <- rel0 %>%
 
 rel_pct0 <- rel0 %>% 
 	filter(delta == "pct_diff") %>%
-	select(-delta) %>% 
-	# change the n to pct (bc that's what it is)
+	select(-delta) 
 
-rel_n <- fn_prep(rel_n0, rel_n)
-rel_pct <- fn_prep(rel_pct0, rel_pct)
+rel_n <- fn_prep_data(rel_n0, rel_n)
+rel_p <- fn_prep_data(rel_pct0, rel_pct)
+rel_p <- rel_p %>% 
+	rename(p = n) %>% 
+	mutate(label_max = str_replace_all(label_max, c("\\(n" = "\\(pct",
+																									"\\)" = "\\%\\)")))
 
 # function to create and subset the x_labels
 fn_x_labels <- function(df_in){
@@ -122,8 +125,9 @@ fn_x_labels <- function(df_in){
 }
 
 attr_xlabs  <- fn_x_labels(attr)
+
+# only need it for rel_n
 rel_n_xlabs <- fn_x_labels(rel_n)
-rel_pct_xlabs <- fn_x_labels(rel_pct)
 
 rm(rel_n0, attr0, rel_pct0, rel0)
 
@@ -134,7 +138,8 @@ rm(rel_n0, attr0, rel_pct0, rel0)
 
 attr_plot <- fn_plot(
 	attr, 
-	100000, 
+	n,
+	0, 
 	1400000, 
 	100000, 
 	xlabels = attr_xlabs,
@@ -146,10 +151,27 @@ attr_plot <- fn_plot(
 
 ggsave("attr_plot.svg", width = 10, height = 7)
 
-
 ```  
 
-```{r rel_change_plot}
+```{r rel_n_plot}
+# range(rel_p$p) 0, 34
+
+rel_plot <- fn_plot(
+	rel_p, 
+	p,
+	0, 
+	40, 
+	5, 
+	xlabels = rel_p_xlabs,
+	"Relative Change, % Member Attribution",
+	"Month",
+	"Percent Change in Attribution, Relative to March 2020",
+	"FY 2019-2022",
+	"Data extracted on 03-01-2023\nAll months in timeframe are represented in the plot; for readability, only quarter and yearly start months have been labeled")
+
+rel_plot
+
+ggsave("rel_plot.svg", width = 10, height = 7)
 
 
 

@@ -1,11 +1,11 @@
 
-fn_plot <- function(dat, ylo, yhi, yby, xlabels, 
+fn_plot <- function(dat, yvar, ylo, yhi, yby, xlabels, 
 										labx, laby, 
 										title, subtitle, caption){
 	
 	plot <- ggplot(
 		dat,
-		aes(row, n, group = flag)
+		aes(row, {{yvar}}, group = flag)
 	)+
 		# vertical gridlines
 		geom_vline(
@@ -40,7 +40,7 @@ fn_plot <- function(dat, ylo, yhi, yby, xlabels,
 			size = 4,
 			color = "grey20",
 			hjust = 1.1,
-			lineheight = .7
+			lineheight = .8
 		) + 
 		# add values at the end of the graph, without grid lines
 		geom_text_repel(
@@ -59,7 +59,7 @@ fn_plot <- function(dat, ylo, yhi, yby, xlabels,
 			segment.curvature = -0.1,
 			segment.ncp = 3,
 			segment.angle = 20,
-			lineheight = .7
+			lineheight = .8
 		) + 
 		coord_cartesian(
 			clip = "off",
