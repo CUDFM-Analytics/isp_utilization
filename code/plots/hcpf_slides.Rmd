@@ -5,7 +5,7 @@ date: "2023-02-28"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 {
 	library(here)
   library(tidyverse) 
@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 	library(ggrepel)
 	library(ggtext)
 	library(showtext)
+	library(ragg)
 }
 
 FONT <- "Lato"
@@ -20,6 +21,8 @@ showtext_auto()
 sysfonts::font_add_google("Lato")
 
 ```  
+
+
 
 ```{r attr_data}
 path <- readxl::read_excel(here("reports_hcpf_pres_march2023/hcpf_attr.xlsx"))
@@ -40,7 +43,9 @@ attr2 <- attr %>%
 	group_by(flag) %>% 
 	mutate(row = row_number()) %>% 
 	mutate(month = lubridate::dmy(month)) %>% 
-	mutate(x_txt = format(month, format = "%b '%y")) %>% 
+	mutate(year  = format(month, format = "%Y")) %>% 
+	mutate(qrtr = quarter(month, with_year = FALSE)) %>% 
+	mutate(x_txt = format(month, format = "%b\n%Y")) %>% 
 	# mutate(x_text = case_when(
 	# 	row %% 3 == 0 ~ format(month, format = "%b %Y"))) %>% 
 	# add label at max 
@@ -50,7 +55,7 @@ attr2 <- attr %>%
 														 glue::glue("{flag}\n(n={label0})"),
 														 NA_character_)) %>% 
 
-	ungroup()
+	ungroup() 
 
 ```  
 
@@ -58,50 +63,6 @@ attr2 <- attr %>%
 # range n: min=12092 max=1203140  
 library(ggsci)
 
-theme_set(theme_minimal(base_family = "Lato"))
-
-theme_update(
-  # Axes labels are grey, angled for x, and give margin for readability
-  axis.text.x = element_text(color = "grey40", 
-  													 angle = 45,
-  													 margin = margin(t=15)),
-  axis.text.y = element_text(color = "grey40"),
-  # ticks light grey
-  axis.ticks = element_line(color = "grey91", size = .5),
-  # Remove the grid lines 
-  panel.grid = element_blank(),
-  # Customize margin values (top, right, bottom, left)
-  plot.margin = margin(20, 10, 20, 10),
-  # Use a light grey color for the background of both the plot and the panel
-  plot.background = element_rect(fill = "grey98", color = "grey98"),
-  panel.background = element_rect(fill = "grey98", color = "grey98"),
-  # Customize title appearence
-  plot.title = element_text(
-    color = "grey10", 
-    size = 28, 
-    face = "bold",
-    margin = margin(t = 15)
-  ),
-  # Customize subtitle appearence
-  plot.subtitle = element_markdown(
-    color = "grey30", 
-    size = 16,
-    lineheight = 1.35,
-    margin = margin(t = 15, b = 40)
-  ),
-  # Title and caption are going to be aligned
-  plot.title.position = "plot",
-  plot.caption.position = "plot",
-  plot.caption = element_text(
-    color = "grey30", 
-    size = 13,
-    lineheight = 1.2, 
-    hjust = 0,
-    margin = margin(t = 40) # Large margin on the top of the caption.
-  ),
-  # Remove legend
-  legend.position = "none"
-)
 
 labs <- list(
 	x = "Month",
@@ -138,14 +99,29 @@ attr_plt0 <- ggplot(
 	geom_line(
 		aes(color = flag))
 
+# get final x to rbind to x_labels next:
+final <- c(row = 36,
+					 x_txt2 = "Jun")
+
 x_labels <- attr2 %>%
-	select(row, x_txt) %>% 
-	filter(row %%3 == 0)
+	mutate(month_abbrev = format(month, format = "%b")) %>% 
+	group_by(year, qrtr) %>% 
+	filter(row == min(row)) %>% 
+	group_by(year) %>% 
+	mutate(x_txt2 = case_when(
+		row == min(row) ~ format(month, format = "%b\n%Y"),
+		TRUE ~ month_abbrev)) %>% 
+	ungroup() %>% 
+	select(row, x_txt2) %>% 
+	unique() %>% 
+	# add final x month so x shows full month range
+	rbind(final) %>% 
+	mutate(row = as.numeric(row))
 
 attr_plt <- attr_plt0 + 
 	# add the March text annotation 
 	annotate(
-	  "text", x = 9, y = 1350000,
+	  "text", x = 9, y = 1305000,
 	  label = "March\n2020",
 	  family = "Lato",
   	size = 4,
@@ -178,9 +154,9 @@ attr_plt <- attr_plt0 +
 	)+
 	scale_x_continuous(
 		expand = c(0,0),
-		limits = c(1,50),
+		limits = c(1,45),
 		breaks = x_labels$row,
-		labels = x_labels$x_txt
+		labels = x_labels$x_txt2
 	)+
 	# scale_x_continuous(
 	# 	expand = c(0,0),
@@ -193,12 +169,17 @@ attr_plt <- attr_plt0 +
 		breaks = seq(100000,1400000, by = 100000)
 		)+
 	labs(
-		y = labs$y,
-		x = labs$x
+		y = "",
+		x = ""
 	)+
 	scale_color_jama()
 
 attr_plt
 
+```
+```{r}
+rel_change <- read_excel("reports_hcpf_pres_march2023/hcpf_attr.xlsx", 
+    sheet = "relative_change_t")
+View(rel_change)
 ```
 
