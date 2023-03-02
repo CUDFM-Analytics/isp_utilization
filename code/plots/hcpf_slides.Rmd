@@ -5,7 +5,8 @@ date: "2023-02-28"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE,
+											dev.args = list(png = list(type = "cairo")))
 {
 	library(here)
   library(tidyverse) 
@@ -23,6 +24,9 @@ sysfonts::font_add_google("Lato")
 
 # import theme code: 
 source(here("code/plots/hcpf_slides_plot_theme.R"))
+
+# import plot function: 
+source(here("code/plots/fn_plot.R"))
 
 ```  
 
@@ -95,7 +99,8 @@ rel_n0  <- rel0 %>%
 
 rel_pct0 <- rel0 %>% 
 	filter(delta == "pct_diff") %>%
-	select(-delta) 
+	select(-delta) %>% 
+	# change the n to pct (bc that's what it is)
 
 rel_n <- fn_prep(rel_n0, rel_n)
 rel_pct <- fn_prep(rel_pct0, rel_pct)
@@ -105,7 +110,7 @@ fn_x_labels <- function(df_in){
 	
 	# make final: 
 	final <- c(row = 36,
-					 x_txt2 = "Jun")
+					 x_txt = "Jun")
 	
 	out <- df_in %>% 
 		filter(q_beg == 1) %>% 
@@ -124,112 +129,29 @@ rm(rel_n0, attr0, rel_pct0, rel0)
 
 ```  
 
+
 ```{r attr_plot}
-# range n: min=12092 max=1203140  
 
-fn_plot <- function(dat, ylo, yhi, yby, xlabels){
-	
-	plot <- ggplot(
-		dat,
-		aes(row, n, group = flag)
-	 )+
-	# vertical gridlines
-	geom_vline(
-		xintercept = seq(1,36,by = 3),
-		color = "grey91",
-		size = .6
-	)+
-	# dotted line for March 2020: 
-	geom_vline(
-		aes(xintercept = 9),
-		color = "grey40",
-		linetype = "dotted",
-		size = .8
-	  )+
-	# horizontal gridlines
-	geom_segment(
-		data = tibble(y = seq(ylo, yhi, by = yby), 
-									x1 = 1, x2 = 36),
-		aes(x=x1, xend = x2, y = y, yend = y),
-		inherit.aes = FALSE,
-		color = "grey91",
-		size = .6
-	)+
-	# data points lines
-	geom_line(
-		aes(color = flag))+
-		# add the March text annotation 
-	annotate(
-	  "text", x = 9, y = 1305000,
-	  label = "March\n2020",
-	  family = "Lato",
-  	size = 4,
-  	color = "grey20",
-  	hjust = 1.1,
-	  lineheight = .7
-  	) + 
-	# add values at the end of the graph, without grid lines
-	geom_text_repel(
-		aes(color = flag,
-				label = label_max),
-		    family = "Lato",
-		    fontface = "bold",
-		    size = 4,
-		    direction = "y",
-		    xlim = c(36.8, NA),
-		    hjust = 0,
-		    segment.size = .7,
-		    segment.alpha = .5, 
-		    segment.linetype = "dotted",
-		    box.padding = .4,
-        segment.curvature = -0.1,
-        segment.ncp = 3,
-        segment.angle = 20,
-		    lineheight = .7
-	) + 
-	coord_cartesian(
-		clip = "off",
-		ylim = c(ylo,yhi)
-	)+
-	scale_x_continuous(
-		expand = c(0,0),
-		limits = c(1,45),
-		breaks = xlabels$row,
-		labels = xlabels$x_txt
-	)+
-	scale_y_continuous(
-		labels = scales::comma,
-		expand = c(0,0),
-		breaks = seq(ylo,yhi, by = yby)
-		)+
-	labs(
-		y = "",
-		x = ""
-	)+
-	scale_color_jama()
-	
-	return(plot)
-}
+attr_plot <- fn_plot(
+	attr, 
+	100000, 
+	1400000, 
+	100000, 
+	xlabels = attr_xlabs,
+	"Members (n)",
+	"Month",
+	"Monthly Member Attribution",
+	"July 1, 2019 through June 30, 2022",
+	"Data extracted on 03-01-2023\nAll months in timeframe are represented in the plot; for readability, only quarter and yearly start months have been labeled")
 
-attr_plot <- fn_plot(attr, 
-										 100000, 
-										 1400000, 
-										 100000, 
-										 xlabels = attr_xlabs)
-attr_plot
+ggsave("attr_plot.svg", width = 10, height = 7)
 
-# save with scaling
-
-ggsave("attr_plot2.png", attr_plot, 
-			 device = ragg::agg_png, 
-			 res = 300,  
-			 units = "in") 
-ggs <- image_read("agg_png-ggsave.png")
-print(ggs)
 
 ```  
 
-```{r rel_change_get}
+```{r rel_change_plot}
+
+
 
 #
 ```
