@@ -110,7 +110,8 @@ fn_x_labels <- function(df_in){
 	out <- df_in %>% 
 		filter(q_beg == 1) %>% 
 		select(row, x_txt) %>% 
-		rbind(final)
+		rbind(final) %>% 
+		mutate(row = as.numeric(row))
 	
 	return(out)
 }
@@ -126,7 +127,7 @@ rm(rel_n0, attr0, rel_pct0, rel0)
 ```{r attr_plot}
 # range n: min=12092 max=1203140  
 
-fn_plot <- function(dat, ylo, yhi, yby){
+fn_plot <- function(dat, ylo, yhi, yby, xlabels){
 	
 	plot <- ggplot(
 		dat,
@@ -171,20 +172,20 @@ fn_plot <- function(dat, ylo, yhi, yby){
 	geom_text_repel(
 		aes(color = flag,
 				label = label_max),
-		family = "Lato",
-		fontface = "bold",
-		size = 4,
-		direction = "y",
-		xlim = c(36.8, NA),
-		hjust = 0,
-		segment.size = .7,
-		segment.alpha = .5, 
-		segment.linetype = "dotted",
-		box.padding = .4,
-    segment.curvature = -0.1,
-    segment.ncp = 3,
-    segment.angle = 20,
-		lineheight = .7
+		    family = "Lato",
+		    fontface = "bold",
+		    size = 4,
+		    direction = "y",
+		    xlim = c(36.8, NA),
+		    hjust = 0,
+		    segment.size = .7,
+		    segment.alpha = .5, 
+		    segment.linetype = "dotted",
+		    box.padding = .4,
+        segment.curvature = -0.1,
+        segment.ncp = 3,
+        segment.angle = 20,
+		    lineheight = .7
 	) + 
 	coord_cartesian(
 		clip = "off",
@@ -193,8 +194,8 @@ fn_plot <- function(dat, ylo, yhi, yby){
 	scale_x_continuous(
 		expand = c(0,0),
 		limits = c(1,45),
-		breaks = x_labels$row,
-		labels = x_labels$x_txt2
+		breaks = xlabels$row,
+		labels = xlabels$x_txt
 	)+
 	scale_y_continuous(
 		labels = scales::comma,
@@ -210,44 +211,21 @@ fn_plot <- function(dat, ylo, yhi, yby){
 	return(plot)
 }
 
-attr_plot <- fn_plot(attr, 100000, 1400000, 100000)
+attr_plot <- fn_plot(attr, 
+										 100000, 
+										 1400000, 
+										 100000, 
+										 xlabels = attr_xlabs)
+attr_plot
 
-# geom_segment seq attr seq(100000, 1400000, by = 100000), 
-attr_plt0 <- ggplot(
-	attr,
-	aes(row, n, group = flag)
-	)+
-	# vertical gridlines
-	geom_vline(
-		xintercept = seq(1,36,by = 3),
-		color = "grey91",
-		size = .6
-	)+
-	# dotted line for March 2020: 
-	geom_vline(
-		aes(xintercept = 9),
-		color = "grey40",
-		linetype = "dotted",
-		size = .8
-	  )+
-	# horizontal gridlines
-	geom_segment(
-		data = tibble(y = seq(100000, 1400000, by = 100000), 
-									x1 = 1, x2 = 36),
-		aes(x=x1, xend = x2, y = y, yend = y),
-		inherit.aes = FALSE,
-		color = "grey91",
-		size = .6
-	)+
-	# data points lines
-	geom_line(
-		aes(color = flag))
+# save with scaling
 
-
-attr_plt <- attr_plt0 + 
-	
-
-attr_plt
+ggsave("attr_plot2.png", attr_plot, 
+			 device = ragg::agg_png, 
+			 res = 300,  
+			 units = "in") 
+ggs <- image_read("agg_png-ggsave.png")
+print(ggs)
 
 ```  
 

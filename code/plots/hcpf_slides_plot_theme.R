@@ -4,11 +4,14 @@ theme_set(theme_minimal(base_family = "Lato"))
 theme_update(
 	
 	# Axis title is grey if used: 
-	axis.title.y = element_text(color = "grey40"),
+	axis.title.y = element_text(color = "grey40",
+															size = rel(1)),
 	
 	# Axes labels are grey
-	axis.text.x = element_text(color = "grey40"),
-	axis.text.y = element_text(color = "grey40"),
+	axis.text.x = element_text(color = "grey40",
+														 size = rel(.9)),
+	axis.text.y = element_text(color = "grey40",
+														 size = rel(.9)),
 	
 	# ticks light grey
 	axis.ticks = element_line(color = "grey91", size = .5),
