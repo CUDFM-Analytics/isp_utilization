@@ -42,11 +42,9 @@ Child Files:
 
 
 ```{r attr_qrtrly}
-# quarter unique member attribution (where statements important)  
-q0 <- read_excel(here("reports_hcpf_pres_march2023/hcpf_attr_quarterly.xlsx"), 
-  sheet = "attr_quarter")
-	# to use the same function as attr, flag has to be numeric
-	mutate(flag = if_else(flag == "ISP", 1, 0))
+
+# prep data with function fn_prep_data2 (imports and preps)
+q <- fn_prep_q()	
 
 ```  
 
@@ -82,6 +80,9 @@ attr_plot <- fn_plot(
 
 # save attr plot 
 ggsave("attr_plot.svg", width = 10, height = 7)
+
+# try shorter?
+ggsave("attr_plot.svg", width = 10, height = 6)
 
 ```
 
