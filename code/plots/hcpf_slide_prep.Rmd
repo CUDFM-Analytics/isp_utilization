@@ -42,8 +42,15 @@ Child Files:
 
 ```{r tele_p}
 # telehealth percentages 
-hcpf_telehealth <- read_excel("reports_hcpf_pres/hcpf_telehealth.xlsx", 
-    sheet = "pct_tele")
+tele0 <- read_excel(here("reports_hcpf_pres/hcpf_telehealth.xlsx"), 
+    sheet = "pct_tele") %>% 
+	rename(flag = ISP) %>% 
+	# only need to plot pct per Mark
+	filter(metric == "pct") %>%   
+	# I had some totals in below for MG ; remove them
+	filter(!is.na(flag)) %>% 
+	select(-metric)
+
 
 
 ```
