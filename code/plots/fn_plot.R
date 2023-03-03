@@ -1,5 +1,6 @@
 
-fn_plot <- function(dat, yvar, ylo, yhi, yby, xlabels, 
+fn_plot <- function(dat, yvar, ylo, yhi, yby, 
+										xlabels, y_annot,
 										labx, laby, 
 										title, subtitle, caption){
 	
@@ -34,7 +35,7 @@ fn_plot <- function(dat, yvar, ylo, yhi, yby, xlabels,
 			aes(color = flag))+
 		# add the March text annotation 
 		annotate(
-			"text", x = 9, y = 1305000,
+			"text", x = 9, y = y_annot,
 			label = "March\n2020",
 			family = "Lato",
 			size = 4,

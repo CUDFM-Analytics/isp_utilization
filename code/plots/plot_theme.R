@@ -52,7 +52,7 @@ theme_update(
 	plot.caption.position = "plot",
 	plot.caption = element_text(
 		color = "grey50", 
-		size = rel(.7),
+		size = rel(.8),
 		lineheight = .8, 
 		hjust = 0,
 		margin = margin(t = 20) # Large margin on the top of the caption.
