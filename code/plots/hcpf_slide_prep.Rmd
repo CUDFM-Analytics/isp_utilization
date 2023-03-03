@@ -40,6 +40,15 @@ Child Files:
  - `plot_theme.R` has plot theme  info  
 
 
+```{r tele_p}
+# telehealth percentages 
+hcpf_telehealth <- read_excel("reports_hcpf_pres/hcpf_telehealth.xlsx", 
+    sheet = "pct_tele")
+
+
+```
+
+
 ```{r attr_qrtrly}
 # prep data with function fn_prep_data2 (imports and preps)
 q <- fn_prep_q()	
@@ -71,7 +80,7 @@ q_plot <- fn_plot_q(q,
 q_plot
 
 # save plot 
-ggsave(here("reports_hcpf_pres_march2023/plot_attr_qrtr.svg"),
+ggsave(here("reports_hcpf_pres/plot_attr_qrtr.svg"),
 						width = 10, height = 5)
 
 ```  
@@ -79,7 +88,7 @@ ggsave(here("reports_hcpf_pres_march2023/plot_attr_qrtr.svg"),
 ```{r attr}
 
 # Unique Attributed members 01Jul2019-01Jul2022
-attr0 <- readxl::read_excel(here("reports_hcpf_pres_march2023/hcpf_attr.xlsx"))
+attr0 <- readxl::read_excel(here("reports_hcpf_pres/hcpf_attr.xlsx"))
 
 # prep data with function
 attr <- fn_prep_data(attr0, attr)
@@ -111,7 +120,7 @@ attr_plot <- fn_plot(
 	"Data extracted on 03-01-2023\nAll months in timeframe are represented in the plot; for readability, only quarter and yearly start months have been labeled")
 attr_plot
 # save attr plot 
-ggsave(here("reports_hcpf_pres_march2023/plot_attr.svg"), 
+ggsave(here("reports_hcpf_pres/plot_attr.svg"), 
 			 width = 10, height = 5)
 # try shorter?
 # ggsave("attr_plot.svg", width = 10, height = 6)
@@ -122,7 +131,7 @@ ggsave(here("reports_hcpf_pres_march2023/plot_attr.svg"),
 ```{r rel} 
 
 # Import Data / Change in member attr relative to March 2020: 
-rel0 <- read_excel(here("reports_hcpf_pres_march2023/hcpf_attr.xlsx"), 
+rel0 <- read_excel(here("reports_hcpf_pres/hcpf_attr.xlsx"), 
   sheet = "relative_change_t") %>% 
 	# to use the same function as attr, flag has to be numeric
 	mutate(flag = if_else(flag == "ISP", 1, 0))
@@ -172,7 +181,7 @@ rel_plot <- fn_plot(
 
 rel_plot
 
-ggsave(here("reports_hcpf_pres_march2023/plot_rel_change.svg"), 
+ggsave(here("reports_hcpf_pres/plot_rel_change.svg"), 
 						width = 10, height = 5)
 
 ```
