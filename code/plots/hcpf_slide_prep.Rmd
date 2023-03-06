@@ -43,14 +43,73 @@ Child Files:
 ```{r tele_p}
 # telehealth percentages 
 tele0 <- read_excel(here("reports_hcpf_pres/hcpf_telehealth.xlsx"), 
-    sheet = "pct_tele") %>% 
+    sheet = "pct_tele", 
+    # have to specify col types was bringing in first ones as char?!
+    col_types = c("numeric", "text", "text", 
+    							"numeric", "numeric", "numeric", "numeric", "numeric", "numeric",
+    							"numeric", "numeric", "numeric", "numeric", "numeric", "numeric", 
+    							"numeric", "numeric", "numeric", "numeric", "numeric", "numeric",
+    							"numeric", "numeric", "numeric", "numeric", "numeric", "numeric",
+    							"numeric", "numeric", "numeric", "numeric", "numeric", "numeric",
+    							"numeric", "numeric", "numeric", "numeric", "numeric", "numeric")
+    ) %>% 
 	rename(flag = ISP) %>% 
 	# only need to plot pct per Mark
 	filter(metric == "pct") %>%   
 	# I had some totals in below for MG ; remove them
 	filter(!is.na(flag)) %>% 
-	select(-metric)
+	select(-metric) %>% 
+	# flag needs to be 0, 1 for fn_prep for now: 
+	mutate(flag = if_else(flag == "ISP", 1, 0)) 
+	
 
+tele <- fn_prep_data(tele0, tele)
+tele$n[is.na(tele$n)] <- 0
+
+
+# get formatted pct in the n column instead of decimals
+tele1 <- tele %>% 
+	# copy the n var so you can use that for y axis, the pct for labels
+	mutate(pct = paste0(n)) %>% 
+	mutate(pct = as.numeric(n)) %>% 
+	# remove first label_max from before: 
+	select(-label_max) %>% 
+	# round to two digits for both n and pct
+	mutate_at(vars(n,pct), ~ round(.*100, digits = 0)) %>% 
+	group_by(flag) %>% 
+	mutate(label0 = if_else(month == max(month), pct, NA_real_)) %>% 
+	mutate(label_max = if_else(!is.na(label0), 
+															 glue::glue("{flag}: {label0}%"),
+															 NA_character_)) %>% 
+	ungroup() 
+
+
+tele_xlabs  <- fn_x_labels(tele1)  
+
+# save tele_RData
+save(tele1,
+		 tele_xlabs,
+		 file = here::here("code/plots/tele_dfs.RData")) 
+
+tele_plot <- fn_plot(
+	tele1, 
+	n,
+	0, 
+	80, 
+	10, 
+	xlabels = tele_xlabs,
+	y_annot = 75,
+	"Percent",
+	"Month",
+	"Percentage of PCMPs Providing Telehealth Services",
+	"FY 2019-2022",
+	"Data extracted on 03-01-2023\nAll months in timeframe are represented in the plot; for readability, only quarter and yearly start months have been labeled")
+
+tele_plot
+
+# save plot 
+ggsave(here("reports_hcpf_pres/plot_tele_pct.svg"),
+						width = 10, height = 5)
 
 
 ```
