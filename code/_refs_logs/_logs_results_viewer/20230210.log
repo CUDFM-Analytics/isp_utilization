@@ -1,0 +1,121 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.74 seconds
+      cpu time            0.68 seconds
+
+1    %let full_isp_prac_report = "S:/FHPC/DATA/HCPF_Data_files_SECURE/UPL-ISP/Copy of FULL ISP
+1  ! Practice Report 20220828.xlsx";
+2    proc import datafile = &full_isp_prac_report
+3        out = isp0 (keep= split_id prac_npi practice_name)
+4    dbms = xlsx replace;
+5    run;
+
+NOTE:    Variable Name Change.  Practice Name -> Practice_Name
+NOTE:    Variable Name Change.  Practice Name: Other -> Practice_Name__Other
+NOTE: One or more variables were converted because the data type is not supported by the V9 engine.
+      For more details, run with options MSGLEVEL=I.
+NOTE: The import data set has 106 observations and 7 variables.
+NOTE: WORK.ISP0 data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.04 seconds
+
+
+6      %LET data = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data;
+7      LIBNAME data "&data";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+
+8      %LET results = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results;
+9      LIBNAME results "&results";
+NOTE: Libref RESULTS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\results
+
+10     %LET hcpf = S:/FHPC/DATA/HCPF_Data_files_SECURE;
+11     %LET ana  = S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset;
+12     LIBNAME ana "&ana";
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+
+13   * VARLEN;
+14     %LET varlen =
+14 ! \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengt
+14 ! hs;
+15     LIBNAME varlen "&varlen";
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLeng
+      ths
+16     %INCLUDE "&varlen\MACRO_charLenMetadata.sas";
+92     %getlen(library=varlen, data=AllVarLengths);
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.78 seconds
+      cpu time            0.32 seconds
+
+
+
+93   * OPTIONS ---------------------------;
+94     OPTIONS NOFMTERR
+95             MPRINT MLOGIC SYMBOLGEN
+96             FMTSEARCH =(ana, data, interim, varlen, work);
+
+97   %let isp = "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/isp_pcmp.xlsx";
+98   proc import datafile = &isp
+SYMBOLGEN:  Macro variable ISP resolves to
+            "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/isp_pcmp.xlsx"
+99       out = isp0 (keep= split_id prac_npi practice_name)
+100  dbms = xlsx replace;
+101  run;
+
+NOTE: One or more variables were converted because the data type is not supported by the V9 engine.
+      For more details, run with options MSGLEVEL=I.
+WARNING: The variable split_id in the DROP, KEEP, or RENAME list has never been referenced.
+WARNING: The variable prac_npi in the DROP, KEEP, or RENAME list has never been referenced.
+WARNING: The variable practice_name in the DROP, KEEP, or RENAME list has never been referenced.
+NOTE: The import data set has 118 observations and 6 variables.
+NOTE: WORK.ISP0 data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+101!       *106 practices;
+
+102  PROC IMPORT DATAFILE = &ISP
+SYMBOLGEN:  Macro variable ISP resolves to
+            "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/isp_pcmp.xlsx"
+103       OUT  = isp0 ( KEEP = splitID practiceNPI prov_loc_id )
+104       DBMS = xlsx replace;
+105  RUN;
+
+NOTE: One or more variables were converted because the data type is not supported by the V9 engine.
+      For more details, run with options MSGLEVEL=I.
+NOTE: The import data set has 118 observations and 6 variables.
+NOTE: WORK.ISP0 data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+
+

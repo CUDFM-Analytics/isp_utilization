@@ -1,0 +1,1304 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.93 seconds
+      cpu time            0.70 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_params.sas";
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Libref DATASETS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\datasets
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\util_analysis
+NOTE: Libref FEB was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\hcpf_pres
+NOTE: Libref TMP was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\tmp
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLeng
+      ths
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.49 seconds
+      cpu time            0.31 seconds
+
+
+NOTE: Format AGECAT has been output.
+NOTE: Format AGEHCPF has been output.
+NOTE: Format AGE7CAT has been output.
+NOTE: Format FY3_ has been output.
+NOTE: Format FY7_ has been output.
+NOTE: Format NSERVE has been output.
+NOTE: Format CAPVSH has been output.
+NOTE: Format MATCHN has been output.
+NOTE: Format PCMP_TYPE_RC has been output.
+NOTE: Format CLMCLASS_RECODE has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+
+167  data  util0;
+168  set   data.util_month_y15_22;
+169  where month ge '01Jul2019'd
+170  and   month le '30Jun2021'd;
+171  run;
+
+NOTE: There were 19018515 observations read from the data set DATA.UTIL_MONTH_Y15_22.
+      WHERE (month>='01JUL2019'D and month<='30JUN2021'D);
+NOTE: The data set WORK.UTIL0 has 19018515 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           35.25 seconds
+      cpu time            3.65 seconds
+
+
+172  data  analysis0;
+173  set   data.qrylong_y15_22;
+174  where month ge '01JUL2019'd
+175  and   month le '30JUN2022'd ;
+176  run;
+
+NOTE: There were 40999955 observations read from the data set DATA.QRYLONG_Y15_22.
+      WHERE (month>='01JUL2019'D and month<='30JUN2022'D);
+NOTE: The data set WORK.ANALYSIS0 has 40999955 observations and 28 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:28.58
+      cpu time            8.89 seconds
+
+
+177  PROC CONTENTS
+NOTE: Writing HTML Body file: sashtml.htm
+178       DATA = util0 VARNUM;
+179  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.39 seconds
+      cpu time            0.25 seconds
+
+
+180  data   util1 ( keep = mcaid_id month clmClass_r tot_n_month tot_pd_month fy3 ) ;
+181  set    util0;
+182  format month date9.;
+183  fy3    = year(intnx('year.7', month, 0, 'BEGINNING'));
+184  run;
+
+NOTE: There were 19018515 observations read from the data set WORK.UTIL0.
+NOTE: The data set WORK.UTIL1 has 19018515 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.59 seconds
+      cpu time            4.53 seconds
+
+
+185  PROC FREQ
+186       DATA = util1;
+187       TABLES clmClass_r;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+188       TITLE  'util clmClass';
+189  RUN;
+
+NOTE: There were 19018515 observations read from the data set WORK.UTIL1.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.70 seconds
+      cpu time            0.64 seconds
+
+
+190  TITLE;
+
+191  PROC FREQ
+192       DATA = util1;
+193       TABLES clmClass_r;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+194       TITLE  'util clmClass';
+195  RUN;
+
+NOTE: Writing HTML Body file: sashtml1.htm
+NOTE: There were 19018515 observations read from the data set WORK.UTIL1.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.18 seconds
+      cpu time            0.93 seconds
+
+
+196  TITLE;
+
+197  PROC FREQ
+198       DATA = util1;
+199       TABLES clmClass_r;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+200       TITLE  'util clmClass';
+201  RUN;
+
+NOTE: Writing HTML Body file: sashtml2.htm
+NOTE: There were 19018515 observations read from the data set WORK.UTIL1.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.12 seconds
+      cpu time            0.99 seconds
+
+
+202  TITLE;
+
+203  PROC FREQ
+204       DATA = util1;
+205       TABLES clmClass_r;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+206       TITLE  'util clmClass';
+207  RUN;
+
+NOTE: There were 19018515 observations read from the data set WORK.UTIL1.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.69 seconds
+      cpu time            0.65 seconds
+
+
+208  TITLE;
+
+209  PROC CONTENTS
+210       DATA = data.qrylong_y19_22 VARNUM;
+211  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.01 seconds
+
+
+212  PROC FREQ
+213       DATA = data.qrylong_y19_22;
+214       TABLES pcmp_loc_type_cd;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+215       TITLE  'pcmp loc type cd';
+216  RUN;
+
+NOTE: There were 42737078 observations read from the data set DATA.QRYLONG_Y19_22.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           21.96 seconds
+      cpu time            1.84 seconds
+
+
+217  TITLE;
+
+218  PROC FREQ
+219       DATA = data.qrylong_y15_22;
+220       TABLES pcmp_loc_type_cd;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+221       TITLE  'pcmp loc type cd';
+222  RUN;
+
+ERROR: User asked for termination
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 3502919 observations read from the data set DATA.QRYLONG_Y15_22.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           11.55 seconds
+      cpu time            0.32 seconds
+
+223  TITLE;
+
+
+224  PROC FREQ
+225       DATA = data.qrylong_y19_22;
+226       TABLES pcmp_type_rc;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+ERROR: Variable PCMP_TYPE_RC not found.
+227       TITLE  'pcmp type rc cd';
+228  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+229  TITLE;
+
+
+230
+231  PROC FREQ
+232       DATA = data.qrylong_y15_22;
+233       TABLES pcmp_type_rc;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+ERROR: Variable PCMP_TYPE_RC not found.
+234       TITLE  'pcmp type rc cd';
+235  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+236  TITLE;
+
+
+237  PROC FREQ
+238       DATA = data.qrylong_y15_22;
+239       TABLES pcmp_type;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+240       TITLE  'pcmp type rc cd';
+241  RUN;
+
+ERROR: User asked for termination
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 21197751 observations read from the data set DATA.QRYLONG_Y15_22.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           35.19 seconds
+      cpu time            1.20 seconds
+
+242  TITLE;
+
+
+243  PROC FREQ
+244       DATA = data.qrylong_y19_22;
+245       TABLES pcmp_type;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+ERROR: Variable PCMP_TYPE not found.
+246       TITLE  'pcmp type rc cd';
+247  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+248  TITLE;
+
+
+249  PROC FREQ
+250       DATA = data.analysis0;
+ERROR: File DATA.ANALYSIS0.DATA does not exist.
+251       TABLES pcmp_type;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+ERROR: No data set open to look up variables.
+252       TITLE  'pcmp type rc cd';
+253  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+254  TITLE;
+
+
+255  PROC FREQ
+256       DATA = analysis0;
+257       TABLES pcmp_type;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+258       TITLE  'pcmp type rc cd';
+259  RUN;
+
+NOTE: There were 40999955 observations read from the data set WORK.ANALYSIS0.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           2.89 seconds
+      cpu time            2.85 seconds
+
+
+260  TITLE;
+
+261  PROC CONTENTS
+262       DATA = data.qrylong_y19_22 VARNUM;
+263  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+264  PROC CONTENTS
+265       DATA = analysis0 VARNUM;
+266  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+267  PROC FREQ
+268       DATA = analysis0;
+269       TABLES fy last_day_fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+270       TITLE  'pcmp type rc cd';
+271  RUN;
+
+NOTE: There were 40999955 observations read from the data set WORK.ANALYSIS0.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           3.39 seconds
+      cpu time            3.36 seconds
+
+
+272  TITLE;
+
+273  PROC FREQ
+274       DATA = analysis0;
+275       TABLES age_end_fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+276       TITLE  'age end fy analysis0';
+277  RUN;
+
+NOTE: There were 40999955 observations read from the data set WORK.ANALYSIS0.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           2.85 seconds
+      cpu time            2.79 seconds
+
+
+278  TITLE;
+
+279
+280  PROC CONTENTS
+281       DATA = util0 VARNUM;
+282  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+283  DATA  qry_monthly_utilization;
+284  SET   ana.qry_monthlyutilization ( WHERE = ( month ge '01Jul2019'd and month le '30Jun2022'd )
+284! ) ;
+285  RUN;
+
+NOTE: There were 33767742 observations read from the data set ANA.QRY_MONTHLYUTILIZATION.
+      WHERE (month>='01JUL2019'D and month<='30JUN2022'D);
+NOTE: The data set WORK.QRY_MONTHLY_UTILIZATION has 33767742 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:05.25
+      cpu time            6.99 seconds
+
+
+286  PROC CONTENTS
+287       DATA = qry_monthly_utilization VARNUM;
+288  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+289  proc format;
+290  value clmType  1 = 'Pharmacy' 2='Hospitalizations' 3 = 'ER' 4 = 'Primary care'  100='Other';
+NOTE: Format CLMTYPE has been output.
+291  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+292  PROC FREQ
+293       DATA = qry_monthly_utilization;
+294       TABLES clmClass;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+295       TITLE  'qry_monthly_utilization clmClass';
+296  RUN;
+
+NOTE: There were 33767742 observations read from the data set WORK.QRY_MONTHLY_UTILIZATION.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.46 seconds
+      cpu time            1.25 seconds
+
+
+297  TITLE;
+
+298
+299  proc format;
+300  value clmClass_r  1 = 'Pharmacy' 2='Hospitalizations' 3 = 'ER' 4 = 'Primary care'  100='Other';
+NOTE: Format CLMCLASS_R has been output.
+301  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+302  DATA  util0;
+303  SET   qry_monthly_utilization;
+304  fy3   year(intnx('year.7', month, 0, 'B'));
+     ---
+     180
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+305  format clmClass_r clmClass_r.;
+306  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.UTIL0 may be incomplete.  When this step was stopped there were 0
+         observations and 6 variables.
+WARNING: Data set WORK.UTIL0 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+307  * Re-factor clmClass as clmClass_r ;
+308  DATA  util0;
+309  SET   qry_monthly_utilization;
+310  fy3   = year(intnx('year.7', month, 0, 'B'));
+311  format clmClass_r clmClass_r.;
+312  RUN;
+
+NOTE: Variable clmClass_r is uninitialized.
+NOTE: There were 33767742 observations read from the data set WORK.QRY_MONTHLY_UTILIZATION.
+NOTE: The data set WORK.UTIL0 has 33767742 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7.67 seconds
+      cpu time            7.65 seconds
+
+
+313  proc format;
+314  value clmClass_r  1 = 'Pharmacy' 2='Hospitalizations' 3 = 'ER' 4 = 'Primary Care'  100='Other';
+NOTE: Format CLMCLASS_R is already on the library WORK.FORMATS.
+NOTE: Format CLMCLASS_R has been output.
+315  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+316  DATA  util0;
+317  SET   qry_monthly_utilization;
+318  fy3   = year(intnx('year.7', month, 0, 'B'));
+319  format clmClass_r clmClass_r.;
+320  RUN;
+
+NOTE: Variable clmClass_r is uninitialized.
+NOTE: There were 33767742 observations read from the data set WORK.QRY_MONTHLY_UTILIZATION.
+NOTE: The data set WORK.UTIL0 has 33767742 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7.77 seconds
+      cpu time            7.73 seconds
+
+
+321  * Re-factor clmClass as clmClass_r ;
+322  DATA  util0;
+323  SET   qry_monthly_utilization;
+324
+325  fy3        = year(intnx('year.7', month, 0, 'B'));
+326  clmClass_r = clmClass ;
+327
+328  format clmClass_r clmClass_r.;
+329  RUN;
+
+NOTE: There were 33767742 observations read from the data set WORK.QRY_MONTHLY_UTILIZATION.
+NOTE: The data set WORK.UTIL0 has 33767742 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7.83 seconds
+      cpu time            7.79 seconds
+
+
+330  PROC CONTENTS
+331       DATA = util0 VARNUM;
+332  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+333  DATA  util0;
+334  SET   qry_monthly_utilization;
+335
+336  fy3        = year(intnx('year.7', month, 0, 'B'));
+337  clmClass_r = clmClass ;
+338
+339  format clmClass_r clmClass_r.;
+340  format month      date9.;
+341  RUN;
+
+NOTE: There were 33767742 observations read from the data set WORK.QRY_MONTHLY_UTILIZATION.
+NOTE: The data set WORK.UTIL0 has 33767742 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7.85 seconds
+      cpu time            7.76 seconds
+
+
+342  PROC SQL;
+343  CREATE TABLE data.util_19_22 as
+344  SELECT mcaid_id
+345       , month
+346       , clmClass
+347       , clmClass_r
+348       , sum(count ) as tot_n_month
+349       , sum(pd_amt) as tot_pd_month
+350  FROM util0
+351  WHERE mcaid_id in ( SELECT mcaid_id FROM data.memlist )
+352  GROUP BY mcaid_id, clmClass_r, month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table DATA.UTIL_19_22 created, with 30434457 rows and 6 columns.
+
+353  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           39.03 seconds
+      cpu time            20.96 seconds
+
+
+353!        * 54191704 : 5 on 2/24;
+
+354  PROC SQL;
+355  CREATE TABLE data.util_19_22 as
+356  SELECT mcaid_id
+357       , month
+358       , clmClass
+359       , clmClass_r
+360       , sum(count ) as tot_n_month
+361       , sum(pd_amt) as tot_pd_month
+362  FROM util0
+363  WHERE mcaid_id in ( SELECT mcaid_id FROM data.memlist )
+364  GROUP BY mcaid_id, clmClass_r, month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table DATA.UTIL_19_22 created, with 30434457 rows and 6 columns.
+
+365  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           35.21 seconds
+      cpu time            20.93 seconds
+
+
+365!        * 54191704 : 5 on 2/24;
+
+366  proc sql;
+367  create table analysis1 as
+368  select *
+369  from analysis0
+370  where mcaid_id in (select mcaid_id from data.memlist) ;
+NOTE: Table WORK.ANALYSIS1 created, with 40999955 rows and 28 columns.
+
+371  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           12.07 seconds
+      cpu time            12.03 seconds
+
+
+372  proc sql;
+373  create table n_mem_analysis1 as
+374  select count ( distinct mcaid_id ) as n_mcaid_id
+375  from analysis1;
+NOTE: Table WORK.N_MEM_ANALYSIS1 created, with 1 rows and 1 columns.
+
+376  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           5.22 seconds
+      cpu time            5.21 seconds
+
+
+377
+378  proc print data = n_mem_analysis1 ; run;
+
+NOTE: There were 1 observations read from the data set WORK.N_MEM_ANALYSIS1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+
+379  proc sql;
+380  create table analysis2 as
+381  select a.*
+382       /* join memlist utilization  */
+383       , b.pcmp_loc_id
+384       , b.id_split
+385       , b.dt_prac_isp
+386       , b.ind_isp
+387
+388       /* join bho  */
+389       , c.bh_n_er
+390       , c.bh_n_other
+391
+392       /* join telehealth utilization  */
+393       , d.n_tele
+394       , d.pd_tele
+395
+396       /* join monthly */
+397       , e.clmClass
+398       , e.clmClass_r
+399       , e.tot_n_month
+400       , e.tot_pd_month
+401
+402  FROM analysis1 AS a
+403
+404  LEFT JOIN data.memlist as b
+405  ON a.mcaid_id = b.mcaid_id AND a.month = b.month
+406
+407  LEFT JOIN data.bho_fy15_22 AS c
+408  ON a.mcaid_id = c.mcaid_id AND a.month = c.month
+409
+410  LEFT JOIN data.memlist_tele_monthly AS d
+411  ON a.mcaid_id = d.mcaid_id AND a.month = d.month
+412
+413  LEFT JOIN data.util_month_y15_22 AS e
+414  ON a.mcaid_id = e.mcaid_id AND a.month = e.month;
+ERROR: File DATA.BHO_FY15_22.DATA does not exist.
+415
+416  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.23 seconds
+      cpu time            0.01 seconds
+
+
+417  proc sql;
+418  create table analysis2 as
+419  select a.*
+420
+421       /* join bho  */
+422       , b.bh_n_er
+423       , b.bh_n_other
+424
+425       /* join telehealth utilization  */
+426       , c.n_tele
+427       , c.pd_tele
+428
+429       /* join monthly */
+430       , d.clmClass
+431       , d.clmClass_r
+432       , d.tot_n_month
+433       , d.tot_pd_month
+434
+435  FROM analysis1 AS a
+436
+437  LEFT JOIN data.bho_19_22 AS b
+438  ON a.mcaid_id = b.mcaid_id AND a.month = b.month
+439
+440  LEFT JOIN data.memlist_tele_monthly AS c
+441  ON a.mcaid_id = c.mcaid_id AND a.month = c.month
+442
+443  LEFT JOIN data.util_19_22 AS d
+444  ON a.mcaid_id = d.mcaid_id AND a.month = d.month;
+NOTE: Table WORK.ANALYSIS2 created, with 56119474 rows and 36 columns.
+
+445
+446  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           55.17 seconds
+      cpu time            49.32 seconds
+
+
+446!         * 53384535 : 31 same when merged on pcmp_loc_id as when not;
+
+447  proc print data = analysis2 (obs = 5000) ; run ;
+
+NOTE: There were 5000 observations read from the data set WORK.ANALYSIS2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           7.65 seconds
+      cpu time            7.64 seconds
+
+
+
+448  PROC FORMAT FMTLIB LIB=Ana.Formats;
+448!                                     SELECT Clmclass;
+448!                                                      RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+NOTE: Non-portable document will be produced. The current settings of FORMCHAR use nonstandard
+      line-drawing characters and the resulting output file will not render correctly unless all
+      readers of the document have the SAS Monospace font installed. To make your document
+      portable, issue the following command:
+      OPTIONS FORMCHAR="|----|+|---+=|-/\<>*";
+
+
+449  %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_params.sas";
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+SYMBOLGEN:  Macro variable ANA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+SYMBOLGEN:  Macro variable DATASETS resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/datasets
+NOTE: Libref DATASETS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\datasets
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/util_analysis
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\util_analysis
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable FEB resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/hcpf_pres
+NOTE: Libref FEB was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\hcpf_pres
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable TMP resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/tmp
+NOTE: Libref TMP was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\tmp
+SYMBOLGEN:  Macro variable VARLEN resolves to
+            \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBV
+            arLengths
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLeng
+      ths
+SYMBOLGEN:  Macro variable VARLEN resolves to
+            \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBV
+            arLengths
+MLOGIC(GETLEN):  Beginning execution.
+MLOGIC(GETLEN):  Parameter LIBRARY has value varlen
+MLOGIC(GETLEN):  Parameter DATA has value AllVarLengths
+MPRINT(GETLEN):   proc sql noprint;
+SYMBOLGEN:  Macro variable LIBRARY resolves to varlen
+SYMBOLGEN:  Macro variable DATA resolves to AllVarLengths
+MPRINT(GETLEN):   select name into :nlist separated by ' ' from dictionary.columns where libname =
+upcase("varlen") and memname = upcase("AllVarLengths");
+MPRINT(GETLEN):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.78 seconds
+      cpu time            0.29 seconds
+
+
+MLOGIC(GETLEN):  %GLOBAL  &NLIST
+SYMBOLGEN:  Macro variable NLIST resolves to ACDNT_IND ADJ_EOB_CD ADJ_EOB_DESC ADJ_IND ADJ_RSN_CD
+            ADJ_RSN_DESC ADMT_SRC_CD ADMT_TYP_CD AID_CD AID_DESC AMND_IND APR_DRG_CD APR_DRG_DESC
+            APR_DRG_SEV_CD APR_DRG_SEV_DESC APR_DRG_VER_NBR ASGMT_STS_CD ASGMT_STS_DESC
+            ATTD_PROV_LOC_ID ATTD_PROV_LOC_NM BILL_ADDR_LNE_1_TX BILL_ADDR_LNE_2_TX
+            BILL_ADDR_LNE_3_TX BILL_CTY_NM BILL_EMAIL_ADDR_1_TX BILL_EMAIL_ADDR_2_TX BILL_FAX_NBR
+            BILL_PHN_NBR BILL_PROV_LOC_ID BILL_PROV_LOC_NM BILL_PROV_MCAID_ID BILL_PROV_NPI_ID
+            BILL_PROV_SPCLTY_CD BILL_PROV_SPCLTY_DESC BILL_PROV_TYP_CD BILL_PROV_TYP_DESC
+            BILL_PSTL_CD BILL_ST_CD BILL_TYP_CD BILL_TYP_DESC BILL_ZIP_PLS_4_CD BNCHMK_IND BPLAN_CD
+            BUS_PROV_NM CARR_DENY_IND CASE_COORDR_FRST_NM CASE_COORDR_LIC_NBR CASE_COORDR_LST_NM
+            CASE_NBR CD_SET_CD CD_SET_VER_NBR CERTN_CD CERTN_NBR CERTN_TYP_CD CERTN_TYP_DESC
+            CHP_PLS_INCM_RT_CD CLM_CARR_DENY_IND CLM_COPAY_PRCS_CD CLM_COPAY_PRCS_DESC CLM_CTG_CD
+            CLM_CTG_DESC CLM_STS_CD CLM_STS_DESC CLM_TRNSCT_TYP_CD CLM_TRNSCT_TYP_DESC CLM_TYP_CD
+            CLM_TYP_DESC CLNT_CNTY_CD CLNT_CNTY_DESC CONT_ELGB_IND COPAY_PRCS_CD COPAY_PRCS_DESC
+            CTGLY_ELGB_IND CTG_OF_SVC_CD CTG_OF_SVC_DESC CTZN_STS_CD CTZN_STS_DESC CURR_REC_IND
+            DEA_NBR DIAG_1_CD DIAG_1_CD_SET_CD DIAG_1_CD_SET_VER_NBR DIAG_1_DESC DIAG_2_CD
+            DIAG_2_CD_SET_CD DIAG_2_CD_SET_VER_NBR DIAG_2_DESC DIAG_3_CD DIAG_3_CD_SET_CD
+            DIAG_3_CD_SET_VER_NBR DIAG_3_DESC DIAG_4_CD DIAG_4_CD_SET_CD DIAG_4_CD_SET_VER_NBR
+            DIAG_4_DESC DIAG_CD DIAG_DESC DIAG_PRSNT_ON_ADMSN_CD DIAG_SEQ_CD DIAG_SEQ_DESC
+            DISBLD_IND DRUG_BRND_NM_IND DRUG_FRM_CD DUR_INTRVN_CD DUR_OTCM_CD EFORM_IND
+            EMAIL_ADDR_TX EMERG_DRUG_IND EMERG_IND EMS_ONLY_IND ENC_IND ENC_STS_CD ENRL_END_RSN_CD
+            ENRL_END_RSN_DESC ENRL_STRT_RSN_CD ENRL_STRT_RSN_DESC ENRL_TYP_CD ENRL_TYP_DESC
+            ENTRY_CLRK_ID EOB_CD EOB_DESC EPSDT_ADA_CD EPSDT_FMLY_PLN_RLT_CD ERR_CD ERR_DESC
+            ERR_DISP_STS_CD ERR_DISP_STS_DESC ETHNC_CD ETHNC_DESC EXTL_CAUSE_OF_INJ_QLFR_CD
+            EXTL_PRI_AUTH_NBR FAC_PROV_LOC_ID FAC_PROV_LOC_NM FED_POV_LVL_CD FED_POV_LVL_DESC
+            FIN_AID_CD FIN_AID_DESC FORMULATION_NBR FRST_NM FUND_CD FUND_DESC GEO_CD GEO_NM GNDR_CD
+            GNDR_DESC GRP_ID HIC_NBR HLTH_PGM_CD HLTH_PGM_DFN_TX HOME_ADDR_LNE_1_TX
+            HOME_ADDR_LNE_2_TX HOME_ADDR_LNE_3_TX HOME_CTY_NM HOME_PSTL_CD HOME_ST_CD
+            HOME_ZIP_PLS_4_CD ICN_NBR INCRCTD_HSPTLZD_IND INCRCTD_IND INIT_ENTRY_CLRK_ID LANG_1_CD
+            LANG_1_DESC LANG_2_CD LANG_2_DESC LANG_3_CD LANG_3_DESC LGL_PROV_NM LIST_ID LNE_STS_CD
+            LNE_STS_DESC LST_NM LTR_IND LVL_OF_CARE_TYP_CD LVL_OF_CARE_TYP_DESC MAIL_ADDR_LNE_1_TX
+            MAIL_ADDR_LNE_2_TX MAIL_ADDR_LNE_3_TX MAIL_CTY_NM MAIL_EMAIL_ADDR_1_TX
+            MAIL_EMAIL_ADDR_2_TX MAIL_PROV_NM MAIL_PROV_TITL_NM MAIL_PSTL_CD MAIL_ST_CD
+            MAIL_ZIP_PLS_4_CD MCAID_ID MCARE_DSCLMR_CD MCARE_ID MC_ADD_ENT_CD MC_ADD_ENT_DESC
+            MC_CHG_ENT_CD MC_CHG_ENT_DESC MC_IND MC_TERM_ENT_CD MC_TERM_ENT_DESC MDIA_TYP_CD
+            MDIA_TYP_DESC MDL_NM MOST_RCNT_CLM_IND MRN_CD MRTL_STS_CD MRTL_STS_DESC
+            NCPDP_PTNT_LOC_CD NDC_CD NDC_DESC NDC_LOCK_IND NDC_STS_CD NRS_HOME_IND ORGN_ICN_NBR
+            PARNT_ICN_NBR PAROLEE_IND PHN_NBR PHRMCS_ID PMP_IND PMT_MTHD_CD PMT_MTHD_DESC POS_CD
+            POS_DESC PRD_OF_INELGB_IND PRGNCY_IND PRI_AUTH_AMND_STS_CD PRI_AUTH_ASGN_KEY_CD
+            PRI_AUTH_ATTCH_GRP_CD PRI_AUTH_LNE_NBR PRI_AUTH_LNE_STS_CD PRI_AUTH_LNE_STS_DESC
+            PRI_AUTH_NBR PRI_AUTH_PRCS_TYP_CD PRI_AUTH_PRCS_TYP_DESC PRI_AUTH_STS_CD
+            PRI_AUTH_STS_DESC PRI_AUTH_TYP_CD PRI_AUTH_TYP_DESC PRI_AUTH_XREF_STS_CD PRMY_DIAG_CD
+            PRMY_PROV_LOC_ID PRMY_SPCLTY_CD PRMY_SPCLTY_DESC PROC_CD PROC_CD_SET_CD PROC_DESC
+            PROC_MOD_1_CD PROC_MOD_1_DESC PROC_MOD_2_CD PROC_MOD_2_DESC PROC_MOD_3_CD
+            PROC_MOD_3_DESC PROC_MOD_4_CD PROC_MOD_4_DESC PROC_QLFR_CD PROC_QLFR_DESC
+            PROV_ADDR_PSTL_CD PROV_ADDR_ZIP_PLS_4_CD PROV_BASE_ID PROV_CNTRC_TYP_CD
+            PROV_CNTRC_TYP_DESC PROV_CNTRC_TYP_LNG_DESC PROV_GNDR_CD PROV_LOC_ID PROV_MCAID_ID
+            PROV_NPI_ID PROV_SSN_NBR PROV_SVC_CNTY_CD PROV_SVC_CNTY_DESC PROV_TYP_CD PROV_TYP_DESC
+            PROV_UPIN_ID PRSCRB_PROV_LOC_ID PRSCRB_PROV_LOC_NM PTNT_ACCT_NBR PTNT_LOC_CD
+            PTNT_STS_CD PTNT_STS_DESC RACE_CD RACE_DESC REC_CHKSM REL_CD REL_DESC REND_PROV_LOC_ID
+            REND_PROV_LOC_NM REND_PROV_MCAID_ID REND_PROV_NPI_ID REND_PROV_SPCLTY_CD
+            REND_PROV_SPCLTY_DESC REND_PROV_TYP_CD REND_PROV_TYP_DESC RFR_2_PROV_LOC_ID
+            RFR_2_PROV_LOC_NM RFR_PROV_ID RFR_PROV_LOC_ID RFR_PROV_LOC_NM RFR_PROV_NM
+            RMBRS_BASIS_CD RSDNC_CNTY_CD RSDNC_CNTY_DESC RT_PRC_CD RVN_CD RVN_DESC RVW_CLRK_ID
+            RX_NBR SBMT_BILL_PROV_TXNMY_CD SBMT_CLNT_FRST_NM SBMT_CLNT_GNDR_CD SBMT_CLNT_GNDR_DESC
+            SBMT_CLNT_ID SBMT_CLNT_LST_NM SBMT_CLNT_MDL_NM SBMT_CLNT_SFX_NM SBMT_CLNT_TITL_NM
+            SBMT_MCAID_ID SBMT_NCPDP_PTNT_LOC_CD SBMT_POS_CD SBMT_PRGNCY_IND SBMT_PROC_MOD_1_CD
+            SBMT_PROC_MOD_2_CD SBMT_PROC_MOD_3_CD SBMT_PROC_MOD_4_CD SBMT_PROV_ID SBMT_PROV_NM
+            SBMT_SVC_PROV_ID SBMT_SVC_PROV_TXNMY_CD SBMT_TTH_NBR_CD SBMT_TTH_QUAD_CD SEC_DIAG_CD
+            SEC_PROV_LOC_ID SFX_NM SPCL_CNSDR_IND SPCL_MED_NEEDS_IND SPKN_LANG_CD SPKN_LANG_DESC
+            SPLM_SCRTY_INCM_IND SRC_REC_DEL_IND SRGPROC_CD SRGPROC_CD_SET_CD SRGPROC_CD_SET_DESC
+            SRGPROC_CD_SET_VER_NBR SRGPROC_DESC SSI_1619B_IND SSN_NBR SS_DSBLTY_INS_IND STS_CD
+            STS_DESC SUB_CTG_OF_SVC_CD SUB_CTG_OF_SVC_DESC SUPV_PROV_LOC_ID SUPV_PROV_LOC_NM
+            SVCTP_CD SVC_ADDR_LNE_1_TX SVC_ADDR_LNE_2_TX SVC_ADDR_LNE_3_TX SVC_CD SVC_CD_DESC
+            SVC_CNTY_CD SVC_CNTY_DESC SVC_CTY_NM SVC_EMAIL_ADDR_1_TX SVC_EMAIL_ADDR_2_TX
+            SVC_FAX_NBR SVC_PHN_NBR SVC_PROV_CHK_CD SVC_PROV_LOC_ID SVC_PROV_NM SVC_PROV_TITL_NM
+            SVC_PSTL_CD SVC_ST_CD SVC_ZIP_PLS_4_CD SYS_ADDED_DTL_IND TAX_ID_TYP_CD TAX_ID_TYP_DESC
+            TAX_NBR_ID THRU_PROC_CD TITL_NM TRNSCT_VER_CD TRT_DIAG_CD_IND TTH_NBR_CD TTH_NBR_DESC
+            TTH_QUAD_CD TTH_QUAD_DESC UNBNDL_RFR_NBR UNT_DOSE_TYP_CD WRT_LANG_CD WRT_LANG_DESC
+MLOGIC(GETLEN):  %LET (variable name is DSID)
+SYMBOLGEN:  Macro variable LIBRARY resolves to varlen
+SYMBOLGEN:  Macro variable DATA resolves to AllVarLengths
+MLOGIC(GETLEN):  %SYSCALL set(dsid)
+MLOGIC(GETLEN):  %LET (variable name is READIT)
+SYMBOLGEN:  Macro variable DSID resolves to 1
+MLOGIC(GETLEN):  %LET (variable name is CLOSEIT)
+SYMBOLGEN:  Macro variable DSID resolves to 1
+MLOGIC(GETLEN):  Ending execution.
+NOTE: Format AGECAT is already on the library WORK.FORMATS.
+NOTE: Format AGECAT has been output.
+NOTE: Format AGEHCPF is already on the library WORK.FORMATS.
+NOTE: Format AGEHCPF has been output.
+NOTE: Format AGE7CAT is already on the library WORK.FORMATS.
+NOTE: Format AGE7CAT has been output.
+NOTE: Format FY3_ is already on the library WORK.FORMATS.
+NOTE: Format FY3_ has been output.
+NOTE: Format FY7_ is already on the library WORK.FORMATS.
+NOTE: Format FY7_ has been output.
+NOTE: Format NSERVE is already on the library WORK.FORMATS.
+NOTE: Format NSERVE has been output.
+NOTE: Format CAPVSH is already on the library WORK.FORMATS.
+NOTE: Format CAPVSH has been output.
+NOTE: Format MATCHN is already on the library WORK.FORMATS.
+NOTE: Format MATCHN has been output.
+NOTE: Format PCMP_TYPE_RC is already on the library WORK.FORMATS.
+NOTE: Format PCMP_TYPE_RC has been output.
+NOTE: Format CLMCLASS_R is already on the library WORK.FORMATS.
+NOTE: Format CLMCLASS_R has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+615  DATA  qry_monthly_utilization;
+616  SET   ana.qry_monthlyutilization ( WHERE = ( month ge '01Jul2019'd and month le '30Jun2022'd )
+616! ) ;
+617  RUN;
+
+NOTE: There were 33767742 observations read from the data set ANA.QRY_MONTHLYUTILIZATION.
+      WHERE (month>='01JUL2019'D and month<='30JUN2022'D);
+NOTE: The data set WORK.QRY_MONTHLY_UTILIZATION has 33767742 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:15.46
+      cpu time            6.20 seconds
+
+
+618  * 2/27 [33767742 : 5] with 2019july set ;
+619  *02/09/23 [111,221,842   :  7];
+620
+621  * Re-factor clmClass as clmClass_r ;
+622  DATA  util0;
+623  SET   qry_monthly_utilization;
+624
+625  fy3        = year(intnx('year.7', month, 0, 'B'));
+626  clmClass_r = clmClass ;
+627
+628  format clmClass_r clmClass_r.;
+629  format month      date9.;
+630  RUN;
+
+NOTE: There were 33767742 observations read from the data set WORK.QRY_MONTHLY_UTILIZATION.
+NOTE: The data set WORK.UTIL0 has 33767742 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7.80 seconds
+      cpu time            7.70 seconds
+
+
+631  proc sql;
+632   create table x2 as
+633   select
+634   MCAID_ID, month,
+635    sum(case when clmClass=4 then pd_amt else 0 end) as PC_tot_pd_m,
+636    sum(pd_amt) as tot_pd_m
+637  from util0
+638  group by MCAID_ID, month;
+NOTE: Table WORK.X2 created, with 16700349 rows and 4 columns.
+
+639  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           7.84 seconds
+      cpu time            12.64 seconds
+
+
+640  proc print data = x2 (obs = 500) ; run ;
+
+NOTE: There were 500 observations read from the data set WORK.X2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.10 seconds
+
+
+
+641  PROC PRINT
+642       DATA = util0 (OBS = 1000);
+643       where mcaid_id = "A000405";
+644  RUN;
+
+NOTE: There were 113 observations read from the data set WORK.UTIL0.
+      WHERE mcaid_id='A000405';
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           1.00 seconds
+      cpu time            0.95 seconds
+
+
+645  proc sql;
+646  create table data.util_19_22 as
+647  select mcaid_id
+648       , month,
+649       , sum(case when clmClass = 4 then pd_amt else 0 end) as pd_amt_pc,
+          -
+          22
+650       , sum(case when clmClass = 2 then pd_amt else 0 end) as pd_amt_rx,
+          -
+          22
+651       , sum(pd_amt) as pd_amt_total
+          -
+          22
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string,
+              a numeric constant, a datetime constant, a missing value, *, BTRIM, INPUT, PUT,
+              SUBSTRING, USER.
+
+652       , sum(case when clmClass = 4 then count else 0 end) as n_pc
+653       , sum(case when clmClass = 3 then count else 0 end) as n_er
+654       , sum(count) as n_total
+655  from util0
+656  group by MCAID_ID, month;
+657  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+658  proc sql;
+659  create table data.util_19_22 as
+660  select mcaid_id
+661       , month
+662       , sum(case when clmClass = 4 then pd_amt else 0 end) as pd_amt_pc,
+663       , sum(case when clmClass = 2 then pd_amt else 0 end) as pd_amt_rx,
+          -
+          22
+664       , sum(pd_amt) as pd_amt_total
+          -
+          22
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string,
+              a numeric constant, a datetime constant, a missing value, *, BTRIM, INPUT, PUT,
+              SUBSTRING, USER.
+
+665       , sum(case when clmClass = 4 then count else 0 end) as n_pc
+666       , sum(case when clmClass = 3 then count else 0 end) as n_er
+667       , sum(count) as n_total
+668  from util0
+669  group by MCAID_ID, month;
+670  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+671
+672  proc sql;
+673  create table data.util_19_22 as
+674  select mcaid_id
+675       , month
+676       , sum(case when clmClass = 4 then pd_amt else 0 end) as pd_amt_pc
+677       , sum(case when clmClass = 2 then pd_amt else 0 end) as pd_amt_rx
+678       , sum(pd_amt) as pd_amt_total
+679       , sum(case when clmClass = 4 then count else 0 end) as n_pc
+680       , sum(case when clmClass = 3 then count else 0 end) as n_er
+681       , sum(count) as n_total
+682  from util0
+683  group by MCAID_ID, month;
+NOTE: Table DATA.UTIL_19_22 created, with 16700349 rows and 8 columns.
+
+684  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           24.98 seconds
+      cpu time            15.64 seconds
+
+
+685  proc print data = data.util_19_22 (obs = 500) ; run ;
+
+NOTE: There were 500 observations read from the data set DATA.UTIL_19_22.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.22 seconds
+      cpu time            0.18 seconds
+
+
+
+686  data data.util_19_22;
+687  set  data.util_19_22;
+688  clmClass_r = clmClass;
+689  format clmClass clmClass_r.;
+690  run ;
+
+NOTE: Variable clmClass is uninitialized.
+NOTE: There were 16700349 observations read from the data set DATA.UTIL_19_22.
+NOTE: The data set DATA.UTIL_19_22 has 16700349 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           45.26 seconds
+      cpu time            2.95 seconds
+
+
+691  proc print data = data.util_19_22 (obs = 500) ; run ;
+
+NOTE: There were 500 observations read from the data set DATA.UTIL_19_22.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.30 seconds
+      cpu time            0.25 seconds
+
+
+
+692  proc sql;
+693  create table data.util_19_22 as
+694  select mcaid_id
+695       , month
+696       , sum(case when clmClass = 4 then pd_amt else 0 end) as pd_amt_pc
+697       , sum(case when clmClass = 2 then pd_amt else 0 end) as pd_amt_rx
+698       , sum(pd_amt) as pd_amt_total
+699       , sum(case when clmClass = 4 then count else 0 end) as n_pc
+700       , sum(case when clmClass = 3 then count else 0 end) as n_er
+701       , sum(count) as n_total
+702  from util0
+703  group by MCAID_ID, month;
+NOTE: Table DATA.UTIL_19_22 created, with 16700349 rows and 8 columns.
+
+704  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           25.25 seconds
+      cpu time            15.92 seconds
+
+
+705  proc print data = data.util_19_22 (obs = 500) ; run ;
+
+NOTE: There were 500 observations read from the data set DATA.UTIL_19_22.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.18 seconds
+
+
+
+706  PROC FORMAT FMTLIB LIB=Ana.Formats;
+706!                                     SELECT Clmclass;
+706!                                                      RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+707  proc contents data = data.util_19_22;
+NOTE: Writing HTML Body file: sashtml3.htm
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.53 seconds
+      cpu time            0.48 seconds
+
+
+708  proc contents data = data.bho_19_22 ;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+
+
+709  proc contents data = data.memlist_tele_monthly;
+710  run ;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.00 seconds
+
+
+711
+712  proc sql;
+713  create table analysis2 as
+714  select a.*
+715       /* join monthly */
+716       , b.pd_amt_pc
+717       , b.pc_amt_rx
+718       , b.pd_amt_total
+719       , b.n_pc
+720       , b.n_er
+721       , b.n_total
+722
+723       /* join bho  */
+724       , c.bh_n_er
+725       , c.bh_n_other
+726
+727       /* join telehealth utilization  */
+728       , d.n_tele
+729       , d.pd_tele
+730
+731  FROM analysis1 AS a
+732
+733  LEFT JOIN data.util_19_22 AS b
+734  ON a.mcaid_id = b.mcaid_id AND a.month = b.month
+735
+736  LEFT JOIN data.bho_19_22 AS b
+737  ON a.mcaid_id = c.mcaid_id AND a.month = c.month
+738
+739  LEFT JOIN data.memlist_tele_monthly AS d
+740  ON a.mcaid_id = d.mcaid_id AND a.month = d.month
+741
+742  QUIT;
+     ----
+     22
+     76
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, *, **, +, ',', -, /, <, <=,
+              <>, =, >, >=, AND, EQ, EQT, GE, GET, GROUP, GT, GTT, HAVING, LE, LET, LT, LTT, NE,
+              NET, OR, ORDER, WHERE, ^=, |, ||, ~=.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           30.77 seconds
+      cpu time            1.09 seconds
+
+
+
+743  proc sql;
+744  create table analysis2 as
+745  select a.*
+746       /* join monthly */
+747       , b.pd_amt_pc
+748       , b.pc_amt_rx
+749       , b.pd_amt_total
+750       , b.n_pc
+751       , b.n_er
+752       , b.n_total
+753
+754       /* join bho  */
+755       , c.bh_n_er
+756       , c.bh_n_other
+757
+758       /* join telehealth utilization  */
+759       , d.n_tele
+760       , d.pd_tele
+761
+762  FROM analysis1 AS a
+763
+764  LEFT JOIN data.util_19_22 AS b
+765  ON a.mcaid_id = b.mcaid_id AND a.month = b.month
+766
+767  LEFT JOIN data.bho_19_22 AS b
+768  ON a.mcaid_id = c.mcaid_id AND a.month = c.month
+769
+770  LEFT JOIN data.memlist_tele_monthly AS d
+771  ON a.mcaid_id = d.mcaid_id AND a.month = d.month;
+ERROR: Unresolved reference to table/correlation name c.
+ERROR: Unresolved reference to table/correlation name c.
+ERROR: Column pc_amt_rx could not be found in the table/view identified with the correlation name B.
+ERROR: Unresolved reference to table/correlation name c.
+ERROR: Unresolved reference to table/correlation name c.
+ERROR: Expression using equals (=) has components that are of different data types.
+772
+773  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.00 seconds
+
+
+774  proc sql;
+775  create table analysis2 as
+776  select a.*
+777       /* join monthly */
+778       , b.pd_amt_pc
+779       , b.pc_amt_rx
+780       , b.pd_amt_total
+781       , b.n_pc
+782       , b.n_er
+783       , b.n_total
+784
+785       /* join bho  */
+786       , c.bh_n_er
+787       , c.bh_n_other
+788
+789       /* join telehealth utilization  */
+790       , d.n_tele
+791       , d.pd_tele
+792
+793  FROM analysis1 AS a
+794
+795  LEFT JOIN data.util_19_22 AS b
+796  ON a.mcaid_id = b.mcaid_id AND a.month = b.month
+797
+798  LEFT JOIN data.bho_19_22 AS c
+799  ON a.mcaid_id = c.mcaid_id AND a.month = c.month
+800
+801  LEFT JOIN data.memlist_tele_monthly AS d
+802  ON a.mcaid_id = d.mcaid_id AND a.month = d.month;
+ERROR: Column pc_amt_rx could not be found in the table/view identified with the correlation name B.
+803
+804  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.01 seconds
+
+
+805  proc sql;
+806  create table analysis2 as
+807  select a.*
+808       /* join monthly */
+809       , b.pd_amt_pc
+810       , b.pd_amt_rx
+811       , b.pd_amt_total
+812       , b.n_pc
+813       , b.n_er
+814       , b.n_total
+815
+816       /* join bho  */
+817       , c.bh_n_er
+818       , c.bh_n_other
+819
+820       /* join telehealth utilization  */
+821       , d.n_tele
+822       , d.pd_tele
+823
+824  FROM analysis1 AS a
+825
+826  LEFT JOIN data.util_19_22 AS b
+827  ON a.mcaid_id = b.mcaid_id AND a.month = b.month
+828
+829  LEFT JOIN data.bho_19_22 AS c
+830  ON a.mcaid_id = c.mcaid_id AND a.month = c.month
+831
+832  LEFT JOIN data.memlist_tele_monthly AS d
+833  ON a.mcaid_id = d.mcaid_id AND a.month = d.month;
+NOTE: Table WORK.ANALYSIS2 created, with 40999955 rows and 38 columns.
+
+834
+835  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           41.56 seconds
+      cpu time            39.06 seconds
+
+
+835!         * 56119474 : 36 same when merged on pcmp_loc_id as when not;
+
+836  proc print data = analysis2 (obs = 5000) ; run ;
+
+NOTE: There were 5000 observations read from the data set WORK.ANALYSIS2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           8.02 seconds
+      cpu time            8.00 seconds
+
+
+
+837  data tmp.analysis2;
+838  set  analysis2;
+839  run ;
+
+NOTE: There were 40999955 observations read from the data set WORK.ANALYSIS2.
+NOTE: The data set TMP.ANALYSIS2 has 40999955 observations and 38 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:04.69
+      cpu time            13.51 seconds
+
+

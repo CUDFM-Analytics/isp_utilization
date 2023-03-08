@@ -1,21 +1,21 @@
 PROC CONTENTS 
-     DATA =  VARNUM;
+     DATA = data.util_month_y15_22 VARNUM;
 RUN;
 
 PROC CONTENTS 
-     DATA = analysis6 VARNUM;
+     DATA = qrylong_y19_22a VARNUM;
 RUN;
 
 proc print data = analysis (obs = 500) ; run ; 
 
 PROC CONTENTS 
-     DATA = data.qrylong_y15_22 VARNUM;
+     DATA = tmp.qrylong_y19_22 VARNUM;
 RUN;
 
 PROC FREQ 
-     DATA = qry_monthly_utilization;
-     TABLES clmClass;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-     TITLE  'qry_monthly_utilization clmClass';
+     DATA = qrylong_y19_22b;
+     TABLES age age_end_fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'age';
 RUN; 
 TITLE; 
 

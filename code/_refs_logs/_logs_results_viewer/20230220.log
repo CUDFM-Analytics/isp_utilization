@@ -1,0 +1,3587 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.49 seconds
+      cpu time            0.85 seconds
+
+1    * PROJECT PATHS, MAPPING;
+2    %LET ROOT = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization;
+3    %INCLUDE "&ROOT./code/00_global.sas";
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Libref DATASETS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\datasets
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref TBL was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data_tables
+S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports
+NOTE: Libref TMP was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\tmp
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLeng
+      ths
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.93 seconds
+      cpu time            0.32 seconds
+
+
+NOTE: Format AGECAT has been output.
+NOTE: Format AGEHCPF has been output.
+NOTE: Format AGE7CAT has been output.
+NOTE: Format FY3_ has been output.
+NOTE: Format FY7_ has been output.
+NOTE: Format NSERVE has been output.
+NOTE: Format CAPVSH has been output.
+NOTE: Format MATCHN has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+
+
+161  %LET ROOT = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization;
+162  %INCLUDE "&ROOT./code/00_global.sas";
+SYMBOLGEN:  Macro variable ROOT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+SYMBOLGEN:  Macro variable ANA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+SYMBOLGEN:  Macro variable DATASETS resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/datasets
+NOTE: Libref DATASETS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\datasets
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable TBL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data_tables
+NOTE: Libref TBL was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data_tables
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable REPORT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports
+S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable TMP resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/tmp
+NOTE: Libref TMP was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\tmp
+SYMBOLGEN:  Macro variable VARLEN resolves to
+            \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBV
+            arLengths
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLeng
+      ths
+SYMBOLGEN:  Macro variable VARLEN resolves to
+            \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBV
+            arLengths
+MLOGIC(GETLEN):  Beginning execution.
+MLOGIC(GETLEN):  Parameter LIBRARY has value varlen
+MLOGIC(GETLEN):  Parameter DATA has value AllVarLengths
+MPRINT(GETLEN):   proc sql noprint;
+SYMBOLGEN:  Macro variable LIBRARY resolves to varlen
+SYMBOLGEN:  Macro variable DATA resolves to AllVarLengths
+MPRINT(GETLEN):   select name into :nlist separated by ' ' from dictionary.columns where libname =
+upcase("varlen") and memname = upcase("AllVarLengths");
+MPRINT(GETLEN):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.69 seconds
+      cpu time            0.34 seconds
+
+
+MLOGIC(GETLEN):  %GLOBAL  &NLIST
+SYMBOLGEN:  Macro variable NLIST resolves to ACDNT_IND ADJ_EOB_CD ADJ_EOB_DESC ADJ_IND ADJ_RSN_CD
+            ADJ_RSN_DESC ADMT_SRC_CD ADMT_TYP_CD AID_CD AID_DESC AMND_IND APR_DRG_CD APR_DRG_DESC
+            APR_DRG_SEV_CD APR_DRG_SEV_DESC APR_DRG_VER_NBR ASGMT_STS_CD ASGMT_STS_DESC
+            ATTD_PROV_LOC_ID ATTD_PROV_LOC_NM BILL_ADDR_LNE_1_TX BILL_ADDR_LNE_2_TX
+            BILL_ADDR_LNE_3_TX BILL_CTY_NM BILL_EMAIL_ADDR_1_TX BILL_EMAIL_ADDR_2_TX BILL_FAX_NBR
+            BILL_PHN_NBR BILL_PROV_LOC_ID BILL_PROV_LOC_NM BILL_PROV_MCAID_ID BILL_PROV_NPI_ID
+            BILL_PROV_SPCLTY_CD BILL_PROV_SPCLTY_DESC BILL_PROV_TYP_CD BILL_PROV_TYP_DESC
+            BILL_PSTL_CD BILL_ST_CD BILL_TYP_CD BILL_TYP_DESC BILL_ZIP_PLS_4_CD BNCHMK_IND BPLAN_CD
+            BUS_PROV_NM CARR_DENY_IND CASE_COORDR_FRST_NM CASE_COORDR_LIC_NBR CASE_COORDR_LST_NM
+            CASE_NBR CD_SET_CD CD_SET_VER_NBR CERTN_CD CERTN_NBR CERTN_TYP_CD CERTN_TYP_DESC
+            CHP_PLS_INCM_RT_CD CLM_CARR_DENY_IND CLM_COPAY_PRCS_CD CLM_COPAY_PRCS_DESC CLM_CTG_CD
+            CLM_CTG_DESC CLM_STS_CD CLM_STS_DESC CLM_TRNSCT_TYP_CD CLM_TRNSCT_TYP_DESC CLM_TYP_CD
+            CLM_TYP_DESC CLNT_CNTY_CD CLNT_CNTY_DESC CONT_ELGB_IND COPAY_PRCS_CD COPAY_PRCS_DESC
+            CTGLY_ELGB_IND CTG_OF_SVC_CD CTG_OF_SVC_DESC CTZN_STS_CD CTZN_STS_DESC CURR_REC_IND
+            DEA_NBR DIAG_1_CD DIAG_1_CD_SET_CD DIAG_1_CD_SET_VER_NBR DIAG_1_DESC DIAG_2_CD
+            DIAG_2_CD_SET_CD DIAG_2_CD_SET_VER_NBR DIAG_2_DESC DIAG_3_CD DIAG_3_CD_SET_CD
+            DIAG_3_CD_SET_VER_NBR DIAG_3_DESC DIAG_4_CD DIAG_4_CD_SET_CD DIAG_4_CD_SET_VER_NBR
+            DIAG_4_DESC DIAG_CD DIAG_DESC DIAG_PRSNT_ON_ADMSN_CD DIAG_SEQ_CD DIAG_SEQ_DESC
+            DISBLD_IND DRUG_BRND_NM_IND DRUG_FRM_CD DUR_INTRVN_CD DUR_OTCM_CD EFORM_IND
+            EMAIL_ADDR_TX EMERG_DRUG_IND EMERG_IND EMS_ONLY_IND ENC_IND ENC_STS_CD ENRL_END_RSN_CD
+            ENRL_END_RSN_DESC ENRL_STRT_RSN_CD ENRL_STRT_RSN_DESC ENRL_TYP_CD ENRL_TYP_DESC
+            ENTRY_CLRK_ID EOB_CD EOB_DESC EPSDT_ADA_CD EPSDT_FMLY_PLN_RLT_CD ERR_CD ERR_DESC
+            ERR_DISP_STS_CD ERR_DISP_STS_DESC ETHNC_CD ETHNC_DESC EXTL_CAUSE_OF_INJ_QLFR_CD
+            EXTL_PRI_AUTH_NBR FAC_PROV_LOC_ID FAC_PROV_LOC_NM FED_POV_LVL_CD FED_POV_LVL_DESC
+            FIN_AID_CD FIN_AID_DESC FORMULATION_NBR FRST_NM FUND_CD FUND_DESC GEO_CD GEO_NM GNDR_CD
+            GNDR_DESC GRP_ID HIC_NBR HLTH_PGM_CD HLTH_PGM_DFN_TX HOME_ADDR_LNE_1_TX
+            HOME_ADDR_LNE_2_TX HOME_ADDR_LNE_3_TX HOME_CTY_NM HOME_PSTL_CD HOME_ST_CD
+            HOME_ZIP_PLS_4_CD ICN_NBR INCRCTD_HSPTLZD_IND INCRCTD_IND INIT_ENTRY_CLRK_ID LANG_1_CD
+            LANG_1_DESC LANG_2_CD LANG_2_DESC LANG_3_CD LANG_3_DESC LGL_PROV_NM LIST_ID LNE_STS_CD
+            LNE_STS_DESC LST_NM LTR_IND LVL_OF_CARE_TYP_CD LVL_OF_CARE_TYP_DESC MAIL_ADDR_LNE_1_TX
+            MAIL_ADDR_LNE_2_TX MAIL_ADDR_LNE_3_TX MAIL_CTY_NM MAIL_EMAIL_ADDR_1_TX
+            MAIL_EMAIL_ADDR_2_TX MAIL_PROV_NM MAIL_PROV_TITL_NM MAIL_PSTL_CD MAIL_ST_CD
+            MAIL_ZIP_PLS_4_CD MCAID_ID MCARE_DSCLMR_CD MCARE_ID MC_ADD_ENT_CD MC_ADD_ENT_DESC
+            MC_CHG_ENT_CD MC_CHG_ENT_DESC MC_IND MC_TERM_ENT_CD MC_TERM_ENT_DESC MDIA_TYP_CD
+            MDIA_TYP_DESC MDL_NM MOST_RCNT_CLM_IND MRN_CD MRTL_STS_CD MRTL_STS_DESC
+            NCPDP_PTNT_LOC_CD NDC_CD NDC_DESC NDC_LOCK_IND NDC_STS_CD NRS_HOME_IND ORGN_ICN_NBR
+            PARNT_ICN_NBR PAROLEE_IND PHN_NBR PHRMCS_ID PMP_IND PMT_MTHD_CD PMT_MTHD_DESC POS_CD
+            POS_DESC PRD_OF_INELGB_IND PRGNCY_IND PRI_AUTH_AMND_STS_CD PRI_AUTH_ASGN_KEY_CD
+            PRI_AUTH_ATTCH_GRP_CD PRI_AUTH_LNE_NBR PRI_AUTH_LNE_STS_CD PRI_AUTH_LNE_STS_DESC
+            PRI_AUTH_NBR PRI_AUTH_PRCS_TYP_CD PRI_AUTH_PRCS_TYP_DESC PRI_AUTH_STS_CD
+            PRI_AUTH_STS_DESC PRI_AUTH_TYP_CD PRI_AUTH_TYP_DESC PRI_AUTH_XREF_STS_CD PRMY_DIAG_CD
+            PRMY_PROV_LOC_ID PRMY_SPCLTY_CD PRMY_SPCLTY_DESC PROC_CD PROC_CD_SET_CD PROC_DESC
+            PROC_MOD_1_CD PROC_MOD_1_DESC PROC_MOD_2_CD PROC_MOD_2_DESC PROC_MOD_3_CD
+            PROC_MOD_3_DESC PROC_MOD_4_CD PROC_MOD_4_DESC PROC_QLFR_CD PROC_QLFR_DESC
+            PROV_ADDR_PSTL_CD PROV_ADDR_ZIP_PLS_4_CD PROV_BASE_ID PROV_CNTRC_TYP_CD
+            PROV_CNTRC_TYP_DESC PROV_CNTRC_TYP_LNG_DESC PROV_GNDR_CD PROV_LOC_ID PROV_MCAID_ID
+            PROV_NPI_ID PROV_SSN_NBR PROV_SVC_CNTY_CD PROV_SVC_CNTY_DESC PROV_TYP_CD PROV_TYP_DESC
+            PROV_UPIN_ID PRSCRB_PROV_LOC_ID PRSCRB_PROV_LOC_NM PTNT_ACCT_NBR PTNT_LOC_CD
+            PTNT_STS_CD PTNT_STS_DESC RACE_CD RACE_DESC REC_CHKSM REL_CD REL_DESC REND_PROV_LOC_ID
+            REND_PROV_LOC_NM REND_PROV_MCAID_ID REND_PROV_NPI_ID REND_PROV_SPCLTY_CD
+            REND_PROV_SPCLTY_DESC REND_PROV_TYP_CD REND_PROV_TYP_DESC RFR_2_PROV_LOC_ID
+            RFR_2_PROV_LOC_NM RFR_PROV_ID RFR_PROV_LOC_ID RFR_PROV_LOC_NM RFR_PROV_NM
+            RMBRS_BASIS_CD RSDNC_CNTY_CD RSDNC_CNTY_DESC RT_PRC_CD RVN_CD RVN_DESC RVW_CLRK_ID
+            RX_NBR SBMT_BILL_PROV_TXNMY_CD SBMT_CLNT_FRST_NM SBMT_CLNT_GNDR_CD SBMT_CLNT_GNDR_DESC
+            SBMT_CLNT_ID SBMT_CLNT_LST_NM SBMT_CLNT_MDL_NM SBMT_CLNT_SFX_NM SBMT_CLNT_TITL_NM
+            SBMT_MCAID_ID SBMT_NCPDP_PTNT_LOC_CD SBMT_POS_CD SBMT_PRGNCY_IND SBMT_PROC_MOD_1_CD
+            SBMT_PROC_MOD_2_CD SBMT_PROC_MOD_3_CD SBMT_PROC_MOD_4_CD SBMT_PROV_ID SBMT_PROV_NM
+            SBMT_SVC_PROV_ID SBMT_SVC_PROV_TXNMY_CD SBMT_TTH_NBR_CD SBMT_TTH_QUAD_CD SEC_DIAG_CD
+            SEC_PROV_LOC_ID SFX_NM SPCL_CNSDR_IND SPCL_MED_NEEDS_IND SPKN_LANG_CD SPKN_LANG_DESC
+            SPLM_SCRTY_INCM_IND SRC_REC_DEL_IND SRGPROC_CD SRGPROC_CD_SET_CD SRGPROC_CD_SET_DESC
+            SRGPROC_CD_SET_VER_NBR SRGPROC_DESC SSI_1619B_IND SSN_NBR SS_DSBLTY_INS_IND STS_CD
+            STS_DESC SUB_CTG_OF_SVC_CD SUB_CTG_OF_SVC_DESC SUPV_PROV_LOC_ID SUPV_PROV_LOC_NM
+            SVCTP_CD SVC_ADDR_LNE_1_TX SVC_ADDR_LNE_2_TX SVC_ADDR_LNE_3_TX SVC_CD SVC_CD_DESC
+            SVC_CNTY_CD SVC_CNTY_DESC SVC_CTY_NM SVC_EMAIL_ADDR_1_TX SVC_EMAIL_ADDR_2_TX
+            SVC_FAX_NBR SVC_PHN_NBR SVC_PROV_CHK_CD SVC_PROV_LOC_ID SVC_PROV_NM SVC_PROV_TITL_NM
+            SVC_PSTL_CD SVC_ST_CD SVC_ZIP_PLS_4_CD SYS_ADDED_DTL_IND TAX_ID_TYP_CD TAX_ID_TYP_DESC
+            TAX_NBR_ID THRU_PROC_CD TITL_NM TRNSCT_VER_CD TRT_DIAG_CD_IND TTH_NBR_CD TTH_NBR_DESC
+            TTH_QUAD_CD TTH_QUAD_DESC UNBNDL_RFR_NBR UNT_DOSE_TYP_CD WRT_LANG_CD WRT_LANG_DESC
+MLOGIC(GETLEN):  %LET (variable name is DSID)
+SYMBOLGEN:  Macro variable LIBRARY resolves to varlen
+SYMBOLGEN:  Macro variable DATA resolves to AllVarLengths
+MLOGIC(GETLEN):  %SYSCALL set(dsid)
+MLOGIC(GETLEN):  %LET (variable name is READIT)
+SYMBOLGEN:  Macro variable DSID resolves to 1
+MLOGIC(GETLEN):  %LET (variable name is CLOSEIT)
+SYMBOLGEN:  Macro variable DSID resolves to 1
+MLOGIC(GETLEN):  Ending execution.
+NOTE: Format AGECAT is already on the library WORK.FORMATS.
+NOTE: Format AGECAT has been output.
+NOTE: Format AGEHCPF is already on the library WORK.FORMATS.
+NOTE: Format AGEHCPF has been output.
+NOTE: Format AGE7CAT is already on the library WORK.FORMATS.
+NOTE: Format AGE7CAT has been output.
+NOTE: Format FY3_ is already on the library WORK.FORMATS.
+NOTE: Format FY3_ has been output.
+NOTE: Format FY7_ is already on the library WORK.FORMATS.
+NOTE: Format FY7_ has been output.
+NOTE: Format NSERVE is already on the library WORK.FORMATS.
+NOTE: Format NSERVE has been output.
+NOTE: Format CAPVSH is already on the library WORK.FORMATS.
+NOTE: Format CAPVSH has been output.
+NOTE: Format MATCHN is already on the library WORK.FORMATS.
+NOTE: Format MATCHN has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+320  data pc;
+321    set ana.Qry_clm_dim_class;
+322    where hosp_episode NE 1
+323      and ER NE 1
+324      and primCare = 1;
+325  run;
+
+NOTE: There were 43044039 observations read from the data set ANA.QRY_CLM_DIM_CLASS.
+      WHERE (hosp_episode not = 1) and (ER not = 1) and (primCare=1);
+NOTE: The data set WORK.PC has 43044039 observations and 25 variables.
+NOTE: DATA statement used (Total process time):
+      real time           8:50.76
+      cpu time            23.28 seconds
+
+
+325!     * 43044039;
+
+326
+327  * telehealth records ;
+328  proc format;
+329   * telehealth eligible visits ;
+330   invalue teleElig
+331   '76801','76802','76805','76811','76812','76813','76814','76815','76816','76817','90791','90792
+331! ','90832','90833','90834','90836',
+332  '90837','90838','90839','90840','90846','90847','90849','90853','90863','92507','92508','92521'
+332! ,'92522','92523','92524','92526',
+333  '92606','92607','92608','92609','92610','92630','92633','96101','96102','96110','96111','96112'
+333! ,'96113','96116','96118','96119',
+334  '96121','96125','96130','96131','96132','96133','96136','96137','96138','96139','96146','97110'
+334! ,'97112','97129','97130','97140',
+335  '97150','97151','97153','97154','97155','97158','97161','97162','97163','97164','97165','97166'
+335! ,'97167','97168','97530','97533',
+336  '97535','97537','97542','97755','97760','97761','97763','97802','97803','97804','98966','98967'
+336! ,'98968','99201','99202','99203',
+337  '99204','99205','99211','99212','99213','99214','99215','99382','99383','99384','99392','99393'
+337! ,'99394','99401','99402','99403',
+338  '99404','99406','99407','99408','99409','99441','99442','99443','G0108','G0109','G8431','G8510'
+338! ,'G9006','H0001','H0002','H0004',
+339  'H0006','H0025','H0031','H0032','H0049','H1005','H2000','H2011','H2015','H2016','S9445','S9485'
+339! ,'T1017','V5011'
+340  =1
+341  other=0;
+NOTE: Informat TELEELIG has been output.
+342  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+343
+344  data telecare;
+345    set ana.Clm_lne_fact_v;
+346
+347    teleCare = (CLM_TYP_CD in ( 'B','M' ) and POS_CD = '02' ) or
+348               (
+349                 CLM_TYP_CD in ( 'C','O' ) and
+350                 (PROC_MOD_1_CD='GT' or PROC_MOD_2_CD='GT' or PROC_MOD_3_CD='GT' or
+350! PROC_MOD_4_CD='GT')
+351                );
+352
+353    *eligible for telehealth ;
+354    teleElig = input(proc_cd, teleElig.);
+355
+356     * keeping only rows that are ER or primary or urgent or tele care ;
+357    if teleCare or teleElig;
+358
+359  run;
+
+NOTE: There were 509386139 observations read from the data set ANA.CLM_LNE_FACT_V.
+NOTE: The data set WORK.TELECARE has 70872713 observations and 32 variables.
+NOTE: DATA statement used (Total process time):
+      real time           30:03.39
+      cpu time            1:59.37
+
+
+360  proc sql;
+361    create table margTele as
+362      select icn_nbr,
+363             max(teleCare) as telecare,
+364             max(teleElig) as teleElig
+365      from telecare
+366      group by icn_nbr;
+NOTE: Table WORK.MARGTELE created, with 52866266 rows and 3 columns.
+
+367  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           22.86 seconds
+      cpu time            29.00 seconds
+
+
+368
+369  * telehealth is: primary care, tele eligible and a telehealth service ;
+370  proc sql;
+371
+372  create table teleCare_FINAL as
+373    select a.*
+374    from pc as a inner join margTele as b
+375      on a.icn_nbr = b.icn_nbr
+376    where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
+NOTE: Table WORK.TELECARE_FINAL created, with 1170229 rows and 25 columns.
+
+377
+378  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           33.18 seconds
+      cpu time            31.43 seconds
+
+
+379  data telecare2;
+380  set  telecare;
+381  if   _n_ = 1 then do;
+382       declare hash d1 (dataset:"data.ll_fy1922_pcmp_isp");
+383       d1.definekey("pcmp_loc_id");
+384       d1.definedone();
+385       end;
+386  flag_isp = (d1.check() = 1);
+387  run;
+
+ERROR: Undeclared key symbol pcmp_loc_id for hash object at line 384 column 6.
+ERROR: DATA STEP Component Object failure.  Aborted during the EXECUTION phase.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 1 observations read from the data set WORK.TELECARE.
+WARNING: The data set WORK.TELECARE2 may be incomplete.  When this step was stopped there were 0
+         observations and 33 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+388  data telecare2;
+389  set  telecare;
+390  if   _n_ = 1 then do;
+391       declare hash d1 (dataset:"ll_fy1922_pcmp_isp");
+392       d1.definekey("pcmp_loc_id");
+393       d1.definedone();
+394       end;
+395  flag_isp = (d1.check() = 1);
+396  run;
+
+ERROR: Undeclared key symbol pcmp_loc_id for hash object at line 393 column 6.
+ERROR: DATA STEP Component Object failure.  Aborted during the EXECUTION phase.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 1 observations read from the data set WORK.TELECARE.
+WARNING: The data set WORK.TELECARE2 may be incomplete.  When this step was stopped there were 0
+         observations and 33 variables.
+WARNING: Data set WORK.TELECARE2 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+397  proc print data = telecare (obs = 1000); run;
+NOTE: Writing HTML Body file: sashtml.htm
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           1.17 seconds
+      cpu time            0.98 seconds
+
+
+398  proc contents data = telecare varnum; run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+399  proc sql;
+400  create table telecare2 as
+401  select bill_prov_loc_id
+402       , rend_prov_loc_id
+403       , bill_prov_loc_id in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_bill_isp
+404       , rend_prov_loc_id in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_rend_isp
+405       , bill_prov_loc_id in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_bill_isp
+406       , rend_prov_loc_id in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_rend_isp
+407       , icn_nbr
+408       , teleCare
+409       , teleElig
+410  FROM telecare;
+ERROR: Expression using IN has components that are of different data types.
+NOTE: The IN referred to may have been transformed from an OR to an IN at some point during PROC
+      SQL WHERE clause optimization.
+ERROR: Expression using IN has components that are of different data types.
+NOTE: The IN referred to may have been transformed from an OR to an IN at some point during PROC
+      SQL WHERE clause optimization.
+ERROR: Expression using IN has components that are of different data types.
+NOTE: The IN referred to may have been transformed from an OR to an IN at some point during PROC
+      SQL WHERE clause optimization.
+ERROR: Expression using IN has components that are of different data types.
+NOTE: The IN referred to may have been transformed from an OR to an IN at some point during PROC
+      SQL WHERE clause optimization.
+411  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+412  proc contents data = telecare varnum; run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+413  proc print data = telecare (obs = 1000); run;
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.71 seconds
+      cpu time            0.70 seconds
+
+
+
+414  data  telecare2;
+415  set   telecare  ( keep = bill_prov_loc_id rend_prov_loc_id icn_nbr mcaid_id teleCare teleElig
+415! lne_frst_svc_dt) ;
+416  bill_prov_loc_id_num = input(bill_prov_loc_id, best12.);
+417  rend_prov_loc_id_num = input(rend_prov_loc_id, best12.);
+418  where lne_frst_svc_dt ge '01JUL2019'd
+419  and   lne_frst_svc_dt le '01JUN2022'd;
+420  run;
+
+NOTE: There were 0 observations read from the data set WORK.TELECARE.
+      WHERE (lne_frst_svc_dt>='01JUL2019'D and lne_frst_svc_dt<='01JUN2022'D);
+NOTE: The data set WORK.TELECARE2 has 0 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           8.74 seconds
+      cpu time            7.00 seconds
+
+
+421  data  telecare2;
+422  set   telecare  ( keep = bill_prov_loc_id rend_prov_loc_id icn_nbr mcaid_id teleCare teleElig
+422! lne_frst_svc_dt) ;
+423  bill_prov_loc_id_num = input(bill_prov_loc_id, best12.);
+424  rend_prov_loc_id_num = input(rend_prov_loc_id, best12.);
+425  lne_frst_svc_dt = datepart(lne_frst_svc_dt);
+426  format lne_frst_svc_dt date9.;
+427  where lne_frst_svc_dt ge '01JUL2019'd
+428  and   lne_frst_svc_dt le '01JUN2022'd;
+429  run;
+
+NOTE: There were 0 observations read from the data set WORK.TELECARE.
+      WHERE (lne_frst_svc_dt>='01JUL2019'D and lne_frst_svc_dt<='01JUN2022'D);
+NOTE: The data set WORK.TELECARE2 has 0 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           6.95 seconds
+      cpu time            6.98 seconds
+
+
+430  data  telecare2;
+431  set   telecare  ( keep = bill_prov_loc_id rend_prov_loc_id icn_nbr mcaid_id teleCare teleElig
+431! lne_frst_svc_dt) ;
+432  bill_prov_loc_id_num = input(bill_prov_loc_id, best12.);
+433  rend_prov_loc_id_num = input(rend_prov_loc_id, best12.);
+434  lne_frst_svc_dt2 = datepart(lne_frst_svc_dt);
+435  format lne_frst_svc_dt2 date9.;
+436  where lne_frst_svc_dt2 ge '01JUL2019'd
+437  and   lne_frst_svc_dt2 le '01JUN2022'd;
+ERROR: Variable lne_frst_svc_dt2 is not on file WORK.TELECARE.
+438  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE2 may be incomplete.  When this step was stopped there were 0
+         observations and 10 variables.
+WARNING: Data set WORK.TELECARE2 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+439  data  telecare2;
+440  set   telecare  ( keep = bill_prov_loc_id rend_prov_loc_id icn_nbr mcaid_id teleCare teleElig
+440! lne_frst_svc_dt) ;
+441  bill_prov_loc_id_num = input(bill_prov_loc_id, best12.);
+442  rend_prov_loc_id_num = input(rend_prov_loc_id, best12.);
+443  lne_frst_svc_dt2 = datepart(lne_frst_svc_dt);
+444  format lne_frst_svc_dt2 date9.;
+445  where lne_frst_svc_dt2 ge '01JUL2019'd
+446  and   lne_frst_svc_dt2 le '01JUN2022'd;
+ERROR: Variable lne_frst_svc_dt2 is not on file WORK.TELECARE.
+447  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE2 may be incomplete.  When this step was stopped there were 0
+         observations and 10 variables.
+WARNING: Data set WORK.TELECARE2 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+448  data  telecare2;
+449  set   telecare  ( keep = bill_prov_loc_id rend_prov_loc_id icn_nbr mcaid_id teleCare teleElig
+449! lne_frst_svc_dt) ;
+450  bill_prov_loc_id_num = input(bill_prov_loc_id, best12.);
+451  rend_prov_loc_id_num = input(rend_prov_loc_id, best12.);
+452  lne_frst_svc_dt = datepart(lne_frst_svc_dt);
+453  format lne_frst_svc_dt date9.;
+454  informat lne_frst_svc_dt date9.;
+455  where lne_frst_svc_dt ge '01JUL2019'd
+456  and   lne_frst_svc_dt le '01JUN2022'd;
+457  run;
+
+NOTE: There were 0 observations read from the data set WORK.TELECARE.
+      WHERE (lne_frst_svc_dt>='01JUL2019'D and lne_frst_svc_dt<='01JUN2022'D);
+NOTE: The data set WORK.TELECARE2 has 0 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7.02 seconds
+      cpu time            7.06 seconds
+
+
+458  data  telecare2;
+459  set   telecare  ( keep = bill_prov_loc_id rend_prov_loc_id icn_nbr mcaid_id teleCare teleElig
+459! lne_frst_svc_dt) ;
+460  bill_prov_loc_id_num = input(bill_prov_loc_id, best12.);
+461  rend_prov_loc_id_num = input(rend_prov_loc_id, best12.);
+462  dt_new = datepart(lne_frst_svc_dt);
+463  format dt_new date9.;
+464  where dt_new ge '01JUL2019'd
+465  and   dt_new le '01JUN2022'd;
+ERROR: Variable dt_new is not on file WORK.TELECARE.
+466  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE2 may be incomplete.  When this step was stopped there were 0
+         observations and 10 variables.
+WARNING: Data set WORK.TELECARE2 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+467  data  telecare2;
+468  set   telecare  ( keep = bill_prov_loc_id rend_prov_loc_id icn_nbr mcaid_id teleCare teleElig
+468! lne_frst_svc_dt) ;
+469  bill_prov_loc_id_num = input(bill_prov_loc_id, best12.);
+470  rend_prov_loc_id_num = input(rend_prov_loc_id, best12.);
+471  dt_new = put(datepart(lne_frst_svc_dt), yymmdd10.);
+472  format dt_new date9.;
+                   ------
+                   484
+NOTE 484-185: Format $DATE was not found or could not be loaded.
+
+473  where dt_new ge '01JUL2019'd
+474  and   dt_new le '01JUN2022'd;
+ERROR: Variable dt_new is not on file WORK.TELECARE.
+475  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE2 may be incomplete.  When this step was stopped there were 0
+         observations and 10 variables.
+WARNING: Data set WORK.TELECARE2 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.00 seconds
+
+
+476  data  telecare2;
+477  set   telecare  ( keep = bill_prov_loc_id rend_prov_loc_id icn_nbr mcaid_id teleCare teleElig
+477! lne_frst_svc_dt) ;
+478  bill_prov_loc_id_num = input(bill_prov_loc_id, best12.);
+479  rend_prov_loc_id_num = input(rend_prov_loc_id, best12.);
+480
+481  lne_frst_svc_dt = put(datepart(lne_frst_svc_dt), yymmdd10.);
+482  format lne_frst_svc_dt date9.;
+483  where  lne_frst_svc_dt ge '01JUL2019'd
+484  and    lne_frst_svc_dt le '01JUN2022'd;
+485  run;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      481:19
+NOTE: There were 0 observations read from the data set WORK.TELECARE.
+      WHERE (lne_frst_svc_dt>='01JUL2019'D and lne_frst_svc_dt<='01JUN2022'D);
+NOTE: The data set WORK.TELECARE2 has 0 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           6.89 seconds
+      cpu time            6.93 seconds
+
+
+486  proc sql;
+487  create table telecare2 as
+488  select bill_prov_loc_id,
+489       , rend_prov_loc_id
+          -
+          22
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string,
+              a numeric constant, a datetime constant, a missing value, *, BTRIM, INPUT, PUT,
+              SUBSTRING, USER.
+
+490       , icn_nbr mcaid_id
+                    --------
+                    22
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, (, *, **, +, ',', -, '.', /,
+              <, <=, <>, =, >, >=, ?, AND, AS, CONTAINS, EQ, EQT, FROM, GE, GET, GT, GTT, LE, LET,
+              LIKE, LT, LTT, NE, NET, OR, ^=, |, ||, ~=.
+
+491       , teleCare
+492       , teleElig
+493       , intnx('month',FRST_SVC_DT, 0, 'beginning') as month
+                         -             -
+                         79            22
+                                       76
+ERROR 79-322: Expecting a ).
+
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string, (, CONNECTION,
+              DICTIONARY.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+494  from telecare;
+495  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+496  proc sql;
+497  create table telecare2 as
+498  select bill_prov_loc_id,
+499       , rend_prov_loc_id
+          -
+          22
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string,
+              a numeric constant, a datetime constant, a missing value, *, BTRIM, INPUT, PUT,
+              SUBSTRING, USER.
+
+500       , icn_nbr mcaid_id
+                    --------
+                    22
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, (, *, **, +, ',', -, '.', /,
+              <, <=, <>, =, >, >=, ?, AND, AS, CONTAINS, EQ, EQT, FROM, GE, GET, GT, GTT, LE, LET,
+              LIKE, LT, LTT, NE, NET, OR, ^=, |, ||, ~=.
+
+501       , teleCare
+502       , teleElig
+503       , frst_svc_dt
+504       , intnx ('month',FRST_SVC_DT, 0, 'beginning') as month
+                          -             -
+                          79            22
+                                        76
+ERROR 79-322: Expecting a ).
+
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string, (, CONNECTION,
+              DICTIONARY.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+505  from telecare;
+506  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+507  proc sql;
+508  create table telecare2 as
+509  select bill_prov_loc_id
+510       , rend_prov_loc_id
+511       , icn_nbr
+512       , mcaid_id
+513       , teleCare
+514       , teleElig
+515       , frst_svc_dt
+516       , intnx ('month',FRST_SVC_DT, 0, 'beginning') as month
+517  from telecare;
+ERROR: Function INTNX requires a numeric expression as argument 2.
+ERROR: The following columns were not found in the contributing tables: FRST_SVC_DT.
+518  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+519  proc sql;
+520  create table telecare2 as
+521  select bill_prov_loc_id
+522       , rend_prov_loc_id
+523       , icn_nbr
+524       , mcaid_id
+525       , teleCare
+526       , teleElig
+527       , frst_svc_dt
+528       , intnx ('month',lne_FRST_SVC_DT, 0, 'beginning') as month
+529  from telecare;
+ERROR: The following columns were not found in the contributing tables: frst_svc_dt.
+530  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+531  proc sql;
+532  create table telecare2 as
+533  select bill_prov_loc_id
+534       , rend_prov_loc_id
+535       , icn_nbr
+536       , mcaid_id
+537       , teleCare
+538       , teleElig
+539       , lne_frst_svc_dt
+540       , intnx ('month',lne_FRST_SVC_DT, 0, 'beginning') as month
+541  from telecare;
+NOTE: Invalid argument to function INTNX. Missing values may be generated.
+NOTE: Table WORK.TELECARE2 created, with 70872713 rows and 8 columns.
+
+542  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           20.83 seconds
+      cpu time            20.84 seconds
+
+
+543
+544  proc sql;
+545  create table telecare2 as
+546  select bill_prov_loc_id
+547       , rend_prov_loc_id
+548       , icn_nbr
+549       , mcaid_id
+550       , teleCare
+551       , teleElig
+552       , lne_frst_svc_dt
+553       , intnx ('dtmonth',lne_FRST_SVC_DT, 0, 'beginning') as month
+554  from telecare;
+NOTE: Table WORK.TELECARE2 created, with 70872713 rows and 8 columns.
+
+555  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           23.34 seconds
+      cpu time            23.15 seconds
+
+
+556  proc sql;
+557  create table telecare2 as
+558  select bill_prov_loc_id
+559       , rend_prov_loc_id
+560       , icn_nbr
+561       , mcaid_id
+562       , teleCare
+563       , teleElig
+564       , lne_frst_svc_dt
+565       , intnx ('month',datepart(lne_FRST_SVC_DT), 0, "B") as month
+566  from telecare;
+NOTE: Table WORK.TELECARE2 created, with 70872713 rows and 8 columns.
+
+567  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           22.43 seconds
+      cpu time            22.43 seconds
+
+
+568  proc sql;
+569  create table telecare2 as
+570  select bill_prov_loc_id
+571       , rend_prov_loc_id
+572       , icn_nbr
+573       , mcaid_id
+574       , teleCare
+575       , teleElig
+576       , lne_frst_svc_dt
+577  from telecare;
+NOTE: Table WORK.TELECARE2 created, with 70872713 rows and 7 columns.
+
+578  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           11.01 seconds
+      cpu time            10.93 seconds
+
+
+579  data telecare3;
+580  set  telecare2;
+581  lne_svc_new = datepart(lne_frst_svc_dt);
+582  format lne_svc_new date9.;
+583  run;
+
+NOTE: There were 70872713 observations read from the data set WORK.TELECARE2.
+NOTE: The data set WORK.TELECARE3 has 70872713 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           6.63 seconds
+      cpu time            6.60 seconds
+
+
+584  data telecare3;
+585  set  telecare2;
+586  lne_svc_new = datepart(lne_frst_svc_dt);
+587  format lne_svc_new date9.;
+588  where  lne_svc_new ge '01JUL2019'd
+589  and    lne_svc_new le '01JUN2022'd;
+ERROR: Variable lne_svc_new is not on file WORK.TELECARE2.
+590  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE3 may be incomplete.  When this step was stopped there were 0
+         observations and 8 variables.
+WARNING: Data set WORK.TELECARE3 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+591
+592  data telecare3;
+593  set  telecare2;
+594  where  lne_svc_new ge '01JUL2019'd
+595  and    lne_svc_new le '01JUN2022'd;
+ERROR: Variable lne_svc_new is not on file WORK.TELECARE2.
+596  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE3 may be incomplete.  When this step was stopped there were 0
+         observations and 7 variables.
+WARNING: Data set WORK.TELECARE3 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+597  data telecare2;
+598  set  telecare1;
+ERROR: File WORK.TELECARE1.DATA does not exist.
+599  lne_svc_new = datepart(lne_frst_svc_dt);
+600  format lne_svc_new date9.;
+601  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE2 may be incomplete.  When this step was stopped there were 0
+         observations and 2 variables.
+WARNING: Data set WORK.TELECARE2 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+602  data telecare2;
+603  set  telecare;
+604  lne_svc_new = datepart(lne_frst_svc_dt);
+605  format lne_svc_new date9.;
+606  run;
+
+NOTE: There were 70872713 observations read from the data set WORK.TELECARE.
+NOTE: The data set WORK.TELECARE2 has 70872713 observations and 33 variables.
+NOTE: DATA statement used (Total process time):
+      real time           28.27 seconds
+      cpu time            21.36 seconds
+
+
+607  data telecare3;
+608  set  telecare2;
+609  where  lne_svc_new ge '01JUL2019'd
+610  and    lne_svc_new le '01JUN2022'd;
+611  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE2.
+      WHERE (lne_svc_new>='01JUL2019'D and lne_svc_new<='01JUN2022'D);
+NOTE: The data set WORK.TELECARE3 has 23324748 observations and 33 variables.
+NOTE: DATA statement used (Total process time):
+      real time           20.50 seconds
+      cpu time            13.37 seconds
+
+
+612  data telecare2;
+613  set  telecare2;
+614  lne_svc_new = datepart(lne_frst_svc_dt);
+615  format lne_svc_new date9.;
+616  run;
+
+NOTE: The DATA step has been abnormally terminated.
+NOTE: There were 11986531 observations read from the data set WORK.TELECARE2.
+WARNING: The data set WORK.TELECARE2 may be incomplete.  When this step was stopped there were
+         11986531 observations and 33 variables.
+WARNING: Data set WORK.TELECARE2 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           6.12 seconds
+      cpu time            3.75 seconds
+
+
+617  proc sql;
+618  create table telecare2 as
+619  select bill_prov_loc_id
+620       , rend_prov_loc_id
+621       , icn_nbr
+622       , mcaid_id
+623       , teleCare
+624       , teleElig
+625       , lne_frst_svc_dt
+626  from telecare;
+NOTE: Table WORK.TELECARE2 created, with 70872713 rows and 7 columns.
+
+627  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           18.75 seconds
+      cpu time            14.26 seconds
+
+
+628  data telecare2;
+629  set  telecare2;
+630  lne_svc_new = datepart(lne_frst_svc_dt);
+631  format lne_svc_new date9.;
+632  run;
+
+NOTE: There were 70872713 observations read from the data set WORK.TELECARE2.
+NOTE: The data set WORK.TELECARE2 has 70872713 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           6.78 seconds
+      cpu time            6.81 seconds
+
+
+633  data telecare3;
+634  set  telecare2;
+635  where  lne_svc_new ge '01JUL2019'd
+636  and    lne_svc_new le '01JUN2022'd;
+637  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE2.
+      WHERE (lne_svc_new>='01JUL2019'D and lne_svc_new<='01JUN2022'D);
+NOTE: The data set WORK.TELECARE3 has 23324748 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           5.10 seconds
+      cpu time            5.12 seconds
+
+
+638  proc contents data = telecare3 varnum; run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+639  proc sql;
+640  create table telecare4 as
+641  select bill_prov_loc_id
+642       , rend_prov_loc_id
+643       , bill_prov_loc_id in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_bill_isp
+644       , rend_prov_loc_id in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_rend_isp
+645       , bill_prov_loc_id in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_bill_isp
+646       , rend_prov_loc_id in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_rend_isp
+647       , icn_nbr
+648       , teleCare
+649       , teleElig
+650       , lne_svc_new
+651       , lne_frst_svc_dt
+652  FROM telecare3;
+ERROR: Expression using IN has components that are of different data types.
+NOTE: The IN referred to may have been transformed from an OR to an IN at some point during PROC
+      SQL WHERE clause optimization.
+ERROR: Expression using IN has components that are of different data types.
+NOTE: The IN referred to may have been transformed from an OR to an IN at some point during PROC
+      SQL WHERE clause optimization.
+ERROR: Expression using IN has components that are of different data types.
+NOTE: The IN referred to may have been transformed from an OR to an IN at some point during PROC
+      SQL WHERE clause optimization.
+ERROR: Expression using IN has components that are of different data types.
+NOTE: The IN referred to may have been transformed from an OR to an IN at some point during PROC
+      SQL WHERE clause optimization.
+653  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+
+
+654  data telecare3;
+655  set  telecare2;
+656  where  lne_svc_new ge '01JUL2019'd
+657  and    lne_svc_new le '01JUN2022'd;
+658  bill_prov_loc_id = input(bill_prov_loc_id, best12.);
+659  rend_prov_loc_id = input(rend_prov_loc_id, best12.);
+660  run;
+
+NOTE: Numeric values have been converted to character values at the places given by:
+      (Line):(Column).
+      658:20   659:20
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=114133 REND_PROV_LOC_ID=. ICN_NBR=2022355013745 MCAID_ID=P056468 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=20MAY2022:00:00:00.000 lne_svc_new=20MAY2022 _ERROR_=1 _N_=1
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=114133 REND_PROV_LOC_ID=. ICN_NBR=2022355013746 MCAID_ID=W584295 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=21APR2022:00:00:00.000 lne_svc_new=21APR2022 _ERROR_=1 _N_=2
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=128255 REND_PROV_LOC_ID=. ICN_NBR=2022355013777 MCAID_ID=G822433 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=20APR2022:00:00:00.000 lne_svc_new=20APR2022 _ERROR_=1 _N_=3
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=133280 REND_PROV_LOC_ID=. ICN_NBR=2022355013817 MCAID_ID=O127486 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=28APR2022:00:00:00.000 lne_svc_new=28APR2022 _ERROR_=1 _N_=4
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=133280 REND_PROV_LOC_ID=. ICN_NBR=2022355013821 MCAID_ID=D566915 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=24MAY2022:00:00:00.000 lne_svc_new=24MAY2022 _ERROR_=1 _N_=5
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=133280 REND_PROV_LOC_ID=. ICN_NBR=2022355013826 MCAID_ID=Y255320 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=19APR2022:00:00:00.000 lne_svc_new=19APR2022 _ERROR_=1 _N_=6
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=133191 REND_PROV_LOC_ID=. ICN_NBR=2022355026332 MCAID_ID=Q296759 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=05MAR2022:00:00:00.000 lne_svc_new=05MAR2022 _ERROR_=1 _N_=11
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=112115 REND_PROV_LOC_ID=. ICN_NBR=2022355026379 MCAID_ID=P878897 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=24JAN2022:00:00:00.000 lne_svc_new=24JAN2022 _ERROR_=1 _N_=12
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=. ICN_NBR=2022355031454 MCAID_ID=O124845 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=12MAY2022:00:00:00.000 lne_svc_new=12MAY2022 _ERROR_=1 _N_=14
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=. ICN_NBR=2022355031459 MCAID_ID=O124845 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=27APR2022:00:00:00.000 lne_svc_new=27APR2022 _ERROR_=1 _N_=15
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=. ICN_NBR=2022355031491 MCAID_ID=O124845 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=13MAY2022:00:00:00.000 lne_svc_new=13MAY2022 _ERROR_=1 _N_=16
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=. ICN_NBR=2022355031497 MCAID_ID=G727291 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=12MAY2022:00:00:00.000 lne_svc_new=12MAY2022 _ERROR_=1 _N_=17
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=. ICN_NBR=2022355031499 MCAID_ID=G727291 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=20MAY2022:00:00:00.000 lne_svc_new=20MAY2022 _ERROR_=1 _N_=18
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=. ICN_NBR=2022355031512 MCAID_ID=G727291 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=27APR2022:00:00:00.000 lne_svc_new=27APR2022 _ERROR_=1 _N_=19
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=128068 REND_PROV_LOC_ID=. ICN_NBR=2022355075658 MCAID_ID=N124820 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=01JUN2022:00:00:00.000 lne_svc_new=01JUN2022 _ERROR_=1 _N_=80
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=128068 REND_PROV_LOC_ID=. ICN_NBR=2022355075999 MCAID_ID=O126104 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=12MAY2022:00:00:00.000 lne_svc_new=12MAY2022 _ERROR_=1 _N_=81
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=196062 REND_PROV_LOC_ID=. ICN_NBR=2022356054781 MCAID_ID=P215460 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=31MAY2022:00:00:00.000 lne_svc_new=31MAY2022 _ERROR_=1 _N_=103
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=108662 REND_PROV_LOC_ID=. ICN_NBR=2022356072092 MCAID_ID=Y463570 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=29APR2022:00:00:00.000 lne_svc_new=29APR2022 _ERROR_=1 _N_=112
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+BILL_PROV_LOC_ID=108662 REND_PROV_LOC_ID=. ICN_NBR=2022356072098 MCAID_ID=Y463570 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=11MAY2022:00:00:00.000 lne_svc_new=11MAY2022 _ERROR_=1 _N_=113
+NOTE: Invalid argument to function INPUT at line 659 column 20.
+WARNING: Limit set by ERRORS= option reached.  Further errors of this type will not be printed.
+BILL_PROV_LOC_ID=182760 REND_PROV_LOC_ID=. ICN_NBR=2022356080417 MCAID_ID=N503957 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=12APR2022:00:00:00.000 lne_svc_new=12APR2022 _ERROR_=1 _N_=117
+NOTE: Mathematical operations could not be performed at the following places. The results of the
+      operations have been set to missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      6504028 at 659:20
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE2.
+      WHERE (lne_svc_new>='01JUL2019'D and lne_svc_new<='01JUN2022'D);
+NOTE: The data set WORK.TELECARE3 has 23324748 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7.52 seconds
+      cpu time            7.50 seconds
+
+
+661  data telecare3;
+662  set  telecare2;
+663  where  lne_svc_new ge '01JUL2019'd
+664  and    lne_svc_new le '01JUN2022'd;
+665  bill2 = input(bill_prov_loc_id, best12.);
+666  rend2 = input(rend_prov_loc_id, best12.);
+667  run;
+
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=114133 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013745 MCAID_ID=P056468 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=20MAY2022:00:00:00.000 lne_svc_new=20MAY2022 bill2=114133 rend2=.
+_ERROR_=1 _N_=1
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=114133 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013746 MCAID_ID=W584295 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=21APR2022:00:00:00.000 lne_svc_new=21APR2022 bill2=114133 rend2=.
+_ERROR_=1 _N_=2
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=128255 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013777 MCAID_ID=G822433 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=20APR2022:00:00:00.000 lne_svc_new=20APR2022 bill2=128255 rend2=.
+_ERROR_=1 _N_=3
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=133280 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013817 MCAID_ID=O127486 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=28APR2022:00:00:00.000 lne_svc_new=28APR2022 bill2=133280 rend2=.
+_ERROR_=1 _N_=4
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=133280 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013821 MCAID_ID=D566915 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=24MAY2022:00:00:00.000 lne_svc_new=24MAY2022 bill2=133280 rend2=.
+_ERROR_=1 _N_=5
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=133280 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013826 MCAID_ID=Y255320 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=19APR2022:00:00:00.000 lne_svc_new=19APR2022 bill2=133280 rend2=.
+_ERROR_=1 _N_=6
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=133191 REND_PROV_LOC_ID=N/A ICN_NBR=2022355026332 MCAID_ID=Q296759 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=05MAR2022:00:00:00.000 lne_svc_new=05MAR2022 bill2=133191 rend2=.
+_ERROR_=1 _N_=11
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=112115 REND_PROV_LOC_ID=N/A ICN_NBR=2022355026379 MCAID_ID=P878897 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=24JAN2022:00:00:00.000 lne_svc_new=24JAN2022 bill2=112115 rend2=.
+_ERROR_=1 _N_=12
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031454 MCAID_ID=O124845 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=12MAY2022:00:00:00.000 lne_svc_new=12MAY2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=14
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031459 MCAID_ID=O124845 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=27APR2022:00:00:00.000 lne_svc_new=27APR2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=15
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031491 MCAID_ID=O124845 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=13MAY2022:00:00:00.000 lne_svc_new=13MAY2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=16
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031497 MCAID_ID=G727291 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=12MAY2022:00:00:00.000 lne_svc_new=12MAY2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=17
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031499 MCAID_ID=G727291 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=20MAY2022:00:00:00.000 lne_svc_new=20MAY2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=18
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031512 MCAID_ID=G727291 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=27APR2022:00:00:00.000 lne_svc_new=27APR2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=19
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=128068 REND_PROV_LOC_ID=N/A ICN_NBR=2022355075658 MCAID_ID=N124820 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=01JUN2022:00:00:00.000 lne_svc_new=01JUN2022 bill2=128068 rend2=.
+_ERROR_=1 _N_=80
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=128068 REND_PROV_LOC_ID=N/A ICN_NBR=2022355075999 MCAID_ID=O126104 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=12MAY2022:00:00:00.000 lne_svc_new=12MAY2022 bill2=128068 rend2=.
+_ERROR_=1 _N_=81
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=196062 REND_PROV_LOC_ID=N/A ICN_NBR=2022356054781 MCAID_ID=P215460 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=31MAY2022:00:00:00.000 lne_svc_new=31MAY2022 bill2=196062 rend2=.
+_ERROR_=1 _N_=103
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=108662 REND_PROV_LOC_ID=N/A ICN_NBR=2022356072092 MCAID_ID=Y463570 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=29APR2022:00:00:00.000 lne_svc_new=29APR2022 bill2=108662 rend2=.
+_ERROR_=1 _N_=112
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+BILL_PROV_LOC_ID=108662 REND_PROV_LOC_ID=N/A ICN_NBR=2022356072098 MCAID_ID=Y463570 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=11MAY2022:00:00:00.000 lne_svc_new=11MAY2022 bill2=108662 rend2=.
+_ERROR_=1 _N_=113
+NOTE: Invalid argument to function INPUT at line 666 column 9.
+WARNING: Limit set by ERRORS= option reached.  Further errors of this type will not be printed.
+BILL_PROV_LOC_ID=182760 REND_PROV_LOC_ID=N/A ICN_NBR=2022356080417 MCAID_ID=N503957 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=12APR2022:00:00:00.000 lne_svc_new=12APR2022 bill2=182760 rend2=.
+_ERROR_=1 _N_=117
+NOTE: Mathematical operations could not be performed at the following places. The results of the
+      operations have been set to missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      6504028 at 666:9
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE2.
+      WHERE (lne_svc_new>='01JUL2019'D and lne_svc_new<='01JUN2022'D);
+NOTE: The data set WORK.TELECARE3 has 23324748 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7.23 seconds
+      cpu time            7.17 seconds
+
+
+668  data telecare3;
+669  set  telecare2;
+670  where  lne_svc_new ge '01JUL2019'd
+671  and    lne_svc_new le '01JUN2022'd;
+672  bill2 = put(bill_prov_loc_id, best12.);
+                                   -------
+                                   484
+673  format bill2 best12.;
+                  -------
+                  484
+674  rend2 = put(rend_prov_loc_id, best12.);
+                                   -------
+                                   484
+675  format rend2 best12.;
+                  -------
+                  484
+NOTE 484-185: Format $BEST was not found or could not be loaded.
+
+676  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE2.
+      WHERE (lne_svc_new>='01JUL2019'D and lne_svc_new<='01JUN2022'D);
+NOTE: The data set WORK.TELECARE3 has 23324748 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           5.53 seconds
+      cpu time            5.42 seconds
+
+
+677  data telecare3;
+678  set  telecare2;
+679  where  lne_svc_new ge '01JUL2019'd
+680  and    lne_svc_new le '01JUN2022'd;
+681  bill2 = input(bill_prov_loc_id, best8.);
+682  rend2 = input(rend_prov_loc_id, best8.);
+683  run;
+
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=114133 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013745 MCAID_ID=P056468 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=20MAY2022:00:00:00.000 lne_svc_new=20MAY2022 bill2=114133 rend2=.
+_ERROR_=1 _N_=1
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=114133 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013746 MCAID_ID=W584295 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=21APR2022:00:00:00.000 lne_svc_new=21APR2022 bill2=114133 rend2=.
+_ERROR_=1 _N_=2
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=128255 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013777 MCAID_ID=G822433 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=20APR2022:00:00:00.000 lne_svc_new=20APR2022 bill2=128255 rend2=.
+_ERROR_=1 _N_=3
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=133280 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013817 MCAID_ID=O127486 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=28APR2022:00:00:00.000 lne_svc_new=28APR2022 bill2=133280 rend2=.
+_ERROR_=1 _N_=4
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=133280 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013821 MCAID_ID=D566915 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=24MAY2022:00:00:00.000 lne_svc_new=24MAY2022 bill2=133280 rend2=.
+_ERROR_=1 _N_=5
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=133280 REND_PROV_LOC_ID=N/A ICN_NBR=2022355013826 MCAID_ID=Y255320 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=19APR2022:00:00:00.000 lne_svc_new=19APR2022 bill2=133280 rend2=.
+_ERROR_=1 _N_=6
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=133191 REND_PROV_LOC_ID=N/A ICN_NBR=2022355026332 MCAID_ID=Q296759 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=05MAR2022:00:00:00.000 lne_svc_new=05MAR2022 bill2=133191 rend2=.
+_ERROR_=1 _N_=11
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=112115 REND_PROV_LOC_ID=N/A ICN_NBR=2022355026379 MCAID_ID=P878897 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=24JAN2022:00:00:00.000 lne_svc_new=24JAN2022 bill2=112115 rend2=.
+_ERROR_=1 _N_=12
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031454 MCAID_ID=O124845 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=12MAY2022:00:00:00.000 lne_svc_new=12MAY2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=14
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031459 MCAID_ID=O124845 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=27APR2022:00:00:00.000 lne_svc_new=27APR2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=15
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031491 MCAID_ID=O124845 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=13MAY2022:00:00:00.000 lne_svc_new=13MAY2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=16
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031497 MCAID_ID=G727291 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=12MAY2022:00:00:00.000 lne_svc_new=12MAY2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=17
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031499 MCAID_ID=G727291 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=20MAY2022:00:00:00.000 lne_svc_new=20MAY2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=18
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=184597 REND_PROV_LOC_ID=N/A ICN_NBR=2022355031512 MCAID_ID=G727291 teleCare=1
+teleElig=0 LNE_FRST_SVC_DT=27APR2022:00:00:00.000 lne_svc_new=27APR2022 bill2=184597 rend2=.
+_ERROR_=1 _N_=19
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=128068 REND_PROV_LOC_ID=N/A ICN_NBR=2022355075658 MCAID_ID=N124820 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=01JUN2022:00:00:00.000 lne_svc_new=01JUN2022 bill2=128068 rend2=.
+_ERROR_=1 _N_=80
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=128068 REND_PROV_LOC_ID=N/A ICN_NBR=2022355075999 MCAID_ID=O126104 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=12MAY2022:00:00:00.000 lne_svc_new=12MAY2022 bill2=128068 rend2=.
+_ERROR_=1 _N_=81
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=196062 REND_PROV_LOC_ID=N/A ICN_NBR=2022356054781 MCAID_ID=P215460 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=31MAY2022:00:00:00.000 lne_svc_new=31MAY2022 bill2=196062 rend2=.
+_ERROR_=1 _N_=103
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=108662 REND_PROV_LOC_ID=N/A ICN_NBR=2022356072092 MCAID_ID=Y463570 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=29APR2022:00:00:00.000 lne_svc_new=29APR2022 bill2=108662 rend2=.
+_ERROR_=1 _N_=112
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+BILL_PROV_LOC_ID=108662 REND_PROV_LOC_ID=N/A ICN_NBR=2022356072098 MCAID_ID=Y463570 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=11MAY2022:00:00:00.000 lne_svc_new=11MAY2022 bill2=108662 rend2=.
+_ERROR_=1 _N_=113
+NOTE: Invalid argument to function INPUT at line 682 column 9.
+WARNING: Limit set by ERRORS= option reached.  Further errors of this type will not be printed.
+BILL_PROV_LOC_ID=182760 REND_PROV_LOC_ID=N/A ICN_NBR=2022356080417 MCAID_ID=N503957 teleCare=0
+teleElig=1 LNE_FRST_SVC_DT=12APR2022:00:00:00.000 lne_svc_new=12APR2022 bill2=182760 rend2=.
+_ERROR_=1 _N_=117
+NOTE: Mathematical operations could not be performed at the following places. The results of the
+      operations have been set to missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      6504028 at 682:9
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE2.
+      WHERE (lne_svc_new>='01JUL2019'D and lne_svc_new<='01JUN2022'D);
+NOTE: The data set WORK.TELECARE3 has 23324748 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           7.20 seconds
+      cpu time            7.25 seconds
+
+
+684  proc sql;
+685  create table telecare4 as
+686  select bill_prov_loc_id
+687       , rend_prov_loc_id
+688       , bill2 in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_bill_isp
+689       , rend2 in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_rend_isp
+690       , bill2 in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_bill_isp
+691       , rend2 in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_rend_isp
+692       , icn_nbr
+693       , teleCare
+694       , teleElig
+695       , lne_svc_new
+696       , lne_frst_svc_dt
+697  FROM telecare3;
+WARNING: Variable flag_bill_isp already exists on file WORK.TELECARE4.
+WARNING: Variable flag_rend_isp already exists on file WORK.TELECARE4.
+NOTE: Table WORK.TELECARE4 created, with 23324748 rows and 9 columns.
+
+698  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           8.68 seconds
+      cpu time            8.67 seconds
+
+
+699  proc sql;
+700  create table telecare4 as
+701  select bill_prov_loc_id
+702       , rend_prov_loc_id
+703       , bill2 in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_bill_isp
+704       , rend2 in ( select pcmp_loc_id from data.ll_fy1922_pcmp_isp ) as flag_rend_isp
+705       , bill2 in ( select pcmp_loc_id from data.ll_fy1922_pcmp_nonisp ) as flag_bill_nonisp
+706       , rend2 in ( select pcmp_loc_id from data.ll_fy1922_pcmp_nonisp ) as flag_rend_nonisp
+707       , icn_nbr
+708       , teleCare
+709       , teleElig
+710       , lne_svc_new
+711       , lne_frst_svc_dt
+712  FROM telecare3;
+NOTE: Table WORK.TELECARE4 created, with 23324748 rows and 11 columns.
+
+713  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           9.59 seconds
+      cpu time            9.56 seconds
+
+
+714  data telecare5;
+715  set  telecare4;
+716  flag_sum = sum(flag_bill_isp, flag_rend_isp, flag_bill_nonisp, flag_rend_nonisp);
+717  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE4.
+NOTE: The data set WORK.TELECARE5 has 23324748 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.33 seconds
+      cpu time            2.31 seconds
+
+
+718  proc freq data = telecare5;
+719  tables flag_sum;
+720  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE5.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.12 seconds
+      cpu time            1.12 seconds
+
+
+721  proc print data = telecare5;
+722  where flag_sum = 2;
+723  run;
+
+NOTE: There were 25356 observations read from the data set WORK.TELECARE5.
+      WHERE flag_sum=2;
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           7.65 seconds
+      cpu time            7.62 seconds
+
+
+724  data telecare5;
+725  set  telecare4;
+726  IF flag_bill_isp = 1 then flag_rend_isp = .;
+727  IF flag_bill_nonisp = 1 then flag_rend_nonisp = . ;
+728  flag_sum = sum(flag_bill_isp, flag_rend_isp, flag_bill_nonisp, flag_rend_nonisp);
+729  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE4.
+NOTE: The data set WORK.TELECARE5 has 23324748 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.59 seconds
+      cpu time            2.59 seconds
+
+
+730  proc freq data = telecare5;
+731  tables flag_sum;
+732  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE5.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.09 seconds
+      cpu time            1.09 seconds
+
+
+733  data telecare6;
+734  set  telecare5;
+735  where flag_sum = 1;
+736  run;
+
+NOTE: There were 7403944 observations read from the data set WORK.TELECARE5.
+      WHERE flag_sum=1;
+NOTE: The data set WORK.TELECARE6 has 7403944 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.78 seconds
+      cpu time            1.78 seconds
+
+
+737  proc sql;
+738    create table margTele as
+739      select icn_nbr,
+740             max(teleCare) as telecare,
+741             max(teleElig) as teleElig
+742      from telecare6
+743      group by icn_nbr;
+NOTE: Table WORK.MARGTELE created, with 6632240 rows and 3 columns.
+
+744  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.51 seconds
+      cpu time            2.73 seconds
+
+
+745  proc sql;
+746
+747  create table teleCare_FINAL as
+748    select a.*
+749    from pc as a inner join margTele as b
+750      on a.icn_nbr = b.icn_nbr
+751    where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
+NOTE: Table WORK.TELECARE_FINAL created, with 678666 rows and 25 columns.
+
+752
+753  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           45.87 seconds
+      cpu time            44.04 seconds
+
+
+754  proc sql;
+755
+756  create table teleCare_monthly as
+757    select
+758           intnx('month',FRST_SVC_DT, 0, 'beginning') as month,
+759           count (distinct FRST_SVC_DT) as n_tele,
+760           sum(pd_amt) as pd_tele
+761    from teleCare_FINAL
+762    group by month;
+NOTE: Table WORK.TELECARE_MONTHLY created, with 36 rows and 3 columns.
+
+763
+764  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.24 seconds
+      cpu time            0.32 seconds
+
+
+765  proc contents data = telecare6;
+766  run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+767  data telecare5 ;
+768  set  telecare4;
+769  IF flag_bill_isp = 1 then flag_rend_isp = .;
+770  IF flag_bill_nonisp = 1 then flag_rend_nonisp = . ;
+771  IF flag_bill_isp = 1 or flag_rend_isp = 1 then isp = 1;
+772  IF flag_bill_nonisp = 1 or flag_rend_nonisp =1 then nonisp = 1;
+773  where isp = 1 or nonisp = 1;
+ERROR: Variable isp is not on file WORK.TELECARE4.
+774  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE5 may be incomplete.  When this step was stopped there were 0
+         observations and 13 variables.
+WARNING: Data set WORK.TELECARE5 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+775  data telecare5 ;
+776  set  telecare4;
+777  IF flag_bill_isp = 1 then flag_rend_isp = .;
+778  IF flag_bill_nonisp = 1 then flag_rend_nonisp = . ;
+779  IF flag_bill_isp = 1 or flag_rend_isp = 1 then isp = 1;
+780  ELSE isp = 0;
+781  IF flag_bill_nonisp = 1 or flag_rend_nonisp =1 then nonisp = 1;
+782  else nonisp = 0;
+783  where isp = 1 or nonisp = 1;
+ERROR: Variable isp is not on file WORK.TELECARE4.
+784  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE5 may be incomplete.  When this step was stopped there were 0
+         observations and 13 variables.
+WARNING: Data set WORK.TELECARE5 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+785  data telecare5 ;
+786  set  telecare4;
+787  IF flag_bill_isp = 1 then flag_rend_isp = .;
+788  IF flag_bill_nonisp = 1 then flag_rend_nonisp = . ;
+789  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE4.
+NOTE: The data set WORK.TELECARE5 has 23324748 observations and 11 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.37 seconds
+      cpu time            2.37 seconds
+
+
+790  data telecare5 ;
+791  set  telecare4;
+792  IF flag_bill_isp = 1 then flag_rend_isp = .;
+793  IF flag_bill_nonisp = 1 then flag_rend_nonisp = . ;
+794  flag_sum = sum(flag_bill_isp, flag_rend_isp, flag_bill_nonisp, flag_rend_nonisp);
+795  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE4.
+NOTE: The data set WORK.TELECARE5 has 23324748 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.74 seconds
+      cpu time            2.67 seconds
+
+
+796  data telecare6;
+797  set  telecare5 (where = (flagsum = 1));
+ERROR: Variable flagsum is not on file WORK.TELECARE5.
+798  if   flag_bill_isp = 1 or if flag_rend_isp = 1 then isp = 1;
+                                  -------------
+                                  22
+799  if   flag_bill_nonisp = 1 or if flag_rend_nonisp = 1 then non_isp = 1;
+                                     ----------------
+                                     22
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, (, *, **, +, -, /, ;, <, <=,
+              <>, =, >, ><, >=, AND, EQ, GE, GT, IN, LE, LT, MAX, MIN, NE, NG, NL, NOTIN, OR, [,
+              ^=, {, |, ||, ~=.
+
+800  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE6 may be incomplete.  When this step was stopped there were 0
+         observations and 7 variables.
+WARNING: Data set WORK.TELECARE6 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+801
+802  data telecare6;
+803  set  telecare5 (where = (flag_sum > 0));
+804  if   flag_bill_isp = 1 or if flag_rend_isp = 1 then isp = 1;
+                                  -------------
+                                  22
+805  if   flag_bill_nonisp = 1 or if flag_rend_nonisp = 1 then non_isp = 1;
+                                     ----------------
+                                     22
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, (, *, **, +, -, /, ;, <, <=,
+              <>, =, >, ><, >=, AND, EQ, GE, GT, IN, LE, LT, MAX, MIN, NE, NG, NL, NOTIN, OR, [,
+              ^=, {, |, ||, ~=.
+
+806  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE6 may be incomplete.  When this step was stopped there were 0
+         observations and 15 variables.
+WARNING: Data set WORK.TELECARE6 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+807  data telecare6;
+808  set  telecare5 (where = (flag_sum > 0));
+809  isp = (whichn(1, of flag_bill_isp-flag_rend_isp) > 0);
+ERROR: Missing numeric suffix on a numbered variable list (flag_bill_isp-flag_rend_isp).
+810  nonisp = (whichn(1, of flag_bill_nonisp-flag_rend_nonisp)>0);
+ERROR: Missing numeric suffix on a numbered variable list (flag_bill_nonisp-flag_rend_nonisp).
+811  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE6 may be incomplete.  When this step was stopped there were 0
+         observations and 14 variables.
+WARNING: Data set WORK.TELECARE6 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+812  data telecare6;
+813  set  telecare5 (where = (flag_sum > 0));
+814  isp = max(of flag_bill_isp-flag_rend_isp);
+           ---
+           71
+ERROR: Missing numeric suffix on a numbered variable list (flag_bill_isp-flag_rend_isp).
+815  nonisp = max(of flag_bill_nonisp-flag_rend_nonisp);
+              ---
+              71
+ERROR: Missing numeric suffix on a numbered variable list (flag_bill_nonisp-flag_rend_nonisp).
+ERROR 71-185: The MAX function call does not have enough arguments.
+
+816  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELECARE6 may be incomplete.  When this step was stopped there were 0
+         observations and 14 variables.
+WARNING: Data set WORK.TELECARE6 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+817
+818  data telecare6;
+819  set  telecare5 (where = (flag_sum > 0));
+820  isp = sum(flag_bill_isp, flag_rend_isp);
+821  non_isp = sum(flag_bill_nonisp, flag_rend_nonisp);
+822  run;
+
+NOTE: There were 7403944 observations read from the data set WORK.TELECARE5.
+      WHERE flag_sum>0;
+NOTE: The data set WORK.TELECARE6 has 7403944 observations and 14 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.96 seconds
+      cpu time            1.92 seconds
+
+
+823  proc print data = telecare6 (obs=1000);
+824  run;
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE6.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.33 seconds
+      cpu time            0.32 seconds
+
+
+825  data telecare6 ( keep = bill_prov_loc_id rend_prov_loc_id icn_nbr telecare teleElig lne_svc_new
+825!  isp non_isp ) ;
+826  set  telecare5 ( where = ( flag_sum > 0 ) );
+827  isp = sum(flag_bill_isp, flag_rend_isp);
+828  non_isp = sum(flag_bill_nonisp, flag_rend_nonisp);
+829  run;
+
+NOTE: There were 7403944 observations read from the data set WORK.TELECARE5.
+      WHERE flag_sum>0;
+NOTE: The data set WORK.TELECARE6 has 7403944 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.79 seconds
+      cpu time            1.79 seconds
+
+
+830  proc print data = telecare6;
+831  where flag_rend_isp = 1;
+ERROR: Variable flag_rend_isp is not on file WORK.TELECARE6.
+832  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+833  proc print data = telecare5;
+834  where flag_rend_isp = 1;
+835  run;
+
+NOTE: There were 1 observations read from the data set WORK.TELECARE5.
+      WHERE flag_rend_isp=1;
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.89 seconds
+      cpu time            0.87 seconds
+
+
+836  data telecare6 ( keep = pcmp bill_prov_loc_id rend_prov_loc_id icn_nbr telecare teleElig
+836! lne_svc_new isp non_isp ) ;
+837  set  telecare5 ( where = ( flag_sum > 0 ) );
+838  IF flag_bill_isp = 1 then pcmp = bill_prov_loc_id;
+839  IF flag_rend_isp = 1 then pcmp = rend_prov_loc_id;
+840  IF flag_bill_nonisp = 1 then pcmp = bill_prov_loc_id;
+841  IF flag_rend_nonisp = 1 then pcmp = rend_prov_loc_id;
+842  run;
+
+WARNING: The variable isp in the DROP, KEEP, or RENAME list has never been referenced.
+WARNING: The variable non_isp in the DROP, KEEP, or RENAME list has never been referenced.
+NOTE: There were 7403944 observations read from the data set WORK.TELECARE5.
+      WHERE flag_sum>0;
+NOTE: The data set WORK.TELECARE6 has 7403944 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.69 seconds
+      cpu time            1.68 seconds
+
+
+843  proc print data = telecare6 (obs=1000);
+844  run;
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE6.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.17 seconds
+
+
+845  data telecare6 ( keep = pcmp bill_prov_loc_id rend_prov_loc_id icn_nbr telecare teleElig
+845! lne_svc_new isp non_isp ) ;
+846  set  telecare5 ( where = ( flag_sum > 0 ) );
+847  IF flag_bill_isp = 1 then pcmp = bill_prov_loc_id;
+848  IF flag_rend_isp = 1 then pcmp = rend_prov_loc_id;
+849  IF flag_bill_nonisp = 1 then pcmp = bill_prov_loc_id;
+850  IF flag_rend_nonisp = 1 then pcmp = rend_prov_loc_id;
+851  ISP = sum(flag_bill_isp, flag_rend_isp);
+852  run;
+
+WARNING: The variable non_isp in the DROP, KEEP, or RENAME list has never been referenced.
+NOTE: There were 7403944 observations read from the data set WORK.TELECARE5.
+      WHERE flag_sum>0;
+NOTE: The data set WORK.TELECARE6 has 7403944 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.73 seconds
+      cpu time            1.73 seconds
+
+
+853  proc print data = telecare6 (obs=1000);
+854  run;
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE6.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.20 seconds
+      cpu time            0.18 seconds
+
+
+855  data telecare6 ( keep = pcmp bill_prov_loc_id rend_prov_loc_id icn_nbr telecare teleElig
+855! lne_svc_new isp non_isp ) ;
+856  set  telecare5 ( where = ( flag_sum > 0 ) );
+857  ISP = sum(flag_bill_isp, flag_rend_isp);
+858  run;
+
+WARNING: The variable pcmp in the DROP, KEEP, or RENAME list has never been referenced.
+WARNING: The variable non_isp in the DROP, KEEP, or RENAME list has never been referenced.
+NOTE: There were 7403944 observations read from the data set WORK.TELECARE5.
+      WHERE flag_sum>0;
+NOTE: The data set WORK.TELECARE6 has 7403944 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.68 seconds
+      cpu time            1.68 seconds
+
+
+859
+860  proc print data = telecare6 (obs=1000);
+861  run;
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE6.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.19 seconds
+      cpu time            0.18 seconds
+
+
+862  proc print data = teleCare_final (obs=1000); run;
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE_FINAL.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.67 seconds
+      cpu time            0.54 seconds
+
+
+
+863  proc sql;
+864    create table margTele as
+865      select icn_nbr,
+866             max(teleCare) as telecare,
+867             max(teleElig) as teleElig,
+868             isp
+869             bill_prov_loc_id
+                ----------------
+                22
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, *, **, +, ',', -, '.', /, <,
+              <=, <>, =, >, >=, ?, AND, AS, CONTAINS, EQ, EQT, GE, GET, GT, GTT, LE, LET, LIKE, LT,
+              LTT, NE, NET, OR, ^=, |, ||, ~=.
+
+870      from telecare6
+871      group by icn_nbr, bill_prov_loc_id;
+872  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+873  proc sql;
+874    create table margTele as
+875      select icn_nbr,
+876             max(teleCare) as telecare,
+877             max(teleElig) as teleElig,
+878             isp
+879             bill_prov_loc_id
+                ----------------
+                22
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, *, **, +, ',', -, '.', /, <,
+              <=, <>, =, >, >=, ?, AND, AS, CONTAINS, EQ, EQT, GE, GET, GT, GTT, LE, LET, LIKE, LT,
+              LTT, NE, NET, OR, ^=, |, ||, ~=.
+
+880      from telecare6
+881      group by icn_nbr, bill_prov_loc_id;
+882  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+883  proc sql;
+884    create table margTele as
+885      select icn_nbr,
+886             max(teleCare) as telecare,
+887             max(teleElig) as teleElig,
+888             isp,
+889             bill_prov_loc_id
+890      from telecare6
+891      group by icn_nbr, bill_prov_loc_id;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.MARGTELE created, with 7403944 rows and 5 columns.
+
+892  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.96 seconds
+      cpu time            2.78 seconds
+
+
+893  proc sql;
+894
+895  create table teleCare_FINAL as
+896    select a.*
+897    from pc as a inner join margTele as b
+898      on a.icn_nbr = b.icn_nbr
+899    where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
+NOTE: Table WORK.TELECARE_FINAL created, with 743473 rows and 25 columns.
+
+900
+901  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           43.81 seconds
+      cpu time            43.74 seconds
+
+
+902  proc print data = teleCare_final (obs=1000); run;
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE_FINAL.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.60 seconds
+      cpu time            0.59 seconds
+
+
+
+903  proc sql;
+904
+905  create table teleCare_FINAL as
+906    select a.*
+907          , b.*
+908    from pc as a inner join margTele as b
+909      on a.icn_nbr = b.icn_nbr
+910    where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
+WARNING: Variable ICN_NBR already exists on file WORK.TELECARE_FINAL.
+NOTE: Table WORK.TELECARE_FINAL created, with 743473 rows and 29 columns.
+
+911
+912  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           57.47 seconds
+      cpu time            57.51 seconds
+
+
+913  proc print data = teleCare_final (obs=1000); run;
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE_FINAL.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.64 seconds
+      cpu time            0.62 seconds
+
+
+
+914  proc sql;
+915  create table teleCare_monthly as
+916    select intnx('month',FRST_SVC_DT, 0, 'beginning') as month,
+917           count ( distinct bill_prov_loc_id ) as n_pcmp,
+918           isp
+919    from teleCare_FINAL
+920    group by month, isp;
+NOTE: Table WORK.TELECARE_MONTHLY created, with 65 rows and 3 columns.
+
+921  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.33 seconds
+      cpu time            0.43 seconds
+
+
+922  proc sql;
+923  create table teleCare_monthly as
+924    select intnx('month',FRST_SVC_DT, 0) as month,
+925           count ( distinct bill_prov_loc_id ) as n_pcmp,
+926           isp
+927    from teleCare_FINAL
+928    group by month, isp;
+NOTE: Table WORK.TELECARE_MONTHLY created, with 65 rows and 3 columns.
+
+929  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.28 seconds
+      cpu time            0.35 seconds
+
+
+930  * monthy telehealth encounters and costs, per client ;
+931  proc sql;
+932  create table teleCare_monthly as
+933    select intnx('month',FRST_SVC_DT, 0, 'B') as month,
+934           count ( distinct bill_prov_loc_id ) as n_pcmp,
+935           isp
+936    from teleCare_FINAL
+937    group by month, isp;
+NOTE: Table WORK.TELECARE_MONTHLY created, with 65 rows and 3 columns.
+
+938  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.30 seconds
+      cpu time            0.46 seconds
+
+
+939  proc sql;
+940  create table teleCare_monthly as
+941    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+942           count ( distinct bill_prov_loc_id ) as n_pcmp,
+943           isp
+944    from teleCare_FINAL
+945    group by month, isp;
+NOTE: Table WORK.TELECARE_MONTHLY created, with 65 rows and 3 columns.
+
+946  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.29 seconds
+      cpu time            0.43 seconds
+
+
+947
+948  data telecare5 ;
+949  set  telecare4;
+950  IF flag_rend_isp = 1 then flag_bill_isp = .;
+951  IF flag_rend_nonisp = 1 then flag_bill_nonisp = . ;
+952  flag_sum = sum(flag_bill_isp, flag_rend_isp, flag_bill_nonisp, flag_rend_nonisp);
+953  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE4.
+NOTE: The data set WORK.TELECARE5 has 23324748 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.74 seconds
+      cpu time            2.73 seconds
+
+
+954  data telecare6 ( keep = pcmp bill_prov_loc_id rend_prov_loc_id icn_nbr telecare teleElig
+954! lne_svc_new isp non_isp ) ;
+955  set  telecare5 ( where = ( flag_sum > 0 ) );
+956  ISP = sum(flag_bill_isp, flag_rend_isp);
+957  run;
+
+WARNING: The variable pcmp in the DROP, KEEP, or RENAME list has never been referenced.
+WARNING: The variable non_isp in the DROP, KEEP, or RENAME list has never been referenced.
+NOTE: There were 7403944 observations read from the data set WORK.TELECARE5.
+      WHERE flag_sum>0;
+NOTE: The data set WORK.TELECARE6 has 7403944 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.73 seconds
+      cpu time            1.73 seconds
+
+
+958
+959  data telecare6 ( keep = pcmp bill_prov_loc_id rend_prov_loc_id icn_nbr telecare teleElig
+959! lne_svc_new isp non_isp ) ;
+960  set  telecare5 ;
+961  ISP     = sum(flag_bill_isp, flag_rend_isp);
+962  non_isp = sum(flag_bill_nonisp, flag_rend_nonisp);
+963  PCMP    = sum(ISP, non_isp);
+964  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE5.
+NOTE: The data set WORK.TELECARE6 has 23324748 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.51 seconds
+      cpu time            2.51 seconds
+
+
+965  proc sql;
+966    create table margTele as
+967      select icn_nbr,
+968             max(teleCare) as telecare,
+969             max(teleElig) as teleElig,
+970             isp,
+971             PCMP,
+972             non_isp,
+973             bill_prov_loc_id
+974      from telecare6
+975      group by icn_nbr, bill_prov_loc_id;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.MARGTELE created, with 23324748 rows and 7 columns.
+
+976  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           7.60 seconds
+      cpu time            10.95 seconds
+
+
+977  proc sql;
+978
+979  create table teleCare_FINAL as
+980    select a.*
+981          , b.*
+982    from pc as a inner join margTele as b
+983      on a.icn_nbr = b.icn_nbr
+984    where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
+WARNING: Variable ICN_NBR already exists on file WORK.TELECARE_FINAL.
+NOTE: Table WORK.TELECARE_FINAL created, with 1190785 rows and 31 columns.
+
+985
+986  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           52.70 seconds
+      cpu time            52.57 seconds
+
+
+987  proc sql;
+988  create table teleCare_monthly as
+989    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+990           count ( distinct bill_prov_loc_id ) as n_pcmp,
+991           isp
+992    from teleCare_FINAL
+993    group by month, isp;
+NOTE: Table WORK.TELECARE_MONTHLY created, with 68 rows and 3 columns.
+
+994  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.49 seconds
+      cpu time            0.62 seconds
+
+
+995  proc print data = teleCare_final (obs=1000); run;
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE_FINAL.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.72 seconds
+      cpu time            0.68 seconds
+
+
+
+996  * QUESTION 3: monthy telehealth encounters and costs, per client ;
+997  proc sql;
+998  create table teleCare_monthly as
+999    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1000           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1001           isp
+1002    from teleCare_FINAL
+1003    group by month, isp
+1004    having pcmp = 1;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.TELECARE_MONTHLY created, with 743473 rows and 3 columns.
+
+1005  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.59 seconds
+      cpu time            0.78 seconds
+
+
+1006  proc freq data = telecare_final ; tables pcmp ; run ;
+
+NOTE: There were 1190785 observations read from the data set WORK.TELECARE_FINAL.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.09 seconds
+
+
+
+1007  proc sql;
+1008  create table teleCare_monthly as
+1009    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1010           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1011           isp
+1012    from teleCare_FINAL
+1013    where pcmp = 1
+1014    group by month, isp;
+NOTE: Table WORK.TELECARE_MONTHLY created, with 65 rows and 3 columns.
+
+1015  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.39 seconds
+      cpu time            0.45 seconds
+
+
+1016  proc sql;
+1017  create table tbl.tbl_pcmp_tele as
+1018    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1019           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1020           isp
+1021    from teleCare_FINAL
+1022    where pcmp = 1
+1023    group by month, isp;
+NOTE: Table TBL.TBL_PCMP_TELE created, with 65 rows and 3 columns.
+
+1024  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.54 seconds
+      cpu time            0.46 seconds
+
+
+1025  PROC TRANSPOSE DATA = tbl.tbl_pcmp_tele
+1026                  OUT = tbl.tbl_pcmp_tele_t (drop=_name_);
+1027  BY  ISP;
+1028  ID  month;
+1029  VAR n_pcmp;
+1030  run;
+
+ERROR: Data set TBL.TBL_PCMP_TELE is not sorted in ascending sequence. The current BY group has ISP
+       = 1 and the next BY group has ISP = 0.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 10 observations read from the data set TBL.TBL_PCMP_TELE.
+WARNING: The data set TBL.TBL_PCMP_TELE_T may be incomplete.  When this step was stopped there were
+         0 observations and 0 variables.
+WARNING: Data set TBL.TBL_PCMP_TELE_T was not replaced because this step was stopped.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.28 seconds
+      cpu time            0.01 seconds
+
+1030!      *;
+
+
+1031  proc sort data = tbl.tbl_pcmp_tele ; by ISP, month ; run ;
+                                                 -
+                                                 22
+                                                 200
+
+ERROR 22-322: Syntax error, expecting one of the following: a name, ;, -, :, DECENDING, DESCENDING,
+              DESENDING, _ALL_, _CHARACTER_, _CHAR_, _NUMERIC_.
+
+ERROR 200-322: The symbol is not recognized and will be ignored.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+
+1032  proc sort data = tbl.tbl_pcmp_tele ; by ISP month ; run ;
+
+NOTE: There were 65 observations read from the data set TBL.TBL_PCMP_TELE.
+NOTE: The data set TBL.TBL_PCMP_TELE has 65 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.03 seconds
+
+
+
+1033  proc sort data = tbl.tbl_pcmp_tele ; by month ISP ; run ;
+
+NOTE: There were 65 observations read from the data set TBL.TBL_PCMP_TELE.
+NOTE: The data set TBL.TBL_PCMP_TELE has 65 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.01 seconds
+
+
+
+1034
+1035  PROC TRANSPOSE DATA = tbl.tbl_pcmp_tele
+1036                  OUT = tbl.tbl_pcmp_tele_t (drop=_name_);
+1037  BY  ISP;
+1038  ID  month;
+1039  VAR n_pcmp;
+1040  run;
+
+ERROR: Data set TBL.TBL_PCMP_TELE is not sorted in ascending sequence. The current BY group has ISP
+       = 1 and the next BY group has ISP = 0.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 10 observations read from the data set TBL.TBL_PCMP_TELE.
+WARNING: The data set TBL.TBL_PCMP_TELE_T may be incomplete.  When this step was stopped there were
+         0 observations and 0 variables.
+WARNING: Data set TBL.TBL_PCMP_TELE_T was not replaced because this step was stopped.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.00 seconds
+
+1040!      *;
+
+
+1041  proc sort data = tbl.tbl_pcmp_tele ; by ISP ; run ;
+
+NOTE: There were 65 observations read from the data set TBL.TBL_PCMP_TELE.
+NOTE: The data set TBL.TBL_PCMP_TELE has 65 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.04 seconds
+
+
+
+1042  PROC TRANSPOSE DATA = tbl.tbl_pcmp_tele
+1043                  OUT = tbl.tbl_pcmp_tele_t (drop=_name_);
+1044  BY  ISP;
+1045  ID  month;
+1046  VAR n_pcmp;
+1047  run;
+
+NOTE: There were 65 observations read from the data set TBL.TBL_PCMP_TELE.
+NOTE: The data set TBL.TBL_PCMP_TELE_T has 2 observations and 37 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.03 seconds
+
+
+1047!      *;
+
+1048  proc print data = tbl.tbl_pcmp_tele_t; run ;
+
+NOTE: There were 2 observations read from the data set TBL.TBL_PCMP_TELE_T.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+
+1049  TITLE "PCMP's providing Telehealth services, ISP & non-ISP: 07/2019-06/2022";
+1050  proc sgplot data = tbl.tbl_pcmp_tele;
+1051  yaxis label = " ";
+1052  styleattrs datacontrastcolors =(purple steel);
+1053  series x = month y = n_pcmp / group = isp ; *datalabel = label ;
+1054  refline '_01MAR2020'd /
+1055          axis = x
+1056          lineattrs = ( thickness = 2 color=grey pattern=dash )
+1057          label = ("March 2020")
+1058          labelloc = inside
+1059          label = "March 2020";
+1060  run;
+
+NOTE: Writing HTML Body file: sashtml1.htm
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           1.29 seconds
+      cpu time            0.67 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 65 observations read from the data set TBL.TBL_PCMP_TELE.
+
+1061  TITLE;
+
+1062  proc print data = tbl.tbl_pcmp_tele NOBS;
+                                          ----
+                                          1
+WARNING 1-322: Assuming the symbol NOOBS was misspelled as NOBS.
+1063  where month = '01JUN2022'd
+1064  OR    month = '01JUL2019'd;
+1065  run;
+
+NOTE: There were 3 observations read from the data set TBL.TBL_PCMP_TELE.
+      WHERE month in ('01JUL2019'D, '01JUN2022'D);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+1066  proc freq data = telecare5; tables flag: ; run ;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE5.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.81 seconds
+      cpu time            1.78 seconds
+
+
+
+1067  proc freq data = telecare5; tables flag: bill_prov_loc_id, rend_prov_loc_id ; run ;
+                                                               -
+                                                               22
+                                                               200
+
+ERROR 22-322: Syntax error, expecting one of the following: a name, ;, (, *, -, /, :, _ALL_,
+              _CHARACTER_, _CHAR_, _NUMERIC_.
+
+ERROR 200-322: The symbol is not recognized and will be ignored.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+1068  proc freq data = telecare5; tables flag: bill_prov_loc_id rend_prov_loc_id ; run ;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE5.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           13.18 seconds
+      cpu time            13.21 seconds
+
+
+
+1069  proc means data = telecare5 nmiss;
+1070  run;
+
+NOTE: Writing HTML Body file: sashtml2.htm
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE5.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           1.84 seconds
+      cpu time            6.98 seconds
+
+
+1071  proc sql;
+1072  select nmiss(bill_prov_loc_id) as missing_bill
+1073      , nmiss(rend_prov_loc_id) as missing_rend
+1074  from telecare5;
+1075  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.47 seconds
+      cpu time            1.45 seconds
+
+
+1076  data telecare5 ;
+1077  set  telecare4;
+1078  IF flag_rend_isp = 1 then flag_bill_isp = .;
+1079  IF flag_rend_nonisp = 1 then flag_bill_nonisp = . ;
+1080  flag_sum = sum(flag_bill_isp, flag_rend_isp, flag_bill_nonisp, flag_rend_nonisp);
+1081  IF rend_prov_loc_id = "N/A" then rend_prov_loc_id = "";
+1082  IF bill_prov_loc_id = "N/A" then bill_prov_loc_id = "";
+1083  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE4.
+NOTE: The data set WORK.TELECARE5 has 23324748 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.82 seconds
+      cpu time            2.84 seconds
+
+
+1084  proc sql;
+1085  select nmiss(bill_prov_loc_id) as missing_bill
+1086      , nmiss(rend_prov_loc_id) as missing_rend
+1087  from telecare5;
+1088  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.44 seconds
+      cpu time            1.42 seconds
+
+
+1089
+1090  data telecare6 ( keep = pcmp bill_prov_loc_id rend_prov_loc_id icn_nbr telecare teleElig
+1090! lne_svc_new isp non_isp ) ;
+1091  set  telecare5 ;
+1092  ISP     = sum(flag_bill_isp, flag_rend_isp);
+1093  non_isp = sum(flag_bill_nonisp, flag_rend_nonisp);
+1094  PCMP    = sum(ISP, non_isp);
+1095  run;
+
+NOTE: There were 23324748 observations read from the data set WORK.TELECARE5.
+NOTE: The data set WORK.TELECARE6 has 23324748 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.63 seconds
+      cpu time            2.62 seconds
+
+
+1096  proc sql;
+1097    create table margTele as
+1098      select icn_nbr,
+1099             max(teleCare) as telecare,
+1100             max(teleElig) as teleElig,
+1101             isp,
+1102             PCMP,
+1103             non_isp,
+1104             bill_prov_loc_id
+1105      from telecare6
+1106      group by icn_nbr, bill_prov_loc_id;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.MARGTELE created, with 23324748 rows and 7 columns.
+
+1107  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           7.25 seconds
+      cpu time            10.68 seconds
+
+
+1108  proc sql;
+1109
+1110  create table teleCare_FINAL as
+1111    select a.*
+1112          , b.*
+1113    from pc as a inner join margTele as b
+1114      on a.icn_nbr = b.icn_nbr
+1115    where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
+WARNING: Variable ICN_NBR already exists on file WORK.TELECARE_FINAL.
+NOTE: Table WORK.TELECARE_FINAL created, with 1190785 rows and 31 columns.
+
+1116
+1117  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           50.97 seconds
+      cpu time            51.01 seconds
+
+
+1118  proc sql;
+1119  create table tbl.tbl_pcmp_tele as
+1120    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1121           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1122           isp
+1123    from teleCare_FINAL
+1124    where pcmp = 1
+1125    group by month, isp;
+NOTE: Table TBL.TBL_PCMP_TELE created, with 65 rows and 3 columns.
+
+1126  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.54 seconds
+      cpu time            0.48 seconds
+
+
+1127  proc sort data = tbl.tbl_pcmp_tele ; by ISP ; run ;
+
+NOTE: There were 65 observations read from the data set TBL.TBL_PCMP_TELE.
+NOTE: The data set TBL.TBL_PCMP_TELE has 65 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.01 seconds
+
+
+
+1128  PROC TRANSPOSE DATA = tbl.tbl_pcmp_tele
+1129                  OUT = tbl.tbl_pcmp_tele_t (drop=_name_);
+1130  BY  ISP;
+1131  ID  month;
+1132  VAR n_pcmp;
+1133  run;
+
+NOTE: There were 65 observations read from the data set TBL.TBL_PCMP_TELE.
+NOTE: The data set TBL.TBL_PCMP_TELE_T has 2 observations and 37 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.00 seconds
+
+
+1133!      *;
+
+1134  proc sql;
+1135  create table pct_pcmp_telel as
+1136    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1137           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1138           isp,
+1139           pcmp
+1140    from teleCare_FINAL
+1141    where pcmp = 1
+1142    group by month, pcmp;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.PCT_PCMP_TELEL created, with 743473 rows and 4 columns.
+
+1143  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.45 seconds
+      cpu time            0.54 seconds
+
+
+1143!       *65, 3 cols;
+
+1144  proc sql;
+1145  create table pct_pcmp_telel as
+1146    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1147           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1148           isp,
+1149           pcmp
+1150    from teleCare_FINAL
+1151    group by month, pcmp;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.PCT_PCMP_TELEL created, with 1190785 rows and 4 columns.
+
+1152  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.59 seconds
+      cpu time            0.71 seconds
+
+
+1152!       *65, 3 cols;
+
+1153  proc sql;
+1154  create table pct_pcmp_telel as
+1155    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1156           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1157           pcmp
+1158    from teleCare_FINAL
+1159    group by month, pcmp;
+NOTE: Table WORK.PCT_PCMP_TELEL created, with 75 rows and 3 columns.
+
+1160  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.47 seconds
+      cpu time            0.70 seconds
+
+
+1161  proc sql;
+1162  create table pct_pcmp_telel as
+1163    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1164           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1165           pcmp
+1166    from teleCare_FINAL
+1167    group by month, pcmp;
+NOTE: Table WORK.PCT_PCMP_TELEL created, with 75 rows and 3 columns.
+
+1168  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.46 seconds
+      cpu time            0.73 seconds
+
+
+1169  proc sql;
+1170  create table pct_pcmp_telel as
+1171    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1172           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1173           pcmp
+1174    from teleCare_FINAL
+1175    group by month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.PCT_PCMP_TELEL created, with 1190785 rows and 3 columns.
+
+1176  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.54 seconds
+      cpu time            0.68 seconds
+
+
+1176!       *65, 3 cols;
+
+1177  proc sql;
+1178  create table pct_pcmp_telel as
+1179    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1180           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1181           pcmp
+1182    from teleCare_FINAL
+1183    group by month, pcmp;
+NOTE: Table WORK.PCT_PCMP_TELEL created, with 75 rows and 3 columns.
+
+1184  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.49 seconds
+      cpu time            0.64 seconds
+
+
+1185  proc sql;
+1186  create table pct_pcmp_tele as
+1187    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1188           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1189           pcmp
+1190    from teleCare_FINAL
+1191    group by month, pcmp;
+NOTE: Table WORK.PCT_PCMP_TELE created, with 75 rows and 3 columns.
+
+1192  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.47 seconds
+      cpu time            0.71 seconds
+
+
+1192!       *65, 3 cols;
+
+1193  proc freq data = pct_pcmp_tele ; run;
+
+NOTE: There were 75 observations read from the data set WORK.PCT_PCMP_TELE.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+
+1194  proc print data = teleCare_final (obs=1000); run;
+
+NOTE: There were 1000 observations read from the data set WORK.TELECARE_FINAL.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.68 seconds
+      cpu time            0.65 seconds
+
+
+
+1195  proc sql;
+1196  create table tbl.pct_pcmp_tele as
+1197    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1198           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1199           pcmp
+1200    from teleCare_FINAL
+1201    group by month, pcmp;
+NOTE: Table TBL.PCT_PCMP_TELE created, with 75 rows and 3 columns.
+
+1202  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.57 seconds
+      cpu time            0.62 seconds
+
+
+1202!       *65, 3 cols;
+
+1203  proc sql;
+1204  create table pct_pcmp_tele as
+1205    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1206           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1207           pcmp
+1208    from teleCare_FINAL
+1209    group by month, pcmp;
+NOTE: Table WORK.PCT_PCMP_TELE created, with 75 rows and 3 columns.
+
+1210  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.47 seconds
+      cpu time            0.73 seconds
+
+
+1210!       *65, 3 cols;
+
+1211  * QUESTION 4: percentage of pcmps delivering any telehealth service;
+1212  proc sql;
+1213  create table pct_pcmp_tele as
+1214    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1215           count ( distinct bill_prov_loc_id ) as n_prov_loc_id,
+1216           pcmp
+1217    from teleCare_FINAL
+1218    group by month, pcmp;
+NOTE: Table WORK.PCT_PCMP_TELE created, with 75 rows and 3 columns.
+
+1219  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.46 seconds
+      cpu time            0.59 seconds
+
+
+1219!       *65, 3 cols;
+
+1220  proc sql;
+1221  create table pct_pcmp_tele as
+1222    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1223           count ( distinct bill_prov_loc_id ) as n_prov_loc_id,
+1224           pcmp
+1225    from teleCare_FINAL
+1226    group by month, pcmp;
+NOTE: Table WORK.PCT_PCMP_TELE created, with 75 rows and 3 columns.
+
+1227  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.45 seconds
+      cpu time            0.60 seconds
+
+
+1227!       *65, 3 cols;
+
+1228  proc sql;
+1229  create table tbl.pct_pcmp_tele as
+1230      select month
+1231           , pcmp
+1232           , n_prov_loc_id
+1233           , n_prov_loc_id / sum(n_prov_loc_id) as month_total
+1234  from pct_pcmp_tele
+1235  group by month, pcmp;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table TBL.PCT_PCMP_TELE created, with 75 rows and 4 columns.
+
+1236  run;
+NOTE: PROC SQL statements are executed immediately; The RUN statement has no effect.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           37.18 seconds
+      cpu time            1.39 seconds
+
+
+1237  proc sql;
+1238  create table tbl.pct_pcmp_tele as
+1239      select month
+1240           , pcmp
+1241           , n_prov_loc_id
+1242           , n_prov_loc_id / sum(n_prov_loc_id) as pct format=percent8.1
+1243  from pct_pcmp_tele
+1244  group by month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table TBL.PCT_PCMP_TELE created, with 75 rows and 4 columns.
+
+1245  run;
+NOTE: PROC SQL statements are executed immediately; The RUN statement has no effect.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           9.19 seconds
+      cpu time            0.28 seconds
+
+
+1246  proc sql;
+1247  create table tbl.pct_pcmp_tele as
+1248      select month
+1249           , pcmp
+1250           , n_prov_loc_id
+1251           , n_prov_loc_id / sum(n_prov_loc_id) as pct format=percent8.1
+1252  from pct_pcmp_tele
+1253  group by month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table TBL.PCT_PCMP_TELE created, with 75 rows and 4 columns.
+
+1254  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.00 seconds
+
+
+1255  proc format ;
+1256  value pcmp_;
+NOTE: Format PCMP_ has been output.
+1257  0 = "non-PCMP"
+      -
+      180
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+1258  1 = "PCMP";
+NOTE: The previous statement has been deleted.
+1259  run;
+
+WARNING: RUN statement ignored due to previous errors. Submit QUIT; to terminate the procedure.
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+NOTE: The SAS System stopped processing this step because of errors.
+
+1260
+1261  proc format ;
+1262  value pcmp_
+1263  0 = "non-PCMP"
+1264  1 = "PCMP";
+NOTE: Format PCMP_ is already on the library WORK.FORMATS.
+NOTE: Format PCMP_ has been output.
+1265  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+1266  proc sql;
+1267  create table tbl.pct_pcmp_tele as
+1268      select month
+1269           , pcmp format pcmp_.
+1270           , n_prov_loc_id
+1271           , n_prov_loc_id / sum(n_prov_loc_id) as pct format=percent8.1
+1272  from pct_pcmp_tele
+1273  group by month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table TBL.PCT_PCMP_TELE created, with 75 rows and 4 columns.
+
+1274  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.16 seconds
+      cpu time            0.03 seconds
+
+
+1275  proc sql;
+1276  create table tbl.pct_pcmp_tele as
+1277      select month
+1278           , pcmp format pcmp_.
+1279           , n_prov_loc_id
+1280           , n_prov_loc_id / sum(n_prov_loc_id) as pct format=percent8.1
+1281           , sum (n_prov_loc_id) as n_prov
+1282  from pct_pcmp_tele
+1283  group by month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table TBL.PCT_PCMP_TELE created, with 75 rows and 5 columns.
+
+1284  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.16 seconds
+      cpu time            0.03 seconds
+
+
+1285  proc sql;
+1286  create table tbl.pct_pcmp_tele as
+1287      select month
+1288           , pcmp format pcmp_.
+1289           , n_prov_loc_id
+1290           , n_prov_loc_id / sum(n_prov_loc_id) as pct format=percent8.1
+1291           , sum (n_prov_loc_id) as n_prov_month
+1292  from pct_pcmp_tele
+1293  group by month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table TBL.PCT_PCMP_TELE created, with 75 rows and 5 columns.
+
+1294  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.01 seconds
+
+
+1295  proc sort data = tbl.pct_pcmp_tele ; by PCMP ; run ;
+
+NOTE: There were 75 observations read from the data set TBL.PCT_PCMP_TELE.
+NOTE: The data set TBL.PCT_PCMP_TELE has 75 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.03 seconds
+
+
+
+1296  proc sql;
+1297  create table tbl.pct_pcmp_tele as
+1298      select month
+1299           , pcmp format pcmp_.
+1300           , n_prov_loc_id
+1301           , n_prov_loc_id / sum(n_prov_loc_id) as pct format=percent8.1
+1302           , sum (n_prov_loc_id) as n_prov_month
+1303  from pct_pcmp_tele
+1304  where month ge '01Jul2019'd
+1305  group by month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table TBL.PCT_PCMP_TELE created, with 72 rows and 5 columns.
+
+1306  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.01 seconds
+
+
+1307  proc sql;
+1308  create table tbl.n_prov_month_tele as
+1309      select month
+1310           , pcmp format pcmp_.
+1311           , sum (n_prov_loc_id) as n_prov_month
+1312  from pct_pcmp_tele
+1313  where month ge '01Jul2019'd
+1314  group by month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table TBL.N_PROV_MONTH_TELE created, with 72 rows and 3 columns.
+
+1315  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.00 seconds
+
+
+1316  proc sql;
+1317  create table tbl.n_prov_month_tele as
+1318      select month
+1319           , sum (n_prov_loc_id) as n_prov_month
+1320  from pct_pcmp_tele
+1321  where month ge '01Jul2019'd
+1322  group by month;
+NOTE: Table TBL.N_PROV_MONTH_TELE created, with 36 rows and 2 columns.
+
+1323  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.01 seconds
+
+
+1324  PROC TRANSPOSE DATA = tbl.pct_pcmp_tele
+1325                  OUT = tbl.tbl_pcmp_tele_t (drop=_name_);
+1326  BY  PCMP;
+1327  ID  month;
+1328  VAR n_prov_loc_id pct;
+1329  run;
+
+ERROR: Data set TBL.PCT_PCMP_TELE is not sorted in ascending sequence. The current BY group has
+       PCMP = PCMP and the next BY group has PCMP = non-PCMP.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 3 observations read from the data set TBL.PCT_PCMP_TELE.
+WARNING: The data set TBL.TBL_PCMP_TELE_T may be incomplete.  When this step was stopped there were
+         0 observations and 0 variables.
+WARNING: Data set TBL.TBL_PCMP_TELE_T was not replaced because this step was stopped.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.48 seconds
+      cpu time            0.03 seconds
+
+1329!      *;
+
+
+1330  proc sort data = tbl.pct_pcmp_tele ; by PCMP ; run ;
+
+NOTE: There were 72 observations read from the data set TBL.PCT_PCMP_TELE.
+NOTE: The data set TBL.PCT_PCMP_TELE has 72 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.45 seconds
+      cpu time            0.04 seconds
+
+
+
+1331
+1332  PROC TRANSPOSE DATA = tbl.pct_pcmp_tele
+1333                  OUT = tbl.tbl_pcmp_tele_t (drop=_name_);
+1334  BY  PCMP;
+1335  ID  month;
+1336  VAR n_prov_loc_id pct;
+1337  run;
+
+NOTE: There were 72 observations read from the data set TBL.PCT_PCMP_TELE.
+NOTE: The data set TBL.TBL_PCMP_TELE_T has 4 observations and 37 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.31 seconds
+      cpu time            0.03 seconds
+
+
+1337!      *;
+
+1338  proc sql;
+1339  create table tbl.n_prov_month_tele as
+1340      select month
+1341           , sum (n_prov_loc_id) as n_prov_month format = percent8.1
+1342  from pct_pcmp_tele
+1343  where month ge '01Jul2019'd
+1344  group by month;
+NOTE: Table TBL.N_PROV_MONTH_TELE created, with 36 rows and 2 columns.
+
+1345  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.04 seconds
+
+
+1346  proc sql;
+1347  create table tbl.n_prov_month_tele as
+1348      select month
+1349           , sum (n_prov_loc_id) as n_prov_month
+1350  from pct_pcmp_tele
+1351  where month ge '01Jul2019'd
+1352  group by month;
+NOTE: Table TBL.N_PROV_MONTH_TELE created, with 36 rows and 2 columns.
+
+1353  quit;
+NOTE: At least one W.D format was too small for the number to be printed. The decimal may be
+      shifted by the "BEST" format.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.03 seconds
+
+
+1354
+1355  PROC TRANSPOSE DATA = tbl.pct_pcmp_tele
+1356                  OUT = tbl.tbl_pcmp_tele_t (drop=_name_);
+1357  BY  PCMP;
+1358  ID  month;
+1359  VAR n_prov_loc_id pct;
+1360  format pct percent8.1;
+1361  run;
+
+NOTE: There were 72 observations read from the data set TBL.PCT_PCMP_TELE.
+NOTE: The data set TBL.TBL_PCMP_TELE_T has 4 observations and 37 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.20 seconds
+      cpu time            0.01 seconds
+
+
+1361!      *;
+
+1362
+1363  PROC TRANSPOSE DATA = tbl.pct_pcmp_tele
+1364                  OUT = tbl.tbl_pcmp_tele_t (drop=_name_);
+1365  BY  PCMP;
+1366  ID  month;
+1367  VAR n_prov_loc_id pct;
+1368  run;
+
+NOTE: There were 72 observations read from the data set TBL.PCT_PCMP_TELE.
+NOTE: The data set TBL.TBL_PCMP_TELE_T has 4 observations and 37 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.23 seconds
+      cpu time            0.00 seconds
+
+
+1368!      *;
+
+1369  PROC TRANSPOSE DATA = tbl.pct_pcmp_tele
+1370                  OUT = tbl.pct_pcmp_tele_t (drop=_name_);
+1371  BY  PCMP;
+1372  ID  month;
+1373  VAR n_prov_loc_id pct;
+1374  run;
+
+NOTE: There were 72 observations read from the data set TBL.PCT_PCMP_TELE.
+NOTE: The data set TBL.PCT_PCMP_TELE_T has 4 observations and 37 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.03 seconds
+
+
+1374!      *;
+
+1375  PROC TRANSPOSE DATA = tbl.tbl_pcmp_tele
+1376                  OUT = tbl.tbl_pcmp_tele_t (drop=_name_);
+1377  BY  ISP;
+1378  ID  month;
+1379  VAR n_pcmp;
+1380  run;
+
+NOTE: There were 65 observations read from the data set TBL.TBL_PCMP_TELE.
+NOTE: The data set TBL.TBL_PCMP_TELE_T has 2 observations and 37 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.04 seconds
+
+
+1380!      *;
+
+1381
+1382  TITLE "PCMP's providing Telehealth services, ISP & non-ISP: 07/2019-06/2022";
+1383  proc sgplot data = tbl.tbl_pcmp_tele;
+1384  yaxis label = " ";
+1385  styleattrs datacontrastcolors =(purple steel);
+1386  series x = month y = n_pcmp / group = isp ; *datalabel = label ;
+1387  refline '_01MAR2020'd /
+1388          axis = x
+1389          lineattrs = ( thickness = 2 color=grey pattern=dash )
+1390          label = ("March 2020")
+1391          labelloc = inside
+1392          label = "March 2020";
+1393  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.59 seconds
+      cpu time            0.35 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 65 observations read from the data set TBL.TBL_PCMP_TELE.
+
+1394  TITLE;
+
+1395  data tbl.teleCare_final;
+1396  set  teleCare_final;
+1397  run;
+
+NOTE: There were 1190785 observations read from the data set WORK.TELECARE_FINAL.
+NOTE: The data set TBL.TELECARE_FINAL has 1190785 observations and 31 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.20 seconds
+      cpu time            0.23 seconds
+
+
+1398
+1399  proc freq data = tbl.teleCare_final;
+1400  tables isp pcmp non_isp;
+1401  run;
+
+NOTE: There were 1190785 observations read from the data set TBL.TELECARE_FINAL.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           2.91 seconds
+      cpu time            0.04 seconds
+
+
+1402  proc freq data = tbl.teleCare_final;
+1403  tables month*(isp pcmp non_isp);
+ERROR: Variable MONTH not found.
+1404  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+1405  proc sql;
+1406  create table tbl.tbl_pcmp_tele as
+1407    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1408           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1409           isp
+1410    from teleCare_FINAL
+1411    where pcmp = 1
+1412    group by month, isp;
+NOTE: Table TBL.TBL_PCMP_TELE created, with 65 rows and 3 columns.
+
+1413  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.51 seconds
+      cpu time            0.48 seconds
+
+
+1413!       *65, 3 cols;
+
+1414  proc sql;
+1415  create table tbl.tbl_pcmp_tele as
+1416    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1417           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1418           isp
+1419    from tbl.teleCare_FINAL
+1420    where pcmp = 1
+1421    group by month, isp;
+NOTE: Table TBL.TBL_PCMP_TELE created, with 65 rows and 3 columns.
+
+1422  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           3.29 seconds
+      cpu time            0.48 seconds
+
+
+1422!       *65, 3 cols;
+
+1423  proc sql;
+1424  create table tbl.tbl_pcmp_tele as
+1425    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1426           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1427           isp,
+1428           max (n_pcmp) as label
+1429    from tbl.teleCare_FINAL
+1430    where pcmp = 1
+1431    group by month, isp;
+ERROR: The following columns were not found in the contributing tables: n_pcmp.
+1432  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+1432!       *65, 3 cols;
+
+
+1433  proc sql;
+1434  create table tbl.tbl_pcmp_tele as
+1435    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1436           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1437           isp,
+1438           max(count(distinct bill_prov_loc_id )) as label
+1439    from tbl.teleCare_FINAL
+1440    where pcmp = 1
+1441    group by month, isp;
+ERROR: Summary functions nested in this way are not supported.
+1442  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+1442!       *65, 3 cols;
+
+
+1443  * ==== QUESTION 3: monthy telehealth encounters and costs, per client ===================;
+1444  proc sql;
+1445  create table tbl.tbl_pcmp_tele as
+1446    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1447           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1448           isp,
+1449           max(n_pcmp) as label
+1450    from tbl.teleCare_FINAL
+1451    where pcmp = 1
+1452    group by month, isp;
+ERROR: The following columns were not found in the contributing tables: n_pcmp.
+1453  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+1454  proc sql;
+1455  create table tbl.n_pcmp_tele as
+1456    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1457           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1458           isp,
+1459    from tbl.teleCare_FINAL
+             ---
+             22
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, (, *, **, +, ',', -, /, <,
+              <=, <>, =, >, >=, ?, AND, BETWEEN, CONTAINS, EQ, EQT, FROM, GE, GET, GT, GTT, LE,
+              LET, LIKE, LT, LTT, NE, NET, OR, ^=, |, ||, ~=.
+
+1460    where pcmp = 1
+        -----
+        22
+        76
+ERROR 22-322: Syntax error, expecting one of the following: a quoted string, !, !!, &, *, **, +,
+              ',', -, /, <, <=, <>, =, >, >=, ?, AND, AS, BETWEEN, CONTAINS, EQ, EQT, FORMAT, FROM,
+              GE, GET, GT, GTT, IN, INFORMAT, INTO, IS, LABEL, LE, LEN, LENGTH, LET, LIKE, LT, LTT,
+              NE, NET, NOT, NOTIN, OR, TRANSCODE, ^, ^=, |, ||, ~, ~=.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+1461    group by month, isp;
+1462  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+1462!       *65, 3 cols;
+
+
+1463  proc sql;
+1464  create table tbl.n_pcmp_tele as
+1465    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1466           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1467           isp
+1468    from tbl.teleCare_FINAL
+1469    where pcmp = 1
+1470    group by month, isp;
+NOTE: Table TBL.N_PCMP_TELE created, with 65 rows and 3 columns.
+
+1471  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           3.36 seconds
+      cpu time            0.40 seconds
+
+
+1471!       *65, 3 cols;
+
+1472
+1473  TITLE "PCMP's providing Telehealth services, ISP & non-ISP: 07/2019-06/2022";
+1474  proc sgplot data = tbl.tbl_pcmp_tele;
+ERROR: File TBL.TBL_PCMP_TELE.DATA does not exist.
+1475  yaxis label = " ";
+1476  styleattrs datacontrastcolors =(purple steel);
+1477  series x = month y = n_pcmp / group = isp ; *datalabel = label ;
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+1478  refline '_01MAR2020'd /
+1479          axis = x
+1480          lineattrs = ( thickness = 2 color=grey pattern=dash )
+1481          label = ("March 2020")
+1482          labelloc = inside
+1483          label = "March 2020";
+1484  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+1485  TITLE;
+
+
+1486  proc sort data = tbl.tbl_pcmp_tele ; by ISP ; run ;
+ERROR: File TBL.TBL_PCMP_TELE.DATA does not exist.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+1487
+
+
+1488  PROC TRANSPOSE DATA = tbl.tbl_pcmp_tele
+1489                  OUT = tbl.tbl_pcmp_tele_t (drop=_name_);
+ERROR: File TBL.TBL_PCMP_TELE.DATA does not exist.
+1490  BY  ISP;
+1491  ID  month;
+1492  VAR n_pcmp;
+1493  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set TBL.TBL_PCMP_TELE_T may be incomplete.  When this step was stopped there were
+         0 observations and 0 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.00 seconds
+
+1493!      *;
+
+
+1494  proc sql;
+1495  create table tbl.n_pcmp_tele as
+1496    select intnx('month',FRST_SVC_DT, 0, 'B') as month format=date9.,
+1497           count ( distinct bill_prov_loc_id ) as n_pcmp,
+1498           isp
+1499    from tbl.teleCare_FINAL
+1500    where pcmp = 1
+1501    group by month, isp;
+NOTE: Table TBL.N_PCMP_TELE created, with 65 rows and 3 columns.
+
+1502  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           3.25 seconds
+      cpu time            0.50 seconds
+
+
+1502!       *65, 3 cols;
+
+1503  proc sort data = tbl.n_pcmp_tele ; by ISP ; run ;
+
+NOTE: There were 65 observations read from the data set TBL.N_PCMP_TELE.
+NOTE: The data set TBL.N_PCMP_TELE has 65 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.00 seconds
+
+
+
+1504
+1505  PROC TRANSPOSE DATA = tbl.n_pcmp_tele
+1506                  OUT = tbl.n_pcmp_tele_t (drop=_name_);
+1507  BY  ISP;
+1508  ID  month;
+1509  VAR n_pcmp;
+1510  run;
+
+NOTE: There were 65 observations read from the data set TBL.N_PCMP_TELE.
+NOTE: The data set TBL.N_PCMP_TELE_T has 2 observations and 37 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.00 seconds
+
+
+1510!      *;
+
+1511  TITLE "PCMP's providing Telehealth services, ISP & non-ISP: 07/2019-06/2022";
+1512  proc sgplot data = tbl.n_pcmp_tele;
+1513  yaxis label = " ";
+1514  styleattrs datacontrastcolors =(purple steel);
+1515  series x = month y = n_pcmp / group = isp ; *datalabel = label ;
+1516  refline '_01MAR2020'd /
+1517          axis = x
+1518          lineattrs = ( thickness = 2 color=grey pattern=dash )
+1519          label = ("March 2020")
+1520          labelloc = inside
+1521          label = "March 2020";
+1522  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.20 seconds
+      cpu time            0.04 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 65 observations read from the data set TBL.N_PCMP_TELE.
+
+1523  TITLE;
+
+1524  proc print data = tbl.n_pcmp_tele;
+1525  where month = '01JUN2022'd
+1526  OR    month = '01JUL2019'd;
+1527  run;
+
+NOTE: There were 3 observations read from the data set TBL.N_PCMP_TELE.
+      WHERE month in ('01JUL2019'D, '01JUN2022'D);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+1528  proc print data = tbl.n_pcmp_tele;
+1529  where month = '01MAR2020'd
+1530  OR    month = '01JUL2022'd;
+1531  run;
+
+NOTE: There were 2 observations read from the data set TBL.N_PCMP_TELE.
+      WHERE month in ('01MAR2020'D, '01JUL2022'D);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+1532  proc print data = tbl.n_pcmp_tele;
+1533  where month = '01JUN2020'd
+1534  OR    month = '01JUN2022'd;
+1535  run;
+
+NOTE: There were 4 observations read from the data set TBL.N_PCMP_TELE.
+      WHERE month in ('01JUN2020'D, '01JUN2022'D);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+1536  proc print data = tbl.n_pcmp_tele nobs;
+                                        ----
+                                        1
+WARNING 1-322: Assuming the symbol NOOBS was misspelled as nobs.
+1537  where month ge '01JUN2020'd
+1538  AND   month le '01JUN2022'd;
+1539  run;
+
+NOTE: There were 50 observations read from the data set TBL.N_PCMP_TELE.
+      WHERE (month>='01JUN2020'D and month<='01JUN2022'D);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+1540
+1541  TITLE "Percent PCMPs (of all Providers) Delivering Telehealth";
+1542  proc sgplot data = tbl.pct_pcmp_tele;
+1543  yaxis label = " ";
+1544  styleattrs datacontrastcolors =(purple steel);
+1545  series x = month y=n_prov_loc_id / group = pcmp;
+1546  refline '_01MAR2020'd /
+1547          axis = x
+1548          lineattrs = ( thickness = 2 color=grey pattern=dash )
+1549          label = ("March 2020")
+1550          labelloc = inside
+1551          label = "March 2020";
+1552  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.19 seconds
+      cpu time            0.00 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 72 observations read from the data set TBL.PCT_PCMP_TELE.
+
+1553  TITLE;
+
+1554
+1555
+1556  * ---------------Export --------------------------;
+1557
+1558  ods excel file = "&report/hcpf_q3_q4_telehealth.xlsx"
+SYMBOLGEN:  Macro variable REPORT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports
+1559      options (   sheet_name = "q3_n_pcmp"
+1560                  sheet_interval = "none"
+1561                  frozen_headers = "yes"
+1562                  autofilter = "all");
+1563
+1564  proc print data = tbl.n_pcmp_tele_t;
+1565  run;
+
+NOTE: There were 2 observations read from the data set TBL.N_PCMP_TELE_T.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.03 seconds
+
+
+1566
+1567  ods excel options ( sheet_interval = "now" sheet_name = "q3_plot") ;
+1568
+1569  TITLE "PCMP's providing Telehealth services, ISP & non-ISP: 07/2019-06/2022";
+1570  proc sgplot data = tbl.n_pcmp_tele;
+1571  yaxis label = " ";
+1572  styleattrs datacontrastcolors =(purple steel);
+1573  series x = month y = n_pcmp / group = isp ; *datalabel = label ;
+1574  refline '_01MAR2020'd /
+1575          axis = x
+1576          lineattrs = ( thickness = 2 color=grey pattern=dash )
+1577          label = ("March 2020")
+1578          labelloc = inside
+1579          label = "March 2020";
+1580  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.70 seconds
+      cpu time            0.40 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 65 observations read from the data set TBL.N_PCMP_TELE.
+
+1581  TITLE;
+1582
+1583  ods excel options ( sheet_interval = "now" sheet_name = "pct_pcmp_tele") ;
+1584
+1585  proc print data = tbl.pct_pcmp_tele_t; run;
+
+NOTE: There were 4 observations read from the data set TBL.PCT_PCMP_TELE_T.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.07 seconds
+
+
+1586
+1587  ods excel options ( sheet_interval = "now" sheet_name = "relative_change_plot") ;
+1588
+1589  TITLE "Percent PCMPs (of all Providers) Delivering Telehealth";
+1590  proc sgplot data = tbl.pct_pcmp_tele;
+1591  yaxis label = " ";
+1592  styleattrs datacontrastcolors =(purple steel);
+1593  series x = month y=n_prov_loc_id / group = pcmp;
+1594  refline '_01MAR2020'd /
+1595          axis = x
+1596          lineattrs = ( thickness = 2 color=grey pattern=dash )
+1597          label = ("March 2020")
+1598          labelloc = inside
+1599          label = "March 2020";
+1600  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.27 seconds
+      cpu time            0.09 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 72 observations read from the data set TBL.PCT_PCMP_TELE.
+
+1601  TITLE;
+1602
+1603  ods excel close;
+NOTE: Writing EXCEL file:
+      S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports\hcpf_q3_q4_telehealth.xlsx
+1604  run;
+
+1605
+1606  ods excel file = "&report/hcpf_q3_q4_telehealth.xlsx"
+SYMBOLGEN:  Macro variable REPORT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports
+1607      options (   sheet_name = "q3_n_pcmp"
+1608                  sheet_interval = "none"
+1609                  frozen_headers = "yes"
+1610                  autofilter = "all");
+1611
+1612  proc print data = tbl.n_pcmp_tele_t;
+1613  run;
+
+NOTE: There were 2 observations read from the data set TBL.N_PCMP_TELE_T.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.03 seconds
+
+
+1614
+1615  ods excel options ( sheet_interval = "now" sheet_name = "q3_plot") ;
+1616
+1617  TITLE "PCMP's providing Telehealth services, ISP & non-ISP: 07/2019-06/2022";
+1618  proc sgplot data = tbl.n_pcmp_tele;
+1619  yaxis label = " ";
+1620  styleattrs datacontrastcolors =(purple steel);
+1621  series x = month y = n_pcmp / group = isp ; *datalabel = label ;
+1622  refline '_01MAR2020'd /
+1623          axis = x
+1624          lineattrs = ( thickness = 2 color=grey pattern=dash )
+1625          label = ("March 2020")
+1626          labelloc = inside
+1627          label = "March 2020";
+1628  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.67 seconds
+      cpu time            0.45 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 65 observations read from the data set TBL.N_PCMP_TELE.
+
+1629  TITLE;
+1630
+1631  ods excel options ( sheet_interval = "now" sheet_name = "pct_pcmp_tele") ;
+1632
+1633  proc print data = tbl.pct_pcmp_tele_t; run;
+
+NOTE: There were 4 observations read from the data set TBL.PCT_PCMP_TELE_T.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.04 seconds
+
+
+1634
+1635  ods excel options ( sheet_interval = "now" sheet_name = "pct_plot") ;
+1636
+1637  TITLE "Percentage of PCMPs Delivering Any Telehealth Service";
+1638  proc sgplot data = tbl.pct_pcmp_tele;
+1639  yaxis label = " ";
+1640  styleattrs datacontrastcolors =(purple steel);
+1641  series x = month y=n_prov_loc_id / group = pcmp;
+1642  refline '_01MAR2020'd /
+1643          axis = x
+1644          lineattrs = ( thickness = 2 color=grey pattern=dash )
+1645          label = ("March 2020")
+1646          labelloc = inside
+1647          label = "March 2020";
+1648  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.26 seconds
+      cpu time            0.04 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 72 observations read from the data set TBL.PCT_PCMP_TELE.
+
+1649  TITLE;
+1650
+1651  ods excel close;
+NOTE: Writing EXCEL file:
+      S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports\hcpf_q3_q4_telehealth.xlsx
+1652  run;
+

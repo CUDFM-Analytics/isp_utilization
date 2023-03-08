@@ -1,0 +1,655 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.09 seconds
+      cpu time            0.84 seconds
+
+1    hese are datasets saved from previous matching with Mark and/or permanent datasets that are
+     ----
+     180
+1  ! sourced in;
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+2      %LET    datasets = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/datasets;
+3      LIBNAME datasets "&datasets";
+NOTE: Libref DATASETS was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\datasets
+4
+5    * contains #'s 1,2,3 (isp attr, change from 03/2020, telehealth pcmp count) datasets for hcpf
+5  ! presentation specifically;
+6      %LET    data     =
+6  ! S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/20230200_hcpf_presentation;
+7      LIBNAME data  "&data";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\20230200_hcpf_presentation
+8
+9    * RESULTS, Feb2023, HCPF Presentation
+10     contains #'s 1,2,3 (isp attr, change from 03/2020, telehealth pcmp count) from analytic plan
+10 ! for hcpf presentation specifically;
+11     %LET    feb     =
+11 ! S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presentation;
+12     LIBNAME feb  "&feb";
+NOTE: Libref FEB was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\results\20230200_hcpf_presentation
+13
+14   * analytic subset;
+15     %LET    hcpf = S:/FHPC/DATA/HCPF_Data_files_SECURE;
+16     %LET    ana  = S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset;
+17     LIBNAME ana "&ana";
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+18
+19   * VARLEN;
+20     %LET varlen =
+20 ! \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengt
+20 ! hs;
+21     LIBNAME varlen "&varlen";
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLeng
+      ths
+22     %INCLUDE "&varlen\MACRO_charLenMetadata.sas";
+98     %getlen(library=varlen, data=AllVarLengths);
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.83 seconds
+      cpu time            0.35 seconds
+
+
+99
+100  * OPTIONS ---------------------------;
+101    OPTIONS NOFMTERR
+102            MPRINT MLOGIC SYMBOLGEN
+103            FMTSEARCH =(ana, data, interim, varlen, work);
+
+104  proc sql;
+105  create table attr_all_pcmp0 as
+106  select isp_flag
+107      , month
+108      , count(distinct mcaid_id) as n_client_id
+109  from data.qry_long_y19_22 group by isp_flag, month;
+NOTE: Table WORK.ATTR_ALL_PCMP0 created, with 72 rows and 3 columns.
+
+110  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           49.68 seconds
+      cpu time            41.90 seconds
+
+
+110!       *31863, 4;
+
+111  PROC TRANSPOSE DATA = attr_all_pcmp0
+112                  OUT = feb.attr_all_pcmp (drop=_name_);
+113  BY  ISP_flag;
+114  ID  month;
+115  VAR n_client_id;
+116  run;
+
+NOTE: There were 72 observations read from the data set WORK.ATTR_ALL_PCMP0.
+NOTE: The data set FEB.ATTR_ALL_PCMP has 2 observations and 37 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.20 seconds
+      cpu time            0.06 seconds
+
+
+116!      *;
+
+117  PROC SQL;
+118  CREATE TABLE attr_MAR2020_0 AS
+119  SELECT isp_flag
+120       , month
+121       , count(DISTINCT mcaid_id) as n_client_id
+122  FROM data.qry_long_y19_22
+123  GROUP BY isp_flag, month;
+NOTE: Table WORK.ATTR_MAR2020_0 created, with 72 rows and 3 columns.
+
+124  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           47.22 seconds
+      cpu time            40.54 seconds
+
+
+124!       *31863, 4;
+
+125  DATA attr_MAR2020_1;
+126  SET  attr_MAR2020_0;
+127  WHERE month ge '01MAR2020'd;
+128  RUN;
+
+NOTE: There were 56 observations read from the data set WORK.ATTR_MAR2020_0.
+      WHERE month>='01MAR2020'D;
+NOTE: The data set WORK.ATTR_MAR2020_1 has 56 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+128!      *24569, 4;
+
+129  PROC SQL;
+130  CREATE TABLE attr_mar2020_2 AS
+131  SELECT a.*
+132       , b.n_client_id AS n_mar2020
+133  FROM attr_MAR2020_1 AS a
+134  RIGHT JOIN attr_MAR2020_only AS b
+135  ON a.isp_flag = b.isp_flag
+136  AND a.month = b.month;
+ERROR: File WORK.ATTR_MAR2020_ONLY.DATA does not exist.
+137  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+138  DATA attr_MAR2020_only;
+139  SET  attr_MAR2020_1;
+140  WHERE month eq '01MAR2020'd;
+141  RUN;
+
+NOTE: There were 2 observations read from the data set WORK.ATTR_MAR2020_1.
+      WHERE month='01MAR2020'D;
+NOTE: The data set WORK.ATTR_MAR2020_ONLY has 2 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+142  PROC SQL;
+143  CREATE TABLE attr_mar2020_2 AS
+144  SELECT a.*
+145       , b.n_client_id AS n_mar2020
+146  FROM attr_MAR2020_1 AS a
+147  RIGHT JOIN attr_MAR2020_only AS b
+148  ON a.isp_flag = b.isp_flag
+149  AND a.month = b.month;
+NOTE: Table WORK.ATTR_MAR2020_2 created, with 2 rows and 4 columns.
+
+150  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+151  PROC SQL;
+152  CREATE TABLE attr_mar2020_2 AS
+153  SELECT a.*
+154       , b.n_client_id AS n_mar2020
+155  FROM attr_MAR2020_1 AS a
+156  FULL JOIN attr_MAR2020_only AS b
+157  ON a.isp_flag = b.isp_flag
+158  AND a.month = b.month;
+NOTE: Table WORK.ATTR_MAR2020_2 created, with 56 rows and 4 columns.
+
+159  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+160  PROC SQL;
+161  CREATE TABLE attr_mar2020_2 AS
+162  SELECT a.*
+163       , b.n_client_id AS n_mar2020
+164  FROM attr_MAR2020_1 AS a
+165  JOIN attr_MAR2020_only AS b
+166  ON a.isp_flag = b.isp_flag;
+NOTE: Table WORK.ATTR_MAR2020_2 created, with 56 rows and 4 columns.
+
+167  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+168  DATA feb.attr_rel_march2020;
+169  SET  attr_mar2020_2;
+170  n_diff_mar2020 = n_mar2020 - n_client_id;
+171  pct_diff_mar2020 = round ( ( n_diff_mar2020 / n_mar2020 ), .01);
+172  pct_diff_mar2020 = pct_diff_mar2020*100;
+173  RUN;
+
+NOTE: There were 56 observations read from the data set WORK.ATTR_MAR2020_2.
+NOTE: The data set FEB.ATTR_REL_MARCH2020 has 56 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.01 seconds
+
+
+174  DATA feb.attr_rel_march2020;
+175  SET  attr_mar2020_2;
+176  n_diff_mar2020 = n_client_id - n_march2020;
+177  pct_diff_mar2020 = round ( ( n_diff_mar2020 / n_mar2020 ), .01);
+178  pct_diff_mar2020 = pct_diff_mar2020*100;
+179  RUN;
+
+NOTE: Variable n_march2020 is uninitialized.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      56 at 176:30   56 at 177:20   56 at 177:45   56 at 178:36
+NOTE: There were 56 observations read from the data set WORK.ATTR_MAR2020_2.
+NOTE: The data set FEB.ATTR_REL_MARCH2020 has 56 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.03 seconds
+
+
+180  PROC SQL;
+181  CREATE TABLE attr_mar2020_2 AS
+182  SELECT a.*
+183       , b.n_client_id AS n_mar2020
+184  FROM attr_MAR2020_1 AS a
+185  JOIN attr_MAR2020_only AS b
+186  ON a.isp_flag = b.isp_flag;
+NOTE: Table WORK.ATTR_MAR2020_2 created, with 56 rows and 4 columns.
+
+187  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+188  DATA feb.attr_rel_march2020;
+189  SET  attr_mar2020_2;
+190  n_diff_mar2020 = n_client_id - n_march2020;
+191  pct_diff_mar2020 = round ( ( n_diff_mar2020 / n_client_id ), .01);
+192  pct_diff_mar2020 = pct_diff_mar2020*100;
+193  RUN;
+
+NOTE: Variable n_march2020 is uninitialized.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      56 at 190:30   56 at 191:20   56 at 191:45   56 at 192:36
+NOTE: There were 56 observations read from the data set WORK.ATTR_MAR2020_2.
+NOTE: The data set FEB.ATTR_REL_MARCH2020 has 56 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.01 seconds
+
+
+194
+195  DATA feb.attr_rel_march2020;
+196  SET  attr_mar2020_2;
+197  n_diff_mar2020 = n_client_id - n_march2020;
+198  pct_diff_mar2020 = round ( ( n_diff_mar2020 / n_client_id ), .01);
+199  pct_diff_mar2020 = pct_diff_mar2020*100;
+200  RUN;
+
+NOTE: Variable n_march2020 is uninitialized.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      56 at 197:30   56 at 198:20   56 at 198:45   56 at 199:36
+NOTE: There were 56 observations read from the data set WORK.ATTR_MAR2020_2.
+NOTE: The data set FEB.ATTR_REL_MARCH2020 has 56 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.00 seconds
+
+
+201
+202  DATA feb.attr_rel_march2020;
+203  SET  attr_mar2020_2;
+204  n_diff_mar2020 = n_client_id - n_march2020;
+205  pct_diff_mar2020 = round ( ( n_diff_mar2020 / n_client_id ), .01);
+206  pct_diff_mar2020 = pct_diff_mar2020*100;
+207  RUN;
+
+NOTE: Variable n_march2020 is uninitialized.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      56 at 204:30   56 at 205:20   56 at 205:45   56 at 206:36
+NOTE: There were 56 observations read from the data set WORK.ATTR_MAR2020_2.
+NOTE: The data set FEB.ATTR_REL_MARCH2020 has 56 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.01 seconds
+
+
+208
+209  DATA attr_rel_march2020;
+210  SET  attr_mar2020_2;
+211  n_diff_mar2020 = n_client_id - n_march2020;
+212  pct_diff_mar2020 = round ( ( n_diff_mar2020 / n_client_id ), .01);
+213  pct_diff_mar2020 = pct_diff_mar2020*100;
+214  RUN;
+
+NOTE: Variable n_march2020 is uninitialized.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      56 at 211:30   56 at 212:20   56 at 212:45   56 at 213:36
+NOTE: There were 56 observations read from the data set WORK.ATTR_MAR2020_2.
+NOTE: The data set WORK.ATTR_REL_MARCH2020 has 56 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+215  DATA feb.attr_rel_march2020;
+216  SET  attr_mar2020_2;
+217  n_diff_mar2020 = n_client_id - n_mar2020;
+218  pct_diff_mar2020 = round ( ( n_diff_mar2020 / n_client_id ), .01);
+219  pct_diff_mar2020 = pct_diff_mar2020*100;
+220  RUN;
+
+NOTE: There were 56 observations read from the data set WORK.ATTR_MAR2020_2.
+NOTE: The data set FEB.ATTR_REL_MARCH2020 has 56 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.01 seconds
+
+
+221  proc print data = feb.attr_rel_march2020;
+NOTE: Writing HTML Body file: sashtml.htm
+222  run;
+
+NOTE: There were 56 observations read from the data set FEB.ATTR_REL_MARCH2020.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.38 seconds
+      cpu time            0.23 seconds
+
+
+223  proc sgplot data = feb.attr_rel_march2020;
+224  styleattrs datacontrastcolors =(purple steel);
+225  series x = month y=pct_diff_mar2020 / group = isp_flag;
+226  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.64 seconds
+      cpu time            0.36 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 56 observations read from the data set FEB.ATTR_REL_MARCH2020.
+
+227  DATA feb.attr_rel_march2020;
+228  SET  attr_mar2020_2;
+229  n_diff_mar2020 = n_client_id - n_mar2020;
+230  pct_diff_mar2020 = round ( ( n_diff_mar2020 / n_client_id ), .01);
+231  pct_diff_mar2020 = pct_diff_mar2020*100;
+232  IF isp_flag = 0 then label = "ISP"
+233  ELSE IF isp_flag = 1 then label = "non ISP";
+     ----
+     388
+     76
+ERROR 388-185: Expecting an arithmetic operator.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+234  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set FEB.ATTR_REL_MARCH2020 may be incomplete.  When this step was stopped there
+         were 0 observations and 7 variables.
+WARNING: Data set FEB.ATTR_REL_MARCH2020 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.00 seconds
+
+
+235  proc format ;
+236  value isp;
+NOTE: Format ISP has been output.
+237  0 = "non ISP"
+     -
+     180
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+238  1 = "ISP" ;
+NOTE: The previous statement has been deleted.
+239  run;
+
+WARNING: RUN statement ignored due to previous errors. Submit QUIT; to terminate the procedure.
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+NOTE: The SAS System stopped processing this step because of errors.
+
+240  proc format ;
+241  value isp
+242  0 = "non ISP"
+243  1 = "ISP" ;
+NOTE: Format ISP is already on the library WORK.FORMATS.
+NOTE: Format ISP has been output.
+244  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+245  proc format ;
+246  value isp_prac
+247  0 = "non ISP"
+248  1 = "ISP" ;
+NOTE: Format ISP_PRAC has been output.
+249  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+250  DATA feb.attr_rel_march2020;
+251  SET  attr_mar2020_2;
+252  n_diff_mar2020 = n_client_id - n_mar2020;
+253  pct_diff_mar2020 = round ( ( n_diff_mar2020 / n_client_id ), .01);
+254  pct_diff_mar2020 = pct_diff_mar2020*100;
+255  format isp_flag isp_prac.;
+256  RUN;
+
+NOTE: There were 56 observations read from the data set WORK.ATTR_MAR2020_2.
+NOTE: The data set FEB.ATTR_REL_MARCH2020 has 56 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.29 seconds
+      cpu time            0.01 seconds
+
+
+257
+258  proc print data = feb.attr_rel_march2020;
+259  run;
+
+NOTE: There were 56 observations read from the data set FEB.ATTR_REL_MARCH2020.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+260  proc sgplot data = feb.attr_rel_march2020;
+261  styleattrs datacontrastcolors =(purple steel);
+262  series x = month y=pct_diff_mar2020 / group = isp_flag;
+263  label = catx("", put
+     -----
+     180
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+264  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           14.70 seconds
+      cpu time            1.06 seconds
+
+
+
+265  proc sgplot data = feb.attr_rel_march2020;
+266  styleattrs datacontrastcolors =(purple steel);
+267  series x = month y=pct_diff_mar2020 / group = isp_flag;
+268  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.00 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 56 observations read from the data set FEB.ATTR_REL_MARCH2020.
+
+269  proc sgplot data = feb.attr_rel_march2020;
+270  yaxis label = "Pct change in n_client_id rel to March 2020";
+271  styleattrs datacontrastcolors =(purple steel);
+272  series x = month y=pct_diff_mar2020 / group = isp_flag;
+273  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.00 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 56 observations read from the data set FEB.ATTR_REL_MARCH2020.
+
+274  ods excel file = "&feb/hcpf_qs_1_2_20230213.xlsx"
+SYMBOLGEN:  Macro variable FEB resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presen
+            tation
+275      options (   sheet_name = "All_pcmp_attr"
+276                  sheet_interval = "none"
+277                  frozen_headers = "yes"
+278                  autofilter = "all");
+279
+280  proc print data = feb.attr_all_pcmp;
+281  run;
+
+NOTE: There were 2 observations read from the data set FEB.ATTR_ALL_PCMP.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.04 seconds
+
+
+282
+283  ods excel options ( sheet_interval = "now" sheet_name = "relative_change") ;
+284
+285  proc print data = feb.attr_rel_march2020; run;
+
+NOTE: There were 56 observations read from the data set FEB.ATTR_REL_MARCH2020.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.07 seconds
+
+
+286
+287  ods excel options ( sheet_interval = "now" sheet_name = "relative_change_plot") ;
+288
+289  proc sgplot data = feb.attr_rel_march2020;
+290  yaxis label = "Pct change in n_client_id rel to March 2020";
+291  styleattrs datacontrastcolors =(purple steel);
+292  series x = month y=pct_diff_mar2020 / group = isp_flag;
+293  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.67 seconds
+      cpu time            0.34 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 56 observations read from the data set FEB.ATTR_REL_MARCH2020.
+
+294
+295  ods excel close;
+NOTE: Writing EXCEL file:
+      S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presentation
+      \hcpf_qs_1_2_20230213.xlsx
+296  run;
+
+297  PROC TRANSPOSE DATA = feb.attr_rel_march2020
+298                  OUT = feb.attr_rel_march2020_t (drop=_name_);
+299  BY  ISP_flag;
+300  ID  month;
+301  VAR n_diff_mar2020 pct_diff_mar2020;
+302  run;
+
+NOTE: There were 56 observations read from the data set FEB.ATTR_REL_MARCH2020.
+NOTE: The data set FEB.ATTR_REL_MARCH2020_T has 4 observations and 29 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.01 seconds
+
+
+302!      *;
+
+303
+304  * ---------------Export --------------------------;
+305  ods excel file = "&feb/hcpf_qs_1_2_20230213.xlsx"
+SYMBOLGEN:  Macro variable FEB resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presen
+            tation
+306      options (   sheet_name = "All_pcmp_attr"
+307                  sheet_interval = "none"
+308                  frozen_headers = "yes"
+309                  autofilter = "all");
+310
+311  proc print data = feb.attr_all_pcmp;
+312  run;
+
+NOTE: There were 2 observations read from the data set FEB.ATTR_ALL_PCMP.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+313
+314  ods excel options ( sheet_interval = "now" sheet_name = "relative_change") ;
+315
+316  proc print data = feb.attr_rel_march2020; run;
+
+NOTE: There were 56 observations read from the data set FEB.ATTR_REL_MARCH2020.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.06 seconds
+
+
+317
+318  ods excel options ( sheet_interval = "now" sheet_name = "relative_change_t") ;
+319
+320  proc print data = feb.attr_rel_march2020_t; run;
+
+NOTE: There were 4 observations read from the data set FEB.ATTR_REL_MARCH2020_T.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+
+
+321
+322  ods excel options ( sheet_interval = "now" sheet_name = "relative_change_plot") ;
+323
+324  proc sgplot data = feb.attr_rel_march2020;
+325  yaxis label = "Pct change in n_client_id rel to March 2020";
+326  styleattrs datacontrastcolors =(purple steel);
+327  series x = month y=pct_diff_mar2020 / group = isp_flag;
+328  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.62 seconds
+      cpu time            0.40 seconds
+
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: The column format DATE9 is replaced by an auto-generated format on the axis.
+NOTE: There were 56 observations read from the data set FEB.ATTR_REL_MARCH2020.
+
+329
+330  ods excel close;
+NOTE: Writing EXCEL file:
+      S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/results/20230200_hcpf_presentation
+      \hcpf_qs_1_2_20230213.xlsx
+331  run;
+
