@@ -102,7 +102,7 @@ pcmp_loc_id = put(id_pcmp, best.-L);
 run ;
 
 
-* ==== SECTION 02 ==============================================================================
+* ==== SECTION02 RAE ==============================================================================
 Get RAE_ID and county info
 Inputs      Kim/county_co_data.csv
 Outputs     data/isp_key
@@ -115,7 +115,7 @@ HCPF_County_Code_C = put(HCPF_County_Code,z2.);
 RUN; 
 
 
-* ==== SECTION 03 ==============================================================================
+* ==== SECTION03 ==============================================================================
 get original longitudinal & demographics files 
 process: 15_22 dataset, 19_22 dataset, and memlist (S4), join RAE
 create vars: FY, last_day_fy, age for subsetting 0-64
@@ -209,7 +209,7 @@ LEFT JOIN tmp.rae AS b
 ON a.enr_cnty = b.hcpf_county_code_c; 
 QUIT; *53384196 rows and 19 columns.;
 
-* ---- SECTION 4 Create memlist ------------------------------------------------------------------------------
+* ---- SECTION04 Create memlist ------------------------------------------------------------------------------
 Get unique mcaid_id from 16-22 subset
  - At first it copies three columns but then keeps only mcaid_id
  - Gets memlist for 19-22 
@@ -296,8 +296,7 @@ quit; *Table TMP.UTIL_FY6 created, with 32830948 rows and 7 columns. ;
 
 proc print data = tmp.util_fy6 (obs = 50) ; run ; 
 
-* ---- SECTION 7 Get Telehealth records ---------------------------------------------------------------------
-
+* ---- SECTION07 Get Telehealth records ---------------------------------------------------------------------
 * primary care records ;
 data pc;
   set ana.Qry_clm_dim_class;
@@ -348,7 +347,7 @@ proc sql;
            max(teleElig) as teleElig
     from telecare
     group by icn_nbr;
-quit;
+quit; *52866266 rows and 3 column;
 
 * telehealth is: primary care, tele eligible and a telehealth service ;
 proc sql;
@@ -359,7 +358,7 @@ create table teleCare_FINAL as
     on a.icn_nbr = b.icn_nbr 
   where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
 
-quit;
+quit; * 1170229 rows and 25 columns.;
 
 * monthy telehealth encounters and costs, per client ;
 proc sql;
@@ -372,33 +371,27 @@ create table teleCare_monthly as
   from teleCare_FINAL
   group by mcaid_id, month;
 
-quit;
-
-DATA  data.teleCare_monthly;
-SET   teleCare_monthly;
-RUN;
+quit; *1015124 : 4 ; 
 
 * Get FY7 years ;
-DATA  data.teleCare_monthly ;
-SET   data.teleCare_monthly ;
-WHERE month ge '01Jul2015'd 
+DATA  tmp.teleCare_monthly ;
+SET   teleCare_monthly ;
+WHERE month ge '01Jul2016'd 
 AND   month le '30Jun2022'd ; 
 format month date9.;
 fy7=year(intnx('year.7', month, 0, 'BEGINNING')) ; 
 RUN; *932892, 5; 
 
+* Subset to memlist ; 
 PROC SQL; 
-CREATE TABLE data.memlist_tele_monthly AS
+CREATE TABLE tmp.memlist_tele_monthly AS
 SELECT *
 FROM   data.teleCare_monthly
 WHERE  mcaid_id IN ( SELECT mcaid_id FROM data.memlist ) ; 
-QUIT; 
+QUIT; *908045, 5; 
 
-proc print data = data.memlist_tele_monthly ( obs = 1000) ; run;
+PROC SORT DATA = tmp.memlist_tele_monthly ; BY mcaid_id ; RUN ; 
+proc print data = data.memlist_tele_monthly ( obs = 15) ; run;
 
-PROC FREQ 
-     DATA = data.teleCare_monthly;
-     TABLES month ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-     TITLE  'Frequency month';
-RUN; 
-TITLE; 
+
+
