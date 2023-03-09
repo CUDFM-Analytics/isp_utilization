@@ -22,6 +22,9 @@
   %LET data = &util/data;
   LIBNAME data "&data"; 
 
+  %LET raw = &data/raw;
+  LIBNAME raw "&raw";
+
   * Datasets used to create the final analysis dataset; 
   %LET tmp = &data/interim;
   LIBNAME tmp "&tmp"; 
@@ -31,6 +34,8 @@
 
   * exports / excel files out, reports; 
   %LET results = &util/results;
+
+
 
 * VARLEN; 
   %LET varlen = \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengths;

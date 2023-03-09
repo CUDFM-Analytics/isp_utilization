@@ -10,7 +10,7 @@ CHANGES    : tmp is interim files
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 ***********************************************************************************************;
 
-* ---- SECTION 01 ------------------------------------------------------------------------------
+* ---- SECTION01 ------------------------------------------------------------------------------
 Create isp id dataset
  - Need date practice started ISP for the time varying cov
  - Covariate ISP participate pcmp at any time
@@ -101,7 +101,6 @@ set  tmp.isp_key;
 pcmp_loc_id = put(id_pcmp, best.-L); 
 run ;
 
-
 * ==== SECTION02 RAE ==============================================================================
 Get RAE_ID and county info
 Inputs      Kim/county_co_data.csv
@@ -114,7 +113,6 @@ SET  tmp.rae;
 HCPF_County_Code_C = put(HCPF_County_Code,z2.); 
 RUN; 
 
-
 * ==== SECTION03 ==============================================================================
 get original longitudinal & demographics files 
 process: 15_22 dataset, 19_22 dataset, and memlist (S4), join RAE
@@ -124,7 +122,6 @@ Inputs      ana.qry_longitudinal  [1,177,273,652 : 25] 2023-02-09
 Outputs     data/qrylong_y15_22   [    78680146 : 25]
 Notes       Got from Jake and did all in R, just got the _c var here 
 ;
-
 proc contents data = ana.qry_longitudinal ; run ; 
 
 * copy datasets from ana.;
@@ -245,8 +242,8 @@ RUN ;
 * ---- SECTION05 BHO Data ------------------------------------------------------------------------------
 Get BH data from analytic subset: keep all (updated specs on 3/7 to include hosp) 
 [bho_n_er, bho_n_hosp, bho_n_other]
-Inputs      ana.qry_bho_mothlyutil_working [6405694 : 7] 2023-03-08
-Outputs     tmp.bho_fy6                    [4208734 : 7] 2023-03-08;
+Inputs      ana.qry_bho_mothlyutil_working [6405694 : 7] 2023-03-09
+Outputs     tmp.bh_1618, tmp.bh_1922       [4208734 : 7] 2023-03-09;
  
 DATA bho_0;
 SET  ana.qry_bho_monthlyutil_working; 
@@ -254,14 +251,24 @@ month2 = month;
 FORMAT month2 date9.;
 DROP   month;
 RENAME month2 = month; 
-run; *6405694 observations and 5 variables;
+WHERE  month ge '01Jul2016'd
+AND    month le '01Jul2022'd;
+FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
+run; *4208734 observations and 5 variables;
 
-* subset 2016 - 2022; 
-DATA   tmp.bho_fy6  ; 
-SET    bho_0  ; 
-WHERE  month ge '01JUL2016'd 
-AND    month le '01JUL2022'd;
-RUN; *The data set WORK.BHO_1 has 4208734 observations and 5 variables;
+* subset FY16-18 and FY19-21; 
+DATA tmp.bh_1922 bh_1618  ; 
+SET  bho_0  ; 
+IF   month ge '01JUL2019'd THEN OUTPUT tmp.bh_1922;
+ELSE OUTPUT bh_1618;
+RUN; 
+*The data set tmp.bh_1922 has 2277105 observations and 5 variables.
+ The data set TMP.BH_1618 has 1931629 observations and 5 variables.;
+
+* ---- SECTION06 BH_XX16, BH_XX17, BH_XX18  ------------------------------------------------- ; 
+data bh_cat ; 
+set  tmp.bh_fy6 ( where = (month ge '01JUL2016'd 
+
 
 *----------------------------------------------------------------------------------------------
 SECTION06 Get Monthly Utilization Data

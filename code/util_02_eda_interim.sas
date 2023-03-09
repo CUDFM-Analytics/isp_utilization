@@ -13,15 +13,29 @@
 *----------------------------------------------------------------------------------------------
 SECTION01 Data Dictionary for tmp
 ----------------------------------------------------------------------------------------------;
+
+
+proc sql;
+create table contents as
+select libname
+     , memname
+     , nobs
+     , nvar
+     , delobs
+     , nlobs
+from dictionary.tables
+where libname = upcase("TMP");
+quit;
+
 proc sql;
 create table columns as
 select *
 from sashelp.vcolumn 
-where libname = upcase("TMP");
+where libname = upcase("tmp");
 quit;
 
 proc print data=columns noobs;
-var memname name type length format informat label;
+var memname nvar nobs name type length format informat label;
 run;  
 
 * Export to excel for varnames ; 
@@ -39,9 +53,9 @@ PROC CONTENTS DATA = tmp.bho_fy6              VARNUM ; RUN ;
 PROC CONTENTS DATA = tmp.memlist              VARNUM ; RUN ; 
 PROC CONTENTS DATA = tmp.qrylong_16_22        VARNUM ; RUN ; 
 PROC CONTENTS DATA = tmp.memlist_tele_monthly VARNUM ; RUN ; 
+PROC CONTENTS DATA = tmp.memlist_tele_monthly VARNUM ; RUN ; 
 
-ods excel close; 
-run;
+ods excel close; run;
 
 *----------------------------------------------------------------------------------------------
 SECTION02 Frequencies
