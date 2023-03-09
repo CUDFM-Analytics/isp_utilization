@@ -209,10 +209,8 @@ LEFT JOIN tmp.rae AS b
 ON a.enr_cnty = b.hcpf_county_code_c; 
 QUIT; *53384196 rows and 19 columns.;
 
-
-
 * ---- SECTION 4 Create memlist ------------------------------------------------------------------------------
-Get unique mcaid_id from 15-22 subset
+Get unique mcaid_id from 16-22 subset
  - At first it copies three columns but then keeps only mcaid_id
  - Gets memlist for 19-22 
 
@@ -221,7 +219,7 @@ Outputs     data/memlist
 Notes       1594687 members for timeframe 01JUL2019-30JUN2022 (memlist)
 ;
 
-PROC SORT DATA  = tmp.qrylong_y19_22 ( KEEP = mcaid_id month pcmp_loc_ID ) 
+PROC SORT DATA  = tmp.qrylong_16_22 ( KEEP = mcaid_id month pcmp_loc_ID ) 
      NODUPKEY
      OUT        = memlist_0 
      ; 
@@ -229,109 +227,76 @@ WHERE pcmp_loc_ID ne ' '
 AND   month ge '01Jul2019'd 
 AND   month le '30Jun2022'd;
 BY    mcaid_id month; 
-RUN; *1594348;
+RUN; 
 
 * kept only mcaid_id
 * ( if running again, can go straight from memlist_0 to here - I had in other code that should not have been ); 
-DATA data.memlist; 
-set  data.memlist ( keep = mcaid_id ) ; 
+DATA memlist_1; 
+set  memlist_0 ( keep = mcaid_id ) ; 
 run; 
+
+PROC SORT 
+DATA = memlist_1 NODUPKEY
+OUT  = tmp.memlist;
+BY   mcaid_id; 
+RUN ; 
 * 1594687 members for timeframe 01JUL2019-30JUN2022;   
 
-
-* ---- SECTION 5 Get BHO Data -------------------------O-----------------------------------------------------
-Get from analytic subset, keep ER & other
-01JUL2019 >= month < 01JUL022
-
-Inputs      ana.qry_bho_mnothlyutil_working [6405694 : 7] 2023-02-24
-Outputs     data.bho                        [4767794 : 7] 2023-02-09
-;
-
-DATA qry_bho_monthlyutil_working; SET ana.qry_bho_monthlyutil_working; RUN; *02/09/23 [   6,405,694  :  7];
-
-*convert to a month; 
+* ---- SECTION05 BHO Data ------------------------------------------------------------------------------
+Get BH data from analytic subset: keep all (updated specs on 3/7 to include hosp) 
+[bho_n_er, bho_n_hosp, bho_n_other]
+Inputs      ana.qry_bho_mothlyutil_working [6405694 : 7] 2023-03-08
+Outputs     tmp.bho_fy6                    [4208734 : 7] 2023-03-08;
+ 
 DATA bho_0;
-SET  qry_bho_monthlyutil_working;
+SET  ana.qry_bho_monthlyutil_working; 
 month2 = month;
 FORMAT month2 date9.;
 DROP   month;
 RENAME month2 = month; 
 run; *6405694 observations and 5 variables;
 
-* subset 2015 - 2022; 
-DATA   bho_1  ; 
-SET    bho_0 ( DROP = bho_n_hosp ) ; 
-WHERE  month ge '01JUL2019'd 
+* subset 2016 - 2022; 
+DATA   tmp.bho_fy6  ; 
+SET    bho_0  ; 
+WHERE  month ge '01JUL2016'd 
 AND    month le '01JUL2022'd;
-RUN; *NOTE: The data set WORK.BHO_1 has 4767794 observations and 4 variables.;
+RUN; *The data set WORK.BHO_1 has 4208734 observations and 5 variables;
 
-* sum by month ; 
-PROC SQL; 
- CREATE TABLE data.bho_19_22 AS
- SELECT MCAID_ID
-      , month
-      , sum(bho_n_er    ) as bh_n_er
-      , sum(bho_n_other ) as bh_n_other
-from bho_1
-group by MCAID_ID, month;
-quit; 
-
-* ==== add format FY7 to bho dataset 02/21 =======================; 
-data   data.bho_19_22; 
-set    data.bho_19_22; 
-format month date9.;
-fy     = year(intnx('year.7', month, 0, 'BEGINNING')); 
-run; 
-
-* ---- SECTION 6 Get Monthly Utilization Data ------------------------------------------------------------------------------
-Get monthly n & pd from ana. for 19-22 records
-
-Inputs      ana.qry_monthly_utilization     [111,221,842 : 7] 2023-02-09
-Outputs     data.util_month_y15_22          [ 77,273,443 : 7] 2023-02-09
-;
+*----------------------------------------------------------------------------------------------
+SECTION06 Get Monthly Utilization Data
+    Need for adj_pd_total_YRcat (16,17,18) and other outcomes
+    Inputs      ana.qry_monthly_utilization     [111,221,842 : 7] 2023-02-09
+    Outputs     data.util_month_fy6             [ 66,367,624 : 7] 2023-03-08
+----------------------------------------------------------------------------------------------;
 
 DATA  qry_monthly_utilization;     
-SET   ana.qry_monthlyutilization ( WHERE = ( month ge '01Jul2019'd and month le '30Jun2022'd ) ) ;  
-RUN; 
-* 2/27 [33767742 : 5] with 2019july set ;
-*02/09/23 [111,221,842   :  7];
+SET   ana.qry_monthlyutilization ( WHERE = ( month ge '01Jul2016'd and month le '30Jun2022'd ) ) ;  
+RUN; * 663676624;
 
-* Re-factor clmClass as clmClass_r ;
 DATA  util0;
 SET   qry_monthly_utilization;  
-
-fy3        = year(intnx('year.7', month, 0, 'B'));
-clmClass_r = clmClass ; 
-
-format clmClass_r clmClass_r.;
 format month      date9.;
 RUN; 
-* 2/27 [33767742 : 7] with 2019july set ;
 
+* COST: rx, pc, total
+* UTIL: PC, ED (no total); 
 proc sql;
-create table data.util_19_22 as
+create table tmp.util_fy6 as
 select mcaid_id
      , month
-     , sum(case when clmClass = 4 then pd_amt else 0 end) as pd_amt_pc
-     , sum(case when clmClass = 2 then pd_amt else 0 end) as pd_amt_rx
-     , sum(pd_amt) as pd_amt_total
-     , sum(case when clmClass = 4 then count else 0 end) as n_pc
-     , sum(case when clmClass = 3 then count else 0 end) as n_er
-     , sum(count) as n_total
+     , sum(case when clmClass = 2 then pd_amt else 0 end) as pd_ffs_rx
+     , sum(case when clmClass = 4 then pd_amt else 0 end) as pd_ffs_pc
+     , sum(pd_amt)                                        as pd_ffs_total
+     , sum(case when clmClass = 4 then count  else 0 end) as n_ffs_pc
+     , sum(case when clmClass = 3 then count  else 0 end) as n_ffs_er
 from util0
 group by MCAID_ID, month;
-quit; *16700349 : 8 ;
+quit; *Table TMP.UTIL_FY6 created, with 32830948 rows and 7 columns. ;
 
-proc print data = data.util_19_22 (obs = 500) ; run ; 
+proc print data = tmp.util_fy6 (obs = 50) ; run ; 
 
 * ---- SECTION 7 Get Telehealth records ---------------------------------------------------------------------
-
-;
-
-* database location ;
-
-libname ana 'S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset'; * reset to : M:\HCPF_SqlServer\AnalyticSubset ;
-option fmtsearch=(ana);
 
 * primary care records ;
 data pc;
@@ -340,7 +305,6 @@ data pc;
     and ER NE 1
     and primCare = 1;
 run;* 43044039;
-
 
 * telehealth records ;
 proc format;

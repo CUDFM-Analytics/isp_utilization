@@ -32,11 +32,6 @@
   * exports / excel files out, reports; 
   %LET results = &util/results;
 
-  * interim / temporary files like proc contents output for eda mid-processing, etc. 
-  proc contents, freqs too: ;
-  %LET tmp = &util/interim;
-  LIBNAME tmp "&tmp"; 
-
 * VARLEN; 
   %LET varlen = \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengths;
   LIBNAME varlen "&varlen";
