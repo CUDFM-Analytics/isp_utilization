@@ -254,7 +254,7 @@ RENAME month2 = month;
 WHERE  month ge '01Jul2016'd
 AND    month le '01Jul2022'd;
 FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
-run; *4208734 observations and 5 variables;
+run; *4208734 observations and 6 variables;
 
 * subset FY16-18 and FY19-21; 
 DATA tmp.bh_1922 bh_1618  ; 
@@ -262,12 +262,20 @@ SET  bho_0  ;
 IF   month ge '01JUL2019'd THEN OUTPUT tmp.bh_1922;
 ELSE OUTPUT bh_1618;
 RUN; 
-*The data set tmp.bh_1922 has 2277105 observations and 5 variables.
- The data set TMP.BH_1618 has 1931629 observations and 5 variables.;
+*The data set tmp.bh_1922 has 2277105 observations and 6 variables.
+ The data set TMP.BH_1618 has 1931629 observations and 6 variables.;
 
 * ---- SECTION06 BH_XX16, BH_XX17, BH_XX18  ------------------------------------------------- ; 
-data bh_cat ; 
-set  tmp.bh_fy6 ( where = (month ge '01JUL2016'd 
+PROC SQL; 
+CREATE TABLE bh_cat AS 
+SELECT mcaid_id
+     , FY
+     , sum(bho_n_er   ) as n_bh_er
+     , sum(bho_n_hosp ) as n_bh_hosp
+     , sum(bho_n_other) as n_bh_other
+FROM bh_1618
+GROUP BY mcaid_id, FY; 
+QUIT ; *493163 : 5 ; 
 
 
 *----------------------------------------------------------------------------------------------
