@@ -26,16 +26,14 @@
   LIBNAME raw "&raw";
 
   * Datasets used to create the final analysis dataset; 
-  %LET tmp = &data/interim;
-  LIBNAME tmp "&tmp"; 
+  %LET int = &data/interim;
+  LIBNAME int "&int"; 
 
 /*  %LET feb = &util/data/hcpf_pres;*/
 /*  LIBNAME feb "&feb";*/
 
   * exports / excel files out, reports; 
   %LET results = &util/results;
-
-
 
 * VARLEN; 
   %LET varlen = \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengths;
@@ -53,15 +51,38 @@
 PROC FORMAT;
 
 VALUE age_cat_
-0 - 5 = "0-5" 
-6 -10 = "6-10" 
-11-15 = "11-15" 
-16-20 = "16-20" 
-21-44 = "21-44" 
-45-64 = "45-64" ;
+0 - 5 = 1
+6 -10 = 2
+11-15 = 3
+16-20 = 4 
+21-44 = 5
+45-64 = 6 ;
+
+VALUE budget_grp_new_
+5    = "MAGI TO 68% FPL"
+3    = "MAGI 69 - 133% FPL"
+6-10 = "Disabled"            
+11   = "Foster Care"
+12   = "MAGI Eligible Children"
+Other = "Other"; 
       
 VALUE pcmp_type_rc
-      32 = "FQHC"    45 = "RHC"     51 = "SHS"      61 = "IHS"      62 = "IHS"      Other = "Other"; 
+32 = "FQHC"    
+45 = "RHC"
+51 = "SHS"
+61 = "IHS"
+62 = "IHS"
+Other = "Other"; 
+
+VALUE adj_pd_total_YRcat_
+0 = "Not eligible for Health First Colorado during year"
+1 = "PMPM in YR is $0 (eligible but cost was 0)"
+2 = "PMPM YR >0 and <=50th percentile"
+3 = "PMPM YR >50th percentile and <=75th percentile"
+4 = "PMPM YR >75th percentile and <=90th percentile" 
+5 = "PMPM YR >90th percentile and <=95th percentile" 
+6 = "PMPM YR >95th percentile"
+Other = "Other";
 
 RUN;
 
