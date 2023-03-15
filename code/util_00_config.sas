@@ -61,7 +61,7 @@ VALUE age_cat_
 VALUE budget_grp_new_
 5    = "MAGI TO 68% FPL"
 3    = "MAGI 69 - 133% FPL"
-6-10 = "Disabled"            
+6-10 = "Disabled"  
 11   = "Foster Care"
 12   = "MAGI Eligible Children"
 Other = "Other"; 
@@ -74,7 +74,7 @@ VALUE pcmp_type_rc
 62 = "IHS"
 Other = "Other"; 
 
-VALUE adj_pd_total_YRcat_
+VALUE $adj_pd_total_YRcat_
 0 = "Not eligible for Health First Colorado during year"
 1 = "PMPM in YR is $0 (eligible but cost was 0)"
 2 = "PMPM YR >0 and <=50th percentile"

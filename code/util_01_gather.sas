@@ -10,98 +10,7 @@ CHANGES    : tmp is interim files
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 ***********************************************************************************************;
 
-* ---- SECTION01 ------------------------------------------------------------------------------
-Create isp id dataset
- - Need date practice started ISP for the time varying cov
- - Covariate ISP participate pcmp at any time
-
-Inputs      redcap.csv, datasets/isp_master_ids.sas7bdat
-Outputs     data/isp_key;
-
-%LET redcap = S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/isp_redcap.csv;
-* select columns and convert id_split to numeric (others??); 
-proc import datafile = "&redcap"
-    out  = redcap0
-    dbms = csv
-    replace;
-run;
-
-PROC IMPORT 
-     DATAFILE = &redcap
-     OUT      = redcap0 
-     DBMS     = csv
-     REPLACE;
-RUN; 
-
-PROC FREQ 
-     DATA = redcap0;
-     TABLES dt_prac_start_isp;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-     TITLE  'Frequency: Date practices started ISP';
-RUN; * all started on 01's ; 
-
-DATA   int.redcap; 
-SET    redcap0 ( KEEP = id_npi_redcap 
-                        id_npi_pcmp
-                        id_pcmp
-                        id_split 
-                        name_practice 
-                        dt_prac_start_isp 
-                        wave 
-                        pr_county
-                        fct_county_class   /* county classification of frontier, urban, rural. */
-               ); 
-* make pcmp numeric ;
-num_id_pcmp = input(id_pcmp, 8.);
-
-* reformat date variable to match on qry_longitudinal;
-dt_prac_isp = put(dt_prac_start_isp, date9.);
-label dt_prac_isp = "Formatted Date Start ISP";
-RUN;  * 122, 10 on 02/14;
-
-DATA isp_key0 ( KEEP = id_pcmp splitid ) ;
-SET  datasets.isp_masterids;
-id_npi  = input(practiceNPI, best12.);
-id_pcmp = input(pcmp_loc_id, best12.);
-RUN; 
-
-PROC SORT DATA = isp_key0    ; BY id_split id_pcmp ; 
-PROC SORT DATA = int.redcap ; BY id_split id_pcmp ; RUN; 
-
-DATA redcap;
-SET  int.redcap ( KEEP = id_split name_practice dt_prac_isp pr_county fct_county_class ) ;  
-RUN; 
-
-PROC SQL;
-CREATE TABLE int.isp_key AS 
-SELECT coalesce ( a.id_split , b.splitID ) as id_split
-     , a.name_practice
-     , a.pr_county
-     , a.fct_county_class
-     , a.dt_prac_isp
-     , b.id_pcmp
-FROM redcap as A
-FULL JOIN isp_key0 as B
-ON  a.id_split = b.splitID;
-QUIT; * 153 ; 
-
-PROC SORT DATA = int.isp_key NODUPKEY; BY _ALL_ ; RUN; 
-* 30 duplicates, 123 remain; 
-
-ods trace on; 
-PROC FREQ 
-     DATA = int.isp_key NLEVELS ;
-     TABLES _all_ ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-     TITLE  'Frequency isp_key';
-RUN; 
-TITLE; 
-ods trace off;
-
-data int.isp_key; 
-set  int.isp_key; 
-pcmp_loc_id = put(id_pcmp, best.-L); 
-run ;
-
-* ==== SECTION02 RAE ==============================================================================
+* ==== SECTION01 RAE ==============================================================================
 Get RAE_ID and county info
 Inputs      Kim/county_co_data.csv
 Outputs     data/isp_key
@@ -113,22 +22,23 @@ SET  int.rae;
 HCPF_County_Code_C = put(HCPF_County_Code,z2.); 
 RUN; 
 
-* ==== SECTION03 ==============================================================================
+* ==== SECTION02 ==============================================================================
 get original longitudinal & demographics files 
 process: 15_22 dataset, 19_22 dataset, and memlist (S4), join RAE
 create vars: FY, last_day_fy, age for subsetting 0-64
-Inputs      ana.qry_longitudinal  [1,177,273,652 : 25] 2023-02-09
-            ana.qry_demographics  [  3008709     :  7] 2023-02-09
-Outputs     data/qrylong_y15_22   [    78680146 : 25]
+Inputs      ana.qry_longitudinal  [1,177,273,652 : 25] 2023-03-14
+            ana.qry_demographics  [      3008709 :  7] 2023-03-14
+Outputs     int/qrylong_1621      [     78680146 : 25]
 Notes       Got from Jake and did all in R, just got the _c var here 
 ;
 
 * copy datasets from ana.;
+PROC CONTENTS DATA = ana.qry_demographics VARNUM ; RUN ; 
 DATA qry_longitudinal;            SET ana.qry_longitudinal;            RUN; *02/09/23 [1,177,273,652 : 25];
 DATA qry_demographics;            SET ana.qry_demographics;            RUN; *02/09/23 [  3008709     :  7];
 
 * subset qrylong to dates within FY's and get var's needed ;  
-DATA   qrylong_16_22;
+DATA   qrylong_1621;
 LENGTH mcaid_id $11; 
 SET    ana.qry_longitudinal ( DROP = FED_POV: 
                                      DISBLD_IND 
@@ -147,11 +57,8 @@ pcmp_type     = put(num_pcmp_type, pcmp_type_rc.);
 
 WHERE  month ge '01Jul2016'd 
 AND    month le '30Jun2022'd 
-AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
-AND    managedCare = 0
-AND    pcmp_loc_id ne ''
-AND    rae_assign = 1;
-RUN;  * 55625167 observations and 10;
+AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
+RUN;  * 95609204  observations and 10;
 
 * join with demographics to get required demographics in all years ; 
 PROC SQL; 
@@ -161,14 +68,16 @@ SELECT a.*,
        b.gender as sex, 
        b.race,
        b.ethnic
-FROM   qrylong_16_22 AS a 
+FROM   qrylong_1621 AS a 
 LEFT JOIN ana.qry_demographics AS b 
 ON     a.mcaid_id=b.mcaid_id ;
 QUIT; 
-* 55625167, 14;
+* 95609204, 14;
 
-DATA qrylong_1621b ( DROP = age_end_fy last_day_fy num_pcmp_type rae_assign budget_group ); 
+DATA qrylong_1621b ( DROP = age_end_fy last_day_fy dob ); 
 SET  qrylong_1621a;
+
+budget_grp_new = put(budget_group, budget_grp_new_.) ; 
 
 * create age variable;
   IF      month ge '01Jul2016'd AND month le '30Jun2017'd THEN last_day_fy='30Jun2017'd;
@@ -177,79 +86,56 @@ SET  qrylong_1621a;
   ELSE IF month ge '01Jul2019'd AND month le '30Jun2020'd THEN last_day_fy='30Jun2020'd;
   ELSE IF month ge '01Jul2020'd AND month le '30Jun2021'd THEN last_day_fy='30Jun2021'd;
   ELSE IF month ge '01Jul2021'd AND month le '30Jun2022'd THEN last_day_fy='30Jun2022'd;
-  * create FY variable; 
-  IF      last_day_fy = '30Jun2017'd then FY = 'FY_1617';
-  ELSE IF last_day_fy = '30Jun2018'd then FY = 'FY_1718';
-  ELSE IF last_day_fy = '30Jun2019'd then FY = 'FY_1819';
-  ELSE IF last_day_fy = '30Jun2020'd then FY = 'FY_1920';
-  ELSE IF last_day_fy = '30Jun2021'd then FY = 'FY_2021';
-  ELSE IF last_day_fy = '30Jun2022'd then FY = 'FY_2122';
 
   age_end_fy = floor( (intck('month', dob, last_day_fy) - (day(last_day_fy) < min(day(dob), day(intnx ('month', last_day_fy, 1) -1)))) /12 );
 
   * remove if age not in range;
   IF age_end_fy lt 0 or age_end_fy gt 64 THEN delete;
   FORMAT last_day_fy date9.;
+
   FY  = year(intnx('year.7', month, 0, 'BEGINNING'));
 
   age = age_end_fy;
   format age age_cat_.;
   
-  * create categorical variable for budgetgroup and pcmp_type; 
-  budget_grp_new = put(BUDGET_GROUP, budget_grp_new_.); 
-  pcmp_type      = put(num_pcmp_type, pcmp_type_rc_.); 
-  
-RUN; *53384196 : 18;
+RUN; *91562324 : 13;
 
-proc datasets nolist lib=work; delete  qrylong_16_22;; quit; run; 
+proc datasets nolist lib=work; delete qrylong_1621a; quit; run; 
 
-* join rae info ; 
-PROC SQL; 
-CREATE TABLE int.qrylong_1621 AS 
-SELECT a.*
-     , b.rae_id as rae_person_new
-FROM qrylong_16_22b AS A
-LEFT JOIN int.rae AS b
-ON a.enr_cnty = b.hcpf_county_code_c; 
-QUIT; *53384196 rows and 19 columns.;
-
-DATA int.qrylong_1921 ; 
-SET  int.qrylong_1621 ; 
-WHERE  month ge '01Jul2019'd 
-AND    month le '30Jun2022'd ; 
-RUN ; * 40999955 boom ; 
-
-* ---- SECTION04 Create memlist ------------------------------------------------------------------------------
-Get unique mcaid_id from 16-22 subset
- - At first it copies three columns but then keeps only mcaid_id
- - Gets memlist for 19-22 
-
-Inputs      data.qrylong_y15_22
-Outputs     data/memlist
-Notes       1594687 members for timeframe 01JUL2019-30JUN2022 (memlist)
-;
-
-PROC SORT DATA  = int.qrylong_16_22 ( KEEP = mcaid_id month pcmp_loc_ID ) 
-     NODUPKEY
-     OUT        = memlist_0 
-     ; 
+PROC SORT DATA = qrylong_1621b (KEEP = mcaid_id month pcmp_loc_id rae_assign managedCare) 
+     NODUPKEY OUT= int.memlist;
 WHERE pcmp_loc_ID ne ' ' 
-AND   month ge '01Jul2019'd 
-AND   month le '30Jun2022'd;
-BY    mcaid_id month; 
+AND   rae_assign = 1
+AND   managedCare = 0
+AND   month ge '01JUL2019'd
+AND   month le '30JUN2022'd;
+BY    MCAID_ID;
+RUN ;  * memlist 1594348 : 5 ; 
+
+* subset FY1618 and FY1921; 
+DATA int.qrylong_1921 int.qrylong_1618  ; 
+SET  qrylong_1621b ; 
+IF   month ge '01JUL2019'd THEN OUTPUT int.qrylong_1921;
+ELSE OUTPUT int.qrylong_1618;
 RUN; 
+* 03/14 
+NOTE: The data set INT.QRYLONG_1921 has 47093480 observations and 16 variables.
+NOTE: The data set INT.QRYLONG_1618 has 44468844 observations and 16 variables.; 
 
-* kept only mcaid_id;
-DATA memlist_1; 
-set  memlist_0 ( keep = mcaid_id ) ; 
-run; 
-
-PROC SORT 
-DATA = memlist_1 NODUPKEY
-OUT  = int.memlist;
-BY   mcaid_id; 
+DATA abr_1618 ; 
+SET  int.qrylong_1618 (KEEP = mcaid_id FY month) ; 
 RUN ; 
-* 1594348 members for timeframe 01JUL2019-30JUN2022;   
+
+* Eligibility by Year for FY16, 17 18 ; 
+DATA int.elig_16 ( KEEP = mcaid_id FY ) int.elig_17 ( KEEP = mcaid_id FY ) int.elig_18 ( KEEP = mcaid_id FY ) ; 
+SET  abr_1618  ; 
+IF   FY = 2016 then OUTPUT int.elig_16 ; 
+IF   FY = 2017 then OUTPUT int.elig_17 ;
+ELSE output int.elig_18;
+RUN ; 
+*NOTE: The data set INT.ELIG_16 has 15349658 observations and 1 variables.
+ NOTE: The data set INT.ELIG_17 has 14934726 observations and 1 variables.
+ NOTE: The data set INT.ELIG_18 has 29534118 observations and 1 variables.; 
 
 * ---- SECTION05 BHO Data ------------------------------------------------------------------------------
 Get BH data from analytic subset: keep all (updated specs on 3/7 to include hosp) 
@@ -598,3 +484,12 @@ proc print data = int.memlist_tele_monthly ( obs = 15) ; run;
 
 
 
+* join rae info ; 
+PROC SQL; 
+CREATE TABLE int.qrylong_1621 AS 
+SELECT a.*
+     , b.rae_id as rae_person_new
+FROM qrylong_1621b AS A
+LEFT JOIN int.rae AS b
+ON a.enr_cnty = b.hcpf_county_code_c; 
+QUIT; *53384196 rows and 19 columns.;
