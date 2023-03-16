@@ -1,0 +1,39 @@
+---
+title: "readme"
+format: html
+date: today
+---
+
+## Pipeline  
+
+```{mermaid}
+
+flowchart TB
+ A["ana.qry_longitudinal\n(n=1177273652)"] --->|subset budgetgroup,\nmonths FY16-21 | B["qrylong_1621\n(nobs=95609204)"] 
+ ana.qry_demographics --->|dob,sex\nrace,ethnic | C
+ B ---> C["qrylong_1621a\n(n=95609204)"] 
+ C --> |age cat, budget_grp_new\nsubset ages | D["qrylong_1621b\n(n=91562324)"]
+ D ---> E["memlist\n(n=1594348)"] 
+
+```  
+## Terms  
+
+**Year Notation**    
+  - In Fiscal years, starting on 07-01-XX through 06-30-XX+1  
+  - Documented by first year of FY (e.g. `FY16` or `...16` refers to FY16-17)  
+  
+**Quarter**  
+1-12, where 1 = Q3 2016 and 12 = Q2 2022  
+
+## Dir Structure  
+
+```{r dir_tree}
+
+fs::dir_tree()
+
+```  
+
+
+
+
+

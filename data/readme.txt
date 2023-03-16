@@ -1,4 +1,4 @@
-This documentation file was generated on [2023-02-04] by [KTW]
+File generated on [2023-02-04] by [KTW]
 
 ------------------------------------------------------------------
 HCPF/Data/Kim/isp/isp_utilization/data/

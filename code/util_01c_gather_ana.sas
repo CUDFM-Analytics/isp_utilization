@@ -1,16 +1,15 @@
 **********************************************************************************************
-PROJECT    : ISP Utilization Analysis
-PROGRAMMER : KTW
-UPDATED ON : 03-07-2023 (new config file from MG) 
-PURPOSE    : Gather, Process datasets needed to create Final Analysis Datasets  
-CHANGES    : tmp is interim files
-           : new specs file from Mark / can reduce many files
+AUTHOR   : KTW
+PROJECT  : ISP Utilization Analysis
+PURPOSE  : Gather, Process datasets from analytic subset dir
+VERSION  : 2023-03-16 [date last updated]
+DEPENDS  : ana subset folder, config file [dependencies]
+NEXT     : [left off on row... or what step to do next... ]  ;
 
-*---- global paths, settings  ----------------------------------------------------------------;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 ***********************************************************************************************;
 
-* ==== SECTION01 RAE ==============================================================================
+* ==== SECTION01 RAE ===============================================
 Get RAE_ID and county info
 Inputs      Kim/county_co_data.csv
 Outputs     data/isp_key
@@ -28,7 +27,7 @@ process: 15_22 dataset, 19_22 dataset, and memlist (S4), join RAE
 create vars: FY, last_day_fy, age for subsetting 0-64
 Inputs      ana.qry_longitudinal  [1,177,273,652 : 25] 2023-03-14
             ana.qry_demographics  [      3008709 :  7] 2023-03-14
-Outputs     int/qrylong_1621      [     78680146 : 25]
+Outputs     UPDATE       [     78680146 : 25]
 Notes       Got from Jake and did all in R, just got the _c var here 
 ;
 
@@ -37,7 +36,7 @@ PROC CONTENTS DATA = ana.qry_demographics VARNUM ; RUN ;
 DATA qry_longitudinal;            SET ana.qry_longitudinal;            RUN; *02/09/23 [1,177,273,652 : 25];
 DATA qry_demographics;            SET ana.qry_demographics;            RUN; *02/09/23 [  3008709     :  7];
 
-* subset qrylong to dates within FY's and get var's needed ;  
+* **B** subset qrylong to dates within FY's and get var's needed ;  
 DATA   qrylong_1621;
 LENGTH mcaid_id $11; 
 SET    ana.qry_longitudinal ( DROP = FED_POV: 
@@ -60,7 +59,7 @@ AND    month le '30Jun2022'd
 AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
 RUN;  * 95609204  observations and 10;
 
-* join with demographics to get required demographics in all years ; 
+* **create C** join with demographics to get required demographics in all years ; 
 PROC SQL; 
 CREATE TABLE qrylong_1621a AS
 SELECT a.*, 
@@ -74,6 +73,7 @@ ON     a.mcaid_id=b.mcaid_id ;
 QUIT; 
 * 95609204, 14;
 
+** Create D ** ; 
 DATA qrylong_1621b ( DROP = age_end_fy last_day_fy dob ); 
 SET  qrylong_1621a;
 
@@ -102,43 +102,36 @@ RUN; *91562324 : 13;
 
 proc datasets nolist lib=work; delete qrylong_1621a; quit; run; 
 
-PROC SORT DATA = qrylong_1621b (KEEP = mcaid_id month pcmp_loc_id rae_assign managedCare) 
-     NODUPKEY OUT= int.memlist;
+PROC SORT DATA = qrylong_1621b ; BY mcaid_id ; RUN ; 
+
+PROC SORT DATA = qrylong_1621b 
+      (KEEP = mcaid_id FY month pcmp_loc_id rae_assign managedCare) NODUPKEY OUT= int.memlist ( KEEP = mcaid_id FY managedCare)  ;
 WHERE pcmp_loc_ID ne ' ' 
 AND   rae_assign = 1
 AND   managedCare = 0
 AND   month ge '01JUL2019'd
 AND   month le '30JUN2022'd;
-BY    MCAID_ID;
+BY    MCAID_ID FY;
 RUN ;  * memlist 1594348 : 5 ; 
 
-* subset FY1618 and FY1921; 
-DATA int.qrylong_1921 int.qrylong_1618  ; 
-SET  qrylong_1621b ; 
-IF   month ge '01JUL2019'd THEN OUTPUT int.qrylong_1921;
-ELSE OUTPUT int.qrylong_1618;
-RUN; 
-* 03/14 
-NOTE: The data set INT.QRYLONG_1921 has 47093480 observations and 16 variables.
-NOTE: The data set INT.QRYLONG_1618 has 44468844 observations and 16 variables.; 
+* subset by memlist ; 
+DATA  int.qrylong_1618 ; 
+MERGE int.memlist (in=a KEEP=mcaid_id) qrylong_1621b (in=b) ; 
+BY    mcaid_id;
+IF    a; 
+RUN ;  *  75341946 :  16 ; 
 
-DATA abr_1618 ; 
-SET  int.qrylong_1618 (KEEP = mcaid_id FY month) ; 
-RUN ; 
+DATA int.memlist_1618 (KEEP = mcaid_id FY       ) ;
+SET  int.qrylong_1621 (KEEP = mcaid_id FY month ) ; 
+WHERE month ge '01JUL2016'd 
+AND   month le '30JUN2019'd; 
+RUN ; *32807214 : 2 ; 
 
-* Eligibility by Year for FY16, 17 18 ; 
-DATA int.elig_16 ( KEEP = mcaid_id FY ) int.elig_17 ( KEEP = mcaid_id FY ) int.elig_18 ( KEEP = mcaid_id FY ) ; 
-SET  abr_1618  ; 
-IF   FY = 2016 then OUTPUT int.elig_16 ; 
-IF   FY = 2017 then OUTPUT int.elig_17 ;
-ELSE output int.elig_18;
-RUN ; 
-*NOTE: The data set INT.ELIG_16 has 15349658 observations and 1 variables.
- NOTE: The data set INT.ELIG_17 has 14934726 observations and 1 variables.
- NOTE: The data set INT.ELIG_18 has 29534118 observations and 1 variables.; 
+PROC SORT DATA = int.memlist_1618 NODUPKEY ; BY _ALL_ ; RUN ; *3121594 ; 
 
-* ---- SECTION05 BHO Data ------------------------------------------------------------------------------
-Get BH data from analytic subset: keep all (updated specs on 3/7 to include hosp) 
+
+* ---- SECTION03 BHO Data ------------------------------------------------------------------------------
+Get BH data from analytic subset: keep all (updated 3/7 to include hosp) 
 [bho_n_er, bho_n_hosp, bho_n_other]
 Inputs      ana.qry_bho_mothlyutil_working [6405694 : 7] 2023-03-09
 Outputs     int.bh_1618, int.bh_1922       [4208734 : 7] 2023-03-09;
@@ -154,12 +147,19 @@ AND    month le '01Jul2022'd;
 FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
 run; *4208734 observations and 6 variables;
 
-* subset FY16-18 and FY19-21; 
-DATA int.bh_1922 bh_1618  ; 
+* subset to memlist ; 
+PROC SQL ; 
+CREATE TABLE memlist_bh_1621 AS 
+SELECT a.*
+     , b.
+
+* subset FY1618 and FY1921; 
+DATA int.bh_1921 bh_1618  ; 
 SET  bho_0  ; 
 IF   month ge '01JUL2019'd THEN OUTPUT int.bh_1922;
 ELSE OUTPUT bh_1618;
 RUN; 
+
 *The data set int.bh_1922 has 2277105 observations and 6 variables.
  The data set int.BH_1618 has 1931629 observations and 6 variables.;
 
@@ -216,7 +216,7 @@ PROC FREQ
      WHERE BH = 1;
 RUN; 
 
-* change missing to 0's (ask too) ; 
+* change missing to 0's ?? #DO (ask MG) ; 
 PROC STDIZE DATA = bh_1618_final 
      OUT         = int.bh_1618  (DROP = _NAME_)
      REPONLY 
@@ -224,7 +224,7 @@ PROC STDIZE DATA = bh_1618_final
 RUN ; *326235 obs 10 var;
 
 *----------------------------------------------------------------------------------------------
-SECTION06 Get Monthly Utilization Data
+SECTION04 Get Monthly Utilization Data
     Need for adj_pd_total_YRcat (16,17,18) and other outcomes
     Inputs      ana.qry_monthly_utilization     [111,221,842 : 7] 2023-02-09
     Outputs     data.util_month_fy6             [ 66,367,624 : 7] 2023-03-08
@@ -266,26 +266,13 @@ IF   month ge '01JUL2019'd THEN OUTPUT int.util_1921;
 ELSE OUTPUT util_1618;
 RUN; 
 * NOTE: The data set  INT.UTIL_1921 has 16700349 observations and 7 variables.
-  NOTE: The data set WORK.UTIL_1618 has 16130599 observations and 7 variables.
-;
+  NOTE: The data set WORK.UTIL_1618 has 16130599 observations and 7 variables;
 
 * get the last two digits of year for column names ; 
 DATA util_1618a ; 
 SET  util_1618  ; 
 FY   = substr(FY, length(FY)-2,4);
 RUN ; 
-
-            * check years are okay...; 
-            ODS GRAPHICS ON;
-            PROC FREQ 
-                 DATA = util_1618a ;
-                 TABLES FY / ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-                 TITLE  'Frequency...';
-            RUN; 
-            TITLE; 
-            ODS GRAPHICS OFF;
-
-            PROC CONTENTS DATA = util_1618a ; RUN ;
 
 * Create quarter variable so it'll match ; 
 DATA util_1618b ; 
@@ -314,9 +301,9 @@ SELECT mcaid_id
      , dt_qrtr
      , pd_ffs_total * index_2021_1 as adj_pd_total
 FROM int.util_1618c; 
-QUIT ; *NOTE: Table INT.UTIL_1618D created, with 16130599 rows and 5 columns. ; 
+QUIT ; *INT.UTIL_1618D created, with 16130599 rows and 5 columns. ; 
 
-* SUM the year total per member; 
+* SUM the year total per member ; 
 proc sql;
 create table util_1618e  as
 select mcaid_id
@@ -326,13 +313,19 @@ from int.util_1618d
 group by MCAID_ID, FY;
 quit; *NOTE: Table WORK.UTIL_1618E created, with 3252799 rows and 2 columns ;
 
-* Compare to memlist to get 0: Not eligible for HFC during year ; 
-DATA  elig_1618 (KEEP = FY mcaid_id); 
-SET   int.qrylong_16_22 ; 
-WHERE month lt '01JUL2019'd ; 
+* join the eligibility list for members int.memlist_elig1618 using abr_1618 (long format to match FY)
+  int.memlist_elig1618 is dummy variables for counting (save elsewhere??)  ; 
+DATA util_1618f ;
+merge abr_1618 util_1618e ; 
+by mcaid_id FY ; 
 RUN ; 
 
-PROC FREQ data = int.qrylong_16_22 ;  tables FY ; RUN ; 
+
+
+
+
+
+
 
 
 
@@ -378,7 +371,8 @@ PROC FREQ
      WHERE BH = 1;
 RUN; 
 
-* change missing to 0's (ask too) ; 
+* change missing to 0's (ask too) > 
+  create int.bh_1618; 
 PROC STDIZE DATA = bh_1618_final 
      OUT         = int.bh_1618  (DROP = _NAME_)
      REPONLY 

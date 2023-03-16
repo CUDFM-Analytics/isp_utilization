@@ -1,3 +1,33 @@
+LOG / DATA ACTIVITY  
+
+ 
+3/16   
+
+- created readme.qmd in root dir started
+- moved archive files out to own dir so cleans up the old stuff a bit  
+
+- CODE working notes: file `util_01c_gather_ana.sas`    
+  for var create `adj_pd_total_YRcat`, need medicaid eligibility for 16 17 18
+  - problem : data/qrylong_1621 didn't have 16, 17 : I think bc rae_assign==1, rae's started 2018? 
+	- row 130 : get eligibility for 16, 17, 18 
+	- delete int.qrylong_1621 (there was work.qrylong_1621b, wasn't saved before broken into 1618, 1921)?
+	  - named it zz_delete... for now, remove if you don't use again soon   
+	- work.abr_1618 [4,477,705]
+	- make FY 2 digits 
+	
+  picking up from 3/15's notes : 
+  - int.util_1618d 
+	- mcaid_id, FY, month, dt_qrtr (date of quarter starting), adj_pd_total   (checked to make sure there were still 0 vars, and there are). 
+  - util_1618e 
+    - 331
+	
+3/15 
+ - ended at int.util_1618d row 317 ish = start there   > saved progress but not finished. Need mem list for elig in 16 17 18
+ 
+
+
+-----------------------------------------------------------------------------------------
+
 readme for Kim/isp/isp_utilization/code/
 Last updated 20230221
 
