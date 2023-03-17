@@ -59,7 +59,7 @@ AND    month le '30Jun2022'd
 AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
 RUN;  * 95609204  observations and 10;
 
-* **create C** join with demographics to get required demographics in all years ; 
+* **create C ** join with demographics to get required demographics in all years ; 
 PROC SQL; 
 CREATE TABLE qrylong_1621a AS
 SELECT a.*, 
@@ -98,7 +98,7 @@ budget_grp_new = put(budget_group, budget_grp_new_.) ;
   age = age_end_fy;
   format age age_cat_.;
   
-RUN; *91562324 : 13;
+RUN; *;
 
 proc datasets nolist lib=work; delete qrylong_1621a; quit; run; 
 
@@ -112,14 +112,12 @@ AND   managedCare = 0
 AND   month ge '01JUL2019'd
 AND   month le '30JUN2022'd;
 BY    MCAID_ID FY;
-RUN ;  * memlist 1594348 : 5 ; 
+RUN ;  * memlist = n3903027 with 1594348 unique  : 5 ; 
 
-* subset by memlist ; 
-DATA  int.qrylong_1618 ; 
-MERGE int.memlist (in=a KEEP=mcaid_id) qrylong_1621b (in=b) ; 
-BY    mcaid_id;
-IF    a; 
-RUN ;  *  75341946 :  16 ; 
+* copy to int ; 
+DATA qrylong_1621b    ; 
+SET  int.qrylong_1621 ; 
+RUN ;  *75341946 : 16 ; 
 
 DATA int.memlist_1618 (KEEP = mcaid_id FY       ) ;
 SET  int.qrylong_1621 (KEEP = mcaid_id FY month ) ; 
@@ -129,12 +127,15 @@ RUN ; *32807214 : 2 ;
 
 PROC SORT DATA = int.memlist_1618 NODUPKEY ; BY _ALL_ ; RUN ; *3121594 ; 
 
-
-* ---- SECTION03 BHO Data ------------------------------------------------------------------------------
+DATA int.qrylong_1921 ; 
+SET  int.qrylong_1621 (DROP=rae_assign);
+WHERE month ge '01JUL2019'd 
+AND   month le '30JUN2022'd; 
+RUN ; 
+**************************************************************************
+* ---- SECTION03 BH Capitated --------------------------------------------
 Get BH data from analytic subset: keep all (updated 3/7 to include hosp) 
-[bho_n_er, bho_n_hosp, bho_n_other]
-Inputs      ana.qry_bho_mothlyutil_working [6405694 : 7] 2023-03-09
-Outputs     int.bh_1618, int.bh_1922       [4208734 : 7] 2023-03-09;
+**************************************************************************;
  
 DATA bho_0;
 SET  ana.qry_bho_monthlyutil_working; 
@@ -150,18 +151,20 @@ run; *4208734 observations and 6 variables;
 * subset to memlist ; 
 PROC SQL ; 
 CREATE TABLE memlist_bh_1621 AS 
-SELECT a.*
-     , b.
+SELECT *
+     , mcaid_id IN (SELECT mcaid_id FROM int.memlist) as keep 
+FROM bho_0 ; 
+QUIT ; *4208734 : 7 ; 
 
 * subset FY1618 and FY1921; 
 DATA int.bh_1921 bh_1618  ; 
-SET  bho_0  ; 
-IF   month ge '01JUL2019'd THEN OUTPUT int.bh_1922;
+SET  memlist_bh_1621 (WHERE=(KEEP = 1)) ; 
+IF   month ge '01JUL2019'd THEN OUTPUT int.bh_1921;
 ELSE OUTPUT bh_1618;
 RUN; 
 
-*The data set int.bh_1922 has 2277105 observations and 6 variables.
- The data set int.BH_1618 has 1931629 observations and 6 variables.;
+* The data set INT.BH_1921 has 2065126 observations and 7 variables.
+  The data set WORK.BH_1618 has 1552679 observations and 7 variables;
 
 * ----  BH_XX16, BH_XX17, BH_XX18  ------------------------------------------------- ; 
 PROC SQL; 
@@ -173,76 +176,64 @@ SELECT mcaid_id
      , sum(bho_n_other) as bh_oth
 FROM bh_1618
 GROUP BY mcaid_id, FY; 
-QUIT ; *3/14 [ 493163 : 5 ] ; 
+QUIT ; *3/14 [ 386384 : 5 ] ; 
 
-DATA bh_cat1 ; 
-SET  bh_cat ; 
-FY   = substr(FY, length(FY)-2,4);
-RUN ; 
-
-            * check years are okay...; 
-            ODS GRAPHICS ON;
-            PROC FREQ 
-                 DATA = bh_cat1;
-                 TABLES FY / ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-                 TITLE  'Frequency...';
-            RUN; 
-            TITLE; 
-            ODS GRAPHICS OFF;
-
-PROC TRANSPOSE DATA = bh_cat1 OUT = bh_cat_t ;
+PROC TRANSPOSE DATA = bh_cat OUT = bh_cat_t ;
 by mcaid_id FY;
 VAR bh_er bh_hosp bh_oth; 
 RUN ; 
 
-DATA int.bh_1618_long ( DROP = Col1); 
-SET  bh_cat_t;
+DATA int.bh_1618_long (DROP = Col1); 
+SET  bh_cat_t (RENAME=(_NAME_=bh_util));
 BH = col1 > 0; 
-RUN ;  
+label bh_util = "BH Visit Type" ; 
+RUN ;  *1159152 : 4 ; 
+
+        * Frequency ; 
+        ODS GRAPHICS ON ; 
+        PROC FREQ 
+             DATA = int.bh_1618_long;
+             TABLES bh_util*bh*FY / nopercent PLOTS = freqplot;
+        RUN; 
+        ODS GRAPHICS OFF ; 
 
 * transpose again to get wide: 1/3 would be 493,163 if everyone had 3 values; 
-PROC TRANSPOSE DATA = int.bh_1618_long OUT = bh_1618_final ;
+PROC TRANSPOSE DATA = int.bh_1618_long OUT = bh_1618_final (DROP = _NAME_);
 by mcaid_id;
 VAR bh ; 
-ID _NAME_ FY ; 
-RUN ; *326235 obs 11 var; 
+ID bh_util FY ; 
+RUN ; *250297 obs 11 var; 
 
-* Frequency for variables, just using long; 
-PROC SORT DATA = bh_1618_final ; BY _NAME_ ; RUN ; 
-PROC FREQ 
-     DATA = int.bh_1618_long;
-     BY _NAME_; 
-     TABLES FY ;
-     WHERE BH = 1;
-RUN; 
-
-* change missing to 0's ?? #DO (ask MG) ; 
+* change missing to 0's ; 
 PROC STDIZE DATA = bh_1618_final 
-     OUT         = int.bh_1618  (DROP = _NAME_)
+     OUT         = int.bh_1618 
      REPONLY 
      MISSING     = 0; 
-RUN ; *326235 obs 10 var;
+RUN ; *250297 obs 10 var;
 
 *----------------------------------------------------------------------------------------------
 SECTION04 Get Monthly Utilization Data
-    Need for adj_pd_total_YRcat (16,17,18) and other outcomes
+    Need 16-18 for adj_pd_total_YRcat (16,17,18) and 19-21 for outcome vars
     Inputs      ana.qry_monthly_utilization     [111,221,842 : 7] 2023-02-09
     Outputs     data.util_month_fy6             [ 66,367,624 : 7] 2023-03-08
 ----------------------------------------------------------------------------------------------;
+PROC SQL ; 
+CREATE TABLE util AS 
+SELECT * 
+     , mcaid_id IN (SELECT mcaid_id FROM int.memlist) AS keep 
+FROM   ana.qry_monthlyutilization 
+WHERE  month ge '01Jul2016'd 
+AND    month le '30Jun2022'd;  
+QUIT; * 663676624;
 
-DATA  qry_monthly_utilization;     
-SET   ana.qry_monthlyutilization ( WHERE = ( month ge '01Jul2016'd and month le '30Jun2022'd ) ) ;  
-RUN; * 663676624;
-
-DATA  util0;
-SET   qry_monthly_utilization;  
-format month      date9.;
-RUN; 
+DATA util0 ; 
+SET  util (where=(keep = 1)) ; 
+RUN ; * 55008620 : 6;
 
 * COST: rx, pc, total
 * UTIL: PC, ED (no total); 
 proc sql;
-create table int.util_fy6 as
+create table int.util_1621 as
 select mcaid_id
      , month
      , sum(case when clmClass = 2 then pd_amt else 0 end) as pd_ffs_rx
@@ -251,75 +242,77 @@ select mcaid_id
      , sum(case when clmClass = 4 then count  else 0 end) as n_ffs_pc
      , sum(case when clmClass = 3 then count  else 0 end) as n_ffs_er
 from util0
-group by MCAID_ID, month;
-quit; *Table int.UTIL_FY6 created, with 32830948 rows and 7 columns. ;
-
-proc print data = int.util_fy6 (obs = 50) ; run ; 
+group by MCAID_ID, month ; 
+quit; *Table int.UTIL_1621 created, with 27092342 rows and 7 columns. ;
 
 * SPLIT INTO 1618 for cat and 19-21 for outcomes ; 
-
-* subset FY16-18 and FY19-21; 
 DATA int.util_1921 util_1618 ; 
-SET  int.util_fy6 ; 
+SET  int.util_1621 ; 
 FY   = year(intnx('year.7', month, 0, 'BEGINNING'));
 IF   month ge '01JUL2019'd THEN OUTPUT int.util_1921;
 ELSE OUTPUT util_1618;
 RUN; 
-* NOTE: The data set  INT.UTIL_1921 has 16700349 observations and 7 variables.
-  NOTE: The data set WORK.UTIL_1618 has 16130599 observations and 7 variables;
-
-* get the last two digits of year for column names ; 
-DATA util_1618a ; 
-SET  util_1618  ; 
-FY   = substr(FY, length(FY)-2,4);
-RUN ; 
+* NOTE: The data set  INT.UTIL_1921 has 15013256 observations and 8 variables.
+  NOTE: The data set WORK.UTIL_1618 has 12079086 observations and 8 variables;
 
 * Create quarter variable so it'll match ; 
-DATA util_1618b ; 
-SET  util_1618a ; 
+DATA util_1618a ; 
+SET  util_1618 ; 
 format dt_qrtr date9.;
 /*q2 = put(month, yyq.);*/
 dt_qrtr = intnx('quarter', month ,0,'b');
-RUN ; 
+RUN ; *12079086;
 
 * Adjust vars ;
 PROC SQL ; 
-CREATE TABLE int.util_1618c AS 
+CREATE TABLE util_1618b AS 
 SELECT a.*
      , b.index_2021_1
-FROM util_1618b as a 
+FROM util_1618a as a 
 LEFT JOIN int.adj as b 
 ON a.dt_qrtr = b.date ; 
-QUIT ;  * 16130599 ; 
+QUIT ;  * 12079086 : 10 ; 
+
+        * Estimate expectation for dataset with one record per member nobs should be 
+            (but we're not reducing all years so it'll be higher) 
+          If avg=11 records per member, then 12million would reduce to about 1 million if 1 year only 
+          Final dataset exp ~ 2-3 million nobs; 
+
+        PROC SQL ; 
+        CREATE TABLE avg_n_id AS 
+        SELECT count(mcaid_id) as n_id
+        FROM util_1618b
+        GROUP BY mcaid_id ; 
+        QUIT ; 
+
+        PROC MEANS DATA = avg_n_id ; RUN ; 
+        PROC SGPLOT DATA = avg_n_id ; histogram n_id ; refline 11.48 9.88 8 / axis = x lineattrs=(color = darkred pattern = dash)
+        label = ("Mean" "SD" "Median"); RUN ;
 
 * Create variable ; 
 PROC SQL ; 
-CREATE TABLE int.util_1618d AS 
+CREATE TABLE int.util_1618c AS 
 SELECT mcaid_id
      , FY 
      , month 
      , dt_qrtr
      , pd_ffs_total * index_2021_1 as adj_pd_total
-FROM int.util_1618c; 
-QUIT ; *INT.UTIL_1618D created, with 16130599 rows and 5 columns. ; 
+FROM util_1618b; 
+QUIT ; *12079086 ; 
 
 * SUM the year total per member ; 
 proc sql;
-create table util_1618e  as
+create table int.util_1618d  as
 select mcaid_id
      , FY
      , sum(adj_pd_total) as adj_pd_fy
-from int.util_1618d 
+from int.util_1618c 
 group by MCAID_ID, FY;
-quit; *NOTE: Table WORK.UTIL_1618E created, with 3252799 rows and 2 columns ;
+quit; *2396891 : 3 - reduced to approx 1/5th ;
 
-* join the eligibility list for members int.memlist_elig1618 using abr_1618 (long format to match FY)
-  int.memlist_elig1618 is dummy variables for counting (save elsewhere??)  ; 
-DATA util_1618f ;
-merge abr_1618 util_1618e ; 
-by mcaid_id FY ; 
+DATA int.util_1618 ; 
+SET  int.util_1618d ; 
 RUN ; 
-
 
 
 
