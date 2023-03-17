@@ -7,13 +7,42 @@ date: today
 ## Pipeline  
 
 ```{mermaid}
-
-flowchart TB
- A["ana.qry_longitudinal\n(n=1177273652)"] --->|subset budgetgroup,\nmonths FY16-21 | B["qrylong_1621\n(nobs=95609204)"] 
- ana.qry_demographics --->|dob,sex\nrace,ethnic | C
- B ---> C["qrylong_1621a\n(n=95609204)"] 
+flowchart TD
+ A1["Get attr\nana.qry_longitudinal\n(n=1177273652)"] -->|subset budgetgroup,\nmonths FY16-21 | B["qrylong_1621\n(nobs=95609204)"] 
+ style A1 fill:#f9f
+ A2["Get demographics\nana.qry_demographics"] -->|dob,sex\nrace,ethnic | C  
+ style A2 fill:#f9f
+ B --> C["qrylong_1621a\n(n=95609204)"]   
  C --> |age cat, budget_grp_new\nsubset ages | D["qrylong_1621b\n(n=91562324)"]
- D ---> E["memlist\n(n=1594348)"] 
+ D --> | | D1["qrylong_1921\nall months\n(n=42534732)"] -->| unique mcaid_id, FY|E 
+  style D1 stroke:#333,stroke-width:4px
+ D --> E["MEMLIST\nby FY (19-21)\n(un n=1594348\nn=3903027)" ] --> F["qrylong_1621\n(n=75341946)"]  
+
+ style E stroke:#333,stroke-width:4px
+ style F stroke:#333,stroke-width:4px
+ D --> F 
+ 
+ F --> | | G["memlist_1618\n(unique n=3121594)"]  
+ style G stroke:#333,stroke-width:4px
+ A3["Get capitated BH\nana.qry_bho_monthly...\n(n=6405694)"] ---> |subset months | bho_0["bho_0\n(n=4208734)"] 
+  style A3 fill:#f9f 
+ bho_0 --> H["memlist_bh_1621\n(n=4208734)"]  
+ E --> H
+ H --> H2["bh_1618a\n(n=1552679)"] & H1["bh_1921\n(n=2065126)"]
+  style H1 stroke:#333,stroke-width:4px
+ H2 --> |sum vals by FY | bh_1618_long["bh_1618_long\n(n=386384)"] 
+ style bh_1618_long stroke:#333,stroke-width:4px
+ H2 --> |set missing to 0| bh_1618["bh_1618\n(n=250297)"]
+ style bh_1618 stroke:#333,stroke-width:4px
+
+ A4["Get FFS monthly\nana.qry_monthly...\n(n=111221842)"] --->|subset timeframe| A41["util\n(nobs=663676624)"] 
+ A41 --> A43["util_1621\n(n=27092432)"] 
+ style A43 stroke-dasharray: 5 5 
+ E --> A43
+ style A4 fill:#f9f
+ A43 --> A4a["util_1921\n(n=15013256)"] 
+ A43 --> | adj index by quarter\n`adj_pd_fy`| A4b["util_1618\n`adj_pd_fy`\n(n=2396891)"] 
+
 
 ```  
 ## Terms  
