@@ -14,37 +14,27 @@
 SECTION01 Data Dictionary for tmp
 ----------------------------------------------------------------------------------------------;
 
-
-proc sql;
-create table contents as
-select libname
-     , memname
-     , nobs
-     , nvar
-     , delobs
-     , nlobs
-from dictionary.tables
-where libname = upcase("TMP");
-quit;
-
-proc sql;
-create table columns as
-select *
-from sashelp.vcolumn 
-where libname = upcase("tmp");
-quit;
-
-proc print data=columns noobs;
-var memname nvar nobs name type length format informat label;
-run;  
+PROC sql ; 
+create table int_contents as 
+select memname
+     , name
+     , length
+     , label 
+     , format
+     , informat
+from dictionary.columns
+where upcase(libname)="INT" and memtype="DATA";
+quit; 
 
 * Export to excel for varnames ; 
-ods excel file = "&tmp./contents_TMP.csv"
+ods excel file = "&util./docs/contents_INT.csv"
     options (frozen_headers = "yes"
              autofilter = "all"
              flow = "tables" );   *so it doesn't include carriage breaks; 
 
-PROC PRINT DATA = columns; RUN; 
+PROC PRINT DATA = int_contents; RUN; 
+
+ods excel close; run;
 
 ods excel options ( sheet_interval = "now" sheet_name = "sheet") ; 
 

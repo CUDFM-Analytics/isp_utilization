@@ -1,12 +1,12 @@
 PROC CONTENTS 
-     DATA =  int.qrylong_1618
+     DATA =  int.util_1921
 VARNUM;
 RUN;
 
 
 PROC FREQ 
-     DATA = abr_1618;   
-     TABLES month * fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     DATA = int.adj;   
+/*     TABLES month * fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;*/
 RUN; 
 
 
@@ -50,3 +50,25 @@ PROC PRINT DATA = columns_DATA;
 RUN; 
 ods excel close; 
 run;
+
+PROC sql ; 
+create table adj_check_ids as 
+select mcaid_id
+     , count(mcaid_id) as n_id
+FROM util1621_adj
+group by mcaid_id ; 
+QUIT ; 
+
+
+PROC FREQ 
+     DATA = adj_check_ids ;
+     TABLES n_id;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'Frequency...';
+RUN; 
+TITLE; 
+
+
+proc contents data = int_contents varnum ; run ; 
+proc print data=columns noobs;
+var memname name type length format informat label;
+run; 

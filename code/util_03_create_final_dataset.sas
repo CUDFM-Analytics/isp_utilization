@@ -14,6 +14,8 @@
 proc sort data = data.qrylong_y15_22 ; by mcaid_id ;       *53384196; 
 proc sort data = data.memlist        ; by mcaid_id ; run ;  *1594686; 
 
+* Join final datasets > RAE, 
+
 * ==== Reduce qrylong to 19-22 only ==========================================;
 data  analysis0 ( drop = fy ) ;
 set   data.qrylong_y15_22;

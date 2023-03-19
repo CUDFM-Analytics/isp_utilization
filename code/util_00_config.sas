@@ -83,17 +83,35 @@ LOG
     62 = "IHS"
     Other = "Other"; 
 
-    VALUE $adj_pd_total_YRcat_
-    0 = "Not eligible for Health First Colorado during year"
-    1 = "PMPM in YR is $0 (eligible but cost was 0)"
-    2 = "PMPM YR >0 and <=50th percentile"
-    3 = "PMPM YR >50th percentile and <=75th percentile"
-    4 = "PMPM YR >75th percentile and <=90th percentile" 
-    5 = "PMPM YR >90th percentile and <=95th percentile" 
-    6 = "PMPM YR >95th percentile"
-    Other = "Other";
+    VALUE adj_pd_total_YRcat_
+    0 = 0
+    1 - 50  = 2
+    51 - 75 = 3
+    76 - 95 = 4
+    96 - 99 = 5 
+    Other = .;
 
     RUN;
+
+
+%macro create_qrtr(data=,set=,var=,qrtr=);
+data &data;
+set  &set; 
+if &var in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then &qrtr = 1;
+if &var in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then &qrtr = 2;
+if &var in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then &qrtr = 3;
+if &var in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then &qrtr = 4;
+if &var in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then &qrtr = 5;
+if &var in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then &qrtr = 6;
+if &var in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then &qrtr = 7;
+if &var in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then &qrtr = 8;
+if &var in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then &qrtr = 9;
+if &var in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then &qrtr = 10;
+if &var in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then &qrtr = 11;
+if &var in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then &qrtr = 12;
+run;
+%mend create_qrtr;
+
 
 * THIS SUCKS because it shows 0.87% as 87% but SAS stopped rounding my proc freqs so I don't know what to do; 
 * Remove it if you can ever figure that out... ; 
