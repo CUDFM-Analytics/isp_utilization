@@ -158,4 +158,28 @@ left join int.memlist_attr_qrtr_1921 as b
 on a.mcaid_id=b.mcaid_id and a.cat_qrtr = b.q ; 
 QUIT ; *7681680 rows and 13 columns;
 
+PROC SORT DATA = int.util1921_adj ; BY FY ; RUN ; 
+* Mean-preserving top codes ; 
+PROC RANK DATA = int.util1921_adj
+     GROUPS    = 100 
+     OUT       = util1921_adj_ranked;
+     VAR       pd_tot_q_adj pd_rx_q_adj; 
+     BY        FY ; 
+     RANKS     pd_tot_adj_fy_rank pd_rx_adj_fy_rank;
+RUN ; 
 
+
+******* ASK MARK WHAT TO DO *******************;  
+DATA above96_ffstotal ; 
+SET  util1921_adj_ranked ; 
+WHERE pd_tot_adj_fy_rank > 95 ; 
+RUN ; * 307266 ; 
+
+PROC PRINT DATA = util1921_adj_ranked ; WHERE pd_tot_adj_fy_rank > 95 OR pd_rx_adj_fy_rank > 95 ; RUN ; 
+
+* Look to see if rank matches with plot ;
+proc sgplot data = above96_ffstotal ; 
+scatter x = pd_tot_adj_fy_rank y=pd_tot_q_adj / markerattrs=(symbol=circlefilled) group = FY ; 
+RUN ; 
+
+PROC SORT DATA = above96_ffstotal ; BY pd_tot_adj_fy_rank ; RUN ; 

@@ -10,33 +10,88 @@
 * PROJECT PATHS, MAPPING; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 
-* ==== Combine datasets into monthly files ==================================;  
-proc sort data = data.qrylong_y15_22 ; by mcaid_id ;       *53384196; 
-proc sort data = data.memlist        ; by mcaid_id ; run ;  *1594686; 
+* ==== Combine datasets with memlist  ==================================;  
+proc sort data = int.memlist        ; by mcaid_id ; run ;  *1594686; 
 
-* Join final datasets > RAE, 
+* Join final datasets > A) RAE, B) 
+* ====  ==========================================;
+PROC SQL ; 
+CREATE TABLE a0 AS 
+SELECT *
+FROM  int.qrylong_1621 
+WHERE mcaid_id IN ( SELECT mcaid_id FROM int.memlist ) 
+AND   month ge '01JUL2019'd 
+AND   month le '30JUN2022'd 
+AND   pcmp_loc_id ne ' ' ;
+QUIT ; * 41000008 : 16 ; 
 
-* ==== Reduce qrylong to 19-22 only ==========================================;
-data  analysis0 ( drop = fy ) ;
-set   data.qrylong_y15_22;
-where month ge '01JUL2019'd 
-and   month le '30JUN2022'd ;
-run; 
-* 02/24: [40999955 : 28 variables];
+* a1 ; 
+%create_qrtr(data=a1,set=a0,var=month,qrtr=time);
 
-                * count unique members in analysis1;
-                proc sql; 
-                create table n_mem_analysis1 as 
-                select count ( distinct mcaid_id ) as n_mcaid_id 
-                from analysis0; 
-                quit; 
+* Add FY to memlist_attr_qrtr_1921 ; 
+data int.memlist_attr_qrtr_1921 (KEEP = mcaid_id 
+                                        FY
+                                        time 
+                                        pcmp_loc_id 
+                                        n_months_per_q
+                                        ind_isp); 
+SET  int.memlist_attr_qrtr_1921 (RENAME=(q=time 
+                                         n_pcmp_per_q=n_months_per_q)); 
+FY      = year(intnx('year.7', max_month, 0, 'BEGINNING')); * create FY variable ; 
+RUN ; *14649660 : 6 ; 
 
-                proc print data = n_mem_analysis1 ; run; * 1594348 2/28; 
+data isp_un_pcmp_dtstart ; 
+set  int.isp_un_pcmp_dtstart ; 
+format dt_qrtr date9.;
+dt_qrtr = intnx('quarter', dt_prac_isp ,0,'b'); 
+RUN ; 
 
-* ==== Join the three utilization files ==========================================;
+* Add time to int.isp_un_pcmp_dtstart ; 
+%create_qrtr(data=int.isp_un_pcmp_dtstart, set=isp_un_pcmp_dtstart, var = dt_qrtr, qrtr = time);
+
+DATA a1a ; 
+SET  a1 ; 
+pcmp = input(pcmp_loc_id, best12.) ; 
+drop pcmp_loc_id ; 
+rename pcmp = pcmp_loc_id ; 
+run ; 
+
+PROC SQL ; 
+CREATE TABLE a2 as 
+SELECT a.mcaid_id
+     , a.FY
+
+     , b.time
+     , b.pcmp_loc_id
+     , b.n_months_per_q
+     , b.ind_isp as intervention
+
+     , c.dt_prac_isp 
+     , c.time as isp_qrtr_start
+
+FROM int.memlist as A 
+/* has to be left join because b isn't age-subset  */
+LEFT JOIN int.memlist_attr_qrtr_1921 AS b 
+ON   a.mcaid_id = b.mcaid_id 
+AND  a.FY = b.FY  
+
+LEFT JOIN int.isp_un_pcmp_dtstart as c
+ON   b.pcmp_loc_id=c.pcmp_loc_id 
+AND  b.time = c.time; 
+
+QUIT ; *14053953 : 6 ; 
+
+
 proc sql; 
-create table analysis1 as 
+create table a3 as 
 select a.*
+
+     /* join RAE */
+     , b.rae_id
+
+     /* join RAE */
+     , b.rae_id
+
      /* join monthly */
      , b.pd_amt_pc
      , b.pd_amt_rx
@@ -53,7 +108,10 @@ select a.*
      , d.n_tele
      , d.pd_tele
 
-FROM analysis0 AS a
+FROM int.memlist AS a
+
+LEFT JOIN int.rae as b
+on a.enr_cnty = b.hcpf_county_code_c  
 
 LEFT JOIN data.util_19_22 AS b
 ON a.mcaid_id = b.mcaid_id AND a.month = b.month
@@ -96,30 +154,6 @@ proc freq data = analysis3 ; tables n_month ; run ;
 * add dt_prac_isp from isp to feb.unique_mem_quarter; 
 * get unique values for ISP pcmp_loc_id's and then remove where . ; 
 
-PROC SORT DATA = data.isp_key (WHERE = (pcmp_loc_id ne '.' ))  
-     NODUPKEY out =isp (KEEP = dt_prac_isp pcmp_loc_id)    ; 
-BY pcmp_loc_id dt_prac_isp ; 
-RUN ; *119; 
-
-DATA isp;
-SET  isp ; 
-dt_prac_isp2 = input(dt_prac_isp, date9.);
-FORMAT dt_prac_isp2 date9.;
-DROP   dt_prac_isp;
-RENAME dt_prac_isp2 = dt_prac_isp;
-RUN  ;  *118;
-
-* there was a duplicate pcmp_loc_id with two different start dates: pcmp 162015 
-* kids first id_split 3356 dt_start 01Mar2020 & their brighton high school id_split 3388 start date 01Jul2020
-* I chose the 01Mar one for this
-PER MARK G 2/28 = OK;
-data data.isp_un_pcmp;
-set  data.isp_un_pcmp ;
-if   pcmp_loc_id = "162015" and dt_prac_isp = '01JUL2020'd then delete ; 
-pcmp2 = input(pcmp_loc_id, 8.); 
-drop pcmp_loc_id;
-rename pcmp2 = pcmp_loc_id; 
-run ; *117;
 
 * left join unique_mem_quarter (don't want all attr, only the memlist) 
 * left join isp_un_pcmp for dt_prac_isp; 
