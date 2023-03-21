@@ -1,8 +1,11 @@
 PROC CONTENTS 
-     DATA = int.bh_1921
+     DATA = data.a5
 VARNUM;
 RUN;
 
+  proc print data = int.qrylong_1921 ; 
+            where mcaid_id in ("P861019", "L155867"); 
+            run ; 
 
 PROC FREQ 
      DATA = int.adj;   

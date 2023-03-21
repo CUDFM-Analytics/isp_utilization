@@ -116,8 +116,9 @@ SELECT a.*
        /* util1921_adj cols: n_pc_q n_er_q pd_rx_q_adj pd_pc_q_adj on cat_qrtr (= time)      */
      , b.n_pc_q 
      , b.n_er_q 
-     , b.pd_rx_q_adj 
-     , b.pd_pc_q_adj
+     , b.pd_rx_q_adj as pd_rx_q_adj_tc
+     , b.pd_tot_q_adj as pd_tot_q_adj_tc
+     , b.pd_pc_q_adj 
      , sum(b.n_er_q, a.sum_q_bh_er) as n_er_total
     
        /* tele cols:      */
@@ -127,7 +128,7 @@ FROM data.a3 as a
 
 LEFT JOIN int.util1921_adj as b
 ON a.mcaid_id = b.mcaid_id
-AND a.time    = b.cat_qrtr 
+AND a.time    = b.time
 
 LEFT JOIN int.tele_1921 as c
 ON a.mcaid_id = c.mcaid_id
@@ -135,48 +136,35 @@ AND a.time    = c.time ;
 
 QUIT ; 
 
-* replace missings with 0, then 
+* divide first so you don't divide by 0's? 
+drop the er var's that you added above (keep the summed one n_er_total);
+DATA data.a5 (DROP = pd_rx_q_adj_tc pd_tot_q_adj_tc pd_pc_q_adj n_pc_q n_q_tele n_er_total sum_q_bh_other) ; 
+SET  data.a4 (DROP = sum_q_bh_er n_er_q) ; 
+dv_pd_rx    = pd_rx_q_adj_tc /n_months_per_q ; 
+dv_pd_total = pd_tot_q_adj_tc/n_months_per_q ; 
+dv_pd_pc    = pd_pc_q_adj    /n_months_per_q ; 
+dv_n_pc     = n_pc_q         /n_months_per_q ; 
+dv_n_tele   = n_q_tele       /n_months_per_q ; 
+dv_n_er     = n_er_total     /n_months_per_q ; 
+dv_n_bh_oth = sum_q_bh_other /n_months_per_q ; 
+RUN ; 
+
+DATA data.a6 (drop=dv:); 
+SET  data.a5 ;
+cost_rx   = coalesce(dv_pd_rx,   0);
+cost_ffs  = coalesce(dv_pd_total,0);
+cost_pc   = coalesce(dv_pd_pc   ,0);
+util_pc   = coalesce(dv_n_pc    ,0);
+util_tele = coalesce(dv_n_tele  ,0);
+util_er   = coalesce(dv_n_er    ,0);
+util_bh_o = coalesce(dv_n_bh_oth,0);
+run ; 
+
                 ****************************;  
 * when joining rae ... 
 LEFT JOIN int.rae as b
 on a.enr_cnty = b.hcpf_county_code_c  ;
 
-
-* Add month count per quarter (to create pmpm n's, amt's) ;
-proc sql; 
-create table analysis3 as 
-select *
-     , count (month) as n_month
-from tmp.analysis2
-group by mcaid_id, q ; 
-quit;  *40999955; 
-
-proc freq data = analysis3 ; tables n_month ; run ; 
-
-* add dt_prac_isp from isp to feb.unique_mem_quarter; 
-* get unique values for ISP pcmp_loc_id's and then remove where . ; 
-
-
-* left join unique_mem_quarter (don't want all attr, only the memlist) 
-* left join isp_un_pcmp for dt_prac_isp; 
-PROC SQL; 
-CREATE TABLE analysis4 AS 
-SELECT a.*
-     , b.pcmp_loc_id AS pcmp_attr_qrtr
-     , b.ind_isp AS ind_isp_ever
-FROM analysis3 AS a
-LEFT JOIN feb.unique_mem_quarter AS b
-ON a.mcaid_id = b.mcaid_id AND a.q = b.q ;
-QUIT ; 
-
-PROC SQL; 
-CREATE TABLE analysis5 as 
-SELECT a.*
-     , b.dt_prac_isp 
-FROM analysis4 AS a
-LEFT JOIN data.isp_un_pcmp AS b
-ON a.pcmp_attr_qrtr = b.pcmp_loc_id; 
-QUIT; *40999955 : 42; 
 
             proc print data = analysis5 (obs=250) ; 
             var dt_prac_isp ind_isp_ever mcaid_id; 
