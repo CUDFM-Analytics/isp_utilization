@@ -10,12 +10,21 @@
 * global paths, settings  ---------------------------;
 ***********************************************************************************************;
 
+PROC PRINT DATA = int.util_ffs_total_adj_mu ; 
+PROC PRINT DATA = int.util_ffs_rx_adj_mu ; RUN ; 
+
+
+proc sql ; 
+create table n_mcaidid_bh_1618 as 
+select count(distinct mcaid_id) 
+FROM int.bh_1618 ; 
+QUIT ; 
 *----------------------------------------------------------------------------------------------
 SECTION01 Data Dictionary for tmp
 ----------------------------------------------------------------------------------------------;
 
 PROC sql ; 
-create table int_contents as 
+create table intermediate_dats as 
 select memname
      , name
      , length
@@ -32,7 +41,7 @@ ods excel file = "&util./docs/contents_INT.csv"
              autofilter = "all"
              flow = "tables" );   *so it doesn't include carriage breaks; 
 
-PROC PRINT DATA = int_contents; RUN; 
+PROC PRINT DATA = intermediate_dats; RUN; 
 
 ods excel close; run;
 

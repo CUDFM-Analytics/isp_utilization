@@ -10,7 +10,18 @@ CHANGES    : tmp is interim files
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 ***********************************************************************************************;
 
-* ---- SECTION01 ------------------------------------------------------------------------------
+data isp_un_pcmp_dtstart ; 
+set  int.isp_un_pcmp_dtstart ; 
+format dt_qrtr date9.;
+dt_qrtr = intnx('quarter', dt_prac_isp ,0,'b'); 
+RUN ; 
+
+* Add time to int.isp_un_pcmp_dtstart ; 
+%create_qrtr(data=int.isp_un_pcmp_dtstart, set=isp_un_pcmp_dtstart, var = dt_qrtr, qrtr = time_start_isp);
+
+
+
+* ---- SECTION03 ------------------------------------------------------------------------------
 Create isp id dataset
  - Need date practice started ISP for the time varying cov
  - Covariate ISP participate pcmp at any time
@@ -101,14 +112,3 @@ set  int.isp_key;
 pcmp_loc_id = put(id_pcmp, best.-L); 
 run ;
 
-* ==== SECTION02 RAE ==============================================================================
-Get RAE_ID and county info
-Inputs      Kim/county_co_data.csv
-Outputs     data/isp_key
-Notes       Got from Jake and did all in R, just got the _c var here 
-;
-
-DATA int.rae; 
-SET  int.rae; 
-HCPF_County_Code_C = put(HCPF_County_Code,z2.); 
-RUN; 

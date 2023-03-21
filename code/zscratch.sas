@@ -1,5 +1,5 @@
 PROC CONTENTS 
-     DATA =  int.util_1921
+     DATA = int.bh_1921
 VARNUM;
 RUN;
 
@@ -17,14 +17,20 @@ PROC FREQ
 RUN; 
 
 PROC PRINT 
-     DATA = util0 (OBS = 1000);
-     where mcaid_id = "A000405";
+     DATA = a1 (OBS = 1000);
+     where intervention = 1 and dt_prac_isp = .;
+RUN; 
+
+PROC PRINT 
+     DATA = a1 ;
+     where pcmp_loc_id = 103320;
 RUN; 
 
 PROC FREQ 
-     DATA = data.rae;
-     TABLES _all_;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-     TITLE  'rae codes';
+     DATA = a1;
+     TABLES time*int_imp;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'pcmp 103320';
+     WHERE pcmp_loc_id = 103320;
 RUN; 
 TITLE; 
 
@@ -32,10 +38,10 @@ TITLE;
 Initial Contents for all work lib
 ******************************************************;
 PROC SQL; 
-     CREATE TABLE columns_data AS 
+     CREATE TABLE contents_int AS 
      SELECT *
      FROM sashelp.vcolumn
-     WHERE LIBNAME = upcase("DATA");
+     WHERE LIBNAME = upcase("INT");
 QUIT; 
 
 PROC PRINT DATA = columns_DATA NOOBS;
@@ -46,7 +52,7 @@ ods excel file = "S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/tm
     options (frozen_headers = "yes"
              autofilter = "all"
              flow = "tables" );   *so it doesn't include carriage breaks; 
-PROC PRINT DATA = columns_DATA;
+PROC PRINT DATA = a2 (obs = 10 ) ; where pcmp_loc_id = 107087 and dt_prac_isp ne . ; RUN ; 
 RUN; 
 ods excel close; 
 run;
@@ -72,3 +78,12 @@ proc contents data = int_contents varnum ; run ;
 proc print data=columns noobs;
 var memname name type length format informat label;
 run; 
+
+
+proc sql ; 
+select count ( distinct pcmp_loc_id ) from a2
+where intervention = 1; 
+quit ; 
+proc print data = a2 (obs = 10 ) ; where dt_prac_isp ne . ; RUn ; 
+
+PROC FREQ DATA = a2 ; tables pcmp_loc_id ; where intervention ne . ; RUN ; 

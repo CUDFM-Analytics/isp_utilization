@@ -107,6 +107,22 @@ BY    mcaid_id;
 IF    a and b; 
 RUN ; 
 
+PROC SQL ; 
+CREATE TABLE qrylong_1921 AS 
+SELECT *
+FROM  int.qrylong_1621 
+WHERE mcaid_id IN ( SELECT mcaid_id FROM int.memlist ) 
+AND   month ge '01JUL2019'd 
+AND   month le '30JUN2022'd 
+AND   pcmp_loc_id ne ' ' ;
+QUIT ; * 41000008 : 16 ; 
+
+****
+* a1 
+***** ; 
+%create_qrtr(data=int.qrylong_1921,set=qrylong_1921,var=month,qrtr=time);
+
+
 **************************************************************************
 * ---- SECTION03 BH Capitated --------------------------------------------
 Get BH data from analytic subset: keep all (updated 3/7 to include hosp) 
@@ -131,13 +147,33 @@ WHERE  mcaid_id IN (SELECT mcaid_id FROM int.memlist) ;
 QUIT ; *3617805 just to get fewer records, subset to memlist ; 
 
 * get FY1618 and FY1921 - 1618 will be binary, simpler outcomes ; 
-DATA int.bh_1921 bh_1618  ; 
+DATA bh_1921 bh_1618  ; 
 SET  memlist_bh_1621  ; 
 IF   month ge '01JUL2019'd THEN OUTPUT int.bh_1921;
 ELSE OUTPUT bh_1618;
 RUN; 
 * The data set INT.BH_1921 has 2065126 observations and 7 variables.
   The data set WORK.BH_1618 has 1552679 observations and 7 variables;
+
+data BH_1921 ; 
+set  bh_1921 ; 
+FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ; 
+format dt_qrtr date9.; * create quarter beginning date to get quarters ; 
+dt_qrtr = intnx('quarter', month ,0,'b');
+RUN ; 
+
+%create_qrtr(data=bh_1921a, set=bh_1921,var = dt_qrtr, qrtr=time);
+
+PROC SQL ; 
+CREATE TABLE int.bh_1921 AS 
+SELECT mcaid_id
+     , sum(bho_n_hosp) as sum_q_bh_hosp 
+     , sum(bho_n_er)   as sum_q_bh_er
+     , sum(bho_n_other) as sum_q_bh_other
+     , time
+FROM bh_1921a 
+GROUP BY mcaid_id, time ; 
+QUIT ; 
 
 * ----  BH_XX16, BH_XX17, BH_XX18  ------------------------------------------------- ; 
 PROC SQL; 
@@ -283,4 +319,23 @@ QUIT; *3/9: 908045, 5;
 PROC SORT DATA = int.memlist_tele_monthly ; BY mcaid_id ; RUN ; 
 proc print data = int.memlist_tele_monthly ( obs = 15) ; run;
 
+DATA tele_1921 ; 
+SET  int.memlist_tele_monthly (DROP = pd_tele fy7); 
+format dt_qrtr date9.; * create quarter beginning date to get quarters ; 
+dt_qrtr = intnx('quarter', month ,0,'b');
+WHERE month ge '01JUL2019'd 
+AND   month le '30JUN2022'd;
+RUN ; * 903721 : 4; 
 
+%create_qrtr(data= tele_1921a, set=tele_1921,var = dt_qrtr, qrtr=time); *903721 : 5;
+
+PROC SQL ; 
+CREATE TABLE int.tele_1921 AS 
+SELECT mcaid_id
+     , time
+     , sum(n_tele) as n_q_tele 
+FROM tele_1921a
+GROUP BY mcaid_id, time ; 
+QUIT ; 
+
+PROC SORT DATA = int.tele_1921 ; by mcaid_id time ; RUN ; 

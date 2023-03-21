@@ -13,51 +13,8 @@
 * ==== Combine datasets with memlist  ==================================;  
 proc sort data = int.memlist        ; by mcaid_id ; run ;  *1594686; 
 
-* Join final datasets > A) RAE, B) 
-* ====  ==========================================;
 PROC SQL ; 
-CREATE TABLE a0 AS 
-SELECT *
-FROM  int.qrylong_1621 
-WHERE mcaid_id IN ( SELECT mcaid_id FROM int.memlist ) 
-AND   month ge '01JUL2019'd 
-AND   month le '30JUN2022'd 
-AND   pcmp_loc_id ne ' ' ;
-QUIT ; * 41000008 : 16 ; 
-
-* a1 ; 
-%create_qrtr(data=a1,set=a0,var=month,qrtr=time);
-
-* Add FY to memlist_attr_qrtr_1921 ; 
-data int.memlist_attr_qrtr_1921 (KEEP = mcaid_id 
-                                        FY
-                                        time 
-                                        pcmp_loc_id 
-                                        n_months_per_q
-                                        ind_isp); 
-SET  int.memlist_attr_qrtr_1921 (RENAME=(q=time 
-                                         n_pcmp_per_q=n_months_per_q)); 
-FY      = year(intnx('year.7', max_month, 0, 'BEGINNING')); * create FY variable ; 
-RUN ; *14649660 : 6 ; 
-
-data isp_un_pcmp_dtstart ; 
-set  int.isp_un_pcmp_dtstart ; 
-format dt_qrtr date9.;
-dt_qrtr = intnx('quarter', dt_prac_isp ,0,'b'); 
-RUN ; 
-
-* Add time to int.isp_un_pcmp_dtstart ; 
-%create_qrtr(data=int.isp_un_pcmp_dtstart, set=isp_un_pcmp_dtstart, var = dt_qrtr, qrtr = time);
-
-DATA a1a ; 
-SET  a1 ; 
-pcmp = input(pcmp_loc_id, best12.) ; 
-drop pcmp_loc_id ; 
-rename pcmp = pcmp_loc_id ; 
-run ; 
-
-PROC SQL ; 
-CREATE TABLE a2 as 
+CREATE TABLE a0 as 
 SELECT a.mcaid_id
      , a.FY
 
@@ -66,79 +23,124 @@ SELECT a.mcaid_id
      , b.n_months_per_q
      , b.ind_isp as intervention
 
-     , c.dt_prac_isp 
-     , c.time as isp_qrtr_start
-
 FROM int.memlist as A 
+
 /* has to be left join because b isn't age-subset  */
 LEFT JOIN int.memlist_attr_qrtr_1921 AS b 
 ON   a.mcaid_id = b.mcaid_id 
-AND  a.FY = b.FY  
+AND  a.FY       = b.FY  
 
-LEFT JOIN int.isp_un_pcmp_dtstart as c
-ON   b.pcmp_loc_id=c.pcmp_loc_id 
-AND  b.time = c.time; 
+QUIT ; 
+*14053953 : 6 ; 
 
-QUIT ; *14053953 : 6 ; 
+** Add demographic info last > start with the outcome values then we'll add them ; 
+PROC SQL ; 
+CREATE TABLE data.a1 as 
+SELECT a.*
+     , b.time_start_isp 
+     , case when b.time_start_isp ne . AND a.time >= b.time_start_isp 
+            then 1 
+            else 0 end 
+            as int_imp
+FROM a0 as a
+LEFT JOIN int.isp_un_pcmp_dtstart as b
+ON   a.pcmp_loc_id = b.pcmp_loc_id ; 
+QUIT ; 
 
-
+*** Joining adj_pd_YYcat, BH 1618 cat, BH 1921;
 proc sql; 
-create table a3 as 
+create table data.a2 as 
 select a.*
 
-     /* join RAE */
-     , b.rae_id
-
-     /* join RAE */
-     , b.rae_id
-
      /* join monthly */
-     , b.pd_amt_pc
-     , b.pd_amt_rx
-     , b.pd_amt_total
-     , b.n_pc
-     , b.n_er
-     , b.n_total
+     , b.adj_pd_total_16cat
+     , b.adj_pd_total_17cat
+     , b.adj_pd_total_18cat
 
-     /* join bho  */
-     , c.bh_n_er
-     , c.bh_n_other
+     /* join bh_cat  */
+     , c.bh_er2016
+     , c.bh_er2017
+     , c.bh_er2018
+     , c.bh_hosp2016
+     , c.bh_hosp2017
+     , c.bh_hosp2018
+     , c.bh_oth2016
+     , c.bh_oth2017
+     , c.bh_oth2018
 
-     /* join telehealth utilization  */
-     , d.n_tele
-     , d.pd_tele
+     /* join bh_1921  */
+     , d.sum_q_bh_hosp
+     , d.sum_q_bh_er
+     , d.sum_q_bh_other
 
-FROM int.memlist AS a
+FROM data.a1 AS a
 
-LEFT JOIN int.rae as b
-on a.enr_cnty = b.hcpf_county_code_c  
+/*only needs to be joined on mcaid_id bc the cat's are wide not long */
+LEFT JOIN int.util_1618_cat AS b
+ON a.mcaid_id = b.mcaid_id 
 
-LEFT JOIN data.util_19_22 AS b
-ON a.mcaid_id = b.mcaid_id AND a.month = b.month
+/*only needs to be joined on mcaid_id bc the cols are wide not long */
+LEFT JOIN int.bh_1618 AS c
+ON a.mcaid_id = c.mcaid_id 
 
-LEFT JOIN data.bho_19_22 AS c
-ON a.mcaid_id = c.mcaid_id AND a.month = c.month
+/*needs to be joined on qrtr and mcaid_id */
+LEFT JOIN int.bh_1921 AS d
+ON a.mcaid_id = d.mcaid_id AND a.time = d.time;
 
-LEFT JOIN data.memlist_tele_monthly AS d
-ON a.mcaid_id = d.mcaid_id AND a.month = d.month;
-
-QUIT;   * 40999955: 36 same when merged on pcmp_loc_id as when not;  
+QUIT;   *14053953 : 24 ;  
       
-        * CHECK counts to see if all = 12; 
-        proc sql; 
-        create table check_mcaid_n as 
-        select count(mcaid_id) as n_mcaid_id
-        from data.memlist
-        group by mcaid_id; 
-        quit ; * 1594348 ; 
+* replace bh_1618 cat var's where . with 0 ; 
+DATA  data.a3;
+SET   data.a2 (DROP = time_start_isp 
+                      sum_q_bh_hosp); 
+ARRAY bher bh_er2016-bh_er2018;
+        do over bher;
+        if bher=. then bher=0;
+      end;
+ARRAY bhhosp bh_hosp2016-bh_hosp2018;
+        do over bhhosp;
+        if bhhosp=. then bhhosp=0;
+      end;
+ARRAY bhoth bh_oth2016-bh_oth2018;
+        do over bhoth;
+        if bhoth=. then bhoth=0;
+      end;
+RUN ;  *14053953 : 21 ; 
 
-        proc freq data = check_mcaid_n ; tables n_mcaid_id ; run ; * all had 12!! ;
+* Join util 1921 values for cost PMPM total, PMPM rx and util ED visits (to join with BH) 
+* Join telehealth  ; 
 
-                ****** save progress ****** ;
-                data tmp.analysis2; 
-                set  analysis2; 
-                run ; 
+PROC SQL ; 
+CREATE TABLE data.a4 AS 
+SELECT a.*
+       /* util1921_adj cols: n_pc_q n_er_q pd_rx_q_adj pd_pc_q_adj on cat_qrtr (= time)      */
+     , b.n_pc_q 
+     , b.n_er_q 
+     , b.pd_rx_q_adj 
+     , b.pd_pc_q_adj
+     , sum(b.n_er_q, a.sum_q_bh_er) as n_er_total
+    
+       /* tele cols:      */
+     , c.n_q_tele
+
+FROM data.a3 as a
+
+LEFT JOIN int.util1921_adj as b
+ON a.mcaid_id = b.mcaid_id
+AND a.time    = b.cat_qrtr 
+
+LEFT JOIN int.tele_1921 as c
+ON a.mcaid_id = c.mcaid_id
+AND a.time    = c.time ; 
+
+QUIT ; 
+
+* replace missings with 0, then 
                 ****************************;  
+* when joining rae ... 
+LEFT JOIN int.rae as b
+on a.enr_cnty = b.hcpf_county_code_c  ;
+
 
 * Add month count per quarter (to create pmpm n's, amt's) ;
 proc sql; 

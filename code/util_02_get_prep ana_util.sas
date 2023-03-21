@@ -39,7 +39,7 @@ group by MCAID_ID, month ;
 quit; *Table int.UTIL_1621 created, with 27092342 rows and 7 columns. ;
 
 * Create FY variable, get beginning of quarter from month variables to match to adj ; 
-DATA util1621a ; 
+DATA util1621a     ; 
 SET  int.util_1621 ; 
 FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ; 
 format dt_qrtr date9.; * create quarter beginning date to get quarters ; 
@@ -168,18 +168,56 @@ PROC RANK DATA = int.util1921_adj
      RANKS     pd_tot_adj_fy_rank pd_rx_adj_fy_rank;
 RUN ; 
 
-
-******* ASK MARK WHAT TO DO *******************;  
-DATA above96_ffstotal ; 
-SET  util1921_adj_ranked ; 
+******* 96th p by FY for FFS TOTAL (per MG)  *******************;  
+DATA int.util_ffs_pd_totals_topcode; 
+SET  util1921_adj_ranked (KEEP = FY pd_tot_q_adj pd_tot_adj_fy_rank); 
 WHERE pd_tot_adj_fy_rank > 95 ; 
 RUN ; * 307266 ; 
 
-PROC PRINT DATA = util1921_adj_ranked ; WHERE pd_tot_adj_fy_rank > 95 OR pd_rx_adj_fy_rank > 95 ; RUN ; 
+PROC MEANS DATA = util_tot_ranks n mean max min range std fw=8;
+VAR pd_tot_q_adj ; 
+BY FY ; 
+TITLE 'ffs total 96th p and above' ; 
+OUTPUT OUT=int.util_ffs_total_adj_mu (DROP=_TYPE_ _FREQ_);
+RUN ; 
+ 
+******* 96th p by FY for FFS RX (per MG)  *******************;  
+DATA int.util_ffs_pd_rx_topcode; 
+SET  util1921_adj_ranked (KEEP = FY pd_rx_q_adj pd_rx_adj_fy_rank); 
+WHERE pd_rx_adj_fy_rank > 95 ; 
+RUN ; * 307266 ; 
 
-* Look to see if rank matches with plot ;
-proc sgplot data = above96_ffstotal ; 
-scatter x = pd_tot_adj_fy_rank y=pd_tot_q_adj / markerattrs=(symbol=circlefilled) group = FY ; 
+PROC MEANS DATA = int.util_ffs_pd_rx_topcode n mean max min range std fw=8;
+VAR pd_rx_q_adj ; 
+BY FY ; 
+TITLE 'FFS Rx 96th p and above' ; 
+OUTPUT OUT=int.util_ffs_rx_adj_mu (DROP=_TYPE_ _FREQ_);
+RUN ; 
+TITLE ; 
+
+PROC PRINT DATA = int.util_ffs_total_adj_mu ; 
+PROC PRINT DATA = int.util_ffs_rx_adj_mu ; RUN ; 
+
+%LET totmin19 = 12120.48; %LET totmu19  = 27283.93; 
+%LET totmin20 = 12120.48; %LET totmu20  = 28248.43; 
+%LET totmin21 = 12120.48; %LET totmu21  = 29280.98; 
+
+%LET rxmin19 = 1824.39; %LET rxmu19  = 7943.55; 
+%LET rxmin20 = 1936.80; %LET rxmu20  = 8510.49; 
+%LET rxmin21 = 2035.16; %LET rxmu21  = 8928.69; 
+
+DATA int.util1921_adj_topcoded ; 
+SET  int.util1921_adj    (DROP=ind_isp ind_nonisp dt_qrtr) ; 
+
+* ffs total : Replace 96th percentile & up with mean ; 
+IF pd_tot_q_adj >= &totmin19 & FY = 2019 then pd_tot_q_adj = &totmu19 ; 
+IF pd_tot_q_adj >= &totmin20 & FY = 2020 then pd_tot_q_adj = &totmu20 ; 
+IF pd_tot_q_adj >= &totmin21 & FY = 2021 then pd_tot_q_adj = &totmu21 ; 
+
+* ffs rx   : Replace 96th percentile & up with mean ; 
+IF pd_rx_q_adj >= &rxmin19 & FY = 2019 then pd_rx_q_adj = &rxmu19 ; 
+IF pd_rx_q_adj >= &rxmin20 & FY = 2020 then pd_rx_q_adj = &rxmu20 ; 
+IF pd_rx_q_adj >= &rxmin21 & FY = 2021 then pd_rx_q_adj = &rxmu21 ; 
+
 RUN ; 
 
-PROC SORT DATA = above96_ffstotal ; BY pd_tot_adj_fy_rank ; RUN ; 

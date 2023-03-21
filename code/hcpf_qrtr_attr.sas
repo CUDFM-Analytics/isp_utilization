@@ -14,6 +14,23 @@
 * PROJECT PATHS, MAPPING; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_params.sas"; 
 
+***********************************************************************************************;
+* UPDATE 2023-03-20: Added for util analysis /
+* It's an addition to all below row 30   - was not used for the hcpf attr part, which starts on row 30; 
+data int.memlist_attr_qrtr_1921 (KEEP = mcaid_id 
+                                        FY
+                                        time 
+                                        pcmp_loc_id 
+                                        n_months_per_q
+                                        ind_isp); 
+SET  int.memlist_attr_qrtr_1921 (RENAME=(q=time 
+                                         n_pcmp_per_q=n_months_per_q)); 
+FY      = year(intnx('year.7', max_month, 0, 'BEGINNING')); * create FY variable ; 
+RUN ; *14649660 : 6 ; 
+
+***********************************************************************************************;
+* HCPF ATTR section that generated above ds; 
+
 data q0;
 set  data.qrylong_y19_22; 
 
