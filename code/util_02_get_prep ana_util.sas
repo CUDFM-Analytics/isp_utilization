@@ -103,8 +103,6 @@ from util_1618
 group by MCAID_ID, FY;
 quit; *2396891 : 3 - reduced to approx 1/5th ;
 
-PROC SORT DATA = int.util_1618_long; BY FY ; RUN ; 
-
 PROC RANK DATA = int.util_1618_long
      GROUPS    = 100 
      OUT       = util1618r;
@@ -124,10 +122,59 @@ RUN;  * 105841 : 4 ;
 * Make cats but keep the original vals to check ; 
 DATA int.util_1618_cat  ; 
 SET  util1618r2     ; 
-adj_pd_total_16cat = put(_2016, adj_pd_total_YRcat_.);
-adj_pd_total_17cat = put(_2017, adj_pd_total_YRcat_.);
-adj_pd_total_18cat = put(_2018, adj_pd_total_YRcat_.);
-RUN ;
+adj_pd_total_16cat_A = put(_2016, adj_pd_total_YRcat_.);
+adj_pd_total_17cat_A = put(_2017, adj_pd_total_YRcat_.);
+adj_pd_total_18cat_A = put(_2018, adj_pd_total_YRcat_.);
+RUN ; *1051841 ; 
+
+****
+03/22  SOMEWHERE I CREATED int.util_memlist_elig1618 but it's lost!! 
+Computer disconnected and I think I lost the code :( 
+total obs after doing sort nodupkey was 1594348 
+Ran checks and it looked good ;
+PROC SQL ; 
+CREATE TABLE adj_cat AS 
+SELECT COALESCE (a.mcaid_id, b.mcaid_id) as mcaid_id
+     , a.*
+     , b.*
+FROM int.util_memlist_elig1618  as a
+FULL JOIN util_1618_cat as b
+on a.mcaid_id = b.mcaid_id ; 
+QUIT ; *1594348 ; 
+
+PROC SQL ; 
+CREATE TABLE int.adj_pd_total_YYcat_final AS 
+SELECT mcaid_id
+     , case when ind_elig16 = 0 then '-1'
+            when (ind_elig16 = 1 AND _2016 = .) then '0'
+            else adj_pd_total_16cat_A
+            end as adj_pd_total_16cat
+     , case when ind_elig17 = 0 then '-1'
+            when (ind_elig17 = 1 and _2017 = .) then '0'
+            else adj_pd_total_17cat_A
+            end as adj_pd_total_17cat
+     , case when ind_elig18 = 0 then '-1'
+            when (ind_elig18 = 1 AND _2018 = .) then '0'
+            else adj_pd_total_18cat_A
+            end as adj_pd_total_18cat
+     , adj_pd_total_16cat_A
+     , adj_pd_total_17cat_A
+     , adj_pd_total_18cat_A
+     , ind_elig16
+     , ind_elig17
+     , ind_elig18
+     , _2016
+     , _2017
+     , _2018
+FROM adj_cat ; 
+QUIT ; 
+
+DATA int.util_1618_cat_adj_A ; 
+SET  adj_cat2 ; 
+cost_2016 = coalesce(cat16,0);
+cost_2017 = coalesce(cat17,0);
+cost_2018 = coalesce(cat18,0); 
+RUN ; 
 
 *----------------------------------------------------------------------------------------------
 SECTION 01d.3 19-21 
@@ -159,65 +206,3 @@ on a.mcaid_id=b.mcaid_id and a.cat_qrtr = b.q ;
 QUIT ; *7681680 rows and 13 columns;
 
 PROC SORT DATA = int.util1921_adj ; BY FY ; RUN ; 
-* Mean-preserving top codes ; 
-PROC RANK DATA = int.util1921_adj
-     GROUPS    = 100 
-     OUT       = util1921_adj_ranked;
-     VAR       pd_tot_q_adj pd_rx_q_adj; 
-     BY        FY ; 
-     RANKS     pd_tot_adj_fy_rank pd_rx_adj_fy_rank;
-RUN ; 
-
-******* 96th p by FY for FFS TOTAL (per MG)  *******************;  
-DATA int.util_ffs_pd_totals_topcode; 
-SET  util1921_adj_ranked (KEEP = FY pd_tot_q_adj pd_tot_adj_fy_rank); 
-WHERE pd_tot_adj_fy_rank > 95 ; 
-RUN ; * 307266 ; 
-
-PROC MEANS DATA = util_tot_ranks n mean max min range std fw=8;
-VAR pd_tot_q_adj ; 
-BY FY ; 
-TITLE 'ffs total 96th p and above' ; 
-OUTPUT OUT=int.util_ffs_total_adj_mu (DROP=_TYPE_ _FREQ_);
-RUN ; 
- 
-******* 96th p by FY for FFS RX (per MG)  *******************;  
-DATA int.util_ffs_pd_rx_topcode; 
-SET  util1921_adj_ranked (KEEP = FY pd_rx_q_adj pd_rx_adj_fy_rank); 
-WHERE pd_rx_adj_fy_rank > 95 ; 
-RUN ; * 307266 ; 
-
-PROC MEANS DATA = int.util_ffs_pd_rx_topcode n mean max min range std fw=8;
-VAR pd_rx_q_adj ; 
-BY FY ; 
-TITLE 'FFS Rx 96th p and above' ; 
-OUTPUT OUT=int.util_ffs_rx_adj_mu (DROP=_TYPE_ _FREQ_);
-RUN ; 
-TITLE ; 
-
-PROC PRINT DATA = int.util_ffs_total_adj_mu ; 
-PROC PRINT DATA = int.util_ffs_rx_adj_mu ; RUN ; 
-
-%LET totmin19 = 12120.48; %LET totmu19  = 27283.93; 
-%LET totmin20 = 12120.48; %LET totmu20  = 28248.43; 
-%LET totmin21 = 12120.48; %LET totmu21  = 29280.98; 
-
-%LET rxmin19 = 1824.39; %LET rxmu19  = 7943.55; 
-%LET rxmin20 = 1936.80; %LET rxmu20  = 8510.49; 
-%LET rxmin21 = 2035.16; %LET rxmu21  = 8928.69; 
-
-DATA int.util1921_adj_topcoded ; 
-SET  int.util1921_adj    (DROP=ind_isp ind_nonisp dt_qrtr) ; 
-
-* ffs total : Replace 96th percentile & up with mean ; 
-IF pd_tot_q_adj >= &totmin19 & FY = 2019 then pd_tot_q_adj = &totmu19 ; 
-IF pd_tot_q_adj >= &totmin20 & FY = 2020 then pd_tot_q_adj = &totmu20 ; 
-IF pd_tot_q_adj >= &totmin21 & FY = 2021 then pd_tot_q_adj = &totmu21 ; 
-
-* ffs rx   : Replace 96th percentile & up with mean ; 
-IF pd_rx_q_adj >= &rxmin19 & FY = 2019 then pd_rx_q_adj = &rxmu19 ; 
-IF pd_rx_q_adj >= &rxmin20 & FY = 2020 then pd_rx_q_adj = &rxmu20 ; 
-IF pd_rx_q_adj >= &rxmin21 & FY = 2021 then pd_rx_q_adj = &rxmu21 ; 
-
-RUN ; 
-

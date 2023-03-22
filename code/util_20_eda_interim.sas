@@ -10,8 +10,6 @@
 * global paths, settings  ---------------------------;
 ***********************************************************************************************;
 
-PROC PRINT DATA = int.util_ffs_total_adj_mu ; 
-PROC PRINT DATA = int.util_ffs_rx_adj_mu ; RUN ; 
 
 
 proc sql ; 
@@ -59,12 +57,7 @@ ods excel close; run;
 *----------------------------------------------------------------------------------------------
 SECTION02 Frequencies
 ----------------------------------------------------------------------------------------------;
-PROC FREQ 
-     DATA = tmp.qrylong_16_22;
-     TABLES age ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-     TITLE  'Frequency month';
-RUN  ; 
-TITLE; 
+
 
 PROC SQL ; 
 SELECT COUNT ( DISTINCT mcaid_id ) 
