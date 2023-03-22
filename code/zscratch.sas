@@ -1,10 +1,15 @@
 PROC CONTENTS 
-     DATA = data.a5
+     DATA = ana.qry_longitudinal
 VARNUM;
 RUN;
 
-  proc print data = int.qrylong_1921 ; 
+  proc print data = int.qrylong_1621 ; 
             where mcaid_id in ("P861019", "L155867"); 
+            run ; 
+
+              proc print data = ana.qry_longitudinal (obs = 1000); 
+            where mcaid_id in ("A001791", "A003524","A000405","A002526","A003219")
+            AND month ge '01JUL2016'd and month le '30Jun2017'd; 
             run ; 
 
 PROC FREQ 

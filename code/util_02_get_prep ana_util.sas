@@ -169,13 +169,6 @@ SELECT mcaid_id
 FROM adj_cat ; 
 QUIT ; 
 
-DATA int.util_1618_cat_adj_A ; 
-SET  adj_cat2 ; 
-cost_2016 = coalesce(cat16,0);
-cost_2017 = coalesce(cat17,0);
-cost_2018 = coalesce(cat18,0); 
-RUN ; 
-
 *----------------------------------------------------------------------------------------------
 SECTION 01d.3 19-21 
 1) Create quarter variable in util1921

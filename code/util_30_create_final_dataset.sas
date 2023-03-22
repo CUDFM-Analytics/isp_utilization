@@ -76,7 +76,7 @@ select a.*
 FROM data.a1 AS a
 
 /*only needs to be joined on mcaid_id bc the cat's are wide not long */
-LEFT JOIN int.util_1618_cat AS b
+LEFT JOIN int.adj_pd_total_YYcat_final AS b
 ON a.mcaid_id = b.mcaid_id 
 
 /*only needs to be joined on mcaid_id bc the cols are wide not long */
@@ -116,8 +116,8 @@ SELECT a.*
        /* util1921_adj cols: n_pc_q n_er_q pd_rx_q_adj pd_pc_q_adj on cat_qrtr (= time)      */
      , b.n_pc_q 
      , b.n_er_q 
-     , b.pd_rx_q_adj as pd_rx_q_adj_tc
-     , b.pd_tot_q_adj as pd_tot_q_adj_tc
+     , b.pd_rx_q_adj as pd_rx_q_adj
+     , b.pd_tot_q_adj as pd_tot_q_adj
      , b.pd_pc_q_adj 
      , sum(b.n_er_q, a.sum_q_bh_er) as n_er_total
     
@@ -136,20 +136,19 @@ AND a.time    = c.time ;
 
 QUIT ; 
 
-* divide first so you don't divide by 0's? 
-drop the er var's that you added above (keep the summed one n_er_total);
-DATA data.a5 (DROP = pd_rx_q_adj_tc pd_tot_q_adj_tc pd_pc_q_adj n_pc_q n_q_tele n_er_total sum_q_bh_other) ; 
-SET  data.a4 (DROP = sum_q_bh_er n_er_q) ; 
-dv_pd_rx    = pd_rx_q_adj_tc /n_months_per_q ; 
-dv_pd_total = pd_tot_q_adj_tc/n_months_per_q ; 
-dv_pd_pc    = pd_pc_q_adj    /n_months_per_q ; 
-dv_n_pc     = n_pc_q         /n_months_per_q ; 
-dv_n_tele   = n_q_tele       /n_months_per_q ; 
-dv_n_er     = n_er_total     /n_months_per_q ; 
-dv_n_bh_oth = sum_q_bh_other /n_months_per_q ; 
+DATA data.A5 ; 
+SET  data.A4 (DROP = sum_q_bh_er n_er_q ) ;
+mu_q_pd_rx  = pd_rx_q_adj    /n_months_per_q ; 
+mu_pd_total = pd_tot_q_adj   /n_months_per_q ; 
+mu_pd_pc    = pd_pc_q_adj    /n_months_per_q ; 
+mu_n_pc     = n_pc_q         /n_months_per_q ; 
+mu_n_tele   = n_q_tele       /n_months_per_q ; 
+mu_n_er     = n_er_total     /n_months_per_q ; 
+mu_n_bh_oth = sum_q_bh_other /n_months_per_q ; 
 RUN ; 
 
-DATA data.a6 (drop=dv:); 
+
+DATA data.a6 (DROP = pd_rx_q_adj_tc pd_tot_q_adj_tc pd_pc_q_adj n_pc_q n_q_tele n_er_total sum_q_bh_other)); 
 SET  data.a5 ;
 cost_rx   = coalesce(dv_pd_rx,   0);
 cost_ffs  = coalesce(dv_pd_total,0);
