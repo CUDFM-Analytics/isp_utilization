@@ -37,6 +37,12 @@ PROC FREQ
 RUN; 
 TITLE; 
 
+* EXAMPLE of int_imp = 0 and intervention = 1 ; 
+proc print data = data.a6 (obs = 1000) ; 
+var mcaid_id pcmp:  time int:  ; 
+where mcaid_id = "A005156";   *was dt_prac_isp ne . ; 
+run ; * Looks good!! 
+
 ******************************************************
 Initial Contents for all work lib
 ******************************************************;

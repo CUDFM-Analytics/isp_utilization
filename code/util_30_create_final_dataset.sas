@@ -160,11 +160,25 @@ util_er   = coalesce(dv_n_er    ,0);
 util_bh_o = coalesce(dv_n_bh_oth,0);
 run ; 
 
-                ****************************;  
+PROC SQL ; 
+CREATE TABLE data.a7 as 
+SELECT a.*
+     , b.enr_cnty
+     , b.sex
+     , b.race
+     , b.ethnic
+     , b.budget_grp_new
+     , b.age
+FROM data.a6 as a
+LEFT JOIN int.qrylong_1621 as b 
+on a.mcaid_id = b.mcaid_id
+AND a.time = b.time ; 
+QUIT ; 
+
+****************************;  
 * when joining rae ... 
 LEFT JOIN int.rae as b
 on a.enr_cnty = b.hcpf_county_code_c  ;
-
 
             proc print data = analysis5 (obs=250) ; 
             var dt_prac_isp ind_isp_ever mcaid_id; 
@@ -176,52 +190,18 @@ on a.enr_cnty = b.hcpf_county_code_c  ;
             where mcaid_id in ("P861019", "L155867"); 
             run ; 
 
-
-* ==== create ind_isp and ind_isp_ever vars =======================================;
-DATA analysis6;
-SET  analysis5; 
-IF   ind_isp_ever = 1 and month >= dt_prac_isp then ind_isp_dtd = 1;
-ELSE ind_isp_dtd = 0; 
-RUN;
-
-        * ==== save progress / delete later ===========================================;  
-        data tmp.analysis6;
-        set  analysis6; 
-        run; 
                 
-proc print data = analysis6 (obs = 100) ; run ;           
-proc contents data = analysis6 varnum; run ; 
+proc print data = data.a6 (obs = 100) ; run ;           
 
-proc sql; 
-create table data.analytic_dataset as 
-select *
-     , case when ind_isp_ever = 1 then max(ind_isp_dtd) else 0 end as ind_isp_dtd_qrtr
-from analysis6
-group by mcaid_id, q;
-quit;  
 
-proc print data = data.analytic_dataset (obs = 1000) ; 
-var mcaid_id pcmp:  ind_isp_ever dt_prac_isp month q ind_isp_dtd ind_isp_dtd_qrtr n_: ; 
-where mcaid_id = "A005156";   *was dt_prac_isp ne . ; 
-run ; * Looks good!! 
+data deidentified_abridged_5k; 
+set  data.a6 (DROP = mcaid_id ) ; 
+IF _N_ <5000 then output ; 
+RUN ; 
 
-* Combine capitated and FFS er, Roll up quarters, add labels and save:; 
-data data.analytic_dataset ;
-set  data.analytic_dataset ;
 
-if pd_amt_pc    = . then pd_amt_pc = 0;
-if pd_amt_rx    = . then pd_amt_rx = 0;
-if pd_amt_total = . then pd_amt_total = 0;
-if n_pc         = . then n_pc = 0;
-if n_er         = . then n_er = 0;
-if n_total      = . then n_total = 0;
-if bh_n_er      = . then bh_n_er = 0;
-if bh_n_other   = . then bh_n_other = 0;
-if n_tele       = . then n_tele = 0;
-if pd_tele      = . then pd_tele = 0;
-if dt_prac_isp  = . then dt_prac_isp = 0; 
 
-fy3=year(intnx('year.7', month, 0, 'BEGINNING'));
+
 
 label FY           = "Fiscal Year"
       RAE_ID       = "RAE ID" 

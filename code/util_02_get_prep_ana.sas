@@ -117,9 +117,7 @@ AND   month le '30JUN2022'd
 AND   pcmp_loc_id ne ' ' ;
 QUIT ; * 41000008 : 16 ; 
 
-****
-* a1 
-***** ; 
+
 %create_qrtr(data=int.qrylong_1921,set=qrylong_1921,var=month,qrtr=time);
 
 
