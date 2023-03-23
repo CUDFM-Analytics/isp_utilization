@@ -1,11 +1,37 @@
 PROC CONTENTS 
-     DATA = ana.qry_longitudinal
+     DATA = data.a9
 VARNUM;
 RUN;
 
-  proc print data = int.qrylong_1621 ; 
+PROC MEANS DATA = int.qrylong_1621  ; 
+VAR pd_tot_q_adj ;
+BY FY ; 
+RUN ; 
+
+
+ind_isp_ever pcmp_loc_id pcmp_attr_qrtr month; 
             where mcaid_id in ("P861019", "L155867"); 
             run ; 
+
+  proc print data = int.qrylong_1621 ; 
+            where mcaid_id in ("P861019", "L155867"); 
+            run ;
+
+              proc print data = int.qrylong_1921 ; 
+            where mcaid_id in ("G010516", "G002318"); 
+            run ;
+
+            proc sort data = int.qrylong_1621 ; by mcaid_id month ; RUN ; 
+                          proc print data = int.qrylong_1621_time ; 
+            where mcaid_id in ("G010516"); 
+            run ;
+
+             proc print data = data.a8 ; 
+            where mcaid_id in ("G010516"); 
+            run ;
+
+             proc print data = data.a8 (obs=100); 
+            run ;
 
               proc print data = ana.qry_longitudinal (obs = 1000); 
             where mcaid_id in ("A001791", "A003524","A000405","A002526","A003219")
@@ -17,21 +43,32 @@ PROC FREQ
 /*     TABLES month * fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;*/
 RUN; 
 
+Data month_time ; 
+SET  int.qrylong_1921 (KEEP = month time ) ; 
+RUN ;
+
+PROC SORT DATA = month_time NODUPKEY; BY _ALL_ ; RUN ; 
 
 PROC FREQ 
-     DATA = qrylong_1621;
-     TABLES month ;
-     WHERE month le '01JUL2018'd ; 
+     DATA = int.qrylong_1921;
+     TABLES month*time ;
 RUN; 
 
 PROC PRINT 
-     DATA = a1 (OBS = 1000);
-     where intervention = 1 and dt_prac_isp = .;
+     DATA = data.a5 (OBS = 100);
+    VAR mu: n_: pd_: ;
 RUN; 
 
 PROC PRINT 
-     DATA = a1 ;
-     where pcmp_loc_id = 103320;
+     DATA =data.a8 (obs=100);
+     WHERE mcaid_id = "G010516" ;
+/*     VAR mcaid_id  time;*/
+RUN; 
+
+PROC PRINT 
+     DATA = ana.qry_longitudinal (obs=100);
+     WHERE mcaid_id = "G010516" ;
+/*     VAR mcaid_id month time;*/
 RUN; 
 
 PROC FREQ 

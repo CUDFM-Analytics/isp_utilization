@@ -4,7 +4,12 @@ format: html
 date: today
 ---
 
-## Pipeline  
+  
+## Pipelines  
+
+::: {.panel-tabset}  
+
+## Attr,MemList,BH   
 
 ```{mermaid}
 flowchart TD
@@ -35,16 +40,28 @@ flowchart TD
  H2 --> |set missing to 0| bh_1618["bh_1618\n(n=250297)"]
  style bh_1618 stroke:#333,stroke-width:4px
 
- A4["Get FFS monthly\nana.qry_monthly...\n(n=111221842)"] --->|subset timeframe| A41["util\n(nobs=663676624)"] 
- A41 --> A43["util_1621\n(n=27092432)"] 
- style A43 stroke-dasharray: 5 5 
- E --> A43
- style A4 fill:#f9f
- A43 --> A4a["util_1921\n(n=15013256)"] 
- A43 --> | adj index by quarter\n`adj_pd_fy`| A4b["util_1618\n`adj_pd_fy`\n(n=2396891)"] 
-
-
 ```  
+## Utilization    
+
+```{mermaid}
+
+flowchart TD
+    A[ana.qry_monthlyutilization] -->|mcaid_id in memlist\nmonths in timeframe| B("util\n[663676624  : 7]")
+    B  -->|"...\nsum: qrtr"| E["util1621b\n[13941142 : 7]"]
+    ADJ[int.adj\ninflation-adjusted price index] -->|"join by quarter dates"| F[int.util1621_adj]
+    E --> F["int.util1621_adj\n[13941142 : x]"] 
+    F --> |"FY in 19,20,21"|G["util_1921"] 
+    util_elig1618a --> |"no dupes"|util_elig1618b["util_elig1618b\n[]"]
+    F --> H["util_1618"]  
+    H --> |"1: sum FY\n2: rank\n3:transpose"|N[int.util_1618_cat]
+   M["int.util_memlist_elig1618"]--> |"full join"|N
+  N-->O["adj_cat\n[1594348]"]
+  O-->|"add binary vars"|P["int.adj_pd_total_YYcat_final"]
+  
+```  
+:::  
+
+
 ## Terms  
 
 **Year Notation**    

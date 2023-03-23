@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2023-03-16">
+<meta name="dcterms.date" content="2023-03-22">
 
 <title>readme</title>
 <style>
@@ -123,7 +123,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 16, 2023</p>
+      <p class="date">March 22, 2023</p>
     </div>
   </div>
   
@@ -133,8 +133,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<section id="pipeline" class="level2">
-<h2 class="anchored" data-anchor-id="pipeline">Pipeline</h2>
+<section id="pipelines" class="level2">
+<h2 class="anchored" data-anchor-id="pipelines">Pipelines</h2>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Attr,MemList,BH</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Utilization</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -167,19 +171,41 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  H2 --&gt; |set missing to 0| bh_1618["bh_1618\n(n=250297)"]
  style bh_1618 stroke:#333,stroke-width:4px
 
- A4["Get FFS monthly\nana.qry_monthly...\n(n=111221842)"] ---&gt;|subset timeframe| A41["util\n(nobs=663676624)"] 
- A41 --&gt; A43["util_1621\n(n=27092432)"] 
- style A43 stroke-dasharray: 5 5 
- E --&gt; A43
- style A4 fill:#f9f
- A43 --&gt; A4a["util_1921\n(n=15013256)"] 
- A43 --&gt; | adj index by quarter\n`adj_pd_fy`| A4b["util_1618\n`adj_pd_fy`\n(n=2396891)"] 
-
 </pre>
 <div id="mermaid-tooltip-1" class="mermaidTooltip">
 
 </div>
 <p></p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<p>
+</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-2">flowchart TD
+    A[ana.qry_monthlyutilization] --&gt;|mcaid_id in memlist\nmonths in timeframe| B("util\n[663676624  : 7]")
+    B  --&gt;|"...\nsum: qrtr"| E["util1621b\n[13941142 : 7]"]
+    ADJ[int.adj\ninflation-adjusted price index] --&gt;|"join by quarter dates"| F[int.util1621_adj]
+    E --&gt; F["int.util1621_adj\n[13941142 : x]"] 
+    F --&gt; |"FY in 19,20,21"|G["util_1921"] 
+    util_elig1618a --&gt; |"no dupes"|util_elig1618b["util_elig1618b\n[]"]
+    F --&gt; H["util_1618"]  
+    H --&gt; |"1: sum FY\n2: rank\n3:transpose"|N[int.util_1618_cat]
+   M["int.util_memlist_elig1618"]--&gt; |"full join"|N
+  N--&gt;O["adj_cat\n[1594348]"]
+  O--&gt;|"add binary vars"|P["int.adj_pd_total_YYcat_final"]
+  
+</pre>
+<div id="mermaid-tooltip-2" class="mermaidTooltip">
+
+</div>
+<p></p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -200,15 +226,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>.
 ├── code
 │   ├── attr_202209.sas
+│   ├── code_ranking_from_util02.txt
+│   ├── hcpf_attr_create_linelists.sas
+│   ├── hcpf_qrtr_attr.sas
+│   ├── log_20230322.log
 │   ├── readme_isp_code
-│   ├── REFACTOR_hcpf_attr_create_linelists.sas
-│   ├── REFACTOR_hcpf_qrtr_attr.sas
 │   ├── util_00_config.sas
-│   ├── util_01a_gather_isp.sas
-│   ├── util_01b_gather_adj_index.sas
-│   ├── util_01c_gather_ana.sas
-│   ├── util_02_eda_interim.sas
-│   ├── util_03_create_final_dataset.sas
+│   ├── util_01_create_isp_undtstart.sas
+│   ├── util_01_get_isp.sas
+│   ├── util_01_get_rae.sas
+│   ├── util_01_import_adj_index.sas
+│   ├── util_02_get_prep ana_util.sas
+│   ├── util_02_get_prep_ana.sas
+│   ├── util_09_pcmp_types.sas
+│   ├── util_20_eda_interim.sas
+│   ├── util_30_create_final_dataset.sas
 │   ├── zscratch.sas
 │   └── _refs
 │       ├── hurdle_APV_orig_cs.sas
@@ -220,8 +252,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 │           ├── cost anal _part2.sas
 │           └── PMPM cost by FY and number STBH.xlsx
 ├── data
+│   ├── a1.sas7bdat
+│   ├── a2.sas7bdat
+│   ├── a3.sas7bdat
+│   ├── a4.sas7bdat
+│   ├── a5.sas7bdat
+│   ├── a6.sas7bdat
+│   ├── a6a.sas7bdat
 │   ├── interim
 │   │   ├── adj.sas7bdat
+│   │   ├── adj_pd_total_yycat_final.sas7bdat
 │   │   ├── bh_1618.sas7bdat
 │   │   ├── bh_1618_long.sas7bdat
 │   │   ├── bh_1921.sas7bdat
@@ -233,20 +273,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 │   │   ├── ll_fy1922_pcmp_isp.sas7bdat
 │   │   ├── ll_fy1922_pcmp_nonisp.sas7bdat
 │   │   ├── memlist.sas7bdat
-│   │   ├── memlist_1618.sas7bdat
 │   │   ├── memlist_attr_qrtr_1921.sas7bdat
 │   │   ├── memlist_tele_monthly.sas7bdat
 │   │   ├── n_quarter.sas7bdat
 │   │   ├── n_total_isp.sas7bdat
 │   │   ├── n_total_nonisp.sas7bdat
+│   │   ├── pcmp_types.sas7bdat
 │   │   ├── qrylong_1621.sas7bdat
 │   │   ├── qrylong_1921.sas7bdat
 │   │   ├── rae.sas7bdat
 │   │   ├── redcap.sas7bdat
+│   │   ├── tele_1921.sas7bdat
 │   │   ├── un_isp_pcmps.sas7bdat
-│   │   ├── util_1618.sas7bdat
+│   │   ├── util1621_adj.sas7bdat
+│   │   ├── util1921_adj.sas7bdat
+│   │   ├── util_1618_cat.sas7bdat
+│   │   ├── util_1618_cat_adj_a.sas7bdat
+│   │   ├── util_1618_long.sas7bdat
 │   │   ├── util_1621.sas7bdat
-│   │   └── util_1921.sas7bdat
+│   │   └── util_memlist_elig1618.sas7bdat
+│   ├── mu_ffs_topcode.sas7bdat
 │   ├── readme.txt
 │   ├── results
 │   │   ├── attr_all_pcmp.sas7bdat

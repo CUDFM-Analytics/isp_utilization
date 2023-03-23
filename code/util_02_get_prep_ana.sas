@@ -40,26 +40,51 @@ SET    ana.qry_longitudinal ( DROP = FED_POV:
                               ) ; 
 * Recode pcmp loc type with format above; 
 num_pcmp_type = input(pcmp_loc_type_cd, 7.);
-pcmp_type     = put(num_pcmp_type, pcmp_type_rc.);        
+pcmp_type     = put(num_pcmp_type, pcmp_type_rc.);     
+
+format dt_qrtr date9.; * create quarter beginning date to get quarters ; 
+dt_qrtr = intnx('quarter', month ,0,'b'); 
 
 WHERE  month ge '01Jul2016'd 
 AND    month le '30Jun2022'd 
 AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
 RUN;  * 95609204  observations and 10;
 
-* **create C ** join with demographics to get required demographics in all years ; 
+** Set aside pcmp type for now - match it to memlist_qrtr and memlist; 
+DATA int.pcmp_type_qrylong ; 
+SET  int.qrylong_1621 (KEEP = pcmp_loc_id pcmp_loc_type_cd num_pcmp_type pcmp_type) ; 
+RUN ; 
+
+PROC SORT DATA = int.pcmp_type_qrylong NODUPKEY ; BY _ALL_ ; RUN ; 
+
+** join with demographics to get required demographics in all years ; 
 PROC SQL; 
 CREATE TABLE qrylong_1621a AS
-SELECT a.*, 
-       b.dob, 
-       b.gender as sex, 
-       b.race,
-       b.ethnic
+SELECT a.mcaid_id
+     , a.pcmp_loc_id
+     , a.month
+     , a.enr_cnty
+     , a.budget_group
+     , a.dt_qrtr 
+
+     , b.dob
+     , b.gender as sex
+     , b.race
+
+     , c.rae_id as rae_person_new
+
 FROM   qrylong_1621 AS a 
+
 LEFT JOIN ana.qry_demographics AS b 
-ON     a.mcaid_id=b.mcaid_id ;
+ON        a.mcaid_id=b.mcaid_id 
+
+LEFT JOIN int.rae as c
+on        a.enr_cnty = c.hcpf_county_code_c
+
+WHERE  managedcare = 0;
 QUIT; 
-* 95609204, 14;
+* 85536949, 14
+  NB Some RAE ID and enr-county will be missing bc rae's not assigned until 2018 so it's okay in this set for now;
  
 DATA int.qrylong_1621 ( DROP = age_end_fy last_day_fy dob ); 
 SET  qrylong_1621a    ;
@@ -87,39 +112,79 @@ budget_grp_new = put(budget_group, budget_grp_new_.) ;
 RUN; *;
 
 PROC SORT 
-DATA  = int.qrylong_1621 (KEEP = mcaid_id FY month pcmp_loc_id rae_assign managedCare) 
-NODUPKEY 
-OUT   = int.memlist      (KEEP = mcaid_id FY managedCare) ;
+DATA  = int.qrylong_1621 NODUPKEY OUT = int.memlist ;
 WHERE pcmp_loc_ID ne ' ' 
-AND   rae_assign = 1
-AND   managedCare = 0
+AND   rae_person_new ne .
 AND   month ge '01JUL2019'd
 AND   month le '30JUN2022'd;
-BY    MCAID_ID FY;
-RUN ;  * memlist = n3903027 with 1594348 unique  : 5 ; 
+BY    MCAID_ID month;
+RUN ;  * memlist = n40974871 ;
+
+        * Unique mcaid_ids;
+        PROC SQL ; 
+        SELECT COUNT (DISTINCT mcaid_id) as n_mcaid_id 
+        FROM int.memlist ; 
+        QUIT ; * 1594074 ; 
+
+* add time to memlit ; 
+%create_qrtr(data=int.memlist, set=int.memlist, var= dt_qrtr, qrtr=time);
 
 PROC SORT DATA = int.qrylong_1621 ; BY mcaid_id ; 
 PROC SORT DATA = int.memlist      ; BY mcaid_id ; RUN ; 
 
-DATA  int.qrylong_1621 ; 
+DATA  int.qrylong_1621_months ; 
 MERGE int.qrylong_1621 (in=a) int.memlist (in=b KEEP=mcaid_id) ; 
 BY    mcaid_id; 
 IF    a and b; 
 RUN ; 
 
+%create_qrtr(data=int.qrylong_1621_months, set=int.qrylong_1621, var=month,qrtr=time);
+
+DATA int.qrylong_1621_time; 
+SET  int.qrylong_1621 (DROP = month) ;
+RUN ;  
+
+PROC SORT DATA = int.qrylong_1621_time NODUPKEY ; BY _ALL_ ; RUN ; 
+*NOTE: There were 73434456 observations read from the data set INT.QRYLONG_1621_TIME.
+NOTE: The data set INT.QRYLONG_1621_TIME has 27098419 observations and 12 variables.';
+/**/
+/*PROC SQL ; */
+/*CREATE TABLE qrylong_1921 AS */
+/*SELECT **/
+/*FROM  int.qrylong_1621_time*/
+/*WHERE mcaid_id IN ( SELECT mcaid_id FROM int.memlist ) */
+/*AND   month ge '01JUL2019'd */
+/*AND   month le '30JUN2022'd */
+/*AND   pcmp_loc_id ne ' ' ;*/
+/*QUIT ; * 41000008 : 16 ; */
+/**/
+/*%create_qrtr(data=int.qrylong_1921,set=qrylong_1921,var=month,qrtr=time);*/
+
+* JOIN memlist with memlist_attr for pcmps for mcaid_ids in memlist (keep memlist mcaid_ids);
 PROC SQL ; 
-CREATE TABLE qrylong_1921 AS 
-SELECT *
-FROM  int.qrylong_1621 
-WHERE mcaid_id IN ( SELECT mcaid_id FROM int.memlist ) 
-AND   month ge '01JUL2019'd 
-AND   month le '30JUN2022'd 
-AND   pcmp_loc_id ne ' ' ;
-QUIT ; * 41000008 : 16 ; 
+CREATE TABLE int.memlist_final AS 
+SELECT a.mcaid_id
+     , a.pcmp_loc_id as pcmp_og_qrylong
+     , a.enr_cnty
+     , a.age
+     , a.sex
+     , a.race
+     , a.rae_person_new
+     , a.budget_grp_new
+     , a.FY
+     , a.time 
 
+     , b.pcmp_loc_id 
+     , b.n_months_per_q
+     , b.ind_isp
+ 
+FROM int.memlist as a
+LEFT JOIN int.memlist_attr_qrtr_1921 as b
 
-%create_qrtr(data=int.qrylong_1921,set=qrylong_1921,var=month,qrtr=time);
+ON a.mcaid_id=b.mcaid_id 
+AND a.time = b.time ; 
 
+QUIT ; 
 
 **************************************************************************
 * ---- SECTION03 BH Capitated --------------------------------------------
