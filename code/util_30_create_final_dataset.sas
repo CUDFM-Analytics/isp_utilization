@@ -10,30 +10,10 @@
 * PROJECT PATHS, MAPPING; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 
-* ==== Combine datasets with memlist  ==================================;  
-proc sort data = int.memlist        ; by mcaid_id ; run ;  *1594686; 
+* ==== Combine datasets with memlist_final ==================================;  
+proc sort data = int.memlist_final; by mcaid_id ; run ;  *1594686; 
 
-PROC SQL ; 
-CREATE TABLE a0 as 
-SELECT a.mcaid_id
-     , a.FY
-
-     , b.time
-     , b.pcmp_loc_id
-     , b.n_months_per_q
-     , b.ind_isp as intervention
-
-FROM int.memlist as A 
-
-/* has to be left join because b isn't age-subset  */
-LEFT JOIN int.memlist_attr_qrtr_1921 AS b 
-ON   a.mcaid_id = b.mcaid_id 
-AND  a.FY       = b.FY  
-
-QUIT ; 
-*14053953 : 6 ; 
-
-** Add demographic info last > start with the outcome values then we'll add them ; 
+** Get isp info  ; 
 PROC SQL ; 
 CREATE TABLE data.a1 as 
 SELECT a.*
@@ -42,14 +22,45 @@ SELECT a.*
             then 1 
             else 0 end 
             as int_imp
-FROM a0 as a
+FROM int.memlist_final as a
 LEFT JOIN int.isp_un_pcmp_dtstart as b
 ON   a.pcmp_loc_id = b.pcmp_loc_id ; 
-QUIT ; 
+QUIT ; * 40974871 : 14 ; 
 
+* TESTS: - expecting time*int_imp to have all int_imp=0 for time 1,2
+         - time_start_isp should only be 3>
+         - ind_isp*int_imp should have values in both cols for 0 but where ind_isp = 0 all int_imp should be 0;         
+PROC FREQ DATA = data.a1 ; 
+TABLES time*int_imp time_start_isp*int_imp ind_isp*int_imp; 
+RUN ;
+
+*** JOIN PCMP TYPE ; 
+*   Create numeric pcmp_loc_id ; 
+DATA int.pcmp_types ; 
+SET  int.pcmp_types ; 
+LENGTH pcmp 8 ; 
+pcmp = input(pcmp_loc_id, best12.); 
+RUN ;
+
+PROC SQL ; 
+CREATE TABLE data.a2 AS 
+SELECT a.*
+     , b.pcmp_loc_type_cd
+FROM data.a1 as a
+LEFT JOIN int.pcmp_types as b
+ON   a.pcmp_loc_id = b.pcmp ; 
+QUIT ; *40974871; 
+
+* tidy up ; 
+DATA data.a2a ; 
+SET  data.a2  (DROP = ENR_CNTY 
+                      TIME_START_ISP ) ;
+RENAME ind_isp=int ; 
+RUN ; *40974871 : 13; 
+                      
 *** Joining adj_pd_YYcat, BH 1618 cat, BH 1921;
 proc sql; 
-create table data.a2 as 
+create table data.a3 as 
 select a.*
 
      /* join monthly */
@@ -73,7 +84,7 @@ select a.*
      , d.sum_q_bh_er
      , d.sum_q_bh_other
 
-FROM data.a1 AS a
+FROM data.a2a AS a
 
 /*only needs to be joined on mcaid_id bc the cat's are wide not long */
 LEFT JOIN int.adj_pd_total_YYcat_final AS b
@@ -87,12 +98,13 @@ ON a.mcaid_id = c.mcaid_id
 LEFT JOIN int.bh_1921 AS d
 ON a.mcaid_id = d.mcaid_id AND a.time = d.time;
 
-QUIT;   *14053953 : 24 ;  
+QUIT;   * 40974871 : 28 ;
+
+PROC SORT DATA = data.a3 NODUPKEY ; BY _ALL_ ; RUN ;  *14347065 : 28 ; 
       
 * replace bh_1618 cat var's where . with 0 ; 
-DATA  data.a3;
-SET   data.a2 (DROP = time_start_isp 
-                      sum_q_bh_hosp); 
+DATA  data.a3a;
+SET   data.a3  (DROP = sum_q_bh_hosp); 
 ARRAY bher bh_er2016-bh_er2018;
         do over bher;
         if bher=. then bher=0;
@@ -124,7 +136,7 @@ SELECT a.*
        /* tele cols:      */
      , c.n_q_tele
 
-FROM data.a3 as a
+FROM data.a3a as a
 
 LEFT JOIN int.util1921_adj as b
 ON a.mcaid_id = b.mcaid_id
@@ -187,13 +199,13 @@ RUN ;
 PROC PRINT DATA = data.mu_rx_topcode ; 
 PROC PRINT DATA = data.mu_ffs_topcode  ; RUN ; 
 
-%LET ffsmin19 = 2109.39; %LET ffsmu19  = 6625.61; 
-%LET ffsmin20 = 2084.17; %LET ffsmu20  = 6676.60; 
-%LET ffsmin21 = 2139.95; %LET ffsmu21  = 6952.31; 
+%LET ffsmin19 = 2092.41; %LET ffsmu19  = 6565.38; 
+%LET ffsmin20 = 2068.44; %LET ffsmu20  = 6620.08; 
+%LET ffsmin21 = 2119.57; %LET ffsmu21  = 6877.58; 
 
-%LET rxmin19 = 303.96; %LET rxmu19  = 1681.80; 
-%LET rxmin20 = 316.68; %LET rxmu20  = 1760.30; 
-%LET rxmin21 = 332.47; %LET rxmu21  = 1870.99; 
+%LET rxmin19 = 305.24; %LET rxmu19  = 1686.94; 
+%LET rxmin20 = 317.11; %LET rxmu20  = 1759.34; 
+%LET rxmin21 = 333.34; %LET rxmu21  = 1873.25; 
 
 DATA data.a7  (rename = (mu_ffs=cost_ffs_tc mu_rx = cost_rx_tc)); 
 SET  data.a6a (DROP= mu_pd_rx mu_pd_total mu_n_pc mu_n_tele mu_n_er mu_n_bh_oth) ; 
@@ -210,43 +222,10 @@ IF mu_rx >= &rxmin21 & FY = 2021 then mu_rx = &rxmu21 ;
 
 RUN ; 
 
-data qrylong_1921 ; 
-SET  int.qrylong_1921 (drop=month) ;
-RUN ; 
-
-PROC SORT DATA = qrylong_1921 NODUPKEY ; BY _ALL_ ; RUN ; 
-
-PROC SQL ; 
-CREATE TABLE data.a8 as 
-SELECT a.*
-     , b.enr_cnty
-     , b.sex
-     , b.race
-     , b.budget_grp_new
-     , b.age
-FROM data.a7 as a
-LEFT JOIN int.qrylong_1621_time as b 
-on a.mcaid_id = b.mcaid_id
-AND a.time = b.time ; 
-QUIT ; * NOTE: There were 14880696 : 33 .;
-
-PROC SORT DATA = data.a8 NODUPKEY ; BY _ALL_ ; RUN ;  *14448284 : 33 ; 
-* NOTE: There were 41000818 observations read from the data set DATA.A8.
-NOTE: 26636540 observations with duplicate key values were deleted.
-NOTE: The data set DATA.A8 has 14364278 observations and 33 variables.;
 
 
-proc sql ; 
-CREATE TABLE data.a9 AS 
-SELECT a.*
-     , b.rae_id
-FROM data.a8 as a
-LEFT JOIN int.rae as b
-on a.enr_cnty = b.hcpf_county_code_c  ;
-QUIT ;  *14364278 : 34 ; 
 
-PROC CONTENTS DATA = data.a9 varnum; 
-RUN ; 
+
 
 DATA data.a9_cat_vars ; 
 SET  data.a9 (KEEP = mcaid_id adj: bh_er: bh_hosp: bh_oth: sex race budget_grp_new age rae_id enr_cnty) ;

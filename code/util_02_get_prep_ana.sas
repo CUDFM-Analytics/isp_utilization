@@ -164,7 +164,6 @@ NOTE: The data set INT.QRYLONG_1621_TIME has 27098419 observations and 12 variab
 PROC SQL ; 
 CREATE TABLE int.memlist_final AS 
 SELECT a.mcaid_id
-     , a.pcmp_loc_id as pcmp_og_qrylong
      , a.enr_cnty
      , a.age
      , a.sex
@@ -184,7 +183,7 @@ LEFT JOIN int.memlist_attr_qrtr_1921 as b
 ON a.mcaid_id=b.mcaid_id 
 AND a.time = b.time ; 
 
-QUIT ; 
+QUIT ; * 4097481 : 12 ; 
 
 **************************************************************************
 * ---- SECTION03 BH Capitated --------------------------------------------

@@ -1,0 +1,893 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.31 seconds
+      cpu time            0.81 seconds
+
+1    DATA qry_longitudinal;            SET ana.qry_longitudinal;            RUN;
+ERROR: Libref ANA is not assigned.
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.QRY_LONGITUDINAL may be incomplete.  When this step was stopped there
+         were 0 observations and 0 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+
+1  !                                                                             *02/09/23
+1  ! [1,177,273,652 : 25];
+2    DATA qry_demographics;            SET ana.qry_demographics;            RUN;
+ERROR: Libref ANA is not assigned.
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.QRY_DEMOGRAPHICS may be incomplete.  When this step was stopped there
+         were 0 observations and 0 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+2  !                                                                             *02/09/23 [
+2  ! 3008709     :  7];
+
+3    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Library RAW does not exist.
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Library OUT does not exist.
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLeng
+      ths
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.82 seconds
+      cpu time            0.34 seconds
+
+
+NOTE: Format AGE_CAT_ has been output.
+NOTE: Format BUDGET_GRP_NEW_ has been output.
+NOTE: Format PCMP_TYPE_RC has been output.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.47 seconds
+      cpu time            0.23 seconds
+
+
+214  DATA qry_longitudinal;            SET ana.qry_longitudinal;            RUN;
+
+NOTE: There were 177278505 observations read from the data set ANA.QRY_LONGITUDINAL.
+NOTE: The data set WORK.QRY_LONGITUDINAL has 177278505 observations and 25 variables.
+NOTE: DATA statement used (Total process time):
+      real time           8:05.01
+      cpu time            41.57 seconds
+
+
+214!                                                                             *02/09/23
+214! [1,177,273,652 : 25];
+215  DATA qry_demographics;            SET ana.qry_demographics;            RUN;
+
+NOTE: There were 3011305 observations read from the data set ANA.QRY_DEMOGRAPHICS.
+NOTE: The data set WORK.QRY_DEMOGRAPHICS has 3011305 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.48 seconds
+      cpu time            0.18 seconds
+
+
+215!                                                                             *02/09/23 [
+215! 3008709     :  7];
+
+216  DATA   qrylong_1621;
+217  LENGTH mcaid_id $11;
+218  SET    ana.qry_longitudinal ( DROP = FED_POV:
+219                                       DISBLD_IND
+220                                       aid_cd:
+221                                       title19:
+222                                       SPLM_SCRTY_INCM_IND
+223                                       SSI_:
+224                                       SS:
+225                                       dual
+226                                       eligGrp
+227                                       fost_aid_cd
+228                                ) ;
+229  * Recode pcmp loc type with format above;
+230  num_pcmp_type = input(pcmp_loc_type_cd, 7.);
+231  pcmp_type     = put(num_pcmp_type, pcmp_type_rc.);
+232
+233  format dt_qrtr date9.; * create quarter beginning date to get quarters ;
+234  dt_qrtr = intnx('quarter', month ,0,'b');
+235
+236  WHERE  month ge '01Jul2016'd
+237  AND    month le '30Jun2022'd
+238  AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
+239  RUN;
+
+NOTE: There were 95609204 observations read from the data set ANA.QRY_LONGITUDINAL.
+      WHERE (month>='01JUL2016'D and month<='30JUN2022'D) and BUDGET_GROUP not in (-1, 16, 17, 18,
+      19, 20, 21, 22, 23, 24, 25, 26, 27);
+NOTE: The data set WORK.QRYLONG_1621 has 95609204 observations and 11 variables.
+NOTE: DATA statement used (Total process time):
+      real time           8:19.01
+      cpu time            55.95 seconds
+
+
+239!       * 95609204  observations and 10;
+
+240  PROC CONTENTS
+241       DATA = qrylong_1621
+242  VARNUM;
+243  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.00 seconds
+
+
+244  DATA int.pcmp_type_qrylong ;
+245  SET  int.qrylong_1621 (KEEP pcmp_loc_id pcmp_loc_type_cd num_pcmp_type pcmp_type) ;
+                            ---- -----------
+                            12   12
+ERROR 12-63: Missing '=' for option KEEP.
+
+246  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set INT.PCMP_TYPE_QRYLONG may be incomplete.  When this step was stopped there
+         were 0 observations and 0 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.03 seconds
+
+
+247  DATA int.pcmp_type_qrylong ;
+248  SET  int.qrylong_1621 (KEEP = pcmp_loc_id pcmp_loc_type_cd num_pcmp_type pcmp_type) ;
+249  RUN ;
+
+NOTE: There were 75341946 observations read from the data set INT.QRYLONG_1621.
+NOTE: The data set INT.PCMP_TYPE_QRYLONG has 75341946 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:03.80
+      cpu time            6.28 seconds
+
+
+250  PROC SORT DATA = int.pcmp_type_qrylong NODUPKEY ; BY _ALL_ ; RUN ;
+
+NOTE: There were 75341946 observations read from the data set INT.PCMP_TYPE_QRYLONG.
+NOTE: 75340525 observations with duplicate key values were deleted.
+NOTE: The data set INT.PCMP_TYPE_QRYLONG has 1421 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           27.98 seconds
+      cpu time            16.00 seconds
+
+
+
+251  PROC SQL;
+252  CREATE TABLE qrylong_1621a AS
+253  SELECT a.mcaid_id,
+254       , a.pcmp_loc_id
+          -
+          22
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string,
+              a numeric constant, a datetime constant, a missing value, *, BTRIM, INPUT, PUT,
+              SUBSTRING, USER.
+
+255       , a.month
+256       , a.enr_cnty
+257       , a.budget_group
+258       , a.dt_qrtr
+259       , b.dob
+260       , b.gender as sex
+261       , b.race
+262  FROM   qrylong_1621 AS a
+263  LEFT JOIN ana.qry_demographics AS b
+264  ON     a.mcaid_id=b.mcaid_id
+265  WHERE  managedcare = 0
+266  AND    rae_assign = 1;
+267  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+268  PROC SQL;
+269  CREATE TABLE qrylong_1621a AS
+270  SELECT a.mcaid_id
+271       , a.pcmp_loc_id
+272       , a.month
+273       , a.enr_cnty
+274       , a.budget_group
+275       , a.dt_qrtr
+276       , b.dob
+277       , b.gender as sex
+278       , b.race
+279  FROM   qrylong_1621 AS a
+280  LEFT JOIN ana.qry_demographics AS b
+281  ON     a.mcaid_id=b.mcaid_id
+282  WHERE  managedcare = 0
+283  AND    rae_assign = 1;
+NOTE: Table WORK.QRYLONG_1621A created, with 55625405 rows and 9 columns.
+
+284  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           19.21 seconds
+      cpu time            25.48 seconds
+
+
+285  PROC SQL;
+286  CREATE TABLE qrylong_1621a AS
+287  SELECT a.mcaid_id
+288       , a.pcmp_loc_id
+289       , a.month
+290       , a.enr_cnty
+291       , a.budget_group
+292       , a.dt_qrtr
+293
+294       , b.dob
+295       , b.gender as sex
+296       , b.race
+297
+298       , c.rae_id as rae_person_new
+299
+300  FROM   qrylong_1621 AS a
+301
+302  LEFT JOIN ana.qry_demographics AS b
+303  ON        a.mcaid_id=b.mcaid_id
+304
+305  LEFT JOIN int.rae as c
+306  on        a.enr_county = c.hcpf_county_code_c
+307
+308  WHERE  managedcare = 0;
+ERROR: Column enr_county could not be found in the table/view identified with the correlation name
+       A.
+ERROR: Column enr_county could not be found in the table/view identified with the correlation name
+       A.
+309  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+
+
+310  PROC SQL;
+311  CREATE TABLE qrylong_1621a AS
+312  SELECT a.mcaid_id
+313       , a.pcmp_loc_id
+314       , a.month
+315       , a.enr_cnty
+316       , a.budget_group
+317       , a.dt_qrtr
+318
+319       , b.dob
+320       , b.gender as sex
+321       , b.race
+322
+323       , c.rae_id as rae_person_new
+324
+325  FROM   qrylong_1621 AS a
+326
+327  LEFT JOIN ana.qry_demographics AS b
+328  ON        a.mcaid_id=b.mcaid_id
+329
+330  LEFT JOIN int.rae as c
+331  on        a.enr_cnty = c.hcpf_county_code_c
+332
+333  WHERE  managedcare = 0;
+NOTE: Table WORK.QRYLONG_1621A created, with 85536949 rows and 10 columns.
+
+334  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           42.80 seconds
+      cpu time            1:06.29
+
+
+335  * 55625405, 14;
+
+336  PROC CONTENTS
+337       DATA = qrylong_1621a
+338  VARNUM;
+339  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+340
+341  DATA int.qrylong_1621 ( DROP = age_end_fy last_day_fy dob );
+342  SET  qrylong_1621a    ;
+343
+344  budget_grp_new = put(budget_group, budget_grp_new_.) ;
+345
+346  * create age variable;
+347    IF      month ge '01Jul2016'd AND month le '30Jun2017'd THEN last_day_fy='30Jun2017'd;
+348    ELSE IF month ge '01Jul2017'd AND month le '30Jun2018'd THEN last_day_fy='30Jun2018'd;
+349    ELSE IF month ge '01Jul2018'd AND month le '30Jun2019'd THEN last_day_fy='30Jun2019'd;
+350    ELSE IF month ge '01Jul2019'd AND month le '30Jun2020'd THEN last_day_fy='30Jun2020'd;
+351    ELSE IF month ge '01Jul2020'd AND month le '30Jun2021'd THEN last_day_fy='30Jun2021'd;
+352    ELSE IF month ge '01Jul2021'd AND month le '30Jun2022'd THEN last_day_fy='30Jun2022'd;
+353
+354    age_end_fy = floor( (intck('month', dob, last_day_fy) - (day(last_day_fy) < min(day(dob),
+354! day(intnx ('month', last_day_fy, 1) -1)))) /12 );
+355
+356    * remove if age not in range;
+357    IF age_end_fy lt 0 or age_end_fy gt 64 THEN delete;
+358    FORMAT last_day_fy date9.;
+359
+360    FY  = year(intnx('year.7', month, 0, 'BEGINNING'));
+361
+362    age = age_end_fy;
+363    format age age_cat_.;
+364  RUN;
+
+NOTE: There were 85536949 observations read from the data set WORK.QRYLONG_1621A.
+NOTE: The data set INT.QRYLONG_1621 has 82182283 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:54.34
+      cpu time            1:11.84
+
+
+364!      *;
+
+365  PROC CONTENTS
+366       DATA = int.qrylong_1621
+367  VARNUM;
+368  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+369  PROC SORT
+370  DATA  = int.qrylong_1621 (DROP = managedCare rae_assign ) NODUPKEY OUT = int.memlist  ;
+ERROR: The variable managedCare in the DROP, KEEP, or RENAME list has never been referenced.
+ERROR: The variable rae_assign in the DROP, KEEP, or RENAME list has never been referenced.
+ERROR: Invalid DROP, KEEP, or RENAME option on file INT.QRYLONG_1621.
+371  WHERE pcmp_loc_ID ne ' '
+372  AND   rae_assign = 1
+373  AND   managedCare = 0
+374  AND   month ge '01JUL2019'd
+375  AND   month le '30JUN2022'd;
+WARNING: No data sets qualify for WHERE processing.
+376  BY    MCAID_ID FY;
+377  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set INT.MEMLIST may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+WARNING: Data set INT.MEMLIST was not replaced because this step was stopped.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.03 seconds
+
+377!        * memlist = n3903027 with 1594348 unique  : 5 ;
+
+
+378  PROC SORT
+379  DATA  = int.qrylong_1621 NODUPKEY OUT = int.memlist (DROP = managedCare rae_assign )  ;
+380  WHERE pcmp_loc_ID ne ' '
+381  AND   rae_assign = 1
+382  AND   managedCare = 0
+383  AND   month ge '01JUL2019'd
+384  AND   month le '30JUN2022'd;
+ERROR: Variable rae_assign is not on file INT.QRYLONG_1621.
+385  BY    MCAID_ID month;
+386  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set INT.MEMLIST may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+WARNING: Data set INT.MEMLIST was not replaced because this step was stopped.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.03 seconds
+
+386!        * memlist = n3903027 with 1594348 unique  : 5 ;
+
+
+387
+388  PROC SORT
+389  DATA  = int.qrylong_1621 NODUPKEY OUT = int.memlist (DROP = managedCare )  ;
+390  WHERE pcmp_loc_ID ne ' '
+391  AND   rae_person_new ne .
+392  AND   managedCare = 0
+393  AND   month ge '01JUL2019'd
+394  AND   month le '30JUN2022'd;
+ERROR: Variable managedCare is not on file INT.QRYLONG_1621.
+395  BY    MCAID_ID month;
+396  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set INT.MEMLIST may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+WARNING: Data set INT.MEMLIST was not replaced because this step was stopped.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.03 seconds
+
+
+397
+398  PROC SORT
+399  DATA  = int.qrylong_1621 NODUPKEY OUT = int.memlist ;
+400  WHERE pcmp_loc_ID ne ' '
+401  AND   rae_person_new ne .
+402  AND   month ge '01JUL2019'd
+403  AND   month le '30JUN2022'd;
+404  BY    MCAID_ID month;
+405  RUN ;
+
+NOTE: There were 40974871 observations read from the data set INT.QRYLONG_1621.
+      WHERE (pcmp_loc_ID not = ' ') and (rae_person_new not = .) and (month>='01JUL2019'D and
+      month<='30JUN2022'D);
+NOTE: 0 observations with duplicate key values were deleted.
+NOTE: The data set INT.MEMLIST has 40974871 observations and 12 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           2:16.07
+      cpu time            23.18 seconds
+
+
+405!        * memlist = n3903027 wit
+
+406   PROC SQL ;
+407          SELECT COUNT (DISTINCT mcaid_id) as n_mcaid_id
+408          FROM int.memlist ;
+409          QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           41.23 seconds
+      cpu time            4.68 seconds
+
+
+410  PROC SORT DATA = int.qrylong_1621 ; BY mcaid_id ;
+
+NOTE: There were 82182283 observations read from the data set INT.QRYLONG_1621.
+NOTE: The data set INT.QRYLONG_1621 has 82182283 observations and 12 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           3:10.95
+      cpu time            37.12 seconds
+
+
+411  PROC SORT DATA = int.memlist      ; BY mcaid_id ; RUN ;
+
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+
+412  DATA  int.qrylong_1621 ;
+413  MERGE int.qrylong_1621 (in=a) int.memlist (in=b KEEP=mcaid_id) ;
+414  BY    mcaid_id;
+415  IF    a and b;
+416  RUN ;
+
+NOTE: MERGE statement has more than one data set with repeats of BY values.
+NOTE: There were 82182283 observations read from the data set INT.QRYLONG_1621.
+NOTE: There were 40974871 observations read from the data set INT.MEMLIST.
+NOTE: The data set INT.QRYLONG_1621 has 73434456 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3:19.88
+      cpu time            17.29 seconds
+
+
+417  PROC CONTENTS
+418       DATA = int.qrylong_1621
+419  VARNUM;
+420  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+421  DATA  int.qrylong_1621_months ;
+422  MERGE int.qrylong_1621 (in=a) int.memlist (in=b KEEP=mcaid_id) ;
+423  BY    mcaid_id;
+424  IF    a and b;
+425  RUN ;
+
+NOTE: MERGE statement has more than one data set with repeats of BY values.
+NOTE: There were 73434456 observations read from the data set INT.QRYLONG_1621.
+NOTE: There were 40974871 observations read from the data set INT.MEMLIST.
+NOTE: The data set INT.QRYLONG_1621_MONTHS has 73434456 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3:10.43
+      cpu time            14.11 seconds
+
+
+426  %create_qrtr(data=int.qrylong_1621, set=int.qrylong_1621, var=month,qrtr=time);
+MLOGIC(CREATE_QRTR):  Beginning execution.
+MLOGIC(CREATE_QRTR):  Parameter DATA has value int.qrylong_1621
+MLOGIC(CREATE_QRTR):  Parameter SET has value int.qrylong_1621
+MLOGIC(CREATE_QRTR):  Parameter VAR has value month
+MLOGIC(CREATE_QRTR):  Parameter QRTR has value time
+SYMBOLGEN:  Macro variable DATA resolves to int.qrylong_1621
+MPRINT(CREATE_QRTR):   data int.qrylong_1621;
+SYMBOLGEN:  Macro variable SET resolves to int.qrylong_1621
+MPRINT(CREATE_QRTR):   set int.qrylong_1621;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then time = 1;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then time = 2;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then time = 3;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then time = 4;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then time = 5;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then time = 6;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then time = 7;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then time = 8;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then time = 9;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then time = 10;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then time = 11;
+SYMBOLGEN:  Macro variable VAR resolves to month
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if month in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then time = 12;
+MPRINT(CREATE_QRTR):   run;
+
+NOTE: There were 73434456 observations read from the data set INT.QRYLONG_1621.
+NOTE: The data set INT.QRYLONG_1621 has 73434456 observations and 13 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:42.19
+      cpu time            18.45 seconds
+
+
+MLOGIC(CREATE_QRTR):  Ending execution.
+
+427  DATA int.qrylong_1621_time;
+428  SET  int.qrylong_1621 (DROP = month) ;
+429  RUN ;
+
+NOTE: There were 73434456 observations read from the data set INT.QRYLONG_1621.
+NOTE: The data set INT.QRYLONG_1621_TIME has 73434456 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:38.90
+      cpu time            9.42 seconds
+
+
+430
+431  PROC SORT DATA = int.qrylong_1621_time NODUPKEY ; BY _ALL_ ; RUN ;
+
+NOTE: There were 73434456 observations read from the data set INT.QRYLONG_1621_TIME.
+NOTE: 46336037 observations with duplicate key values were deleted.
+NOTE: The data set INT.QRYLONG_1621_TIME has 27098419 observations and 12 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:53.41
+      cpu time            33.29 seconds
+
+
+
+432  PROC CONTENTS
+433       DATA = int.qrylong_1621
+434  VARNUM;
+435  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+436       proc print data = int.qrylong_1621_time ;
+437              where mcaid_id in ("G010516");
+438              run ;
+
+NOTE: There were 17 observations read from the data set INT.QRYLONG_1621_TIME.
+      WHERE mcaid_id='G010516';
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.67 seconds
+      cpu time            0.09 seconds
+
+
+439    proc print data = int.memlist ;
+440              where mcaid_id in ("G010516");
+441              run ;
+
+NOTE: There were 9 observations read from the data set INT.MEMLIST.
+      WHERE mcaid_id='G010516';
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.89 seconds
+      cpu time            0.06 seconds
+
+
+442  DATA int.memlist ;
+443  SET  int.memlist ;
+444  format dt_qrtr date9.; * create quarter beginning date to get quarters ;
+445  dt_qrtr = intnx('quarter', month ,0,'b');
+446  RUN ;
+
+NOTE: The DATA step has been abnormally terminated.
+NOTE: There were 11106231 observations read from the data set INT.MEMLIST.
+WARNING: The data set INT.MEMLIST may be incomplete.  When this step was stopped there were
+         11106231 observations and 12 variables.
+WARNING: Data set INT.MEMLIST was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           25.84 seconds
+      cpu time            3.01 seconds
+
+
+447  %create_qrtr(data=int.memlist, set=int.memlist, var= dt_qrtr, qrtr=time);
+MLOGIC(CREATE_QRTR):  Beginning execution.
+MLOGIC(CREATE_QRTR):  Parameter DATA has value int.memlist
+MLOGIC(CREATE_QRTR):  Parameter SET has value int.memlist
+MLOGIC(CREATE_QRTR):  Parameter VAR has value dt_qrtr
+MLOGIC(CREATE_QRTR):  Parameter QRTR has value time
+SYMBOLGEN:  Macro variable DATA resolves to int.memlist
+MPRINT(CREATE_QRTR):   data int.memlist;
+SYMBOLGEN:  Macro variable SET resolves to int.memlist
+MPRINT(CREATE_QRTR):   set int.memlist;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then time = 1;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then time = 2;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then time = 3;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then time = 4;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then time = 5;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then time = 6;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then time = 7;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then time = 8;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then time = 9;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then time = 10;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then time = 11;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then time = 12;
+MPRINT(CREATE_QRTR):   run;
+
+NOTE: There were 40974871 observations read from the data set INT.MEMLIST.
+NOTE: The data set INT.MEMLIST has 40974871 observations and 13 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:30.85
+      cpu time            9.64 seconds
+
+
+MLOGIC(CREATE_QRTR):  Ending execution.
+
+448     proc print data = int.memlist ;
+449              where mcaid_id in ("G010516");
+450              run ;
+
+NOTE: There were 9 observations read from the data set INT.MEMLIST.
+      WHERE mcaid_id='G010516';
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           41.08 seconds
+      cpu time            1.37 seconds
+
+
+451  PROC CONTENTS
+452       DATA = int.memlist
+453  VARNUM;
+454  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+455  PROC CONTENTS
+456       DATA = int.memlist
+457  VARNUM;
+458  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+459  PROC CONTENTS
+460       DATA = int.memlist_attr_qrtr_1921
+461  VARNUM;
+462  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.00 seconds
+
+
+463  PROC SQL ;
+464  CREATE TABLE int.memlist_final AS
+465  SELECT a.mcaid_id
+466       , a.pcmp_loc_id as pcmp_og_qrylong
+467       , a.enr_cnty
+468       , a.age
+469       , a.sex
+470       , a.race
+471       , a.rae_person_new
+472       , a.budget_grp_new
+473       , a.FY
+474       , a.time
+475
+476       , b.pcmp_loc_id
+477       , b.n_months_per_q
+478       , b.ind_isp
+479
+480  FROM int.memlist as a
+481  LEFT JOIN int.memlist_attr_qrtr_1921 as b
+482
+483  ON a.mcaid_id=b.mcaid_id
+484  AND a.time = b.time ;
+NOTE: Table INT.MEMLIST_FINAL created, with 40974871 rows and 13 columns.
+
+485
+486  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:56.94
+      cpu time            29.86 seconds
+
+
+487  PROC CONTENTS
+488       DATA = int.memlist_final
+489  VARNUM;
+490  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+491  PROC FREQ
+492       DATA = int.memlist_final;
+493  TABLES time ;
+494  /*     TABLES month * fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;*/
+495  RUN;
+
+NOTE: There were 40974871 observations read from the data set INT.MEMLIST_FINAL.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           42.53 seconds
+      cpu time            1.98 seconds
+
+
+496  PROC CONTENTS
+497       DATA = int.memlist_final
+498  VARNUM;
+499  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+
+
+500  DATA memlist_chk_pcmp ;
+501  SET  int.memlist_final ;
+502  where pcmp_og_qrylong ne pcmp_loc_id ;
+ERROR: WHERE clause operator requires compatible variables.
+503  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.MEMLIST_CHK_PCMP may be incomplete.  When this step was stopped there
+         were 0 observations and 13 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+504  PROC SQL ;
+505  CREATE TABLE int.memlist_final AS
+506  SELECT a.mcaid_id
+507       , a.enr_cnty
+508       , a.age
+509       , a.sex
+510       , a.race
+511       , a.rae_person_new
+512       , a.budget_grp_new
+513       , a.FY
+514       , a.time
+515
+516       , b.pcmp_loc_id
+517       , b.n_months_per_q
+518       , b.ind_isp
+519
+520  FROM int.memlist as a
+521  LEFT JOIN int.memlist_attr_qrtr_1921 as b
+522
+523  ON a.mcaid_id=b.mcaid_id
+524  AND a.time = b.time ;
+NOTE: Table INT.MEMLIST_FINAL created, with 40974871 rows and 12 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2:52.89
+      cpu time            31.57 seconds
+
+
+525  PROC CONTENTS
+526       DATA = int.memlist_final
+527  VARNUM;
+528  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+529  PROC FREQ
+530       DATA = int.memlist_final;
+531  TABLES FY time age sex race rae_person_new budget_grp_new  ;
+532  /*     TABLES month * fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;*/
+533  RUN;
+
+NOTE: There were 40974871 observations read from the data set INT.MEMLIST_FINAL.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           42.92 seconds
+      cpu time            6.15 seconds
+
+

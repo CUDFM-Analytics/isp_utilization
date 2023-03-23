@@ -1,0 +1,4917 @@
+From: "Saved by Internet Explorer 11"
+Subject: SAS Output
+Date: Thu, 23 Mar 2023 09:54:59 -0600
+MIME-Version: 1.0
+Content-Type: text/html;
+	charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: file://C:\Users\wigginki\AppData\Local\Temp\SAS Temporary Files\_TD19656_HPC09_\sashtml.htm
+X-MimeOLE: Produced By Microsoft MimeOLE
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><META content=3D"IE=3D5.0000" =
+http-equiv=3D"X-UA-Compatible">
+<TITLE>SAS Output</TITLE>
+<META name=3DGENERATOR content=3D"MSHTML 11.00.10570.1001">
+<META content=3D"text/html; charset=3Dwindows-1252" =
+http-equiv=3DContent-type>
+<STYLE type=3Dtext/css>.accessiblecaption {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.aftercaption {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; PADDING-TOP: 4pt; =
+BACKGROUND-COLOR: #ffffff
+}
+.batch {
+	FONT-SIZE: x-small; BORDER-TOP: #000000 1px solid; FONT-FAMILY: 'SAS =
+Monospace', 'Courier New', Courier, monospace; BORDER-RIGHT: #000000 0px =
+solid; BORDER-COLLAPSE: separate; BORDER-BOTTOM: #000000 1px solid; =
+FONT-WEIGHT: normal; COLOR: #000000; PADDING-BOTTOM: 7px; FONT-STYLE: =
+normal; PADDING-TOP: 7px; PADDING-LEFT: 7px; BORDER-SPACING: 0px; =
+BORDER-LEFT: #000000 0px solid; PADDING-RIGHT: 7px; BACKGROUND-COLOR: =
+#ffffff
+}
+.beforecaption {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.body {
+	MARGIN-LEFT: 8px; MARGIN-RIGHT: 8px
+}
+.bodydate {
+	WIDTH: 100%; COLOR: #000000
+}
+.bycontentfolder {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.byline {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.bylinecontainer {
+	BORDER-TOP: #000000 0px solid; BORDER-RIGHT: #000000 0px solid; WIDTH: =
+100%; BORDER-BOTTOM: #000000 0px solid; BORDER-SPACING: 1px; =
+BORDER-LEFT: #000000 0px solid
+}
+.caption {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.contentfolder {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.contentitem {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.contentproclabel {
+	LIST-STYLE-TYPE: decimal; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: italic
+}
+.contentprocname {
+	LIST-STYLE-TYPE: decimal; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: italic
+}
+.contents {
+	LIST-STYLE-TYPE: decimal; MARGIN-LEFT: 8px; BACKGROUND-COLOR: #ffffff; =
+MARGIN-RIGHT: 8px
+}
+.contentsdate {
+	WIDTH: 100%; COLOR: #000000
+}
+.contenttitle {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal
+}
+.continued {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; WIDTH: 100%; =
+FONT-WEIGHT: normal; COLOR: #000000; FONT-STYLE: italic; TEXT-ALIGN: =
+left; BORDER-SPACING: 0px
+}
+.data {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.dataemphasis {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.dataemphasisfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.dataempty {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.datafixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.datastrong {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.datastrongfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.date {
+	WIDTH: 100%; COLOR: #000000
+}
+.document {
+=09
+}
+A:link {
+	COLOR: #0066aa
+}
+A:visited {
+	COLOR: #004488
+}
+A:active {
+	COLOR: #004488
+}
+.errorcontent {
+	TEXT-ALIGN: left
+}
+.errorcontentfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; FONT-STYLE: normal; TEXT-ALIGN: left
+}
+.extendedpage {
+	FONT-SIZE: x-small; BORDER-TOP: #000000 1pt solid; FONT-FAMILY: Arial, =
+Helvetica, Helv; BORDER-RIGHT: #000000 1pt solid; BORDER-BOTTOM: #000000 =
+1pt solid; FONT-WEIGHT: normal; COLOR: #000000; FONT-STYLE: italic; =
+TEXT-ALIGN: center; BORDER-LEFT: #000000 1pt solid
+}
+.fatalcontent {
+	TEXT-ALIGN: left
+}
+.fatalcontentfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; FONT-STYLE: normal; TEXT-ALIGN: left
+}
+.folderaction {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.footer {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.footeremphasis {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.footeremphasisfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.footerempty {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.footerfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.footerstrong {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.footerstrongfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.frame {
+=09
+}
+.graph {
+	BORDER-TOP: #000000 1px solid; BORDER-RIGHT: #000000 0px solid; =
+BORDER-COLLAPSE: separate; BORDER-BOTTOM: #000000 1px solid; =
+BORDER-SPACING: 0px; BORDER-LEFT: #000000 0px solid; BACKGROUND-COLOR: =
+#ffffff
+}
+.header {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headeremphasis {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headeremphasisfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headerempty {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headerfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.headersandfooters {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headerstrong {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headerstrongfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.heading1 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.heading2 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.heading3 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.heading4 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.heading5 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.heading6 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.index {
+	COLOR: #000000
+}
+.indexaction {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.indexitem {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.indexprocname {
+	LIST-STYLE-TYPE: decimal; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: italic
+}
+.indextitle {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal
+}
+.layoutcontainer {
+	BORDER-TOP: #000000 0px solid; BORDER-RIGHT: #000000 0px solid; =
+BORDER-BOTTOM: #000000 0px solid; BORDER-SPACING: 30px; BORDER-LEFT: =
+#000000 0px solid
+}
+.layoutregion {
+	BORDER-TOP: #000000 0px solid; BORDER-RIGHT: #000000 0px solid; =
+BORDER-BOTTOM: #000000 0px solid; BORDER-SPACING: 30px; BORDER-LEFT: =
+#000000 0px solid
+}
+.linecontent {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.list {
+	LIST-STYLE-TYPE: disc
+}
+.list10 {
+	LIST-STYLE-TYPE: square
+}
+.list2 {
+	LIST-STYLE-TYPE: circle
+}
+.list3 {
+	LIST-STYLE-TYPE: square
+}
+.list4 {
+	LIST-STYLE-TYPE: square
+}
+.list5 {
+	LIST-STYLE-TYPE: square
+}
+.list6 {
+	LIST-STYLE-TYPE: square
+}
+.list7 {
+	LIST-STYLE-TYPE: square
+}
+.list8 {
+	LIST-STYLE-TYPE: square
+}
+.list9 {
+	LIST-STYLE-TYPE: square
+}
+.listitem {
+	LIST-STYLE-TYPE: disc; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.listitem10 {
+	LIST-STYLE-TYPE: square
+}
+.listitem2 {
+	LIST-STYLE-TYPE: circle
+}
+.listitem3 {
+	LIST-STYLE-TYPE: square
+}
+.listitem4 {
+	LIST-STYLE-TYPE: square
+}
+.listitem5 {
+	LIST-STYLE-TYPE: square
+}
+.listitem6 {
+	LIST-STYLE-TYPE: square
+}
+.listitem7 {
+	LIST-STYLE-TYPE: square
+}
+.listitem8 {
+	LIST-STYLE-TYPE: square
+}
+.listitem9 {
+	LIST-STYLE-TYPE: square
+}
+.notebanner {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; FONT-STYLE: italic
+}
+.notecontent {
+	TEXT-ALIGN: left
+}
+.notecontentfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; FONT-STYLE: normal; TEXT-ALIGN: left
+}
+.output {
+	BORDER-TOP: #000000 1px solid; BORDER-RIGHT: #000000 0px solid; =
+BORDER-COLLAPSE: separate; BORDER-BOTTOM: #000000 1px solid; =
+BORDER-SPACING: 0px; BORDER-LEFT: #000000 0px solid; BACKGROUND-COLOR: =
+#ffffff
+}
+.pageno {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; =
+VERTICAL-ALIGN: top; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: =
+italic; TEXT-ALIGN: right; BORDER-SPACING: 0px
+}
+.pages {
+	LIST-STYLE-TYPE: decimal; MARGIN-LEFT: 8px; BACKGROUND-COLOR: #ffffff; =
+MARGIN-RIGHT: 8px
+}
+.pagesdate {
+	WIDTH: 100%; COLOR: #000000
+}
+.pagesitem {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.pagesproclabel {
+	LIST-STYLE-TYPE: decimal; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: italic
+}
+.pagesprocname {
+	LIST-STYLE-TYPE: decimal; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: italic
+}
+.pagestitle {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal
+}
+.paragraph {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; FONT-STYLE: normal
+}
+.parskip {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BORDER-SPACING: 0px
+}
+.prepage {
+	TEXT-ALIGN: left
+}
+.proctitle {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.proctitlefixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal
+}
+.rowfooter {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowfooteremphasis {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowfooteremphasisfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowfooterempty {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowfooterfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.rowfooterstrong {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowfooterstrongfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.rowheader {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderemphasis {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderemphasisfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderempty {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderstrong {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderstrongfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.systemfooter {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter10 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter2 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter3 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter4 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter5 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter6 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter7 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter8 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter9 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle10 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle2 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle3 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle4 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle5 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle6 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle7 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle8 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle9 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systitleandfootercontainer {
+	FONT-SIZE: x-small; BORDER-TOP: #000000 0px solid; FONT-FAMILY: Arial, =
+Helvetica, Helv; BORDER-RIGHT: #000000 0px solid; WIDTH: 100%; =
+BORDER-BOTTOM: #000000 0px solid; FONT-WEIGHT: bold; FONT-STYLE: italic; =
+BORDER-SPACING: 0px; BORDER-LEFT: #000000 0px solid
+}
+.table {
+	BORDER-TOP: #000000 1px solid; BORDER-RIGHT: #000000 0px solid; =
+BORDER-COLLAPSE: separate; BORDER-BOTTOM: #000000 1px solid; =
+BORDER-SPACING: 0px; BORDER-LEFT: #000000 0px solid; BACKGROUND-COLOR: =
+#ffffff
+}
+.top_stacked_value {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: 0px; PADDING-BOTTOM: =
+1px; BORDER-LEFT: 0px
+}
+.middle_stacked_value {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: 0px; PADDING-BOTTOM: =
+1px; PADDING-TOP: 1px; BORDER-LEFT: 0px
+}
+.bottom_stacked_value {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: 0px; PADDING-TOP: =
+1px; BORDER-LEFT: 0px
+}
+.titleandnotecontainer {
+	BORDER-TOP: #000000 0px solid; BORDER-RIGHT: #000000 0px solid; WIDTH: =
+100%; BORDER-BOTTOM: #000000 0px solid; BORDER-SPACING: 1px; =
+BORDER-LEFT: #000000 0px solid
+}
+.titlesandfooters {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.warncontent {
+	TEXT-ALIGN: left
+}
+.warncontentfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; FONT-STYLE: normal; TEXT-ALIGN: left
+}
+.l {
+	TEXT-ALIGN: left
+}
+.c {
+	TEXT-ALIGN: center
+}
+.r {
+	TEXT-ALIGN: right
+}
+.d {
+	TEXT-ALIGN: right
+}
+.j {
+	TEXT-ALIGN: justify
+}
+.t {
+	VERTICAL-ALIGN: top
+}
+.m {
+	VERTICAL-ALIGN: middle
+}
+.b {
+	VERTICAL-ALIGN: bottom
+}
+TD {
+	VERTICAL-ALIGN: top
+}
+TH {
+	VERTICAL-ALIGN: top
+}
+.stacked_cell {
+	PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 0px; =
+PADDING-RIGHT: 0px
+}
+</STYLE>
+
+<SCRIPT language=3Djavascript type=3Dtext/javascript>
+<!--=20
+function startup(){
+
+}
+function shutdown(){
+
+}
+
+//-->
+</SCRIPT>
+</HEAD>
+<BODY class=3Dbody onload=3Dstartup() onunload=3Dshutdown()>
+<SCRIPT language=3Djavascript type=3Dtext/javascript>
+<!--=20
+var _info =3D navigator.userAgent
+var _ie =3D (_info.indexOf("MSIE") > 0
+          && _info.indexOf("Win") > 0
+          && _info.indexOf("Windows 3.1") < 0);
+var _ie64 =3D _info.indexOf("x64") > 0
+
+//-->
+</SCRIPT>
+
+<DIV class=3Dbranch><A name=3DIDX></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">WORK.QRYLONG_1621</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">95609204</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">11</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/23/2023 08:02:10</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">80</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/23/2023 08:02:10</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX1></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">117025</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">817</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">788</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD class=3D"l data">C:\Users\wigginki\AppData\Local\Temp\SAS =
+Temporary=20
+      Files\_TD19656_HPC09_\qrylong_1621.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">7GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">7669415936</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX2></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">month</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Month period of eligibility</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">enr_cnty</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">County of enrollment</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">managedCare</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Managed care flag</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">BUDGET_GROUP</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BUDGET_GROUP.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">HCPF budget reporting group assignment=20
+  (incomplete)</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">pcmp_loc_ID</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PCMP location ID code</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">pcmp_loc_type_cd</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$PROV_TYP_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PROV_TYP_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">rae_assign</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Client assigned to a RAE</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">num_pcmp_type</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">pcmp_type</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">5</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"l data">dt_qrtr</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DI=
+V>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX3></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">WORK.QRYLONG_1621A</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">85536949</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">10</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/23/2023 08:30:26</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">72</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/23/2023 08:30:26</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX4></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">94204</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">908</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">878</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD class=3D"l data">C:\Users\wigginki\AppData\Local\Temp\SAS =
+Temporary=20
+      Files\_TD19656_HPC09_\qrylong_1621a.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">6GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">6173818880</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX5></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">pcmp_loc_ID</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PCMP location ID code</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">month</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Month period of eligibility</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">enr_cnty</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">County of enrollment</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">BUDGET_GROUP</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BUDGET_GROUP.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">HCPF budget reporting group assignment=20
+  (incomplete)</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">dt_qrtr</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">dob</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">sex</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"l data">$GNDR_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">GNDR_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">race</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$RACE_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">RACE_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">rae_person_new</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BEST12.</TD>
+    <TD class=3D"l data">BEST32.</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX6></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Sortedby" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Sort=20
+  Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sortedby</TH>
+    <TD class=3D"l data">enr_cnty</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Validated</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Character Set</TH>
+    <TD=20
+class=3D"l =
+data">ANSI</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DIV>=
+
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX7></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">INT.QRYLONG_1621</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">82182283</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">12</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/23/2023 08:37:13</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">104</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/23/2023 08:37:13</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX8></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">130656</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">629</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">606</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD=20
+      class=3D"l =
+data">S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\in=
+terim\qrylong_1621.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">8GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">8562737152</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX9></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">pcmp_loc_ID</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PCMP location ID code</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">month</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Month period of eligibility</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">enr_cnty</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">County of enrollment</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">BUDGET_GROUP</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BUDGET_GROUP.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">HCPF budget reporting group assignment=20
+  (incomplete)</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">dt_qrtr</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">sex</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"l data">$GNDR_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">GNDR_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">race</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$RACE_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">RACE_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">rae_person_new</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BEST12.</TD>
+    <TD class=3D"l data">BEST32.</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">budget_grp_new</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">22</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"l data">FY</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"l data">age</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">AGE_CAT_.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DI=
+V>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX10></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure SQL: Query Results" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>n_mcaid_id</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TD=20
+class=3D"r =
+data">1594074</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></D=
+IV>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX11></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">INT.QRYLONG_1621</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">73434456</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">12</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/23/2023 08:56:10</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">104</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/23/2023 08:56:10</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX12></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">116748</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">629</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">606</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD=20
+      class=3D"l =
+data">S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\in=
+terim\qrylong_1621.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">7GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">7651262464</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX13></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">pcmp_loc_ID</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PCMP location ID code</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">month</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Month period of eligibility</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">enr_cnty</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">County of enrollment</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">BUDGET_GROUP</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BUDGET_GROUP.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">HCPF budget reporting group assignment=20
+  (incomplete)</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">dt_qrtr</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">sex</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"l data">$GNDR_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">GNDR_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">race</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$RACE_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">RACE_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">rae_person_new</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BEST12.</TD>
+    <TD class=3D"l data">BEST32.</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">budget_grp_new</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">22</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"l data">FY</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"l data">age</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">AGE_CAT_.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DI=
+V>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX14></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">INT.QRYLONG_1621</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">73434456</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">13</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/23/2023 09:06:30</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">112</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/23/2023 09:06:30</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX15></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">125744</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">584</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">562</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD=20
+      class=3D"l =
+data">S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\in=
+terim\qrylong_1621.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">8GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">8240824320</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX16></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">pcmp_loc_ID</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PCMP location ID code</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">month</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Month period of eligibility</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">enr_cnty</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">County of enrollment</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">BUDGET_GROUP</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BUDGET_GROUP.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">HCPF budget reporting group assignment=20
+  (incomplete)</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">dt_qrtr</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">sex</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"l data">$GNDR_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">GNDR_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">race</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$RACE_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">RACE_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">rae_person_new</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BEST12.</TD>
+    <TD class=3D"l data">BEST32.</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">budget_grp_new</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">22</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"l data">FY</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"l data">age</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">AGE_CAT_.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>13</TH>
+    <TD class=3D"l data">time</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DI=
+V>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX17></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Print: Data Set INT.QRYLONG_1621_TIME" border=3D1=20
+  frame=3Dhsides><COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"r header" scope=3Dcol>Obs</TH>
+    <TH class=3D"l header" scope=3Dcol>mcaid_id</TH>
+    <TH class=3D"l header" scope=3Dcol>pcmp_loc_ID</TH>
+    <TH class=3D"l header" scope=3Dcol>enr_cnty</TH>
+    <TH class=3D"r header" scope=3Dcol>BUDGET_GROUP</TH>
+    <TH class=3D"r header" scope=3Dcol>dt_qrtr</TH>
+    <TH class=3D"l header" scope=3Dcol>sex</TH>
+    <TH class=3D"l header" scope=3Dcol>race</TH>
+    <TH class=3D"r header" scope=3Dcol>rae_person_new</TH>
+    <TH class=3D"l header" scope=3Dcol>budget_grp_new</TH>
+    <TH class=3D"r header" scope=3Dcol>FY</TH>
+    <TH class=3D"r header" scope=3Dcol>age</TH>
+    <TH class=3D"r header" scope=3Dcol>time</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610056</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">16</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01JUL2016</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">5</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2016</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610057</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01JUL2016</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2016</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610058</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01OCT2016</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2016</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610059</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01JAN2017</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2016</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610060</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01APR2017</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2016</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610061</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01JUL2017</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2017</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610062</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01OCT2017</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2017</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610063</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01JAN2018</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2017</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610064</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01APR2018</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2017</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610065</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01OCT2018</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2018</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610066</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JAN2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2018</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610067</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01APR2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2018</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610068</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JUL2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">1</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610069</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01OCT2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">2</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610070</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JAN2020</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">3</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610071</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01JUL2018</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2018</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">.</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>610072</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">01OCT2018</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">MAGI Eligible Children</TD>
+    <TD class=3D"r data">2018</TD>
+    <TD class=3D"r data">4</TD>
+    <TD=20
+class=3D"r =
+data">.</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DIV>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX18></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Print: Data Set INT.MEMLIST" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"r header" scope=3Dcol>Obs</TH>
+    <TH class=3D"l header" scope=3Dcol>mcaid_id</TH>
+    <TH class=3D"l header" scope=3Dcol>pcmp_loc_ID</TH>
+    <TH class=3D"r header" scope=3Dcol>month</TH>
+    <TH class=3D"l header" scope=3Dcol>enr_cnty</TH>
+    <TH class=3D"r header" scope=3Dcol>BUDGET_GROUP</TH>
+    <TH class=3D"r header" scope=3Dcol>dt_qrtr</TH>
+    <TH class=3D"l header" scope=3Dcol>sex</TH>
+    <TH class=3D"l header" scope=3Dcol>race</TH>
+    <TH class=3D"r header" scope=3Dcol>rae_person_new</TH>
+    <TH class=3D"l header" scope=3Dcol>budget_grp_new</TH>
+    <TH class=3D"r header" scope=3Dcol>FY</TH>
+    <TH class=3D"r header" scope=3Dcol>age</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856657</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01JUL2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JUL2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856658</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01AUG2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JUL2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856659</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01SEP2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JUL2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856660</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01OCT2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01OCT2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856661</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01NOV2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01OCT2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856662</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01DEC2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01OCT2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856663</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01JAN2020</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JAN2020</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856664</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01FEB2020</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JAN2020</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856665</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01MAR2020</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JAN2020</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD=20
+class=3D"r =
+data">4</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DIV>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX19></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Print: Data Set INT.MEMLIST" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"r header" scope=3Dcol>Obs</TH>
+    <TH class=3D"l header" scope=3Dcol>mcaid_id</TH>
+    <TH class=3D"l header" scope=3Dcol>pcmp_loc_ID</TH>
+    <TH class=3D"r header" scope=3Dcol>month</TH>
+    <TH class=3D"l header" scope=3Dcol>enr_cnty</TH>
+    <TH class=3D"r header" scope=3Dcol>BUDGET_GROUP</TH>
+    <TH class=3D"r header" scope=3Dcol>dt_qrtr</TH>
+    <TH class=3D"l header" scope=3Dcol>sex</TH>
+    <TH class=3D"l header" scope=3Dcol>race</TH>
+    <TH class=3D"r header" scope=3Dcol>rae_person_new</TH>
+    <TH class=3D"l header" scope=3Dcol>budget_grp_new</TH>
+    <TH class=3D"r header" scope=3Dcol>FY</TH>
+    <TH class=3D"r header" scope=3Dcol>age</TH>
+    <TH class=3D"r header" scope=3Dcol>time</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856657</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01JUL2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JUL2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">1</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856658</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01AUG2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JUL2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">1</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856659</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01SEP2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JUL2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">1</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856660</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01OCT2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01OCT2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">2</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856661</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01NOV2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01OCT2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">2</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856662</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01DEC2019</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01OCT2019</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">2</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856663</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01JAN2020</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JAN2020</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">3</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856664</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01FEB2020</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JAN2020</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD class=3D"r data">3</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>856665</TH>
+    <TD class=3D"l data">G010516</TD>
+    <TD class=3D"l data">107729</TD>
+    <TD class=3D"r data">01MAR2020</TD>
+    <TD class=3D"l data">43</TD>
+    <TD class=3D"r data">Foster Care</TD>
+    <TD class=3D"r data">01JAN2020</TD>
+    <TD class=3D"l data">Male</TD>
+    <TD class=3D"l data">White/Caucasian</TD>
+    <TD class=3D"r data">1</TD>
+    <TD class=3D"l data">Foster Care</TD>
+    <TD class=3D"r data">2019</TD>
+    <TD class=3D"r data">4</TD>
+    <TD=20
+class=3D"r =
+data">3</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DIV>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX20></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">INT.MEMLIST</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">40974871</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">13</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/23/2023 09:22:19</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">112</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/23/2023 09:22:19</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX21></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">70163</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">584</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">562</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD=20
+      class=3D"l =
+data">S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\in=
+terim\memlist.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">4GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">4598267904</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX22></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">pcmp_loc_ID</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PCMP location ID code</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">month</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Month period of eligibility</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">enr_cnty</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">County of enrollment</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">BUDGET_GROUP</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BUDGET_GROUP.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">HCPF budget reporting group assignment=20
+  (incomplete)</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">dt_qrtr</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">sex</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"l data">$GNDR_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">GNDR_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">race</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$RACE_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">RACE_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">rae_person_new</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BEST12.</TD>
+    <TD class=3D"l data">BEST32.</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">budget_grp_new</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">22</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"l data">FY</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"l data">age</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">AGE_CAT_.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>13</TH>
+    <TD class=3D"l data">time</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DI=
+V>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX23></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">INT.MEMLIST</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">40974871</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">13</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/23/2023 09:22:19</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">112</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/23/2023 09:22:19</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX24></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">70163</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">584</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">562</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD=20
+      class=3D"l =
+data">S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\in=
+terim\memlist.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">4GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">4598267904</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX25></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">pcmp_loc_ID</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PCMP location ID code</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">month</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Month period of eligibility</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">enr_cnty</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">County of enrollment</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">BUDGET_GROUP</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BUDGET_GROUP.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">HCPF budget reporting group assignment=20
+  (incomplete)</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">dt_qrtr</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">DATE9.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">sex</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"l data">$GNDR_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">GNDR_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">race</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$RACE_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">RACE_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">rae_person_new</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BEST12.</TD>
+    <TD class=3D"l data">BEST32.</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">budget_grp_new</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">22</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"l data">FY</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"l data">age</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">AGE_CAT_.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>13</TH>
+    <TD class=3D"l data">time</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DI=
+V>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX26></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">INT.MEMLIST_ATTR_QRTR_1921</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">14649660</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/20/2023 09:29:32</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">64</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/20/2023 09:29:32</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX27></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">14349</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">1021</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">994</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD=20
+      class=3D"l =
+data">S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\in=
+terim\memlist_attr_qrtr_1921.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">897MB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">940441600</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><=
+A=20
+name=3DIDX28></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">MCAID_ID</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">time</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">pcmp_loc_id</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">n_months_per_q</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">ind_isp</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">FY</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">char_pcmp_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DI=
+V>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX29></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">INT.MEMLIST_FINAL</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">40974871</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">13</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/23/2023 09:40:20</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">112</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/23/2023 09:40:20</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX30></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">70163</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">584</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">562</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD=20
+      class=3D"l =
+data">S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\in=
+terim\memlist_final.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">4GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">4598267904</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX31></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">pcmp_og_qrylong</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PCMP location ID code</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">enr_cnty</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">County of enrollment</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">age</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">AGE_CAT_.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">sex</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"l data">$GNDR_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">GNDR_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">race</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$RACE_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">RACE_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">rae_person_new</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BEST12.</TD>
+    <TD class=3D"l data">BEST32.</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">budget_grp_new</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">22</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">FY</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">time</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"l data">pcmp_loc_id</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"l data">n_months_per_q</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>13</TH>
+    <TD class=3D"l data">ind_isp</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX32></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Sortedby" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Sort=20
+  Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sortedby</TH>
+    <TD class=3D"l data">mcaid_id time</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Validated</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Character Set</TH>
+    <TD=20
+class=3D"l =
+data">ANSI</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DIV>=
+
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX33></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The FREQ Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Freq: One-Way Frequencies" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>time</TH>
+    <TH class=3D"r b header" scope=3Dcol>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Relative Frequency </TH>
+    <TH class=3D"r b header" scope=3Dcol>Cumulative<BR>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Cumulative<BR>Relative=20
+  Frequency</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"r data">2962649</TD>
+    <TD class=3D"c data">7.23%</TD>
+    <TD class=3D"r data">2962649</TD>
+    <TD class=3D"c data">7.23%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"r data">2944358</TD>
+    <TD class=3D"c data">7.18%</TD>
+    <TD class=3D"r data">5907007</TD>
+    <TD class=3D"c data">14.41%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"r data">2916005</TD>
+    <TD class=3D"c data">7.11%</TD>
+    <TD class=3D"r data">8823012</TD>
+    <TD class=3D"c data">21.53%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"r data">3060206</TD>
+    <TD class=3D"c data">7.46%</TD>
+    <TD class=3D"r data">11883218</TD>
+    <TD class=3D"c data">29.00%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"r data">3228013</TD>
+    <TD class=3D"c data">7.87%</TD>
+    <TD class=3D"r data">15111231</TD>
+    <TD class=3D"c data">36.87%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"r data">3389726</TD>
+    <TD class=3D"c data">8.27%</TD>
+    <TD class=3D"r data">18500957</TD>
+    <TD class=3D"c data">45.15%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"r data">3530844</TD>
+    <TD class=3D"c data">8.61%</TD>
+    <TD class=3D"r data">22031801</TD>
+    <TD class=3D"c data">53.76%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"r data">3629954</TD>
+    <TD class=3D"c data">8.85%</TD>
+    <TD class=3D"r data">25661755</TD>
+    <TD class=3D"c data">62.62%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"r data">3690157</TD>
+    <TD class=3D"c data">9.00%</TD>
+    <TD class=3D"r data">29351912</TD>
+    <TD class=3D"c data">71.63%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"r data">3777960</TD>
+    <TD class=3D"c data">9.22%</TD>
+    <TD class=3D"r data">33129872</TD>
+    <TD class=3D"c data">80.85%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"r data">3880625</TD>
+    <TD class=3D"c data">9.47%</TD>
+    <TD class=3D"r data">37010497</TD>
+    <TD class=3D"c data">90.32%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"r data">3964374</TD>
+    <TD class=3D"c data">9.67%</TD>
+    <TD class=3D"r data">40974871</TD>
+    <TD=20
+class=3D"c =
+data">100.00%</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></D=
+IV>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX34></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">INT.MEMLIST_FINAL</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">40974871</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">13</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/23/2023 09:40:20</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">112</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/23/2023 09:40:20</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX35></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">70163</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">584</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">562</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD=20
+      class=3D"l =
+data">S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\in=
+terim\memlist_final.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">4GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">4598267904</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX36></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">pcmp_og_qrylong</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PCMP location ID code</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">enr_cnty</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">County of enrollment</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">age</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">AGE_CAT_.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">sex</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"l data">$GNDR_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">GNDR_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">race</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$RACE_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">RACE_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">rae_person_new</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BEST12.</TD>
+    <TD class=3D"l data">BEST32.</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">budget_grp_new</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">22</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">FY</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">time</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"l data">pcmp_loc_id</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"l data">n_months_per_q</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>13</TH>
+    <TD class=3D"l data">ind_isp</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX37></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Sortedby" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Sort=20
+  Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sortedby</TH>
+    <TD class=3D"l data">mcaid_id time</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Validated</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Character Set</TH>
+    <TD=20
+class=3D"l =
+data">ANSI</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DIV>=
+
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX38></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">INT.MEMLIST_FINAL</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">40974871</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">12</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/23/2023 09:48:06</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">104</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/23/2023 09:48:06</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX39></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">65143</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">629</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">607</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD=20
+      class=3D"l =
+data">S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\in=
+terim\memlist_final.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">4GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">4269277184</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX40></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">enr_cnty</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">County of enrollment</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">age</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">AGE_CAT_.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">sex</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"l data">$GNDR_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">GNDR_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">race</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$RACE_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">RACE_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">rae_person_new</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BEST12.</TD>
+    <TD class=3D"l data">BEST32.</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">budget_grp_new</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">22</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">FY</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">time</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">pcmp_loc_id</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"l data">n_months_per_q</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"l data">ind_isp</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX41></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Sortedby" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Sort=20
+  Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sortedby</TH>
+    <TD class=3D"l data">mcaid_id time</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Validated</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Character Set</TH>
+    <TD=20
+class=3D"l =
+data">ANSI</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DIV>=
+
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX42></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">The SAS =
+System</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The FREQ Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Freq: One-Way Frequencies" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>FY</TH>
+    <TH class=3D"r b header" scope=3Dcol>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Relative Frequency </TH>
+    <TH class=3D"r b header" scope=3Dcol>Cumulative<BR>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Cumulative<BR>Relative=20
+  Frequency</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2019</TH>
+    <TD class=3D"r data">11883218</TD>
+    <TD class=3D"c data">29.00%</TD>
+    <TD class=3D"r data">11883218</TD>
+    <TD class=3D"c data">29.00%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2020</TH>
+    <TD class=3D"r data">13778537</TD>
+    <TD class=3D"c data">33.62%</TD>
+    <TD class=3D"r data">25661755</TD>
+    <TD class=3D"c data">62.62%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2021</TH>
+    <TD class=3D"r data">15313116</TD>
+    <TD class=3D"c data">37.37%</TD>
+    <TD class=3D"r data">40974871</TD>
+    <TD=20
+class=3D"c =
+data">100.00%</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A =
+
+name=3DIDX43></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Freq: One-Way Frequencies" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>time</TH>
+    <TH class=3D"r b header" scope=3Dcol>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Relative Frequency </TH>
+    <TH class=3D"r b header" scope=3Dcol>Cumulative<BR>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Cumulative<BR>Relative=20
+  Frequency</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"r data">2962649</TD>
+    <TD class=3D"c data">7.23%</TD>
+    <TD class=3D"r data">2962649</TD>
+    <TD class=3D"c data">7.23%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"r data">2944358</TD>
+    <TD class=3D"c data">7.18%</TD>
+    <TD class=3D"r data">5907007</TD>
+    <TD class=3D"c data">14.41%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"r data">2916005</TD>
+    <TD class=3D"c data">7.11%</TD>
+    <TD class=3D"r data">8823012</TD>
+    <TD class=3D"c data">21.53%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"r data">3060206</TD>
+    <TD class=3D"c data">7.46%</TD>
+    <TD class=3D"r data">11883218</TD>
+    <TD class=3D"c data">29.00%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"r data">3228013</TD>
+    <TD class=3D"c data">7.87%</TD>
+    <TD class=3D"r data">15111231</TD>
+    <TD class=3D"c data">36.87%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"r data">3389726</TD>
+    <TD class=3D"c data">8.27%</TD>
+    <TD class=3D"r data">18500957</TD>
+    <TD class=3D"c data">45.15%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"r data">3530844</TD>
+    <TD class=3D"c data">8.61%</TD>
+    <TD class=3D"r data">22031801</TD>
+    <TD class=3D"c data">53.76%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"r data">3629954</TD>
+    <TD class=3D"c data">8.85%</TD>
+    <TD class=3D"r data">25661755</TD>
+    <TD class=3D"c data">62.62%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"r data">3690157</TD>
+    <TD class=3D"c data">9.00%</TD>
+    <TD class=3D"r data">29351912</TD>
+    <TD class=3D"c data">71.63%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"r data">3777960</TD>
+    <TD class=3D"c data">9.22%</TD>
+    <TD class=3D"r data">33129872</TD>
+    <TD class=3D"c data">80.85%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"r data">3880625</TD>
+    <TD class=3D"c data">9.47%</TD>
+    <TD class=3D"r data">37010497</TD>
+    <TD class=3D"c data">90.32%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"r data">3964374</TD>
+    <TD class=3D"c data">9.67%</TD>
+    <TD class=3D"r data">40974871</TD>
+    <TD=20
+class=3D"c =
+data">100.00%</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A =
+
+name=3DIDX44></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Freq: One-Way Frequencies" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>age</TH>
+    <TH class=3D"r b header" scope=3Dcol>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Relative Frequency </TH>
+    <TH class=3D"r b header" scope=3Dcol>Cumulative<BR>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Cumulative<BR>Relative=20
+  Frequency</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"r data">5332862</TD>
+    <TD class=3D"c data">13.01%</TD>
+    <TD class=3D"r data">5332862</TD>
+    <TD class=3D"c data">13.01%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"r data">4804428</TD>
+    <TD class=3D"c data">11.72%</TD>
+    <TD class=3D"r data">10137290</TD>
+    <TD class=3D"c data">24.74%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"r data">4857484</TD>
+    <TD class=3D"c data">11.85%</TD>
+    <TD class=3D"r data">14994774</TD>
+    <TD class=3D"c data">36.59%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"r data">4085326</TD>
+    <TD class=3D"c data">9.97%</TD>
+    <TD class=3D"r data">19080100</TD>
+    <TD class=3D"c data">46.56%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"r data">14753809</TD>
+    <TD class=3D"c data">36.00%</TD>
+    <TD class=3D"r data">33833909</TD>
+    <TD class=3D"c data">82.57%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"r data">7140962</TD>
+    <TD class=3D"c data">17.42%</TD>
+    <TD class=3D"r data">40974871</TD>
+    <TD=20
+class=3D"c =
+data">100.00%</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A =
+
+name=3DIDX45></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Freq: One-Way Frequencies" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D5 =
+scope=3Dcolgroup>GNDR_CD</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>sex</TH>
+    <TH class=3D"r b header" scope=3Dcol>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Relative Frequency </TH>
+    <TH class=3D"r b header" scope=3Dcol>Cumulative<BR>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Cumulative<BR>Relative=20
+  Frequency</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Female</TH>
+    <TD class=3D"r data">21594887</TD>
+    <TD class=3D"c data">52.70%</TD>
+    <TD class=3D"r data">21594887</TD>
+    <TD class=3D"c data">52.70%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Male</TH>
+    <TD class=3D"r data">19379731</TD>
+    <TD class=3D"c data">47.29%</TD>
+    <TD class=3D"r data">40974618</TD>
+    <TD class=3D"c data">99.99%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Unknown</TH>
+    <TD class=3D"r data">253</TD>
+    <TD class=3D"c data">&nbsp;</TD>
+    <TD class=3D"r data">40974871</TD>
+    <TD=20
+class=3D"c =
+data">100.00%</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A =
+
+name=3DIDX46></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Freq: One-Way Frequencies" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D5 =
+scope=3Dcolgroup>RACE_CD</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>race</TH>
+    <TH class=3D"r b header" scope=3Dcol>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Relative Frequency </TH>
+    <TH class=3D"r b header" scope=3Dcol>Cumulative<BR>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Cumulative<BR>Relative=20
+  Frequency</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Not Populated</TH>
+    <TD class=3D"r data">677540</TD>
+    <TD class=3D"c data">1.65%</TD>
+    <TD class=3D"r data">677540</TD>
+    <TD class=3D"c data">1.65%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Hispanic/Latino</TH>
+    <TD class=3D"r data">12552609</TD>
+    <TD class=3D"c data">30.63%</TD>
+    <TD class=3D"r data">13230149</TD>
+    <TD class=3D"c data">32.28%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>White/Caucasian</TH>
+    <TD class=3D"r data">16472163</TD>
+    <TD class=3D"c data">40.20%</TD>
+    <TD class=3D"r data">29702312</TD>
+    <TD class=3D"c data">72.48%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Black/African American</TH>
+    <TD class=3D"r data">2709957</TD>
+    <TD class=3D"c data">6.61%</TD>
+    <TD class=3D"r data">32412269</TD>
+    <TD class=3D"c data">79.10%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>American Indian/Alaska =
+Native</TH>
+    <TD class=3D"r data">400995</TD>
+    <TD class=3D"c data">97%</TD>
+    <TD class=3D"r data">32813264</TD>
+    <TD class=3D"c data">80.08%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Asian</TH>
+    <TD class=3D"r data">933355</TD>
+    <TD class=3D"c data">2.27%</TD>
+    <TD class=3D"r data">33746619</TD>
+    <TD class=3D"c data">82.35%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Other/Unknown Race</TH>
+    <TD class=3D"r data">2173427</TD>
+    <TD class=3D"c data">5.30%</TD>
+    <TD class=3D"r data">35920046</TD>
+    <TD class=3D"c data">87.66%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Not Provided</TH>
+    <TD class=3D"r data">2825856</TD>
+    <TD class=3D"c data">6.89%</TD>
+    <TD class=3D"r data">38745902</TD>
+    <TD class=3D"c data">94.56%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Native Hawaiian/Other Pacific=20
+Islander</TH>
+    <TD class=3D"r data">121265</TD>
+    <TD class=3D"c data">29%</TD>
+    <TD class=3D"r data">38867167</TD>
+    <TD class=3D"c data">94.85%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Other People of Color</TH>
+    <TD class=3D"r data">2107704</TD>
+    <TD class=3D"c data">5.14%</TD>
+    <TD class=3D"r data">40974871</TD>
+    <TD=20
+class=3D"c =
+data">100.00%</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A =
+
+name=3DIDX47></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Freq: One-Way Frequencies" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>rae_person_new</TH>
+    <TH class=3D"r b header" scope=3Dcol>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Relative Frequency </TH>
+    <TH class=3D"r b header" scope=3Dcol>Cumulative<BR>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Cumulative<BR>Relative=20
+  Frequency</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"r data">5645845</TD>
+    <TD class=3D"c data">13.77%</TD>
+    <TD class=3D"r data">5645845</TD>
+    <TD class=3D"c data">13.77%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"r data">3436687</TD>
+    <TD class=3D"c data">8.38%</TD>
+    <TD class=3D"r data">9082532</TD>
+    <TD class=3D"c data">22.16%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"r data">11257568</TD>
+    <TD class=3D"c data">27.47%</TD>
+    <TD class=3D"r data">20340100</TD>
+    <TD class=3D"c data">49.64%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"r data">4596168</TD>
+    <TD class=3D"c data">11.21%</TD>
+    <TD class=3D"r data">24936268</TD>
+    <TD class=3D"c data">60.85%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"r data">3964338</TD>
+    <TD class=3D"c data">9.67%</TD>
+    <TD class=3D"r data">28900606</TD>
+    <TD class=3D"c data">70.53%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"r data">5344947</TD>
+    <TD class=3D"c data">13.04%</TD>
+    <TD class=3D"r data">34245553</TD>
+    <TD class=3D"c data">83.57%</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"r data">6729318</TD>
+    <TD class=3D"c data">16.42%</TD>
+    <TD class=3D"r data">40974871</TD>
+    <TD=20
+class=3D"c =
+data">100.00%</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A =
+
+name=3DIDX48></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Freq: One-Way Frequencies" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>budget_grp_new</TH>
+    <TH class=3D"r b header" scope=3Dcol>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Relative Frequency </TH>
+    <TH class=3D"r b header" scope=3Dcol>Cumulative<BR>Frequency</TH>
+    <TH class=3D"c b header" scope=3Dcol>Cumulative<BR>Relative=20
+  Frequency</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Disabled</TH>
+    <TD class=3D"r data">2850000</TD>
+    <TD class=3D"c data">6.95%</TD>
+    <TD class=3D"r data">2850000</TD>
+    <TD class=3D"c data">6.95%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Foster Care</TH>
+    <TD class=3D"r data">693613</TD>
+    <TD class=3D"c data">1.69%</TD>
+    <TD class=3D"r data">3543613</TD>
+    <TD class=3D"c data">8.64%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>MAGI 69 - 133% FPL</TH>
+    <TD class=3D"r data">14122763</TD>
+    <TD class=3D"c data">34.46%</TD>
+    <TD class=3D"r data">17666376</TD>
+    <TD class=3D"c data">43.11%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>MAGI Eligible Children</TH>
+    <TD class=3D"r data">17016815</TD>
+    <TD class=3D"c data">41.52%</TD>
+    <TD class=3D"r data">34683191</TD>
+    <TD class=3D"c data">84.64%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>MAGI TO 68% FPL</TH>
+    <TD class=3D"r data">5753554</TD>
+    <TD class=3D"c data">14.04%</TD>
+    <TD class=3D"r data">40436745</TD>
+    <TD class=3D"c data">98.68%</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Other</TH>
+    <TD class=3D"r data">538126</TD>
+    <TD class=3D"c data">1.31%</TD>
+    <TD class=3D"r data">40974871</TD>
+    <TD=20
+class=3D"c =
+data">100.00%</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></D=
+IV></BODY></HTML>
