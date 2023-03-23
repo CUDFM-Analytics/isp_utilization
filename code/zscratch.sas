@@ -1,5 +1,9 @@
+PROC CONTENTS DATA = int.adj_pd_total_YYcat_final VARNUM;
+PROC CONTENTS DATA = int.bh_1618                  VARNUM;
+PROC CONTENTS DATA = data.a3                     VARNUM;
+RUN;
 PROC CONTENTS 
-     DATA = data.a9
+     DATA = int.memlist_final
 VARNUM;
 RUN;
 
@@ -8,8 +12,11 @@ VAR pd_tot_q_adj ;
 BY FY ; 
 RUN ; 
 
+PROC UNIVARIATE DATA = data.a7 ; 
+VAR cost_rx_tc cost_ffs_tc ; 
+RUN ;
 
-ind_isp_ever pcmp_loc_id pcmp_attr_qrtr month; 
+PROC PRINT DATA = data.a1 ; 
             where mcaid_id in ("P861019", "L155867"); 
             run ; 
 
@@ -17,7 +24,7 @@ ind_isp_ever pcmp_loc_id pcmp_attr_qrtr month;
             where mcaid_id in ("P861019", "L155867"); 
             run ;
 
-              proc print data = int.qrylong_1921 ; 
+              proc print data = int.qrylong_1921_time ; 
             where mcaid_id in ("G010516", "G002318"); 
             run ;
 
@@ -26,11 +33,11 @@ ind_isp_ever pcmp_loc_id pcmp_attr_qrtr month;
             where mcaid_id in ("G010516"); 
             run ;
 
-             proc print data = data.a8 ; 
+             proc print data = int.memlist ; 
             where mcaid_id in ("G010516"); 
             run ;
 
-             proc print data = data.a8 (obs=100); 
+             proc print data = data.a3 (obs=100); 
             run ;
 
               proc print data = ana.qry_longitudinal (obs = 1000); 
@@ -38,8 +45,13 @@ ind_isp_ever pcmp_loc_id pcmp_attr_qrtr month;
             AND month ge '01JUL2016'd and month le '30Jun2017'd; 
             run ; 
 
+PROC FREQ DATA = data.a7 ; 
+TABLES FY*cost_ffs_tc ; 
+RUN ; 
+
 PROC FREQ 
-     DATA = int.adj;   
+     DATA = int.memlist_final;
+TABLES FY time age sex race rae_person_new budget_grp_new  ;  
 /*     TABLES month * fy;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;*/
 RUN; 
 
