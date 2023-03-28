@@ -276,7 +276,7 @@ label age          = "Age (category)"
       ;
 RUN; 
 
-DATA data.analyis_dataset; 
+DATA data.analysis_dataset; 
 SET  data.a8 ; 
 ind_cost_rx  = cost_rx_tc  > 0 ;
 ind_cost_ffs = cost_ffs_tc > 0 ;
@@ -287,18 +287,18 @@ ind_util_bh_o= util_bh_o   > 0 ;
 ind_util_tel = util_tele   > 0 ;
 RUN ;
 
-PROC CONTENTS DATA = data.analyis_dataset VARNUM  ; RUN ; 
+PROC CONTENTS DATA = data.analysis_dataset VARNUM  ; RUN ; 
 
 
 
 
 
 DATA data.cat_vars ; 
-SET  data.analyis_dataset  (KEEP = mcaid_id adj: bh_er: bh_hosp: bh_oth: sex race budget_grp_new age rae_person_new pcmp_loc_type_cd ) ;
+SET  data.analysis_dataset  (KEEP = mcaid_id adj: bh_er: bh_hosp: bh_oth: sex race budget_grp_new age rae_person_new pcmp_loc_type_cd ) ;
 RUN ;
 
 PROC SORT DATA = data.cat_vars NODUPKEY  ; bY mcaid_id ; RUN ; 
-PROC SORT DATA = data.analyis_dataset ; by mcaid_id time ; RUN ; 
+PROC SORT DATA = data.analysis_dataset ; by mcaid_id time ; RUN ; 
 
 
 

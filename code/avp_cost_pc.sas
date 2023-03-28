@@ -2,13 +2,6 @@
 LIBNAME VARLEN CLEAR ; 
 
 *** Take sample from final set ; 
-DATA test ; 
-SET  data.analyis_dataset (obs=1000000) ; 
-KEEP mcaid_id time cost: int int_imp util: ind: ; 
-RUN; 
-
-proc contents data = test ; 
-RUN ; 
 
 * Var description: 
 mcaid_id    : medicaid id (between 1 and 3 records per member: compound primary key with 'time' variable)
@@ -24,15 +17,18 @@ cost_pc_tc  : mean-preserving top coded inflation adjusted total Primary Care co
 util_bh_o   : non-hospital, non_ED capitated BH Utilization (n visits) - PMPM avg for a quarter
 util_er     : ED utilization (n FFS ED visits + n BH ED visits) - PMPM avg for quarter
 util_pc     : Primary Care Utilization (n PC visits in quarter) - PMPM avg for quarter 
-util_tele   : Primary Care telehealth utilizaton (n PC telehealth visits) - PMPM avg for a quarter
+util_tele   : Primary Care telehealth utilizaton (n PC telehealth visits) - PMPM avg for a quarter; 
 
+proc contents data = data.Analysis_dataset; 
+RUN ; 
 
 * probability model ;
-proc gee data  = test desc;
+proc gee data  = data.analysis_dataset desc;
   class mcaid_id int int_imp time ind_cost_pc ;
   model ind_cost_pc = int int_imp time / dist = binomial link = logit ; 
   repeated subject = mcaid_id / type = exch;
-  store p_model;
+  store data.p_model;
+/*  code file="S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/p_model.sas"; */
 run;
 
 * positive cost model ;
