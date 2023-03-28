@@ -1,0 +1,2930 @@
+From: "Saved by Internet Explorer 11"
+Subject: SAS Output
+Date: Tue, 28 Mar 2023 09:58:16 -0600
+MIME-Version: 1.0
+Content-Type: text/html;
+	charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: file://C:\Users\wigginki\AppData\Local\Temp\SAS Temporary Files\_TD20632_HPC09_\sashtml2.htm
+X-MimeOLE: Produced By Microsoft MimeOLE
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><META content=3D"IE=3D5.0000" =
+http-equiv=3D"X-UA-Compatible">
+<TITLE>SAS Output</TITLE>
+<META name=3DGENERATOR content=3D"MSHTML 11.00.10570.1001">
+<META content=3D"text/html; charset=3Dwindows-1252" =
+http-equiv=3DContent-type>
+<STYLE type=3Dtext/css>.accessiblecaption {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.aftercaption {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; PADDING-TOP: 4pt; =
+BACKGROUND-COLOR: #ffffff
+}
+.batch {
+	FONT-SIZE: x-small; BORDER-TOP: #000000 1px solid; FONT-FAMILY: 'SAS =
+Monospace', 'Courier New', Courier, monospace; BORDER-RIGHT: #000000 0px =
+solid; BORDER-COLLAPSE: separate; BORDER-BOTTOM: #000000 1px solid; =
+FONT-WEIGHT: normal; COLOR: #000000; PADDING-BOTTOM: 7px; FONT-STYLE: =
+normal; PADDING-TOP: 7px; PADDING-LEFT: 7px; BORDER-SPACING: 0px; =
+BORDER-LEFT: #000000 0px solid; PADDING-RIGHT: 7px; BACKGROUND-COLOR: =
+#ffffff
+}
+.beforecaption {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.body {
+	MARGIN-LEFT: 8px; MARGIN-RIGHT: 8px
+}
+.bodydate {
+	WIDTH: 100%; COLOR: #000000
+}
+.bycontentfolder {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.byline {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.bylinecontainer {
+	BORDER-TOP: #000000 0px solid; BORDER-RIGHT: #000000 0px solid; WIDTH: =
+100%; BORDER-BOTTOM: #000000 0px solid; BORDER-SPACING: 1px; =
+BORDER-LEFT: #000000 0px solid
+}
+.caption {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.contentfolder {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.contentitem {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.contentproclabel {
+	LIST-STYLE-TYPE: decimal; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: italic
+}
+.contentprocname {
+	LIST-STYLE-TYPE: decimal; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: italic
+}
+.contents {
+	LIST-STYLE-TYPE: decimal; MARGIN-LEFT: 8px; BACKGROUND-COLOR: #ffffff; =
+MARGIN-RIGHT: 8px
+}
+.contentsdate {
+	WIDTH: 100%; COLOR: #000000
+}
+.contenttitle {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal
+}
+.continued {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; WIDTH: 100%; =
+FONT-WEIGHT: normal; COLOR: #000000; FONT-STYLE: italic; TEXT-ALIGN: =
+left; BORDER-SPACING: 0px
+}
+.data {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.dataemphasis {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.dataemphasisfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.dataempty {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.datafixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.datastrong {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.datastrongfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.date {
+	WIDTH: 100%; COLOR: #000000
+}
+.document {
+=09
+}
+A:link {
+	COLOR: #0066aa
+}
+A:visited {
+	COLOR: #004488
+}
+A:active {
+	COLOR: #004488
+}
+.errorcontent {
+	TEXT-ALIGN: left
+}
+.errorcontentfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; FONT-STYLE: normal; TEXT-ALIGN: left
+}
+.extendedpage {
+	FONT-SIZE: x-small; BORDER-TOP: #000000 1pt solid; FONT-FAMILY: Arial, =
+Helvetica, Helv; BORDER-RIGHT: #000000 1pt solid; BORDER-BOTTOM: #000000 =
+1pt solid; FONT-WEIGHT: normal; COLOR: #000000; FONT-STYLE: italic; =
+TEXT-ALIGN: center; BORDER-LEFT: #000000 1pt solid
+}
+.fatalcontent {
+	TEXT-ALIGN: left
+}
+.fatalcontentfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; FONT-STYLE: normal; TEXT-ALIGN: left
+}
+.folderaction {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.footer {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.footeremphasis {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.footeremphasisfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.footerempty {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.footerfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.footerstrong {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.footerstrongfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.frame {
+=09
+}
+.graph {
+	BORDER-TOP: #000000 1px solid; BORDER-RIGHT: #000000 0px solid; =
+BORDER-COLLAPSE: separate; BORDER-BOTTOM: #000000 1px solid; =
+BORDER-SPACING: 0px; BORDER-LEFT: #000000 0px solid; BACKGROUND-COLOR: =
+#ffffff
+}
+.header {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headeremphasis {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headeremphasisfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headerempty {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headerfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.headersandfooters {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headerstrong {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.headerstrongfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.heading1 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.heading2 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.heading3 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.heading4 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.heading5 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.heading6 {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.index {
+	COLOR: #000000
+}
+.indexaction {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.indexitem {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.indexprocname {
+	LIST-STYLE-TYPE: decimal; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: italic
+}
+.indextitle {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal
+}
+.layoutcontainer {
+	BORDER-TOP: #000000 0px solid; BORDER-RIGHT: #000000 0px solid; =
+BORDER-BOTTOM: #000000 0px solid; BORDER-SPACING: 30px; BORDER-LEFT: =
+#000000 0px solid
+}
+.layoutregion {
+	BORDER-TOP: #000000 0px solid; BORDER-RIGHT: #000000 0px solid; =
+BORDER-BOTTOM: #000000 0px solid; BORDER-SPACING: 30px; BORDER-LEFT: =
+#000000 0px solid
+}
+.linecontent {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.list {
+	LIST-STYLE-TYPE: disc
+}
+.list10 {
+	LIST-STYLE-TYPE: square
+}
+.list2 {
+	LIST-STYLE-TYPE: circle
+}
+.list3 {
+	LIST-STYLE-TYPE: square
+}
+.list4 {
+	LIST-STYLE-TYPE: square
+}
+.list5 {
+	LIST-STYLE-TYPE: square
+}
+.list6 {
+	LIST-STYLE-TYPE: square
+}
+.list7 {
+	LIST-STYLE-TYPE: square
+}
+.list8 {
+	LIST-STYLE-TYPE: square
+}
+.list9 {
+	LIST-STYLE-TYPE: square
+}
+.listitem {
+	LIST-STYLE-TYPE: disc; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.listitem10 {
+	LIST-STYLE-TYPE: square
+}
+.listitem2 {
+	LIST-STYLE-TYPE: circle
+}
+.listitem3 {
+	LIST-STYLE-TYPE: square
+}
+.listitem4 {
+	LIST-STYLE-TYPE: square
+}
+.listitem5 {
+	LIST-STYLE-TYPE: square
+}
+.listitem6 {
+	LIST-STYLE-TYPE: square
+}
+.listitem7 {
+	LIST-STYLE-TYPE: square
+}
+.listitem8 {
+	LIST-STYLE-TYPE: square
+}
+.listitem9 {
+	LIST-STYLE-TYPE: square
+}
+.notebanner {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; FONT-STYLE: italic
+}
+.notecontent {
+	TEXT-ALIGN: left
+}
+.notecontentfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; FONT-STYLE: normal; TEXT-ALIGN: left
+}
+.output {
+	BORDER-TOP: #000000 1px solid; BORDER-RIGHT: #000000 0px solid; =
+BORDER-COLLAPSE: separate; BORDER-BOTTOM: #000000 1px solid; =
+BORDER-SPACING: 0px; BORDER-LEFT: #000000 0px solid; BACKGROUND-COLOR: =
+#ffffff
+}
+.pageno {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; =
+VERTICAL-ALIGN: top; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: =
+italic; TEXT-ALIGN: right; BORDER-SPACING: 0px
+}
+.pages {
+	LIST-STYLE-TYPE: decimal; MARGIN-LEFT: 8px; BACKGROUND-COLOR: #ffffff; =
+MARGIN-RIGHT: 8px
+}
+.pagesdate {
+	WIDTH: 100%; COLOR: #000000
+}
+.pagesitem {
+	LIST-STYLE-TYPE: none; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: normal; FONT-STYLE: normal
+}
+.pagesproclabel {
+	LIST-STYLE-TYPE: decimal; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: italic
+}
+.pagesprocname {
+	LIST-STYLE-TYPE: decimal; FONT-SIZE: x-small; FONT-FAMILY: Arial, =
+Helvetica, Helv; FONT-WEIGHT: bold; COLOR: #000000; FONT-STYLE: italic
+}
+.pagestitle {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal
+}
+.paragraph {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; FONT-STYLE: normal
+}
+.parskip {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BORDER-SPACING: 0px
+}
+.prepage {
+	TEXT-ALIGN: left
+}
+.proctitle {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.proctitlefixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal
+}
+.rowfooter {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowfooteremphasis {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowfooteremphasisfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowfooterempty {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowfooterfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.rowfooterstrong {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowfooterstrongfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.rowheader {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderemphasis {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderemphasisfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderempty {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderstrong {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic; BACKGROUND-COLOR: #ffffff
+}
+.rowheaderstrongfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: normal; BACKGROUND-COLOR: #ffffff
+}
+.systemfooter {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter10 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter2 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter3 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter4 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter5 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter6 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter7 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter8 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemfooter9 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle10 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle2 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle3 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle4 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle5 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle6 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle7 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle8 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systemtitle9 {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.systitleandfootercontainer {
+	FONT-SIZE: x-small; BORDER-TOP: #000000 0px solid; FONT-FAMILY: Arial, =
+Helvetica, Helv; BORDER-RIGHT: #000000 0px solid; WIDTH: 100%; =
+BORDER-BOTTOM: #000000 0px solid; FONT-WEIGHT: bold; FONT-STYLE: italic; =
+BORDER-SPACING: 0px; BORDER-LEFT: #000000 0px solid
+}
+.table {
+	BORDER-TOP: #000000 1px solid; BORDER-RIGHT: #000000 0px solid; =
+BORDER-COLLAPSE: separate; BORDER-BOTTOM: #000000 1px solid; =
+BORDER-SPACING: 0px; BORDER-LEFT: #000000 0px solid; BACKGROUND-COLOR: =
+#ffffff
+}
+.top_stacked_value {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: 0px; PADDING-BOTTOM: =
+1px; BORDER-LEFT: 0px
+}
+.middle_stacked_value {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: 0px; PADDING-BOTTOM: =
+1px; PADDING-TOP: 1px; BORDER-LEFT: 0px
+}
+.bottom_stacked_value {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: 0px; PADDING-TOP: =
+1px; BORDER-LEFT: 0px
+}
+.titleandnotecontainer {
+	BORDER-TOP: #000000 0px solid; BORDER-RIGHT: #000000 0px solid; WIDTH: =
+100%; BORDER-BOTTOM: #000000 0px solid; BORDER-SPACING: 1px; =
+BORDER-LEFT: #000000 0px solid
+}
+.titlesandfooters {
+	FONT-SIZE: x-small; FONT-FAMILY: Arial, Helvetica, Helv; FONT-WEIGHT: =
+bold; COLOR: #000000; FONT-STYLE: italic
+}
+.warncontent {
+	TEXT-ALIGN: left
+}
+.warncontentfixed {
+	FONT-SIZE: x-small; FONT-FAMILY: 'Courier New', Courier; FONT-WEIGHT: =
+normal; FONT-STYLE: normal; TEXT-ALIGN: left
+}
+.l {
+	TEXT-ALIGN: left
+}
+.c {
+	TEXT-ALIGN: center
+}
+.r {
+	TEXT-ALIGN: right
+}
+.d {
+	TEXT-ALIGN: right
+}
+.j {
+	TEXT-ALIGN: justify
+}
+.t {
+	VERTICAL-ALIGN: top
+}
+.m {
+	VERTICAL-ALIGN: middle
+}
+.b {
+	VERTICAL-ALIGN: bottom
+}
+TD {
+	VERTICAL-ALIGN: top
+}
+TH {
+	VERTICAL-ALIGN: top
+}
+.stacked_cell {
+	PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 0px; =
+PADDING-RIGHT: 0px
+}
+</STYLE>
+
+<SCRIPT language=3Djavascript type=3Dtext/javascript>
+<!--=20
+function startup(){
+
+}
+function shutdown(){
+
+}
+
+//-->
+</SCRIPT>
+</HEAD>
+<BODY class=3Dbody onload=3Dstartup() onunload=3Dshutdown()>
+<SCRIPT language=3Djavascript type=3Dtext/javascript>
+<!--=20
+var _info =3D navigator.userAgent
+var _ie =3D (_info.indexOf("MSIE") > 0
+          && _info.indexOf("Win") > 0
+          && _info.indexOf("Windows 3.1") < 0);
+var _ie64 =3D _info.indexOf("x64") > 0
+
+//-->
+</SCRIPT>
+
+<DIV class=3Dbranch><A name=3DIDX></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">Contents: Final =
+Dataset</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The CONTENTS Procedure</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Attributes" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Name</TH>
+    <TD class=3D"l data">DATA.ANALYIS_DATASET</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observations</TH>
+    <TD class=3D"l data">14347065</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Member Type</TH>
+    <TD class=3D"l data">DATA</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variables</TH>
+    <TD class=3D"l data">38</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Engine</TH>
+    <TD class=3D"l data">V9</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Indexes</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Created</TH>
+    <TD class=3D"l data">03/28/2023 09:30:54</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Observation Length</TH>
+    <TD class=3D"l data">296</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Last Modified</TH>
+    <TD class=3D"l data">03/28/2023 09:30:54</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Deleted Observations</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Protection</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Compressed</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Type</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sorted</TH>
+    <TD class=3D"l data">NO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Label</TH>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Representation</TH>
+    <TD class=3D"l data">WINDOWS_64</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Encoding</TH>
+    <TD class=3D"l data">wlatin1 Western (Windows)</TD>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX1></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Engine/Host Information" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Engine/Host =
+Dependent=20
+      Information</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Data Set Page Size</TH>
+    <TD class=3D"l data">65536</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set Pages</TH>
+    <TD class=3D"l data">64919</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>First Data Page</TH>
+    <TD class=3D"l data">1</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Max Obs per Page</TH>
+    <TD class=3D"l data">221</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Obs in First Data Page</TH>
+    <TD class=3D"l data">203</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Number of Data Set =
+Repairs</TH>
+    <TD class=3D"l data">0</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>ExtendObsCounter</TH>
+    <TD class=3D"l data">YES</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Filename</TH>
+    <TD=20
+      class=3D"l =
+data">S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\an=
+alyis_dataset.sas7bdat</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Release Created</TH>
+    <TD class=3D"l data">9.0401M7</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Host Created</TH>
+    <TD class=3D"l data">X64_10PRO</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Owner Name</TH>
+    <TD class=3D"l data">UNIVERSITY\wigginki</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size</TH>
+    <TD class=3D"l data">4GB</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>File Size (bytes)</TH>
+    <TD=20
+class=3D"l =
+data">4254597120</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX2></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Contents: Varnum" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D7 scope=3Dcolgroup>Variables in =
+Creation=20
+    Order</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>#</TH>
+    <TH class=3D"l b header" scope=3Dcol>Variable</TH>
+    <TH class=3D"l b header" scope=3Dcol>Type</TH>
+    <TH class=3D"r b header" scope=3Dcol>Len</TH>
+    <TH class=3D"l b header" scope=3Dcol>Format</TH>
+    <TH class=3D"l b header" scope=3Dcol>Informat</TH>
+    <TH class=3D"l b header" scope=3Dcol>Label</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>1</TH>
+    <TD class=3D"l data">mcaid_id</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">11</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">MCAID_ID</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>2</TH>
+    <TD class=3D"l data">age</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">AGE_CAT_.</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Age (category)</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>3</TH>
+    <TD class=3D"l data">sex</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">3</TD>
+    <TD class=3D"l data">$GNDR_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">GNDR_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>4</TH>
+    <TD class=3D"l data">race</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$RACE_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">RACE_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>5</TH>
+    <TD class=3D"l data">rae_person_new</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">BEST12.</TD>
+    <TD class=3D"l data">BEST32.</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>6</TH>
+    <TD class=3D"l data">budget_grp_new</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">22</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>7</TH>
+    <TD class=3D"l data">FY</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Fiscal Year</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>8</TH>
+    <TD class=3D"l data">time</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Quarter, FY19-21</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>9</TH>
+    <TD class=3D"l data">pcmp_loc_id</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>10</TH>
+    <TD class=3D"l data">int</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">ISP: Time-Invariant</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>11</TH>
+    <TD class=3D"l data">int_imp</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">ISP: Time-Varying</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>12</TH>
+    <TD class=3D"l data">pcmp_loc_type_cd</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">7</TD>
+    <TD class=3D"l data">$PROV_TYP_CD.</TD>
+    <TD class=3D"l data">$255.</TD>
+    <TD class=3D"l data">PROV_TYP_CD</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>13</TH>
+    <TD class=3D"l data">adj_pd_total_16cat</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>14</TH>
+    <TD class=3D"l data">adj_pd_total_17cat</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>15</TH>
+    <TD class=3D"l data">adj_pd_total_18cat</TD>
+    <TD class=3D"l data">Char</TD>
+    <TD class=3D"r data">2</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>16</TH>
+    <TD class=3D"l data">bh_er2016</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">BH ER visits 2016: Binary</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>17</TH>
+    <TD class=3D"l data">bh_er2017</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">BH ER visits 2017: Binary</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>18</TH>
+    <TD class=3D"l data">bh_er2018</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">BH ER visits 2018: Binary</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>19</TH>
+    <TD class=3D"l data">bh_hosp2016</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>20</TH>
+    <TD class=3D"l data">bh_hosp2017</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>21</TH>
+    <TD class=3D"l data">bh_hosp2018</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>22</TH>
+    <TD class=3D"l data">bh_oth2016</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>23</TH>
+    <TD class=3D"l data">bh_oth2017</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>24</TH>
+    <TD class=3D"l data">bh_oth2018</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>25</TH>
+    <TD class=3D"l data">cost_rx_tc</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Cost FFS Rx: top-coded infl-adj qrtr =
+avg</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>26</TH>
+    <TD class=3D"l data">cost_ffs_tc</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Cost FFS total: top-coded infl-adj qrtr =
+avg</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>27</TH>
+    <TD class=3D"l data">cost_pc_tc</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Cost FFS Primary Care: top-coded infl-adj qrtr=20
+avg</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>28</TH>
+    <TD class=3D"l data">util_pc</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Visits: PC</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>29</TH>
+    <TD class=3D"l data">util_tele</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Visits: Tele</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>30</TH>
+    <TD class=3D"l data">util_er</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Visits: ER</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>31</TH>
+    <TD class=3D"l data">util_bh_o</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">Visits: BH Other</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>32</TH>
+    <TD class=3D"l data">ind_cost_rx</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>33</TH>
+    <TD class=3D"l data">ind_cost_ffs</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>34</TH>
+    <TD class=3D"l data">ind_cost_pc</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>35</TH>
+    <TD class=3D"l data">ind_util_pc</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>36</TH>
+    <TD class=3D"l data">ind_util_er</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>37</TH>
+    <TD class=3D"l data">ind_util_bh_o</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD></TR>
+  <TR>
+    <TH class=3D"r rowheader" scope=3Drow>38</TH>
+    <TD class=3D"l data">ind_util_tel</TD>
+    <TD class=3D"l data">Num</TD>
+    <TD class=3D"r data">8</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD class=3D"l data">&nbsp;</TD>
+    <TD=20
+class=3D"l =
+data">&nbsp;</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DI=
+V>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX3></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">Univariate: Cost =
+DV's</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The UNIVARIATE Procedure</DIV>
+<DIV class=3D"c proctitle">Variable: cost_rx_tc (Cost FFS Rx: top-coded =
+infl-adj=20
+qrtr avg)</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Moments" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 =
+scope=3Dcolgroup>Moments</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>N</TH>
+    <TD class=3D"r data">14347065</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Weights</TH>
+    <TD class=3D"r data">14347065</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">82.5249739</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Observations</TH>
+    <TD class=3D"r data">1183991164</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">348.811992</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">121669.806</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Skewness</TH>
+    <TD class=3D"r data">4.62929875</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Kurtosis</TH>
+    <TD class=3D"r data">19.7140528</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Uncorrected SS</TH>
+    <TD class=3D"r data">1.84331E12</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Corrected SS</TH>
+    <TD class=3D"r data">1.7456E12</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Coeff Variation</TH>
+    <TD class=3D"r data">422.674465</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Error Mean</TH>
+    <TD=20
+class=3D"r =
+data">0.09208945</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX4></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Basic Measures of Location and =
+Variability"=20
+border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Basic =
+Statistical=20
+    Measures</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Location</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Variability</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">82.52497</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">348.81199</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Median</TH>
+    <TD class=3D"r data">0.00000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">121670</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mode</TH>
+    <TD class=3D"r data">0.00000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Range</TH>
+    <TD class=3D"r data">1873</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"r data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Interquartile Range</TH>
+    <TD=20
+class=3D"r =
+data">5.74810</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A =
+
+name=3DIDX5></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Tests For Location" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D5=20
+      =
+scope=3Dcolgroup>Tests&nbsp;for&nbsp;Location:&nbsp;Mu0=3D0</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Test</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Statistic</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>p =
+Value</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Student's t</TH>
+    <TH class=3D"l rowheader" scope=3Drow>t</TH>
+    <TD class=3D"r data">896.1393</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt; |t|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sign</TH>
+    <TH class=3D"l rowheader" scope=3Drow>M</TH>
+    <TD class=3D"r data">2159264</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |M|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Signed Rank</TH>
+    <TH class=3D"l rowheader" scope=3Drow>S</TH>
+    <TD class=3D"r data">4.662E12</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |S|</TH>
+    <TD=20
+class=3D"r =
+data">&lt;.0001</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><=
+A=20
+name=3DIDX6></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Quantiles" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2=20
+      scope=3Dcolgroup>Quantiles&nbsp;(Definition&nbsp;5)</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Level</TH>
+    <TH class=3D"r b header" scope=3Dcol>Quantile</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>100% Max</TH>
+    <TD class=3D"r data">1873.2500</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>99%</TH>
+    <TD class=3D"r data">1873.2500</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>95%</TH>
+    <TD class=3D"r data">219.4896</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>90%</TH>
+    <TD class=3D"r data">51.7868</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>75% Q3</TH>
+    <TD class=3D"r data">5.7481</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>50% Median</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>25% Q1</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>10%</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>5%</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>1%</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>0% Min</TH>
+    <TD=20
+class=3D"r =
+data">0.0000</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX7></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Extreme Observations" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Extreme =
+Observations</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Lowest</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Highest</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">1873.25</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">1873.25</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">1873.25</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">1873.25</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">1873.25</TD>
+    <TD=20
+class=3D"r =
+data">1.43E7</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX8></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">Univariate: Cost =
+DV's</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The UNIVARIATE Procedure</DIV>
+<DIV class=3D"c proctitle">Variable: cost_ffs_tc (Cost FFS total: =
+top-coded=20
+infl-adj qrtr avg)</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Moments" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 =
+scope=3Dcolgroup>Moments</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>N</TH>
+    <TD class=3D"r data">14347065</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Weights</TH>
+    <TD class=3D"r data">14347065</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">404.782965</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Observations</TH>
+    <TD class=3D"r data">5807447515</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">1319.75762</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">1741760.17</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Skewness</TH>
+    <TD class=3D"r data">4.3483817</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Kurtosis</TH>
+    <TD class=3D"r data">17.7809466</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Uncorrected SS</TH>
+    <TD class=3D"r data">2.73399E13</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Corrected SS</TH>
+    <TD class=3D"r data">2.49891E13</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Coeff Variation</TH>
+    <TD class=3D"r data">326.0408</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Error Mean</TH>
+    <TD=20
+class=3D"r =
+data">0.34842768</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX9></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Basic Measures of Location and =
+Variability"=20
+border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Basic =
+Statistical=20
+    Measures</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Location</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Variability</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">404.7830</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">1320</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Median</TH>
+    <TD class=3D"r data">13.0272</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">1741760</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mode</TH>
+    <TD class=3D"r data">0.0000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Range</TH>
+    <TD class=3D"r data">6878</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"r data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Interquartile Range</TH>
+    <TD=20
+class=3D"r =
+data">161.34926</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><=
+A=20
+name=3DIDX10></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Tests For Location" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D5=20
+      =
+scope=3Dcolgroup>Tests&nbsp;for&nbsp;Location:&nbsp;Mu0=3D0</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Test</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Statistic</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>p =
+Value</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Student's t</TH>
+    <TH class=3D"l rowheader" scope=3Drow>t</TH>
+    <TD class=3D"r data">1161.742</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt; |t|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sign</TH>
+    <TH class=3D"l rowheader" scope=3Drow>M</TH>
+    <TD class=3D"r data">3814626</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |M|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Signed Rank</TH>
+    <TH class=3D"l rowheader" scope=3Drow>S</TH>
+    <TD class=3D"r data">1.455E13</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |S|</TH>
+    <TD=20
+class=3D"r =
+data">&lt;.0001</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><=
+A=20
+name=3DIDX11></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Quantiles" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2=20
+      scope=3Dcolgroup>Quantiles&nbsp;(Definition&nbsp;5)</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Level</TH>
+    <TH class=3D"r b header" scope=3Dcol>Quantile</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>100% Max</TH>
+    <TD class=3D"r data">6877.5800</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>99%</TH>
+    <TD class=3D"r data">6877.5800</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>95%</TH>
+    <TD class=3D"r data">1628.5745</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>90%</TH>
+    <TD class=3D"r data">642.7777</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>75% Q3</TH>
+    <TD class=3D"r data">161.3493</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>50% Median</TH>
+    <TD class=3D"r data">13.0272</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>25% Q1</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>10%</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>5%</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>1%</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>0% Min</TH>
+    <TD=20
+class=3D"r =
+data">0.0000</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX12></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Extreme Observations" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Extreme =
+Observations</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Lowest</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Highest</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">6877.58</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">6877.58</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">6877.58</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">6877.58</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">6877.58</TD>
+    <TD=20
+class=3D"r =
+data">1.43E7</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX13></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">Univariate: Cost =
+DV's</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The UNIVARIATE Procedure</DIV>
+<DIV class=3D"c proctitle">Variable: cost_pc_tc (Cost FFS Primary Care: =
+top-coded=20
+infl-adj qrtr avg)</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Moments" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 =
+scope=3Dcolgroup>Moments</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>N</TH>
+    <TD class=3D"r data">14347065</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Weights</TH>
+    <TD class=3D"r data">14347065</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">35.0976687</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Observations</TH>
+    <TD class=3D"r data">503548534</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">71.9920685</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">5182.85792</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Skewness</TH>
+    <TD class=3D"r data">2.87212322</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Kurtosis</TH>
+    <TD class=3D"r data">8.39980356</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Uncorrected SS</TH>
+    <TD class=3D"r data">9.20322E10</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Corrected SS</TH>
+    <TD class=3D"r data">7.43588E10</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Coeff Variation</TH>
+    <TD class=3D"r data">205.119232</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Error Mean</TH>
+    <TD=20
+class=3D"r =
+data">0.01900654</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX14></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Basic Measures of Location and =
+Variability"=20
+border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Basic =
+Statistical=20
+    Measures</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Location</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Variability</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">35.09767</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">71.99207</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Median</TH>
+    <TD class=3D"r data">0.00000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">5183</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mode</TH>
+    <TD class=3D"r data">0.00000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Range</TH>
+    <TD class=3D"r data">332.67000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"r data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Interquartile Range</TH>
+    <TD=20
+class=3D"r =
+data">42.86324</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=
+=20
+name=3DIDX15></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Tests For Location" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D5=20
+      =
+scope=3Dcolgroup>Tests&nbsp;for&nbsp;Location:&nbsp;Mu0=3D0</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Test</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Statistic</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>p =
+Value</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Student's t</TH>
+    <TH class=3D"l rowheader" scope=3Drow>t</TH>
+    <TD class=3D"r data">1846.61</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt; |t|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sign</TH>
+    <TH class=3D"l rowheader" scope=3Drow>M</TH>
+    <TD class=3D"r data">2590688</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |M|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Signed Rank</TH>
+    <TH class=3D"l rowheader" scope=3Drow>S</TH>
+    <TD class=3D"r data">6.712E12</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |S|</TH>
+    <TD=20
+class=3D"r =
+data">&lt;.0001</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><=
+A=20
+name=3DIDX16></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Quantiles" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2=20
+      scope=3Dcolgroup>Quantiles&nbsp;(Definition&nbsp;5)</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Level</TH>
+    <TH class=3D"r b header" scope=3Dcol>Quantile</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>100% Max</TH>
+    <TD class=3D"r data">332.6700</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>99%</TH>
+    <TD class=3D"r data">332.6700</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>95%</TH>
+    <TD class=3D"r data">166.6191</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>90%</TH>
+    <TD class=3D"r data">107.3230</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>75% Q3</TH>
+    <TD class=3D"r data">42.8632</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>50% Median</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>25% Q1</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>10%</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>5%</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>1%</TH>
+    <TD class=3D"r data">0.0000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>0% Min</TH>
+    <TD=20
+class=3D"r =
+data">0.0000</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX17></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Extreme Observations" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Extreme =
+Observations</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Lowest</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Highest</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">332.67</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">332.67</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">332.67</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">332.67</TD>
+    <TD class=3D"r data">1.43E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">332.67</TD>
+    <TD=20
+class=3D"r =
+data">1.43E7</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DI=
+V>
+<DIV class=3Dbranch>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX18></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">Univariate: Util =
+DV's</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The UNIVARIATE Procedure</DIV>
+<DIV class=3D"c proctitle">Variable: util_pc (Visits: PC)</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Moments" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 =
+scope=3Dcolgroup>Moments</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>N</TH>
+    <TD class=3D"r data">14347065</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Weights</TH>
+    <TD class=3D"r data">14347065</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">0.26794746</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Observations</TH>
+    <TD class=3D"r data">3844259.67</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">0.52053108</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">0.27095261</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Skewness</TH>
+    <TD class=3D"r data">3.99601279</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Kurtosis</TH>
+    <TD class=3D"r data">33.4210345</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Uncorrected SS</TH>
+    <TD class=3D"r data">4917434</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Corrected SS</TH>
+    <TD class=3D"r data">3887374.38</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Coeff Variation</TH>
+    <TD class=3D"r data">194.266098</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Error Mean</TH>
+    <TD=20
+class=3D"r =
+data">0.00013742</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX19></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Basic Measures of Location and =
+Variability"=20
+border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Basic =
+Statistical=20
+    Measures</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Location</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Variability</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">0.267947</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">0.52053</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Median</TH>
+    <TD class=3D"r data">0.000000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">0.27095</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mode</TH>
+    <TD class=3D"r data">0.000000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Range</TH>
+    <TD class=3D"r data">29.00000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"r data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Interquartile Range</TH>
+    <TD=20
+class=3D"r =
+data">0.33333</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A =
+
+name=3DIDX20></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Tests For Location" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D5=20
+      =
+scope=3Dcolgroup>Tests&nbsp;for&nbsp;Location:&nbsp;Mu0=3D0</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Test</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Statistic</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>p =
+Value</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Student's t</TH>
+    <TH class=3D"l rowheader" scope=3Drow>t</TH>
+    <TD class=3D"r data">1949.775</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt; |t|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sign</TH>
+    <TH class=3D"l rowheader" scope=3Drow>M</TH>
+    <TD class=3D"r data">2633881</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |M|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Signed Rank</TH>
+    <TH class=3D"l rowheader" scope=3Drow>S</TH>
+    <TD class=3D"r data">6.937E12</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |S|</TH>
+    <TD=20
+class=3D"r =
+data">&lt;.0001</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><=
+A=20
+name=3DIDX21></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Quantiles" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2=20
+      scope=3Dcolgroup>Quantiles&nbsp;(Definition&nbsp;5)</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Level</TH>
+    <TH class=3D"r b header" scope=3Dcol>Quantile</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>100% Max</TH>
+    <TD class=3D"r data">29.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>99%</TH>
+    <TD class=3D"r data">2.333333</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>95%</TH>
+    <TD class=3D"r data">1.333333</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>90%</TH>
+    <TD class=3D"r data">1.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>75% Q3</TH>
+    <TD class=3D"r data">0.333333</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>50% Median</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>25% Q1</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>10%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>5%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>1%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>0% Min</TH>
+    <TD=20
+class=3D"r =
+data">0.000000</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=
+=20
+name=3DIDX22></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Extreme Observations" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Extreme =
+Observations</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Lowest</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Highest</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">23.6667</TD>
+    <TD class=3D"r data">5.37E6</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">24.6667</TD>
+    <TD class=3D"r data">5.11E6</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">26.0000</TD>
+    <TD class=3D"r data">2.6E6</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">26.0000</TD>
+    <TD class=3D"r data">1.4E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">29.0000</TD>
+    <TD=20
+class=3D"r =
+data">2.22E6</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX23></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">Univariate: Util =
+DV's</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The UNIVARIATE Procedure</DIV>
+<DIV class=3D"c proctitle">Variable: util_tele (Visits: Tele)</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Moments" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 =
+scope=3Dcolgroup>Moments</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>N</TH>
+    <TD class=3D"r data">14347065</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Weights</TH>
+    <TD class=3D"r data">14347065</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">0.02545292</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Observations</TH>
+    <TD class=3D"r data">365174.667</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">0.13471208</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">0.01814735</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Skewness</TH>
+    <TD class=3D"r data">9.11504934</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Kurtosis</TH>
+    <TD class=3D"r data">167.109869</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Uncorrected SS</TH>
+    <TD class=3D"r data">269655.889</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Corrected SS</TH>
+    <TD class=3D"r data">260361.128</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Coeff Variation</TH>
+    <TD class=3D"r data">529.259886</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Error Mean</TH>
+    <TD=20
+class=3D"r =
+data">0.00003557</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX24></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Basic Measures of Location and =
+Variability"=20
+border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Basic =
+Statistical=20
+    Measures</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Location</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Variability</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">0.025453</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">0.13471</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Median</TH>
+    <TD class=3D"r data">0.000000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">0.01815</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mode</TH>
+    <TD class=3D"r data">0.000000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Range</TH>
+    <TD class=3D"r data">16.33333</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"r data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Interquartile Range</TH>
+    <TD class=3D"r =
+data">0</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX25></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Tests For Location" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D5=20
+      =
+scope=3Dcolgroup>Tests&nbsp;for&nbsp;Location:&nbsp;Mu0=3D0</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Test</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Statistic</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>p =
+Value</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Student's t</TH>
+    <TH class=3D"l rowheader" scope=3Drow>t</TH>
+    <TD class=3D"r data">715.6696</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt; |t|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sign</TH>
+    <TH class=3D"l rowheader" scope=3Drow>M</TH>
+    <TD class=3D"r data">362153</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |M|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Signed Rank</TH>
+    <TH class=3D"l rowheader" scope=3Drow>S</TH>
+    <TD class=3D"r data">1.312E11</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |S|</TH>
+    <TD=20
+class=3D"r =
+data">&lt;.0001</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><=
+A=20
+name=3DIDX26></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Quantiles" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2=20
+      scope=3Dcolgroup>Quantiles&nbsp;(Definition&nbsp;5)</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Level</TH>
+    <TH class=3D"r b header" scope=3Dcol>Quantile</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>100% Max</TH>
+    <TD class=3D"r data">16.333333</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>99%</TH>
+    <TD class=3D"r data">0.666667</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>95%</TH>
+    <TD class=3D"r data">0.333333</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>90%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>75% Q3</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>50% Median</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>25% Q1</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>10%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>5%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>1%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>0% Min</TH>
+    <TD=20
+class=3D"r =
+data">0.000000</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=
+=20
+name=3DIDX27></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Extreme Observations" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Extreme =
+Observations</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Lowest</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Highest</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">10.0000</TD>
+    <TD class=3D"r data">1.08E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">10.3333</TD>
+    <TD class=3D"r data">6.29E6</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">10.5000</TD>
+    <TD class=3D"r data">8.01E6</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">13.0000</TD>
+    <TD class=3D"r data">4.89E6</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">16.3333</TD>
+    <TD=20
+class=3D"r =
+data">6.29E6</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX28></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">Univariate: Util =
+DV's</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The UNIVARIATE Procedure</DIV>
+<DIV class=3D"c proctitle">Variable: util_er (Visits: ER)</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Moments" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 =
+scope=3Dcolgroup>Moments</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>N</TH>
+    <TD class=3D"r data">14347065</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Weights</TH>
+    <TD class=3D"r data">14347065</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">0.04794235</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Observations</TH>
+    <TD class=3D"r data">687832</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">0.18272751</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">0.03338934</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Skewness</TH>
+    <TD class=3D"r data">9.61256654</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Kurtosis</TH>
+    <TD class=3D"r data">294.576091</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Uncorrected SS</TH>
+    <TD class=3D"r data">512015.333</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Corrected SS</TH>
+    <TD class=3D"r data">479039.051</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Coeff Variation</TH>
+    <TD class=3D"r data">381.140089</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Error Mean</TH>
+    <TD=20
+class=3D"r =
+data">0.00004824</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX29></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Basic Measures of Location and =
+Variability"=20
+border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Basic =
+Statistical=20
+    Measures</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Location</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Variability</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">0.047942</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">0.18273</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Median</TH>
+    <TD class=3D"r data">0.000000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">0.03339</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mode</TH>
+    <TD class=3D"r data">0.000000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Range</TH>
+    <TD class=3D"r data">20.33333</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"r data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Interquartile Range</TH>
+    <TD class=3D"r =
+data">0</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX30></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Tests For Location" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D5=20
+      =
+scope=3Dcolgroup>Tests&nbsp;for&nbsp;Location:&nbsp;Mu0=3D0</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Test</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Statistic</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>p =
+Value</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Student's t</TH>
+    <TH class=3D"l rowheader" scope=3Drow>t</TH>
+    <TD class=3D"r data">993.7952</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt; |t|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sign</TH>
+    <TH class=3D"l rowheader" scope=3Drow>M</TH>
+    <TD class=3D"r data">714311</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |M|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Signed Rank</TH>
+    <TH class=3D"l rowheader" scope=3Drow>S</TH>
+    <TD class=3D"r data">5.102E11</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |S|</TH>
+    <TD=20
+class=3D"r =
+data">&lt;.0001</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><=
+A=20
+name=3DIDX31></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Quantiles" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2=20
+      scope=3Dcolgroup>Quantiles&nbsp;(Definition&nbsp;5)</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Level</TH>
+    <TH class=3D"r b header" scope=3Dcol>Quantile</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>100% Max</TH>
+    <TD class=3D"r data">20.333333</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>99%</TH>
+    <TD class=3D"r data">0.666667</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>95%</TH>
+    <TD class=3D"r data">0.333333</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>90%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>75% Q3</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>50% Median</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>25% Q1</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>10%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>5%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>1%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>0% Min</TH>
+    <TD=20
+class=3D"r =
+data">0.000000</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=
+=20
+name=3DIDX32></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Extreme Observations" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Extreme =
+Observations</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Lowest</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Highest</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">18.6667</TD>
+    <TD class=3D"r data">1.01E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">19.0000</TD>
+    <TD class=3D"r data">9.45E6</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">19.0000</TD>
+    <TD class=3D"r data">1.01E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">20.0000</TD>
+    <TD class=3D"r data">1.33E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">20.3333</TD>
+    <TD=20
+class=3D"r =
+data">6.91E6</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>
+<P style=3D"PAGE-BREAK-AFTER: always"><BR></P>
+<HR SIZE=3D3>
+<A name=3DIDX33></A>
+<TABLE class=3Dsystitleandfootercontainer cellSpacing=3D0 =
+cellPadding=3D1 rules=3Dnone=20
+width=3D"100%" summary=3D"Page Layout" border=3D0 frame=3Dvoid>
+  <TBODY>
+  <TR>
+    <TD class=3D"c systemtitle">Univariate: Util =
+DV's</TD></TR></TBODY></TABLE><BR>
+<DIV class=3D"c proctitle">The UNIVARIATE Procedure</DIV>
+<DIV class=3D"c proctitle">Variable: util_bh_o (Visits: BH Other)</DIV>
+<P>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Moments" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 =
+scope=3Dcolgroup>Moments</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>N</TH>
+    <TD class=3D"r data">14347065</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Weights</TH>
+    <TD class=3D"r data">14347065</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">0.11468509</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Sum Observations</TH>
+    <TD class=3D"r data">1645394.5</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">0.64537231</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">0.41650542</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Skewness</TH>
+    <TD class=3D"r data">15.0696504</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Kurtosis</TH>
+    <TD class=3D"r data">545.8904</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Uncorrected SS</TH>
+    <TD class=3D"r data">6164332.08</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Corrected SS</TH>
+    <TD class=3D"r data">5975629.86</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Coeff Variation</TH>
+    <TD class=3D"r data">562.734253</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Error Mean</TH>
+    <TD=20
+class=3D"r =
+data">0.00017038</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR>=
+<A=20
+name=3DIDX34></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Basic Measures of Location and =
+Variability"=20
+border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Basic =
+Statistical=20
+    Measures</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Location</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Variability</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mean</TH>
+    <TD class=3D"r data">0.114685</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Std Deviation</TH>
+    <TD class=3D"r data">0.64537</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Median</TH>
+    <TD class=3D"r data">0.000000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Variance</TH>
+    <TD class=3D"r data">0.41651</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Mode</TH>
+    <TD class=3D"r data">0.000000</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Range</TH>
+    <TD class=3D"r data">92.00000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>&nbsp;</TH>
+    <TD class=3D"r data">&nbsp;</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Interquartile Range</TH>
+    <TD class=3D"r =
+data">0</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=20
+name=3DIDX35></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Tests For Location" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D5=20
+      =
+scope=3Dcolgroup>Tests&nbsp;for&nbsp;Location:&nbsp;Mu0=3D0</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Test</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Statistic</TH>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>p =
+Value</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Student's t</TH>
+    <TH class=3D"l rowheader" scope=3Drow>t</TH>
+    <TD class=3D"r data">673.0978</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt; |t|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Sign</TH>
+    <TH class=3D"l rowheader" scope=3Drow>M</TH>
+    <TD class=3D"r data">525243.5</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |M|</TH>
+    <TD class=3D"r data">&lt;.0001</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>Signed Rank</TH>
+    <TH class=3D"l rowheader" scope=3Drow>S</TH>
+    <TD class=3D"r data">2.759E11</TD>
+    <TH class=3D"l rowheader" scope=3Drow>Pr &gt;=3D |S|</TH>
+    <TD=20
+class=3D"r =
+data">&lt;.0001</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><=
+A=20
+name=3DIDX36></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Quantiles" border=3D1 frame=3Dhsides>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <COLGROUP>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2=20
+      scope=3Dcolgroup>Quantiles&nbsp;(Definition&nbsp;5)</TH></TR>
+  <TR>
+    <TH class=3D"l b header" scope=3Dcol>Level</TH>
+    <TH class=3D"r b header" scope=3Dcol>Quantile</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>100% Max</TH>
+    <TD class=3D"r data">92.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>99%</TH>
+    <TD class=3D"r data">3.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>95%</TH>
+    <TD class=3D"r data">0.666667</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>90%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>75% Q3</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>50% Median</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>25% Q1</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>10%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>5%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>1%</TH>
+    <TD class=3D"r data">0.000000</TD></TR>
+  <TR>
+    <TH class=3D"l rowheader" scope=3Drow>0% Min</TH>
+    <TD=20
+class=3D"r =
+data">0.000000</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR><A=
+=20
+name=3DIDX37></A>
+<DIV>
+<DIV align=3Dcenter><!--BEGINTABLE-->
+<TABLE class=3Dtable borderColor=3D#000000 cellSpacing=3D0 =
+cellPadding=3D7 rules=3Dgroups=20
+summary=3D"Procedure Univariate: Extreme Observations" border=3D1 =
+frame=3Dhsides>
+  <COLGROUP>
+  <COL>
+  <COL>
+  <COL>
+  <COL></COLGROUP>
+  <THEAD>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D4 scope=3Dcolgroup>Extreme =
+Observations</TH></TR>
+  <TR>
+    <TH class=3D"c b header" colSpan=3D2 scope=3Dcolgroup>Lowest</TH>
+    <TH class=3D"c b header" colSpan=3D2 =
+scope=3Dcolgroup>Highest</TH></TR>
+  <TR>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH>
+    <TH class=3D"r b header" scope=3Dcol>Value</TH>
+    <TH class=3D"r b header" scope=3Dcol>Obs</TH></TR></THEAD>
+  <TBODY>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">84</TD>
+    <TD class=3D"r data">1.23E7</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">88</TD>
+    <TD class=3D"r data">1.06E6</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">88</TD>
+    <TD class=3D"r data">1.34E6</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">90</TD>
+    <TD class=3D"r data">2.15E6</TD></TR>
+  <TR>
+    <TD class=3D"r data">0</TD>
+    <TD class=3D"r data">1.43E7</TD>
+    <TD class=3D"r data">92</TD>
+    <TD=20
+class=3D"r =
+data">3.64E6</TD></TR></TBODY></TABLE><!--ENDTABLE--></DIV></DIV><BR></DI=
+V></BODY></HTML>

@@ -83,6 +83,16 @@ LOG
     62 = "IHS"
     Other = "Other"; 
 
+    VALUE $pcmp_type_new 
+    "Hospital - General" = "Other"
+    "Physician" = "Other" 
+    "Clinic - Practitioner" = "Other" 
+    "Federally Qualified Health Center" = "Federally Qualified Health Center" 
+    "Nurse Practitioner" = "Other" 
+    "Rural Health Clinic" = "Rural Health Clinic" 
+    "Clinic - Dental" = "Other" 
+    "Indian Health Services - FQHC" = "Indian Health Services - FQHC" ;
+
     VALUE adj_pd_total_YRcat_
     0 = 0
     1 - 50  = 1
