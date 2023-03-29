@@ -9,6 +9,8 @@
 ***********************************************************************************************;
 * PROJECT PATHS, MAPPING; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas"; 
+
 
 * ==== Combine datasets with memlist_final ==================================;  
 proc sort data = int.memlist_final; by mcaid_id ; run ;  *1594686; 
@@ -282,7 +284,9 @@ RUN;
 
 DATA data.analysis_dataset; 
 SET  data.a8 ;  
-FORMAT age age_cat_. pcmp_type fqhc_rc_. race race_rc_. ;
+FORMAT age age_cat_. 
+       pcmp_type fqhc_rc_. 
+       race race_rc_.  ;
 pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.); 
 ind_cost_rx   = cost_rx_tc  > 0 ;
 ind_cost_ffs  = cost_ffs_tc > 0 ;
@@ -295,42 +299,3 @@ IF SEX =: 'U' then delete ;
 RUN ;
 *NOTE: There were 14347065 observations read from the data set DATA.A8.
 NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables;
-
-
-
-
-PROC CONTENTS DATA = data.analysis_dataset VARNUM  ; RUN ; 
-
-
-
-
-
-DATA data.cat_vars ; 
-SET  data.analysis_dataset  (KEEP = mcaid_id adj: bh_er: bh_hosp: bh_oth: sex race budget_grp_new age rae_person_new pcmp_loc_type_cd ) ;
-RUN ;
-
-PROC SORT DATA = data.cat_vars NODUPKEY  ; bY mcaid_id ; RUN ; 
-PROC SORT DATA = data.analysis_dataset ; by mcaid_id time ; RUN ; 
-
-
-
-
-
-
-/*DATA ind ; */
-/*SET  data.analysis_dataset (KEEP = mcaid_id time ind: )  ; */
-
-PROC FREQ DATA = data.analyis_dataset ; 
-TABLES int*ind_: ; 
-TITLE "Indicator Variable if DV 0 or >0 by Intervention" ; 
-format ind: comma20. ; 
-RUN ; 
-TITLE ; 
-
-PROC FREQ DATA = data.analysis_dataset ; 
-TABLES int*util: ; 
-RUN ; 
-
-proc univariate data = data.analysis_dataset ; 
-VAR = int*cost: ; 
-RUN; 
