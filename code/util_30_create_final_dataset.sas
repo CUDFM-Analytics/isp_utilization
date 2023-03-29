@@ -285,9 +285,8 @@ RUN;
 DATA data.analysis_dataset; 
 SET  data.a8 ;  
 FORMAT age age_cat_. 
-       pcmp_type fqhc_rc_. 
-       race race_rc_.  ;
-pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.); 
+       race race_rc_.  
+       pcmp_loc_type_cd pcmp_rc_.; 
 ind_cost_rx   = cost_rx_tc  > 0 ;
 ind_cost_ffs  = cost_ffs_tc > 0 ;
 ind_cost_pc   = cost_pc_tc  > 0 ;

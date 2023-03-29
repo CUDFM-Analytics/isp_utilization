@@ -9,10 +9,6 @@ VALUE budget_grp_new_
     12         = "MAGI Eligible Children"
     Other      = "Other"; 
 
-VALUE fqhc_rc_              
-    32, 45, 61, 62 = 1
-    Other          = 0;
-
 VALUE $race_rc_  
     .         = "Other" 
     1         = "Hispanic/Latino"
