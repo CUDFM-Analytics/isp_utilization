@@ -282,11 +282,10 @@ RUN;
     - make sure age = age_cat_. format
     - remove sex observations where sex = unknown; 
 
-DATA data.analysis_dataset; 
+DATA data.analysis_dataset (drop=pcmp_loc_type_cd FY) ; 
 SET  data.a8 ;  
 FORMAT age age_cat_. 
-       race race_rc_.  
-       pcmp_loc_type_cd pcmp_rc_.; 
+       race race_rc_. ; 
 ind_cost_rx   = cost_rx_tc  > 0 ;
 ind_cost_ffs  = cost_ffs_tc > 0 ;
 ind_cost_pc   = cost_pc_tc  > 0 ;
@@ -295,6 +294,12 @@ ind_util_er   = util_er     > 0 ;
 ind_util_bh_o = util_bh_o   > 0 ; 
 ind_util_tel  = util_tele   > 0 ;
 IF SEX =: 'U' then delete ; 
+IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 ;
+    else fqhc = 0 ;
 RUN ;
 *NOTE: There were 14347065 observations read from the data set DATA.A8.
 NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables;
+
+
+PROC PRINTTO; 
+RUN ; 

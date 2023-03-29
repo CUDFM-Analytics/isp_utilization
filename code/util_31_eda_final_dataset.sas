@@ -1,8 +1,20 @@
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas"; 
 
-PROC FREQ DATA = data.analysis_dataset; 
-TABLES age race sex ; 
+PROC PRINTTO LOG= "&util./code/_logs/log_eda_20230329.txt"; 
+RUN ; 
+
+ods pdf file = "&report./eda_freq_20230329.pdf";
+
+%let dat = data.analysis_dataset ; 
+
+PROC CONTENTS DATA = &dat VARNUM ; RUN ;  
+
+PROC FREQ DATA = &dat ; 
+TABLES int*(age--fqhc); 
+RUN ; 
+
+PROC FREQ DATA = &dat ; 
+TABLES int*fqhc; 
 RUN ; 
 
 PROC SORT DATA = data.analysis_dataset ; by mcaid_id time ; RUN ; 

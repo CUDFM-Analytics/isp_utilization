@@ -1,0 +1,1746 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.83 seconds
+      cpu time            0.57 seconds
+
+1        %LET hcpf     = S:/FHPC/DATA/HCPF_Data_files_SECURE;
+2
+3    * PROJECT ROOT DIR ----------------------------------------------------------------------------
+3  ! ;
+4          %LET util = &hcpf/Kim/isp/isp_utilization;
+5
+6        * DATA
+7          |--data           [libname 'data': stores final analytic dataset and other data folders]
+8             |--_raw`       [libname 'raw' : raw, read-only files to be prepped then stored in
+8  ! /interim]
+9             |--interim     [libname 'int' : intermediate ds used to make final analytic ds or eda]
+10            |--results     [libname 'out' : results tables, get exported to ../results
+11         ;
+12
+13         %LET data = &util/data;   LIBNAME data "&data";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+14         %LET raw = &data/raw;     LIBNAME raw "&raw";
+NOTE: Library RAW does not exist.
+15         %LET int = &data/interim; LIBNAME int "&int";
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+16         %LET out = &util/out;     LIBNAME out "&out";
+NOTE: Library OUT does not exist.
+17
+18       * export folder for excel files output;
+19         %LET report = &util/reports;
+20
+21   * EXT DATA SOURCES ---------------------------------------------------------------------------;
+22
+23       * Medicaid dats: keep attached for formats (until/if final fmts copied);
+24         %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
+25         LIBNAME ana "&ana";
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+26
+27   /*    * VARLEN (not sure if still needed... can ask Carter); */
+28   /*      %LET varlen =
+28 ! \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengt
+28 ! hs;*/
+29   /*      LIBNAME varlen "&varlen";*/
+30   /*      %INCLUDE "&varlen\MACRO_charLenMetadata.sas";*/
+31   /*      %getlen(library=varlen, data=AllVarLengths);*/
+32
+33   * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------;
+34
+35       OPTIONS NOFMTERR
+36                 MPRINT MLOGIC SYMBOLGEN
+37                 FMTSEARCH =(ana, datasets, data, util, work);
+38                 * removed varlen > if you comment it back in as a lib, put back in options
+38 ! fmtsearch;
+
+39   PROC FORMAT FMTLIB LIB=Data.Formats;
+39 !                                      SELECT $Race_cd;
+39 !                                                       RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.30 seconds
+      cpu time            0.18 seconds
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: Non-portable document will be produced. The current settings of FORMCHAR use nonstandard
+      line-drawing characters and the resulting output file will not render correctly unless all
+      readers of the document have the SAS Monospace font installed. To make your document
+      portable, issue the following command:
+      OPTIONS FORMCHAR="|----|+|---+=|-/\<>*";
+
+
+40   proc print data = ana.demographics (obs=50);
+ERROR: File ANA.DEMOGRAPHICS.DATA does not exist.
+41       var = race;
+         ---
+         180
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+42       RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+43     proc print data = ana.qry_demographics (obs=50);
+44       var = race;
+         ---
+         180
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+45       RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.00 seconds
+
+
+46   proc print data = ana.qry_demographics (obs=50);
+47       var race;
+48       RUN ;
+
+NOTE: There were 50 observations read from the data set ANA.QRY_DEMOGRAPHICS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+49   proc print data = ana.qry_demographics (obs=50) nolabels;
+                                                     --------
+                                                     22
+                                                     202
+ERROR 22-322: Syntax error, expecting one of the following: ;, BLANKLINE, CONTENTS, DATA, DOUBLE,
+              GRANDTOTAL_LABEL, GRANDTOT_LABEL, GRAND_LABEL, GTOTAL_LABEL, GTOT_LABEL, HEADING,
+              LABEL, N, NOOBS, NOSUMLABEL, OBS, ROUND, ROWS, SPLIT, STYLE, SUMLABEL, UNIFORM,
+              WIDTH.
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+50       var race;
+51       RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+52   PROC CATALOG CATALOG = data.FORMATS ;
+53   CONTENTS ;
+54   RUN ;
+
+55   QUIT ;
+
+NOTE: PROCEDURE CATALOG used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.01 seconds
+
+
+56   PROC PRINT DATA = data.analysis_dataset nofmterr (obs=1000);
+                                             --------
+                                             22
+                                             76
+ERROR 22-322: Syntax error, expecting one of the following: ;, (, BLANKLINE, CONTENTS, DATA,
+              DOUBLE, GRANDTOTAL_LABEL, GRANDTOT_LABEL, GRAND_LABEL, GTOTAL_LABEL, GTOT_LABEL,
+              HEADING, LABEL, N, NOOBS, NOSUMLABEL, OBS, ROUND, ROWS, SPLIT, STYLE, SUMLABEL,
+              UNIFORM, WIDTH.
+ERROR 76-322: Syntax error, statement will be ignored.
+57   /*            where mcaid_id in ("P861019", "L155867"); */
+58               run ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+59   options nofmterr;
+60   PROC PRINT DATA = data.analysis_dataset (obs=1000);
+61   /*            where mcaid_id in ("P861019", "L155867"); */
+62               run ;
+
+NOTE: There were 1000 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.96 seconds
+      cpu time            0.82 seconds
+
+
+63   PROC FORMAT FMTLIB LIB=Data.Formats;
+63 !                                      SELECT $Prov_typ_cd;
+63 !                                                           RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+64   PROC FORMAT FMTLIB LIB=Data.Formats;
+64 !                                      SELECT $Race_cd;
+64 !                                                       RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+65
+66   PROC FORMAT library = data;
+67
+68   * Formats for values in datasets in ana library:;
+69   VALUE budget_grp_new_
+70       5          = "MAGI TO 68% FPL"
+71       3          = "MAGI 69 - 133% FPL"
+72       6,7,8,9,10 = "Disabled"
+73       11         = "Foster Care"
+74       12         = "MAGI Eligible Children"
+75       Other      = "Other";
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+76
+77   VALUE fqhc_rc_
+78       32, 45, 61, 62 = 1
+79       Other          = 0;
+NOTE: Format FQHC_RC_ has been written to DATA.FORMATS.
+80
+81   VALUE race_rc_
+82       1         = "Hispanic/Latino"
+83       2         = "non-Hispanic White/Caucasian"
+84       3         = "non-Hispanic Black/African American"
+85       4,5,6,7,8 = "non-Hispanic Other"
+86       9         = "non-Hispanic Other People of Color"
+87       Other     = "Unknown Race/Ethnicity";
+NOTE: Format RACE_RC_ has been written to DATA.FORMATS.
+88
+89   * Formats for values created originally in the util files;
+90   VALUE adj_pd_total_YRcat_
+91       0 = 0
+92       1 - 50  = 1
+93       51 - 75 = 2
+94       76 - 95 = 3
+95       96 - 99 = 4
+96       Other = .;
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been written to DATA.FORMATS.
+97
+98   VALUE age_cat_
+99       0 - 5 = 1
+100      6 -10 = 2
+101      11-15 = 3
+102      16-20 = 4
+103      21-44 = 5
+104      45-64 = 6 ;
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+105
+106  VALUE age_cat_labels_
+107      1 = "0-5"
+108      2 = "6-10"
+109      3 = "11-15"
+110      4 = "16-20"
+111      5 = "21-44"
+112      6 = "45-64";
+NOTE: Format AGE_CAT_LABELS_ has been written to DATA.FORMATS.
+113
+114  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+115
+116
+117  %macro create_qrtr(data=,set=,var=,qrtr=);
+118  data &data;
+119  set  &set;
+120  if &var in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then &qrtr = 1;
+121  if &var in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then &qrtr = 2;
+122  if &var in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then &qrtr = 3;
+123  if &var in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then &qrtr = 4;
+124  if &var in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then &qrtr = 5;
+125  if &var in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then &qrtr = 6;
+126  if &var in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then &qrtr = 7;
+127  if &var in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then &qrtr = 8;
+128  if &var in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then &qrtr = 9;
+129  if &var in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then &qrtr = 10;
+130  if &var in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then &qrtr = 11;
+131  if &var in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then &qrtr = 12;
+132  run;
+133  %mend create_qrtr;
+134
+135
+136  * THIS SUCKS because it shows 0.87% as 87% but SAS stopped rounding my proc freqs so I don't
+136! know what to do;
+137  * Remove it if you can ever figure that out... ;
+138  proc format;
+139   picture pctfmt low-high='000.00%';
+NOTE: Format PCTFMT has been output.
+140  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+141  ods path work.templat(update) sashelp.tmplmst(read);
+142  proc template;
+143   edit Base.Freq.OneWayList;
+144   edit Percent;
+145   header="; Relative Frequency ;";
+146   format= pctfmt.;
+147   justify= on;
+148   end;
+149   edit CumPercent;
+150   header = ";Cumulative; Relative Frequency;";
+151   format= pctfmt.;
+152   justify= on;
+153   end;
+154   end;
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+155  run;
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.00 seconds
+
+
+156  PROC CONTENTS DATA = data.analysis_dataset VARNUM; RUN ;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.04 seconds
+
+
+157  PROC FREQ
+158       DATA = data.analysis_dataset ;
+159       TABLES sex ;
+160  RUN;
+
+NOTE: There were 8981643 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           30.64 seconds
+      cpu time            1.06 seconds
+
+
+161  PROC FORMAT FMTLIB LIB=Data.Formats;
+161!                                      SELECT $Gndr_cd;
+161!                                                       RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+162  DATA data.analysis_dataset;
+163  FORMAT age age_cat_. pcmp_loc_type_cd fqhc_rc_. race race_rc. ;
+                                                          --------
+                                                          484
+NOTE 484-185: Format RACE_RC was not found or could not be loaded.
+
+164  SET  data.a8 ;
+ERROR: Variable race has been defined as both character and numeric.
+ERROR: Variable pcmp_loc_type_cd has been defined as both character and numeric.
+165  ind_cost_rx   = cost_rx_tc  > 0 ;
+166  ind_cost_ffs  = cost_ffs_tc > 0 ;
+167  ind_cost_pc   = cost_pc_tc  > 0 ;
+168  ind_util_pc   = util_pc     > 0 ;
+169  ind_util_er   = util_er     > 0 ;
+170  ind_util_bh_o = util_bh_o   > 0 ;
+171  ind_util_tel  = util_tele   > 0 ;
+172  IF SEX = "Unknown" then delete ;
+173  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 0 observations and 38 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.01 seconds
+
+
+174
+175  PROC FORMAT library = data;
+176
+177  * Formats for values in datasets in ana library:;
+178  VALUE budget_grp_new_
+179      5          = "MAGI TO 68% FPL"
+180      3          = "MAGI 69 - 133% FPL"
+181      6,7,8,9,10 = "Disabled"
+182      11         = "Foster Care"
+183      12         = "MAGI Eligible Children"
+184      Other      = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+185
+186  VALUE fqhc_rc_
+187      32, 45, 61, 62 = 1
+188      Other          = 0;
+NOTE: Format FQHC_RC_ is already on the library DATA.FORMATS.
+NOTE: Format FQHC_RC_ has been written to DATA.FORMATS.
+189
+190  VALUE race_rc_
+191      1         = "Hispanic/Latino"
+192      2         = "non-Hispanic White/Caucasian"
+193      3         = "non-Hispanic Black/African American"
+194      4,5,6,7,8 = "non-Hispanic Other"
+195      9         = "non-Hispanic Other People of Color"
+196      Other     = "Unknown Race/Ethnicity";
+NOTE: Format RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format RACE_RC_ has been written to DATA.FORMATS.
+197
+198  * Formats for values created originally in the util files;
+199  VALUE adj_pd_total_YRcat_
+200      0 = 0
+201      1 - 50  = 1
+202      51 - 75 = 2
+203      76 - 95 = 3
+204      96 - 99 = 4
+205      Other = .;
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ is already on the library DATA.FORMATS.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been written to DATA.FORMATS.
+206
+207  VALUE age_cat_
+208      0 - 5 = 1
+209      6 -10 = 2
+210      11-15 = 3
+211      16-20 = 4
+212      21-44 = 5
+213      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+214
+215  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+216
+217  DATA data.analysis_dataset (DROP=pcmp_loc_type_cd);
+218  SET  data.a8 ;
+219  FORMAT age age_cat_. pcmp_type fqhc_rc_. race race_rc. ;
+                                                   --------
+                                                   484
+220  pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.);
+                                         ---------
+                                         485
+NOTE 484-185: Format $RACE_RC was not found or could not be loaded.
+
+NOTE 485-185: Informat FQHC_RC_ was not found or could not be loaded.
+
+221  ind_cost_rx   = cost_rx_tc  > 0 ;
+222  ind_cost_ffs  = cost_ffs_tc > 0 ;
+223  ind_cost_pc   = cost_pc_tc  > 0 ;
+224  ind_util_pc   = util_pc     > 0 ;
+225  ind_util_er   = util_er     > 0 ;
+226  ind_util_bh_o = util_bh_o   > 0 ;
+227  ind_util_tel  = util_tele   > 0 ;
+228  IF SEX = "Unknown" then delete ;
+229  RUN ;
+
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14347065 observations and 38 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:30.17
+      cpu time            4.89 seconds
+
+
+230  DATA data.analysis_dataset (DROP=pcmp_loc_type_cd);
+231  SET  data.a8 ;
+232  FORMAT age age_cat_. pcmp_type fqhc_rc_. race race_rc. ;
+                                                   --------
+                                                   484
+233  pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.);
+                                         ---------
+                                         485
+NOTE 484-185: Format $RACE_RC was not found or could not be loaded.
+
+NOTE 485-185: Informat FQHC_RC_ was not found or could not be loaded.
+
+234  ind_cost_rx   = cost_rx_tc  > 0 ;
+235  ind_cost_ffs  = cost_ffs_tc > 0 ;
+236  ind_cost_pc   = cost_pc_tc  > 0 ;
+237  ind_util_pc   = util_pc     > 0 ;
+238  ind_util_er   = util_er     > 0 ;
+239  ind_util_bh_o = util_bh_o   > 0 ;
+240  ind_util_tel  = util_tele   > 0 ;
+241  IF SEX = "U" then delete ;
+242  RUN ;
+
+NOTE: The DATA step has been abnormally terminated.
+NOTE: There were 4792793 observations read from the data set DATA.A8.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 4792763 observations and 38 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           30.35 seconds
+      cpu time            2.11 seconds
+
+
+243  DATA data.analysis_dataset;
+244  SET  data.a8 ;
+245  FORMAT age age_cat_. pcmp_type fqhc_rc_. race race_rc_. ;
+                                                   ---------
+                                                   484
+246  pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.);
+                                         ---------
+                                         485
+NOTE 484-185: Format $RACE_RC_ was not found or could not be loaded.
+
+NOTE 485-185: Informat FQHC_RC_ was not found or could not be loaded.
+
+247  ind_cost_rx   = cost_rx_tc  > 0 ;
+248  ind_cost_ffs  = cost_ffs_tc > 0 ;
+249  ind_cost_pc   = cost_pc_tc  > 0 ;
+250  ind_util_pc   = util_pc     > 0 ;
+251  ind_util_er   = util_er     > 0 ;
+252  ind_util_bh_o = util_bh_o   > 0 ;
+253  ind_util_tel  = util_tele   > 0 ;
+254  IF SEX =: 'U' then delete ;
+255  RUN ;
+
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:25.41
+      cpu time            5.64 seconds
+
+
+256  PROC CONTENTS DATA = data.analysis_dataset VARNUM  ; RUN ;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+257
+258  DATA data.analysis_dataset;
+259  SET  data.a8 ;
+260  FORMAT age age_cat_.
+261         pcmp_type fqhc_rc_.
+262         race race_rc_.
+                 ---------
+                 484
+NOTE 484-185: Format $RACE_RC_ was not found or could not be loaded.
+
+263         budget_grp_new budget_grp_new_.
+                           ----------------
+                           484
+NOTE 484-185: Format $BUDGET_GRP_NEW_ was not found or could not be loaded.
+
+264         adj_pd_total_: adj_pd_total_YRcat_. ;
+                           --------------------
+                           484
+265  pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.);
+                                         ---------
+                                         485
+NOTE 484-185: Format $ADJ_PD_TOTAL_YRCAT_ was not found or could not be loaded.
+
+NOTE 485-185: Informat FQHC_RC_ was not found or could not be loaded.
+
+266  ind_cost_rx   = cost_rx_tc  > 0 ;
+267  ind_cost_ffs  = cost_ffs_tc > 0 ;
+268  ind_cost_pc   = cost_pc_tc  > 0 ;
+269  ind_util_pc   = util_pc     > 0 ;
+270  ind_util_er   = util_er     > 0 ;
+271  ind_util_bh_o = util_bh_o   > 0 ;
+272  ind_util_tel  = util_tele   > 0 ;
+273  IF SEX =: 'U' then delete ;
+274  RUN ;
+
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:24.75
+      cpu time            5.11 seconds
+
+
+275  PROC FREQ DATA = data.analysis_dataset;
+276  TABLES age race sex budget: adj_pd_total: ;
+277  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           43.23 seconds
+      cpu time            3.12 seconds
+
+
+278
+279  PROC FORMAT library = data;
+280
+281  * Formats for values in datasets in ana library:;
+282  VALUE budget_grp_new_
+283      5          = "MAGI TO 68% FPL"
+284      3          = "MAGI 69 - 133% FPL"
+285      6,7,8,9,10 = "Disabled"
+286      11         = "Foster Care"
+287      12         = "MAGI Eligible Children"
+288      Other      = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+289
+290  VALUE fqhc_rc_
+291      32, 45, 61, 62 = 1
+292      Other          = 0;
+NOTE: Format FQHC_RC_ is already on the library DATA.FORMATS.
+NOTE: Format FQHC_RC_ has been written to DATA.FORMATS.
+293
+294  VALUE race_rc_
+295      .         = "Other"
+296      1         = "Hispanic/Latino"
+297      2         = "non-Hispanic White/Caucasian"
+298      3         = "non-Hispanic Black/African American"
+299      4,5,6,7,8 = "non-Hispanic Other"
+300      9         = "non-Hispanic Other People of Color"
+301      Other     = "Unknown Race/Ethnicity";
+NOTE: Format RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format RACE_RC_ has been written to DATA.FORMATS.
+302
+303  * Formats for values created originally in the util files;
+304  VALUE adj_pd_total_YRcat_
+305      0 = 0
+306      1 - 50  = 1
+307      51 - 75 = 2
+308      76 - 95 = 3
+309      96 - 99 = 4
+310      Other = .;
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ is already on the library DATA.FORMATS.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been written to DATA.FORMATS.
+311
+312  VALUE age_cat_
+313      0 - 5 = 1
+314      6 -10 = 2
+315      11-15 = 3
+316      16-20 = 4
+317      21-44 = 5
+318      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+319
+320  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+321
+322  DATA data.analysis_dataset;
+323  SET  data.a8 ;
+324  FORMAT age age_cat_.
+325         pcmp_type fqhc_rc_.
+326         race race_rc_.
+                 ---------
+                 484
+NOTE 484-185: Format $RACE_RC_ was not found or could not be loaded.
+
+327         budget_grp_new budget_grp_new_.
+                           ----------------
+                           484
+NOTE 484-185: Format $BUDGET_GRP_NEW_ was not found or could not be loaded.
+
+328         adj_pd_total_: adj_pd_total_YRcat_. ;
+                           --------------------
+                           484
+329  pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.);
+                                         ---------
+                                         485
+NOTE 484-185: Format $ADJ_PD_TOTAL_YRCAT_ was not found or could not be loaded.
+
+NOTE 485-185: Informat FQHC_RC_ was not found or could not be loaded.
+
+330  ind_cost_rx   = cost_rx_tc  > 0 ;
+331  ind_cost_ffs  = cost_ffs_tc > 0 ;
+332  ind_cost_pc   = cost_pc_tc  > 0 ;
+333  ind_util_pc   = util_pc     > 0 ;
+334  ind_util_er   = util_er     > 0 ;
+335  ind_util_bh_o = util_bh_o   > 0 ;
+336  ind_util_tel  = util_tele   > 0 ;
+337  IF SEX =: 'U' then delete ;
+338  RUN ;
+
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:29.50
+      cpu time            5.31 seconds
+
+
+339  PROC FREQ DATA = data.analysis_dataset;
+340  TABLES age race sex budget: adj_pd_total: ;
+341  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           42.95 seconds
+      cpu time            3.01 seconds
+
+
+342  %INCLUDE
+342! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas";
+WARNING: Physical file does not exist,
+         S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\code\util_00_config_formats.sas
+         .
+ERROR: Cannot open %INCLUDE file
+       S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas.
+343  %INCLUDE
+343! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas";
+WARNING: Physical file does not exist,
+         S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\code\util_00_config_formats.sas
+         .
+ERROR: Cannot open %INCLUDE file
+       S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas.
+344  %INCLUDE
+344! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas";
+WARNING: Physical file does not exist,
+         S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\code\util_00_config_formats.sas
+         .
+ERROR: Cannot open %INCLUDE file
+       S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas.
+345  %INCLUDE
+345! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+NOTE: Format FQHC_RC_ is already on the library DATA.FORMATS.
+NOTE: Format FQHC_RC_ has been written to DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ is already on the library DATA.FORMATS.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been written to DATA.FORMATS.
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.00 seconds
+
+
+388
+389  DATA data.analysis_dataset;
+390  SET  data.a8 ;
+391  FORMAT age age_cat_.
+392         pcmp_type fqhc_rc_.
+393         race race_rc_.
+394         budget_grp_new budget_grp_new_.
+                           ----------------
+                           484
+NOTE 484-185: Format $BUDGET_GRP_NEW_ was not found or could not be loaded.
+
+395         adj_pd_total_: adj_pd_total_YRcat_. ;
+                           --------------------
+                           484
+396  pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.);
+                                         ---------
+                                         485
+NOTE 484-185: Format $ADJ_PD_TOTAL_YRCAT_ was not found or could not be loaded.
+
+NOTE 485-185: Informat FQHC_RC_ was not found or could not be loaded.
+
+397  ind_cost_rx   = cost_rx_tc  > 0 ;
+398  ind_cost_ffs  = cost_ffs_tc > 0 ;
+399  ind_cost_pc   = cost_pc_tc  > 0 ;
+400  ind_util_pc   = util_pc     > 0 ;
+401  ind_util_er   = util_er     > 0 ;
+402  ind_util_bh_o = util_bh_o   > 0 ;
+403  ind_util_tel  = util_tele   > 0 ;
+404  IF SEX =: 'U' then delete ;
+405  RUN ;
+
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:25.26
+      cpu time            2.99 seconds
+
+
+406
+407  DATA data.analysis_dataset;
+408  SET  data.a8 ;
+409  FORMAT age age_cat_.
+410         pcmp_type fqhc_rc_.
+411         race race_rc_.  ;
+412  pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.);
+                                         ---------
+                                         485
+NOTE 485-185: Informat FQHC_RC_ was not found or could not be loaded.
+
+413  ind_cost_rx   = cost_rx_tc  > 0 ;
+414  ind_cost_ffs  = cost_ffs_tc > 0 ;
+415  ind_cost_pc   = cost_pc_tc  > 0 ;
+416  ind_util_pc   = util_pc     > 0 ;
+417  ind_util_er   = util_er     > 0 ;
+418  ind_util_bh_o = util_bh_o   > 0 ;
+419  ind_util_tel  = util_tele   > 0 ;
+420  IF SEX =: 'U' then delete ;
+421  RUN ;
+
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:25.74
+      cpu time            4.03 seconds
+
+
+422  *NOTE: There were
+
+423  PROC FORMAT library = data;
+424
+425  * Formats for values in datasets in ana library:;
+426  VALUE budget_grp_new_
+427      5          = "MAGI TO 68% FPL"
+428      3          = "MAGI 69 - 133% FPL"
+429      6,7,8,9,10 = "Disabled"
+430      11         = "Foster Care"
+431      12         = "MAGI Eligible Children"
+432      Other      = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+433
+434  INVALUE fqhc_rc_
+435      32, 45, 61, 62 = 1
+436      Other          = 0;
+NOTE: Informat FQHC_RC_ has been output.
+437
+438  VALUE $race_rc_
+439      .         = "Other"
+440      1         = "Hispanic/Latino"
+441      2         = "non-Hispanic White/Caucasian"
+442      3         = "non-Hispanic Black/African American"
+443      4,5,6,7,8 = "non-Hispanic Other"
+444      9         = "non-Hispanic Other People of Color"
+445      Other     = "Unknown Race/Ethnicity";
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+446
+447  * Formats for values created originally in the util files;
+448  VALUE adj_pd_total_YRcat_
+449      0 = 0
+450      1 - 50  = 1
+451      51 - 75 = 2
+452      76 - 95 = 3
+453      96 - 99 = 4
+454      Other = .;
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ is already on the library DATA.FORMATS.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been written to DATA.FORMATS.
+455
+456  VALUE age_cat_
+457      0 - 5 = 1
+458      6 -10 = 2
+459      11-15 = 3
+460      16-20 = 4
+461      21-44 = 5
+462      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+463
+464  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+465  DATA data.analysis_dataset;
+466  SET  data.a8 ;
+467  FORMAT age age_cat_.
+468         pcmp_type fqhc_rc_.
+469         race race_rc_.  ;
+470  pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.);
+471  ind_cost_rx   = cost_rx_tc  > 0 ;
+472  ind_cost_ffs  = cost_ffs_tc > 0 ;
+473  ind_cost_pc   = cost_pc_tc  > 0 ;
+474  ind_util_pc   = util_pc     > 0 ;
+475  ind_util_er   = util_er     > 0 ;
+476  ind_util_bh_o = util_bh_o   > 0 ;
+477  ind_util_tel  = util_tele   > 0 ;
+478  IF SEX =: 'U' then delete ;
+479  RUN ;
+
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:26.48
+      cpu time            4.03 seconds
+
+
+480  PROC FREQ DATA = data.analysis_dataset;
+481  TABLES age race sex ;
+482  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           40.53 seconds
+      cpu time            2.04 seconds
+
+
+483  %let dat = data.analysis_dataset ;
+484  PROC CONTENTS DATA = &dat VARNUM ; RUN ;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.00 seconds
+
+
+485  PROC FREQ DATA = &dat;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+486  TABLES  pcmp_loc_type_cd ;
+487  RUN ;
+
+NOTE: There were 13188727 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           39.51 seconds
+      cpu time            2.15 seconds
+
+
+488  PROC FREQ DATA = &dat;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+489  TABLES  pcmp_loc_type_cd pcmp_type;
+490  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           40.09 seconds
+      cpu time            1.75 seconds
+
+
+491
+492  DATA data.analysis_dataset;
+493  SET  data.a8 ;
+494  FORMAT age age_cat_.
+495         race race_rc_.  ;
+496  ind_cost_rx   = cost_rx_tc  > 0 ;
+497  ind_cost_ffs  = cost_ffs_tc > 0 ;
+498  ind_cost_pc   = cost_pc_tc  > 0 ;
+499  ind_util_pc   = util_pc     > 0 ;
+500  ind_util_er   = util_er     > 0 ;
+501  ind_util_bh_o = util_bh_o   > 0 ;
+502  ind_util_tel  = util_tele   > 0 ;
+503  IF SEX =: 'U' then delete ;
+504  IF pcmp_loc_type_cd in ('Federally Qualified Health Center','Rural Health Clinic','Indian
+504! Health Services - FQHC')
+505                      then 1
+                              -
+                              180
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+506                      else 0
+507                      end as pcmp_type;
+508  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 0 observations and 38 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.19 seconds
+      cpu time            0.04 seconds
+
+
+509  DATA data.analysis_dataset;
+510  SET  data.a8 ;
+511  FORMAT age age_cat_.
+512         race race_rc_.  ;
+513  ind_cost_rx   = cost_rx_tc  > 0 ;
+514  ind_cost_ffs  = cost_ffs_tc > 0 ;
+515  ind_cost_pc   = cost_pc_tc  > 0 ;
+516  ind_util_pc   = util_pc     > 0 ;
+517  ind_util_er   = util_er     > 0 ;
+518  ind_util_bh_o = util_bh_o   > 0 ;
+519  ind_util_tel  = util_tele   > 0 ;
+520  IF SEX =: 'U' then delete ;
+521  IF pcmp_loc_type_cd in ('Federally Qualified Health Center','Rural Health Clinic','Indian
+521! Health Services - FQHC')
+522                      then pcmp_type = 1
+523                      else pcmp_type = 0
+                         ----
+                         388
+                         202
+524                      end as pcmp_type;
+                         ---
+                         388
+                         76
+ERROR 388-185: Expecting an arithmetic operator.
+
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+525  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 0 observations and 39 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.16 seconds
+      cpu time            0.00 seconds
+
+
+526  DATA data.analysis_dataset;
+527  SET  data.a8 ;
+528  FORMAT age age_cat_.
+529         race race_rc_.  ;
+530  ind_cost_rx   = cost_rx_tc  > 0 ;
+531  ind_cost_ffs  = cost_ffs_tc > 0 ;
+532  ind_cost_pc   = cost_pc_tc  > 0 ;
+533  ind_util_pc   = util_pc     > 0 ;
+534  ind_util_er   = util_er     > 0 ;
+535  ind_util_bh_o = util_bh_o   > 0 ;
+536  ind_util_tel  = util_tele   > 0 ;
+537  IF SEX =: 'U' then delete ;
+538  IF pcmp_loc_type_cd in ('Federally Qualified Health Center','Rural Health Clinic','Indian
+538! Health Services - FQHC')
+539                      then pcmp_type = 1
+540                      else 0 ;
+                         ----
+                         388
+                         202
+ERROR 388-185: Expecting an arithmetic operator.
+
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+
+541  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 0 observations and 39 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.04 seconds
+
+
+542
+543  DATA data.analysis_dataset;
+544  SET  data.a8 ;
+545  FORMAT age age_cat_.
+546         race race_rc_.  ;
+547  ind_cost_rx   = cost_rx_tc  > 0 ;
+548  ind_cost_ffs  = cost_ffs_tc > 0 ;
+549  ind_cost_pc   = cost_pc_tc  > 0 ;
+550  ind_util_pc   = util_pc     > 0 ;
+551  ind_util_er   = util_er     > 0 ;
+552  ind_util_bh_o = util_bh_o   > 0 ;
+553  ind_util_tel  = util_tele   > 0 ;
+554  IF SEX =: 'U' then delete ;
+555  IF pcmp_loc_type_cd in ('Federally Qualified Health Center','Rural Health Clinic','Indian
+555! Health Services - FQHC')
+556                      then 1
+                              -
+                              180
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+557                      else 0
+558                      end as pcmp_type;
+559  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 0 observations and 38 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.01 seconds
+
+
+560  PROC FORMAT library = data;
+561
+562  * Formats for values in datasets in ana library:;
+563  VALUE budget_grp_new_
+564      5          = "MAGI TO 68% FPL"
+565      3          = "MAGI 69 - 133% FPL"
+566      6,7,8,9,10 = "Disabled"
+567      11         = "Foster Care"
+568      12         = "MAGI Eligible Children"
+569      Other      = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+570
+571  VALUE fqhc_rc_
+572      'Federally Qualified Health Center' = 1
+ERROR: The quoted string 'Federally Qualified Health Center' is not acceptable to a numeric format
+       or informat.
+572      'Federally Qualified Health Center' = 1
+                                               -
+                                               22
+ERROR 22-322: Syntax error, expecting one of the following: a quoted string, a format name.
+
+572      'Federally Qualified Health Center' = 1
+                                               -
+                                               76
+ERROR 76-322: Syntax error, statement will be ignored.
+
+573      'Rural Health Clinic' = 1
+574      'Indian Health Services - FQHC' = 1
+575      Other = 0 ;
+NOTE: The previous statement has been deleted.
+576
+577  VALUE $race_rc_
+578      .         = "Other"
+579      1         = "Hispanic/Latino"
+580      2         = "non-Hispanic White/Caucasian"
+581      3         = "non-Hispanic Black/African American"
+582      4,5,6,7,8 = "non-Hispanic Other"
+583      9         = "non-Hispanic Other People of Color"
+584      Other     = "Unknown Race/Ethnicity";
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+585
+586  * Formats for values created originally in the util files;
+587  VALUE adj_pd_total_YRcat_
+588      0 = 0
+589      1 - 50  = 1
+590      51 - 75 = 2
+591      76 - 95 = 3
+592      96 - 99 = 4
+593      Other = .;
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ is already on the library DATA.FORMATS.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been written to DATA.FORMATS.
+594
+595  VALUE age_cat_
+596      0 - 5 = 1
+597      6 -10 = 2
+598      11-15 = 3
+599      16-20 = 4
+600      21-44 = 5
+601      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+602
+603  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+NOTE: The SAS System stopped processing this step because of errors.
+
+604  PROC FORMAT library = data;
+605
+606  * Formats for values in datasets in ana library:;
+607  VALUE budget_grp_new_
+608      5          = "MAGI TO 68% FPL"
+609      3          = "MAGI 69 - 133% FPL"
+610      6,7,8,9,10 = "Disabled"
+611      11         = "Foster Care"
+612      12         = "MAGI Eligible Children"
+613      Other      = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+614
+615  VALUE pcmp_rc_
+616      'Federally Qualified Health Center' = 1
+ERROR: The quoted string 'Federally Qualified Health Center' is not acceptable to a numeric format
+       or informat.
+616      'Federally Qualified Health Center' = 1
+                                               -
+                                               22
+ERROR 22-322: Syntax error, expecting one of the following: a quoted string, a format name.
+
+616      'Federally Qualified Health Center' = 1
+                                               -
+                                               76
+ERROR 76-322: Syntax error, statement will be ignored.
+
+617      'Rural Health Clinic' = 1
+618      'Indian Health Services - FQHC' = 1
+619      Other = 0 ;
+NOTE: The previous statement has been deleted.
+620
+621  VALUE $race_rc_
+622      .         = "Other"
+623      1         = "Hispanic/Latino"
+624      2         = "non-Hispanic White/Caucasian"
+625      3         = "non-Hispanic Black/African American"
+626      4,5,6,7,8 = "non-Hispanic Other"
+627      9         = "non-Hispanic Other People of Color"
+628      Other     = "Unknown Race/Ethnicity";
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+629
+630  * Formats for values created originally in the util files;
+631  VALUE adj_pd_total_YRcat_
+632      0 = 0
+633      1 - 50  = 1
+634      51 - 75 = 2
+635      76 - 95 = 3
+636      96 - 99 = 4
+637      Other = .;
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ is already on the library DATA.FORMATS.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been written to DATA.FORMATS.
+638
+639  VALUE age_cat_
+640      0 - 5 = 1
+641      6 -10 = 2
+642      11-15 = 3
+643      16-20 = 4
+644      21-44 = 5
+645      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+646
+647  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+NOTE: The SAS System stopped processing this step because of errors.
+
+648
+649  DATA data.analysis_dataset;
+650  SET  data.a8 ;
+651  FORMAT age age_cat_.
+652         race race_rc_.
+653         pcmp_type_loc_cd pcmp_rc_.;
+                             ---------
+                             484
+NOTE 484-185: Format PCMP_RC_ was not found or could not be loaded.
+
+654  ind_cost_rx   = cost_rx_tc  > 0 ;
+655  ind_cost_ffs  = cost_ffs_tc > 0 ;
+656  ind_cost_pc   = cost_pc_tc  > 0 ;
+657  ind_util_pc   = util_pc     > 0 ;
+658  ind_util_er   = util_er     > 0 ;
+659  ind_util_bh_o = util_bh_o   > 0 ;
+660  ind_util_tel  = util_tele   > 0 ;
+661  IF SEX =: 'U' then delete ;
+662  ;
+
+NOTE: Variable pcmp_type_loc_cd is uninitialized.
+NOTE: The DATA step has been abnormally terminated.
+NOTE: There were 1773743 observations read from the data set DATA.A8.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 1773732 observations and 39 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           46.04 seconds
+      cpu time            2.01 seconds
+
+
+702      16-20 = 4
+703      21-44 = 5
+704      45-64 = 6 ;
+705
+706  RUN;
+
+707  PROC FORMAT library = data;
+708
+709  * Formats for values in datasets in ana library:;
+710  VALUE budget_grp_new_
+711      5          = "MAGI TO 68% FPL"
+712      3          = "MAGI 69 - 133% FPL"
+713      6,7,8,9,10 = "Disabled"
+714      11         = "Foster Care"
+715      12         = "MAGI Eligible Children"
+716      Other      = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+717
+718  VALUE pcmp_rc_
+719      'Federally Qualified Health Center' = 1
+ERROR: The quoted string 'Federally Qualified Health Center' is not acceptable to a numeric format
+       or informat.
+719      'Federally Qualified Health Center' = 1
+                                               -
+                                               22
+ERROR 22-322: Syntax error, expecting one of the following: a quoted string, a format name.
+
+719      'Federally Qualified Health Center' = 1
+                                               -
+                                               76
+ERROR 76-322: Syntax error, statement will be ignored.
+
+720      'Rural Health Clinic' = 1
+721      'Indian Health Services - FQHC' = 1
+722      Other = 0 ;
+NOTE: The previous statement has been deleted.
+723
+724  VALUE $race_rc_
+725      .         = "Other"
+726      1         = "Hispanic/Latino"
+727      2         = "non-Hispanic White/Caucasian"
+728      3         = "non-Hispanic Black/African American"
+729      4,5,6,7,8 = "non-Hispanic Other"
+730      9         = "non-Hispanic Other People of Color"
+731      Other     = "Unknown Race/Ethnicity";
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+732
+733  * Formats for values created originally in the util files;
+734  VALUE adj_pd_total_YRcat_
+735      0 = 0
+736      1 - 50  = 1
+737      51 - 75 = 2
+738      76 - 95 = 3
+739      96 - 99 = 4
+740      Other = .;
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ is already on the library DATA.FORMATS.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been written to DATA.FORMATS.
+741
+742  VALUE age_cat_
+743      0 - 5 = 1
+744      6 -10 = 2
+745      11-15 = 3
+746      16-20 = 4
+747      21-44 = 5
+748      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+749
+750  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+NOTE: The SAS System stopped processing this step because of errors.
+
+751  PROC FORMAT library = data;
+752
+753  * Formats for values in datasets in ana library:;
+754  VALUE budget_grp_new_
+755      5          = "MAGI TO 68% FPL"
+756      3          = "MAGI 69 - 133% FPL"
+757      6,7,8,9,10 = "Disabled"
+758      11         = "Foster Care"
+759      12         = "MAGI Eligible Children"
+760      Other      = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+761
+762  VALUE $pcmp_rc_
+763      'Federally Qualified Health Center' = 1
+764      'Rural Health Clinic' = 1
+765      'Indian Health Services - FQHC' = 1
+766      Other = 0 ;
+NOTE: Format $PCMP_RC_ has been written to DATA.FORMATS.
+767
+768  VALUE $race_rc_
+769      .         = "Other"
+770      1         = "Hispanic/Latino"
+771      2         = "non-Hispanic White/Caucasian"
+772      3         = "non-Hispanic Black/African American"
+773      4,5,6,7,8 = "non-Hispanic Other"
+774      9         = "non-Hispanic Other People of Color"
+775      Other     = "Unknown Race/Ethnicity";
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+776
+777  * Formats for values created originally in the util files;
+778  VALUE adj_pd_total_YRcat_
+779      0 = 0
+780      1 - 50  = 1
+781      51 - 75 = 2
+782      76 - 95 = 3
+783      96 - 99 = 4
+784      Other = .;
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ is already on the library DATA.FORMATS.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been written to DATA.FORMATS.
+785
+786  VALUE age_cat_
+787      0 - 5 = 1
+788      6 -10 = 2
+789      11-15 = 3
+790      16-20 = 4
+791      21-44 = 5
+792      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+793
+794  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+795  DATA data.analysis_dataset;
+796  SET  data.a8 ;
+797  FORMAT age age_cat_.
+798         race race_rc_.
+799         pcmp_type_loc_cd pcmp_rc_.;
+                             ---------
+                             484
+NOTE 484-185: Format PCMP_RC_ was not found or could not be loaded.
+
+800  ind_cost_rx   = cost_rx_tc  > 0 ;
+801  ind_cost_ffs  = cost_ffs_tc > 0 ;
+802  ind_cost_pc   = cost_pc_tc  > 0 ;
+803  ind_util_pc   = util_pc     > 0 ;
+804  ind_util_er   = util_er     > 0 ;
+805  ind_util_bh_o = util_bh_o   > 0 ;
+806  ind_util_tel  = util_tele   > 0 ;
+807  IF SEX =: 'U' then delete ;
+808  RUN ;
+
+NOTE: Variable pcmp_type_loc_cd is uninitialized.
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:23.59
+      cpu time            3.40 seconds
+
+
+809  PROC CONTENTS DATA = data.analysis_dataset VARNUM; RUN ;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+810
+811  DATA data.analysis_dataset;
+812  SET  data.a8 ;
+813  FORMAT age age_cat_.
+814         race race_rc_.
+815         pcmp_loc_type_cd pcmp_rc_.;
+816  ind_cost_rx   = cost_rx_tc  > 0 ;
+817  ind_cost_ffs  = cost_ffs_tc > 0 ;
+818  ind_cost_pc   = cost_pc_tc  > 0 ;
+819  ind_util_pc   = util_pc     > 0 ;
+820  ind_util_er   = util_er     > 0 ;
+821  ind_util_bh_o = util_bh_o   > 0 ;
+822  ind_util_tel  = util_tele   > 0 ;
+823  IF SEX =: 'U' then delete ;
+824  RUN ;
+
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 38 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:25.33
+      cpu time            4.00 seconds
+
+
+825  *NOTE: There were 14347065 observations read from the data set DATA.A8.
+826  NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables;
+
+827
+828  PROC FREQ DATA = &dat;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+829  TABLES  pcmp_loc_type_cd ;
+830  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           39.47 seconds
+      cpu time            1.43 seconds
+
+
+831  PROC FREQ DATA = data.a8;
+832  TABLES  pcmp_loc_type_cd ;
+833  RUN ;
+
+NOTE: There were 8495358 observations read from the data set DATA.A8.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           23.14 seconds
+      cpu time            1.00 seconds
+
+
+834  PROC FREQ DATA = data.a8;
+835  TABLES  pcmp_loc_type_cd ;
+836  format _ALL_ ;
+837  RUN ;
+
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           32.29 seconds
+      cpu time            1.31 seconds
+
+
+838  PROC FORMAT FMTLIB LIB=Ana.Formats;
+838!                                     SELECT $Prov_typ_cd;
+838!                                                          RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+839  PROC FORMAT FMTLIB LIB=Ana.Formats;
+839!                                     SELECT Clmclass;
+839!                                                      RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+840  PROC FORMAT FMTLIB LIB=Ana.Formats;
+840!                                     SELECT $Prov_typ_cd;
+840!                                                          RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+841
+842  DATA data.analysis_dataset;
+843  SET  data.a8 ;
+844  FORMAT age age_cat_.
+845         race race_rc_. ;
+846  ind_cost_rx   = cost_rx_tc  > 0 ;
+847  ind_cost_ffs  = cost_ffs_tc > 0 ;
+848  ind_cost_pc   = cost_pc_tc  > 0 ;
+849  ind_util_pc   = util_pc     > 0 ;
+850  ind_util_er   = util_er     > 0 ;
+851  ind_util_bh_o = util_bh_o   > 0 ;
+852  ind_util_tel  = util_tele   > 0 ;
+853  IF SEX =: 'U' then delete ;
+854  IF pcmp_loc_type_cd eq (32, 45, 61, 62) then fqhc = 1 else fqhc = 0;
+                               -
+                               388
+                               76
+ERROR 388-185: Expecting an arithmetic operator.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+855  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 0 observations and 38 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.03 seconds
+
+
+856  DATA data.analysis_dataset;
+857  SET  data.a8 ;
+858  FORMAT age age_cat_.
+859         race race_rc_. ;
+860  ind_cost_rx   = cost_rx_tc  > 0 ;
+861  ind_cost_ffs  = cost_ffs_tc > 0 ;
+862  ind_cost_pc   = cost_pc_tc  > 0 ;
+863  ind_util_pc   = util_pc     > 0 ;
+864  ind_util_er   = util_er     > 0 ;
+865  ind_util_bh_o = util_bh_o   > 0 ;
+866  ind_util_tel  = util_tele   > 0 ;
+867  IF SEX =: 'U' then delete ;
+868  IF pcmp_loc_type_cd eq (32 45 61 62) then fqhc = 1 else fqhc = 0;
+                                --             ---- -
+                                388            180  180
+                                200
+ERROR 388-185: Expecting an arithmetic operator.
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+ERROR 200-322: The symbol is not recognized and will be ignored.
+
+869  RUN ;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      868:4
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 0 observations and 38 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.03 seconds
+
+
+870  DATA data.analysis_dataset;
+871  SET  data.a8 ;
+872  FORMAT age age_cat_.
+873         race race_rc_. ;
+874  ind_cost_rx   = cost_rx_tc  > 0 ;
+875  ind_cost_ffs  = cost_ffs_tc > 0 ;
+876  ind_cost_pc   = cost_pc_tc  > 0 ;
+877  ind_util_pc   = util_pc     > 0 ;
+878  ind_util_er   = util_er     > 0 ;
+879  ind_util_bh_o = util_bh_o   > 0 ;
+880  ind_util_tel  = util_tele   > 0 ;
+881  IF SEX =: 'U' then delete ;
+882  IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 else fqhc = 0;
+                                                        ----
+                                                        388
+                                                        202
+ERROR 388-185: Expecting an arithmetic operator.
+
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+
+883  RUN ;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      882:4
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 0 observations and 39 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.06 seconds
+
+
+884  DATA data.analysis_dataset;
+885  SET  data.a8 ;
+886  FORMAT age age_cat_.
+887         race race_rc_. ;
+888  ind_cost_rx   = cost_rx_tc  > 0 ;
+889  ind_cost_ffs  = cost_ffs_tc > 0 ;
+890  ind_cost_pc   = cost_pc_tc  > 0 ;
+891  ind_util_pc   = util_pc     > 0 ;
+892  ind_util_er   = util_er     > 0 ;
+893  ind_util_bh_o = util_bh_o   > 0 ;
+894  ind_util_tel  = util_tele   > 0 ;
+895  IF SEX =: 'U' then delete ;
+896  IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1;
+897  RUN ;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      896:4
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:25.44
+      cpu time            3.70 seconds
+
+
+898  PROC FREQ DATA = data.analysis_dataset ;
+899  TABLES  pcmp_loc_type_cd ;
+900  RUN ;
+
+NOTE: There were 1132817 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           5.65 seconds
+      cpu time            0.21 seconds
+
+
+901
+902  PROC FREQ DATA = data.analysis_dataset ;
+903  TABLES  pcmp_loc_type_cd fqhc;
+904  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           41.34 seconds
+      cpu time            1.62 seconds
+
+
+905
+906  DATA data.analysis_dataset;
+907  SET  data.a8 ;
+908  FORMAT age age_cat_.
+909         race race_rc_. ;
+910  ind_cost_rx   = cost_rx_tc  > 0 ;
+911  ind_cost_ffs  = cost_ffs_tc > 0 ;
+912  ind_cost_pc   = cost_pc_tc  > 0 ;
+913  ind_util_pc   = util_pc     > 0 ;
+914  ind_util_er   = util_er     > 0 ;
+915  ind_util_bh_o = util_bh_o   > 0 ;
+916  ind_util_tel  = util_tele   > 0 ;
+917  IF SEX =: 'U' then delete ;
+918  IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1
+919      else fqhc = 0 ;
+         ----
+         388
+         202
+ERROR 388-185: Expecting an arithmetic operator.
+
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+
+920  RUN ;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      918:4
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set DATA.ANALYSIS_DATASET may be incomplete.  When this step was stopped there
+         were 0 observations and 39 variables.
+WARNING: Data set DATA.ANALYSIS_DATASET was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.03 seconds
+
+
+921
+922  DATA data.analysis_dataset;
+923  SET  data.a8 ;
+924  FORMAT age age_cat_.
+925         race race_rc_. ;
+926  ind_cost_rx   = cost_rx_tc  > 0 ;
+927  ind_cost_ffs  = cost_ffs_tc > 0 ;
+928  ind_cost_pc   = cost_pc_tc  > 0 ;
+929  ind_util_pc   = util_pc     > 0 ;
+930  ind_util_er   = util_er     > 0 ;
+931  ind_util_bh_o = util_bh_o   > 0 ;
+932  ind_util_tel  = util_tele   > 0 ;
+933  IF SEX =: 'U' then delete ;
+934  IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 ;
+935      else fqhc = 0 ;
+936  RUN ;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      934:4
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:27.00
+      cpu time            3.89 seconds
+
+
+937  PROC FREQ DATA = data.analysis_dataset ;
+938  TABLES  pcmp_loc_type_cd fqhc;
+939  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           41.20 seconds
+      cpu time            1.45 seconds
+
+
+940  DATA data.analysis_dataset (drop=pcmp_loc_type_cd) ;
+941  SET  data.a8 ;
+942  FORMAT age age_cat_.
+943         race race_rc_. ;
+944  ind_cost_rx   = cost_rx_tc  > 0 ;
+945  ind_cost_ffs  = cost_ffs_tc > 0 ;
+946  ind_cost_pc   = cost_pc_tc  > 0 ;
+947  ind_util_pc   = util_pc     > 0 ;
+948  ind_util_er   = util_er     > 0 ;
+949  ind_util_bh_o = util_bh_o   > 0 ;
+950  ind_util_tel  = util_tele   > 0 ;
+951  IF SEX =: 'U' then delete ;
+952  IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 ;
+953      else fqhc = 0 ;
+954  RUN ;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      952:4
+NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 38 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:28.79
+      cpu time            4.48 seconds
+
+

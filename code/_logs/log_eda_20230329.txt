@@ -1,0 +1,92 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1073  %let dat = data.analysis_dataset ;
+1074  
+1075  PROC CONTENTS DATA = &dat VARNUM ; RUN ;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.00 seconds
+      
+
+1076  PROC FREQ DATA = &dat ;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+1077  TABLES age--race;
+1078  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           41.87 seconds
+      cpu time            1.76 seconds
+      
+
+1079  PROC CONTENTS DATA = &dat VARNUM ; RUN ;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.01 seconds
+      
+
+1080  %let dat = data.analysis_dataset ;
+1081  
+1082  PROC CONTENTS DATA = &dat VARNUM ; RUN ;
+NOTE: Writing HTML Body file: sashtml2.htm
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.39 seconds
+      cpu time            0.28 seconds
+      
+
+1083  
+1084  PROC FREQ DATA = &dat ;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+1085  TABLES age--race;
+1086  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           39.52 seconds
+      cpu time            1.82 seconds
+      
+
+1087  PROC FREQ DATA = &dat ;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+1088  TABLES int*fqhc;
+1089  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           39.17 seconds
+      cpu time            1.35 seconds
+      
+
+1090  ods pdf file = "&report./eda_freqs_20230329.pdf";
+SYMBOLGEN:  Macro variable REPORT resolves to 
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports
+NOTE: Writing ODS PDF output to DISK destination 
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\eda_freqs_20230329.pdf", 
+      printer "PDF".
+1091  
+1092  PROC CONTENTS DATA = &dat VARNUM ; RUN ;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.04 seconds
+      
+
+1093  
+1094  PROC SQL ;
+1095  SELECT COUNT (DISTINCT mcaid_id) FROM &dat;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+1096  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           41.66 seconds
+      cpu time            2.59 seconds
+      
