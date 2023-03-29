@@ -27,12 +27,12 @@ proc gee data  = data.analysis_dataset desc;
   class mcaid_id int int_imp time ind_cost_pc ;
   model ind_cost_pc = int int_imp time / dist = binomial link = logit ; 
   repeated subject = mcaid_id / type = exch;
-  store data.p_model;
+  store p_model;
 /*  code file="S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/p_model.sas"; */
 run;
 
 * positive cost model ;
-proc gee data  = test desc;
+proc gee data  = data.analysis_dataset desc;
 where cost_pc_tc > 0;
 class mcaid_id int int_imp time ind_cost_pc ;
 model cost_pc_tc = int int_imp time / dist = gamma link = log ;

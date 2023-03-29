@@ -38,71 +38,11 @@ LOG
       %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
       LIBNAME ana "&ana"; 
 
-    * VARLEN (not sure if still needed... can ask Carter); 
-      %LET varlen = \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengths;
-      LIBNAME varlen "&varlen";
-      %INCLUDE "&varlen\MACRO_charLenMetadata.sas";
-      %getlen(library=varlen, data=AllVarLengths);
-
 * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------; 
 
-    OPTIONS NOFMTERR
-              MPRINT MLOGIC SYMBOLGEN
-              FMTSEARCH =(ana, datasets, data, util, varlen, work);
-
-/** INCLUDE FILES  -----------------------------------------------------------------------; */
-/*%INCLUDE "C:/Users/wigginki/OneDrive - The University of Colorado Denver/Documents/src_sas/sas_macros/data_specs.sas";*/
-
-
-* FORMATS ----------------------------------------------------------; 
-* Specified in ISP-CTLP_Model_specifications.docx from MG 03/13/2023;
-
-    PROC FORMAT;
-
-    VALUE age_cat_
-    0 - 5 = 1
-    6 -10 = 2
-    11-15 = 3
-    16-20 = 4 
-    21-44 = 5
-    45-64 = 6 ;
-
-    VALUE budget_grp_new_
-    5    = "MAGI TO 68% FPL"
-    3    = "MAGI 69 - 133% FPL"
-    6-10 = "Disabled"  
-    11   = "Foster Care"
-    12   = "MAGI Eligible Children"
-    Other = "Other"; 
-          
-    VALUE pcmp_type_rc
-    32 = "FQHC"    
-    45 = "RHC"
-    51 = "SHS"
-    61 = "IHS"
-    62 = "IHS"
-    Other = "Other"; 
-
-    VALUE $pcmp_type_new 
-    "Hospital - General" = "Other"
-    "Physician" = "Other" 
-    "Clinic - Practitioner" = "Other" 
-    "Federally Qualified Health Center" = "Federally Qualified Health Center" 
-    "Nurse Practitioner" = "Other" 
-    "Rural Health Clinic" = "Rural Health Clinic" 
-    "Clinic - Dental" = "Other" 
-    "Indian Health Services - FQHC" = "Indian Health Services - FQHC" ;
-
-    VALUE adj_pd_total_YRcat_
-    0 = 0
-    1 - 50  = 1
-    51 - 75 = 2
-    76 - 95 = 3
-    96 - 99 = 4 
-    Other = .;
-
-    RUN;
-
+ OPTIONS NOFMTERR
+         MPRINT MLOGIC SYMBOLGEN
+         FMTSEARCH =(ana, datasets, data, util, work);
 
 %macro create_qrtr(data=,set=,var=,qrtr=);
 data &data;
@@ -143,3 +83,4 @@ proc template;
  end;
  end;
 run; 
+

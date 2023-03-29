@@ -1,0 +1,107 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.64 seconds
+      cpu time            0.70 seconds
+
+1    %INCLUDE
+1  ! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Library RAW does not exist.
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Library OUT does not exist.
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Libref VARLEN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVar
+      Lengths
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.34 seconds
+      cpu time            0.32 seconds
+
+
+NOTE: Format AGE_CAT_ has been output.
+NOTE: Format BUDGET_GRP_NEW_ has been output.
+NOTE: Format PCMP_TYPE_RC has been output.
+NOTE: Format $PCMP_TYPE_NEW has been output.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.68 seconds
+      cpu time            0.11 seconds
+
+
+222  LIBNAME VARLEN CLEAR ;
+NOTE: Libref VARLEN has been deassigned.
+
+223  proc gee data  = data.analysis_dataset desc;
+224    class mcaid_id int int_imp time ind_cost_pc ;
+225    model ind_cost_pc = int int_imp time / dist = binomial link = logit ;
+226    repeated subject = mcaid_id / type = exch;
+227    store data.p_model;
+228  /*  code
+228! file="S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/p_model.sas"; */
+229  run;
+
+NOTE: The GEE procedure deleted the model item store DATA.P_MODEL because of incomplete
+      information for a subsequent analysis.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           17.37 seconds
+      cpu time            0.28 seconds
+
+
+230  proc gee data  = data.analysis_dataset desc;
+231    class mcaid_id int int_imp time ind_cost_pc ;
+232    model ind_cost_pc = int int_imp time / dist = binomial link = logit ;
+233    repeated subject = mcaid_id / type = exch;
+234    store p_model;
+235  /*  code
+235! file="S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/p_model.sas"; */
+236  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_cost_pc='1'.
+NOTE: The GEE procedure generated the model item store WORK.P_MODEL.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           1:02:50.94
+      cpu time            4:52.50
+
+

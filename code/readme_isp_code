@@ -1,23 +1,6 @@
-****************************************************************************
-2023-03-23 WORKING NOTES 
-****************************************************************************
-Started on util_02_get_prep_ana again to try to fix the enr_cnty, rae issue > start with keeping all in long + demo for 1921??
-
-...get_prep_ana 
-24:25
 
 
-
-****************************************************************************
-2023-03-22 WORKING NOTES / CHECK LATER 
-****************************************************************************
-through row 247 --> ran a8, a9 ; 
-
-row 218 trying data.a8 on int.qrylong_1621_time on mcaid_id and time to see if I get demo: 
-G010 mcaid is rae_id = 0 for that q???
-
-
-file: util_03_...
+file: util_03_create_final_dataset...
 
 CHECKS / crosstabs : 
 

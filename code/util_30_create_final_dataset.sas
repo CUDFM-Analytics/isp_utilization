@@ -9,7 +9,6 @@
 ***********************************************************************************************;
 * PROJECT PATHS, MAPPING; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-LIBNAME VARLEN CLEAR ; 
 
 * ==== Combine datasets with memlist_final ==================================;  
 proc sort data = int.memlist_final; by mcaid_id ; run ;  *1594686; 
@@ -276,16 +275,29 @@ label age          = "Age (category)"
       ;
 RUN; 
 
+* Updated 3/29 per new spec file: 
+    - include new categories for FQHC (binary 0,1), race
+    - make sure age = age_cat_. format
+    - remove sex observations where sex = unknown; 
+
 DATA data.analysis_dataset; 
-SET  data.a8 ; 
-ind_cost_rx  = cost_rx_tc  > 0 ;
-ind_cost_ffs = cost_ffs_tc > 0 ;
-ind_cost_pc  = cost_pc_tc  > 0 ;
-ind_util_pc  = util_pc     > 0 ;
-ind_util_er  = util_er     > 0 ;
-ind_util_bh_o= util_bh_o   > 0 ; 
-ind_util_tel = util_tele   > 0 ;
+SET  data.a8 ;  
+FORMAT age age_cat_. pcmp_type fqhc_rc_. race race_rc_. ;
+pcmp_type = input(pcmp_loc_type_cd, fqhc_rc_.); 
+ind_cost_rx   = cost_rx_tc  > 0 ;
+ind_cost_ffs  = cost_ffs_tc > 0 ;
+ind_cost_pc   = cost_pc_tc  > 0 ;
+ind_util_pc   = util_pc     > 0 ;
+ind_util_er   = util_er     > 0 ;
+ind_util_bh_o = util_bh_o   > 0 ; 
+ind_util_tel  = util_tele   > 0 ;
+IF SEX =: 'U' then delete ; 
 RUN ;
+*NOTE: There were 14347065 observations read from the data set DATA.A8.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables;
+
+
+
 
 PROC CONTENTS DATA = data.analysis_dataset VARNUM  ; RUN ; 
 

@@ -16,8 +16,9 @@ PROC UNIVARIATE DATA = data.a7 ;
 VAR cost_rx_tc cost_ffs_tc ; 
 RUN ;
 
-PROC PRINT DATA = data.a1 ; 
-            where mcaid_id in ("P861019", "L155867"); 
+
+PROC PRINT DATA = data.analysis_dataset (obs=1000); 
+/*            where mcaid_id in ("P861019", "L155867"); */
             run ; 
 
   proc print data = int.qrylong_1621 ; 
