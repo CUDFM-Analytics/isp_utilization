@@ -60,9 +60,10 @@ SET  data.a2  (DROP = ENR_CNTY
 RENAME ind_isp=int ; 
 RUN ; *40974871 : 13; 
                       
-*** Joining adj_pd_YYcat, BH 1618 cat, BH 1921;
+*** UPDATED 3/30 
+new adj file with all (no missing yay) and changed lib to int;
 proc sql; 
-create table data.a3 as 
+create table int.a3 as 
 select a.*
 
      /* join monthly */
@@ -86,10 +87,10 @@ select a.*
      , d.sum_q_bh_er
      , d.sum_q_bh_other
 
-FROM data.a2a AS a
+FROM int.a2a AS a
 
 /*only needs to be joined on mcaid_id bc the cat's are wide not long */
-LEFT JOIN int.adj_pd_total_YYcat_final AS b
+LEFT JOIN int.adj_pd_total_YYcat AS b
 ON a.mcaid_id = b.mcaid_id 
 
 /*only needs to be joined on mcaid_id bc the cols are wide not long */
@@ -102,11 +103,11 @@ ON a.mcaid_id = d.mcaid_id AND a.time = d.time;
 
 QUIT;   * 40974871 : 28 ;
 
-PROC SORT DATA = data.a3 NODUPKEY ; BY _ALL_ ; RUN ;  *14347065 : 28 ; 
+PROC SORT DATA = int.a3 NODUPKEY ; BY _ALL_ ; RUN ;  *14347065 : 28 ; 
       
 * replace bh_1618 cat var's where . with 0 ; 
-DATA  data.a3a;
-SET   data.a3  (DROP = sum_q_bh_hosp); 
+DATA  int.a3a;
+SET   int.a3  (DROP = sum_q_bh_hosp); 
 ARRAY bher bh_er2016-bh_er2018;
         do over bher;
         if bher=. then bher=0;
@@ -125,7 +126,7 @@ RUN ;  *14053953 : 21 ;
 * Join telehealth  ; 
 
 PROC SQL ; 
-CREATE TABLE data.a4 AS 
+CREATE TABLE int.a4 AS 
 SELECT a.*
        /* util1921_adj cols: n_pc_q n_er_q pd_rx_q_adj pd_pc_q_adj on cat_qrtr (= time)      */
      , b.n_pc_q 
@@ -138,7 +139,7 @@ SELECT a.*
        /* tele cols:      */
      , c.n_q_tele
 
-FROM data.a3a as a
+FROM int.a3a as a
 
 LEFT JOIN int.util1921_adj as b
 ON a.mcaid_id = b.mcaid_id
@@ -150,8 +151,8 @@ AND a.time    = c.time ;
 
 QUIT ; 
 
-DATA data.A5 ; 
-SET  data.A4 (DROP = sum_q_bh_er n_er_q ) ;
+DATA int.A5 ; 
+SET  int.A4 (DROP = sum_q_bh_er n_er_q ) ;
 mu_pd_rx    = pd_rx_q_adj    /n_months_per_q ; 
 mu_pd_total = pd_tot_q_adj   /n_months_per_q ; 
 mu_pd_pc    = pd_pc_q_adj    /n_months_per_q ; 
@@ -162,8 +163,8 @@ mu_n_bh_oth = sum_q_bh_other /n_months_per_q ;
 RUN ; 
 
 * 3/27 do same for pc (top coded) ; 
-DATA data.a6 (DROP = pd_rx_q_adj pd_tot_q_adj pd_pc_q_adj n_pc_q n_q_tele n_er_total sum_q_bh_other mu_pd_pc); 
-SET  data.a5 ;
+DATA int.a6 (DROP = pd_rx_q_adj pd_tot_q_adj pd_pc_q_adj n_pc_q n_q_tele n_er_total sum_q_bh_other mu_pd_pc); 
+SET  int.a5 ;
 mu_rx     = coalesce(mu_pd_rx, 0);
 mu_ffs    = coalesce(mu_pd_total,0);
 mu_pc   = coalesce(mu_pd_pc   ,0);
@@ -174,41 +175,41 @@ util_bh_o = coalesce(mu_n_bh_oth,0);
 run ; * 14347065 ; 
 
 *** TOP CODE cost vars ; 
-PROC SORT DATA = data.a6 ; BY FY ; RUN ; 
+PROC SORT DATA = int.a6 ; BY FY ; RUN ; 
 
-PROC RANK DATA = data.a6
+PROC RANK DATA = int.a6
      GROUPS    = 100 
-     OUT       = data.a6a ;
+     OUT       = int.a6a ;
      VAR       mu_rx mu_ffs mu_pc; 
      BY        FY ; 
      RANKS     mu_rx_pctile mu_ffs_pctile mu_pc_pctile;
 RUN ; 
 
 * Get mean for FY percentiles > 95 ; 
-PROC MEANS DATA = data.a6a ; 
+PROC MEANS DATA = int.a6a ; 
 VAR   mu_pd_rx ; 
 BY    FY ; 
 WHERE mu_rx_pctile > 95 ; 
-OUTPUT OUT = data.mu_rx_topcode (DROP=_TYPE_ _FREQ_); 
+OUTPUT OUT = int.mu_rx_topcode (DROP=_TYPE_ _FREQ_); 
 RUN ; 
 
-PROC MEANS DATA = data.a6a ; 
+PROC MEANS DATA = int.a6a ; 
 VAR   mu_ffs ; 
 BY    FY ; 
 WHERE mu_ffs_pctile > 95 ; 
-OUTPUT OUT = data.mu_ffs_topcode (DROP=_TYPE_ _FREQ_); 
+OUTPUT OUT = int.mu_ffs_topcode (DROP=_TYPE_ _FREQ_); 
 RUN ; 
 
-PROC MEANS DATA = data.a6a ; 
+PROC MEANS DATA = int.a6a ; 
 VAR   mu_pc ; 
 BY    FY ; 
 WHERE mu_pc_pctile > 95 ; 
-OUTPUT OUT = data.mu_pc_topcode (DROP=_TYPE_ _FREQ_); 
+OUTPUT OUT = int.mu_pc_topcode (DROP=_TYPE_ _FREQ_); 
 RUN ; 
 
-PROC PRINT DATA = data.mu_rx_topcode ; 
-PROC PRINT DATA = data.mu_ffs_topcode;  
-PROC PRINT DATA = data.mu_pc_topcode ; RUN ; 
+PROC PRINT DATA = int.mu_rx_topcode ; 
+PROC PRINT DATA = int.mu_ffs_topcode;  
+PROC PRINT DATA = int.mu_pc_topcode ; RUN ; 
 
 
 %LET ffsmin19 = 2092.41; %LET ffsmu19  = 6565.38; 
@@ -224,10 +225,10 @@ PROC PRINT DATA = data.mu_pc_topcode ; RUN ;
 %LET pcmin21 = 193.03; %LET pcmu21  = 332.67; 
 
 
-DATA data.a7  (rename = (mu_ffs= cost_ffs_tc 
+DATA int.a7  (rename = (mu_ffs= cost_ffs_tc 
                          mu_rx = cost_rx_tc
                          mu_pc = cost_pc_tc)); 
-SET  data.a6a (DROP= mu_pd_rx mu_pd_total mu_n_pc mu_n_tele mu_n_er mu_n_bh_oth) ; 
+SET  int.a6a (DROP= mu_pd_rx mu_pd_total mu_n_pc mu_n_tele mu_n_er mu_n_bh_oth) ; 
 
 * ffs total : Replace 96th percentile & up with mean ; 
 IF mu_ffs >= &ffsmin19 & FY = 2019 then mu_ffs = &ffsmu19 ; 
@@ -246,7 +247,7 @@ IF mu_pc >= &pcmin21 & FY = 2021 then mu_pc = &pcmu21 ;
 
 RUN ; 
 
-proc contents data = data.a7 ; 
+proc contents data = int.a7 ; 
 RUN ; 
 
 *** FINAL ; 

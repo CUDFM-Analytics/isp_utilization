@@ -134,68 +134,48 @@ total obs after doing sort nodupkey was 1594348
 Ran checks and it looked good ;
 
 *** RECREATING HERE TO CHECK MY LIST UGH 3/30; 
-DATA int.elig1618_memlist0 ; 
+DATA int.elig1618a; 
 SET  ANA.QRY_LONGITUDINAL (KEEP= mcaid_ID month pcmp_loc_id);
 FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ; 
 ind = 1 ; 
-WHERE pcmp_loc_ID ne ' ' 
-AND   month ge '01JUL2016'd 
+WHERE month ge '01JUL2016'd 
 AND   month le '30JUN2019'd ; 
 RUN ; 
-* WORK.ELIG1618_MEMLIST0 has 30167936 observations and 4 variables.;
+* WORK.ELIG1618_MEMLIST0 has 50603704 obs and 4 variables.;
 
-PROC SORT DATA = int.elig1618_memlist0 nodupkey out=int.elig1618_memlist1 (KEEP=mcaid_id FY pcmp_loc_id ind); 
+PROC SORT DATA = int.elig1618a nodupkey out=int.elig1618b (KEEP=mcaid_id FY ind); 
 BY mcaid_id FY ; 
 RUN ; 
-* WORK.ELIG1618_MEMLIST1 has  3169382 observations and 3 variables; 
+* WORK.ELIG1618_MEMLIST1 has 5011888 observations and 3 variables; 
 
-PROC SQL ; 
-CREATE TABLE int.elig1618_memlist2 AS 
-SELECT mcaid_id
-     , FY
-     , ind
-FROM int.elig1618_memlist1 
-WHERE mcaid_id IN (SELECT mcaid_id FROM int.memlist_attr_qrtr_1921) ;
-QUIT; * 2534025 : 3 ;
-
-PROC SORT DATA = int.elig1618_memlist2 ; BY FY ; RUN ; 
-
-PROC TRANSPOSE 
-     DATA = int.elig1618_memlist2 
-     OUT  = int.elig1618_memlist 
-     PREFIX=ind_elig
-; 
-     BY   FY ; 
-     ID   mcaid_id ; 
+PROC TRANSPOSE DATA=int.elig1618b prefix=ind_elig OUT=int.elig1618c (DROP=_NAME_); 
+     BY   mcaid_id ; 
+     ID   FY ; 
      VAR  ind ; 
-RUN ; *1197230 : 3 ; 
+RUN ; * 2065238 : 4 ; 
 
-proc print data = 
-
-**** ; 
+/*proc delete data=int.elig1618_memlist1; */
+/*RUN ; */
 
 PROC SQL ; 
 CREATE TABLE adj_cat AS 
 SELECT COALESCE (a.mcaid_id, b.mcaid_id) as mcaid_id
      , a.*
      , b.*
-FROM elig1618_memlist  as a
+FROM int.elig1618c as a
 FULL JOIN int.util_1618_cat as b
 on a.mcaid_id = b.mcaid_id ; 
-QUIT ; *2564034 ; 
+QUIT ; * 2066292 ; 
 
-/*PROC SQL ; */
-/*CREATE TABLE adj_cat AS */
-/*SELECT COALESCE (a.mcaid_id, b.mcaid_id) as mcaid_id*/
-/*     , a.**/
-/*     , b.**/
-/*FROM int.util_memlist_elig1618  as a*/
-/*FULL JOIN util_1618_cat as b*/
-/*on a.mcaid_id = b.mcaid_id ; */
-/*QUIT ; *1594348 ; */
+DATA adj_cat2; 
+SET  adj_cat ; 
+ind_elig16 = coalesce(ind_elig2016,0);
+ind_elig17 = coalesce(ind_elig2017,0);
+ind_elig18 = coalesce(ind_elig2018,0);
+RUN ; *2066292 ; 
 
 PROC SQL ; 
-CREATE TABLE int.adj_pd_total_YYcat_final_v2 AS 
+CREATE TABLE int.adj_pd_total_YYcat AS 
 SELECT mcaid_id
      , case when ind_elig16 = 0 then '-1'
             when (ind_elig16 = 1 AND _2016 = .) then '0'
@@ -218,8 +198,12 @@ SELECT mcaid_id
      , _2016
      , _2017
      , _2018
-FROM adj_cat ; 
-QUIT ; 
+FROM adj_cat2 ; 
+QUIT ; *2066292; 
+
+PROC FREQ DATA = int.adj_pd_total_YYcat; 
+tables adj: ;
+RUN ; 
 
 *----------------------------------------------------------------------------------------------
 SECTION 01d.3 19-21 
