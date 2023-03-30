@@ -1,6 +1,15 @@
 ****************************************************************************
 03/30 Working Notes 
+	1) MEMSIZE notes
+	2) adj_: missing values > 2 members were blank, which is definitely wrong... 
+
 ****************************************************************************
+MEMSIZE 
+ - link: https://blogs.sas.com/content/iml/2015/07/31/large-matrices.html
+ - ran ```proc options option=memsize value; run;```  
+	- results: 
+
+
 Two members had blanks in their adj: columns (why only 2?) (G657131 and N039812) (is that a 0 or O make sure) 
 SAVED LOG in _logs/log_20230330_fix_elig1618.log  
 

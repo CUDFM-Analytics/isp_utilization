@@ -1,0 +1,68 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.07 seconds
+      cpu time            0.75 seconds
+
+1    proc options option=memsize value;
+2    run;
+
+    SAS (r) Proprietary Software Release 9.4  TS1M7
+
+Option Value Information For SAS Option MEMSIZE
+    Value: 12884901888
+    Scope: SAS Session
+    How option value set: SAS Session Startup Command Line
+
+NOTE: PROCEDURE OPTIONS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+3    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Library OUT does not exist.
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+
+71   libname ana clear ;
+NOTE: Libref ANA has been deassigned.
+
+72   PROC TRANSPOSE
+73   DATA = int.elig1618_memlist2
+74   OUT  = int.elig1618_memlist ;
+75   BY   FY ;
+76   ID   mcaid_id ;
+77   VAR  ind ;
+78   RUN ;
+
+NOTE: There were 2534025 observations read from the data set INT.ELIG1618_MEMLIST2.
+NOTE: The data set INT.ELIG1618_MEMLIST has 3 observations and 1197230 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           10.69 seconds
+      cpu time            7.81 seconds
+
+

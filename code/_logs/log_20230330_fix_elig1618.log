@@ -18,8 +18,8 @@ NOTE: Additional host information:
  X64_10PRO WIN 10.0.19041  Workstation
 
 NOTE: SAS initialization used:
-      real time           1.02 seconds
-      cpu time            0.71 seconds
+      real time           0.81 seconds
+      cpu time            0.74 seconds
 
 1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
 NOTE: Libref DATA was successfully assigned as follows:
@@ -32,21 +32,4 @@ NOTE: Library OUT does not exist.
 NOTE: Libref ANA was successfully assigned as follows:
       Engine:        V9
       Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
-
-69   DATA elig1618_memlist0 ;
-70   SET  ANA.QRY_LONGITUDINAL (KEEP= mcaid_ID month pcmp_loc_id);
-71   FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ;
-72   ind = 1 ;
-73   WHERE pcmp_loc_ID ne ' '
-74   AND   month ge '01JUL2016'd
-75   AND   month le '30JUN2019'd ;
-76   RUN ;
-
-NOTE: There were 30167936 observations read from the data set ANA.QRY_LONGITUDINAL.
-      WHERE (pcmp_loc_ID not = ' ') and (month>='01JUL2016'D and month<='30JUN2019'D);
-NOTE: The data set WORK.ELIG1618_MEMLIST0 has 30167936 observations and 5 variables.
-NOTE: DATA statement used (Total process time):
-      real time           3:58.02
-      cpu time            17.84 seconds
-
 

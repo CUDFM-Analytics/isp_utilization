@@ -6,11 +6,11 @@ VERSION  : 2023-03-16 [date last updated]
 DEPENDS  : ana subset folder, config file [dependencies]
     Need 16-18 for adj_pd_total_YRcat (16,17,18) and 19-21 for outcome vars
     Inputs      ana.qry_monthly_utilization     [111,221,842 : 7] 2023-02-09
-    Outputs     data.util_month_fy6             [ 66,367,624 : 7] 2023-03-08
+    Outputs     data.util_month_fy6             [ 66,367,624 : 7] 2023-03-08;
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 ***********************************************************************************************;
-
+libname ana clear ; 
 *----------------------------------------------------------------------------------------------
 SECTION 01d.1 Get Monthly Utilization Data 16-21 for memlist
 ----------------------------------------------------------------------------------------------;
@@ -134,37 +134,43 @@ total obs after doing sort nodupkey was 1594348
 Ran checks and it looked good ;
 
 *** RECREATING HERE TO CHECK MY LIST UGH 3/30; 
-DATA elig1618_memlist0 ; 
+DATA int.elig1618_memlist0 ; 
 SET  ANA.QRY_LONGITUDINAL (KEEP= mcaid_ID month pcmp_loc_id);
 FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ; 
+ind = 1 ; 
 WHERE pcmp_loc_ID ne ' ' 
 AND   month ge '01JUL2016'd 
 AND   month le '30JUN2019'd ; 
 RUN ; 
 * WORK.ELIG1618_MEMLIST0 has 30167936 observations and 4 variables.;
 
-PROC SORT DATA = elig1618_memlist0 nodupkey out=elig1618_memlist1 (KEEP=mcaid_id FY pcmp_loc_id); 
+PROC SORT DATA = int.elig1618_memlist0 nodupkey out=int.elig1618_memlist1 (KEEP=mcaid_id FY pcmp_loc_id ind); 
 BY mcaid_id FY ; 
 RUN ; 
 * WORK.ELIG1618_MEMLIST1 has  3169382 observations and 3 variables; 
 
 PROC SQL ; 
-CREATE TABLE elig1618_memlist2 AS 
+CREATE TABLE int.elig1618_memlist2 AS 
 SELECT mcaid_id
      , FY
-FROM elig1618_memlist1 
+     , ind
+FROM int.elig1618_memlist1 
 WHERE mcaid_id IN (SELECT mcaid_id FROM int.memlist_attr_qrtr_1921) ;
 QUIT; * 2534025 : 3 ;
 
-PROC SORT DATA = elig1618_memlist2 ; BY FY ; RUN ; 
+PROC SORT DATA = int.elig1618_memlist2 ; BY FY ; RUN ; 
 
 PROC TRANSPOSE 
-DATA = elig1618_memlist2 
-OUT  = elig1618_memlist ; 
-BY   FY ; 
-ID   mcaid_id ; 
-VAR  FY ; 
-RUN ; 
+     DATA = int.elig1618_memlist2 
+     OUT  = int.elig1618_memlist 
+     PREFIX=ind_elig
+; 
+     BY   FY ; 
+     ID   mcaid_id ; 
+     VAR  ind ; 
+RUN ; *1197230 : 3 ; 
+
+proc print data = 
 
 **** ; 
 
