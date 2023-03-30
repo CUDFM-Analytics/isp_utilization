@@ -90,3 +90,42 @@ NOTE: PROCEDURE SQL used (Total process time):
       real time           41.66 seconds
       cpu time            2.59 seconds
       
+
+1097  
+1098  PROC FREQ DATA = &dat ;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+1099  TABLES age--fqhc;
+1100  RUN ;
+
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           12:29.84
+      cpu time            12:29.76
+      
+
+1101  
+1102  PROC FREQ DATA = &dat ;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+1103  TABLES int*(age--fqhc);
+1104  RUN ;
+
+ERROR: Unable to allocate sufficient memory. At least 12K bytes were requested. You must either 
+       increase the amount of memory available, or approach the problem differently.
+ERROR: The SAS System stopped processing this step because of insufficient memory.
+NOTE: There were 14346977 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           48.75 seconds
+      cpu time            48.48 seconds
+      
+1105  
+
+
+1106  PROC UNIVARIATE DATA = &dat ;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+1107  VAR cost: util: ;
+1108  RUN ;
+
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           36.79 seconds
+      cpu time            36.71 seconds
+      
