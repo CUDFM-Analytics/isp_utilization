@@ -1,6 +1,7 @@
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+/*%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; */
 
-PROC PRINTTO LOG= "&util./code/_logs/log_eda_20230329.txt"; 
+pROC PRINT DATA  = &dat ; 
+where adj_pd_total_16cat = ' ' ; 
 RUN ; 
 
 ods pdf file = "&report./eda_freq_20230329.pdf";
@@ -9,30 +10,71 @@ ods pdf file = "&report./eda_freq_20230329.pdf";
 
 PROC CONTENTS DATA = &dat VARNUM ; RUN ;  
 
-PROC FREQ DATA = &dat ; 
-TABLES int*(age--fqhc); 
-RUN ; 
+ods text "Frequencies for categorical variables by Intervention (non-varying)" ; 
+
+TITLE "Unique Member Count, Final Dataset"; 
+PROC SQL ; 
+SELECT COUNT (DISTINCT mcaid_id ) 
+FROM &dat ; 
+QUIT ; 
+
+Title "Unique PCMP count by Intervention Status (Non-Varying)"; 
+PROC SQL ; 
+SELECT COUNT(DISTINCT pcmp_loc_id) as n_pcmp
+     , int as intervention
+FROM &dat
+GROUP BY int;
+QUIT; 
+TITLE ; 
 
 PROC FREQ DATA = &dat ; 
-TABLES int*fqhc; 
-RUN ; 
+TABLES age--time int_imp adj: bh_: ind: fqhc; 
+RUN ;  
 
-PROC SORT DATA = data.analysis_dataset ; by mcaid_id time ; RUN ; 
+PROC FREQ DATA = &dat ; 
+TABLES (age--time int_imp adj: bh_: ind: fqhc)*int; 
+RUN ;   
 
-/*DATA ind ; */
-/*SET  data.analysis_dataset (KEEP = mcaid_id time ind: )  ; */
+TITLE "Max Time by Member" ;
+PROC SQL ; 
+CREATE TABLE data._max_time AS 
+SELECT mcaid_id
+     , MAX (time) as time
+     , MAX (int) as intervention
+FROM &dat
+GROUP BY mcaid_id ; 
+QUIT; 
 
-PROC FREQ DATA = data.analyis_dataset ; 
-TABLES int*ind_: ; 
-TITLE "Indicator Variable if DV 0 or >0 by Intervention" ; 
+Title "Time Frequency by Member" ; 
+PROC FREQ DATA = data._max_time ; 
+tables time / nopercent norow; 
+RUN; 
+
+Title "Time Frequency by Member, Intervention (non-varying)"; 
+PROC FREQ DATA = data._max_time ; 
+tables time*intervention / plots = freqplot(type=dot scale=percent) nopercent norow; 
+RUN; 
+
+PROC FREQ DATA = &dat; 
+TABLES (ind_:)*int ; 
+TITLE "Indicator DVs by Intervention" ; 
+TITLE2 "If DV eq 0 then indicator = 0, > 0 then indicator = 1";
 format ind: comma20. ; 
 RUN ; 
 TITLE ; 
+TITLE2; 
 
-PROC FREQ DATA = data.analysis_dataset ; 
-TABLES int*util: ; 
+PROC UNIVARIATE DATA = &dat ; 
+TABLES (util:)*int ; 
 RUN ; 
 
-proc univariate data = data.analysis_dataset ; 
-VAR = int*cost: ; 
+proc univariate data = &dat ; 
+VAR cost_rx_tc cost_ffs_tc cost_pc_tc ; 
 RUN; 
+ods text "By intervention: univariates"; 
+proc univariate data = &dat ; 
+by int ; 
+VAR cost_rx_tc cost_ffs_tc cost_pc_tc ; 
+RUN; 
+
+ods pdf close ; 

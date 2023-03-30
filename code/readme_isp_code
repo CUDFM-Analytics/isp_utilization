@@ -1,4 +1,47 @@
+****************************************************************************
+03/30 Working Notes 
+****************************************************************************
+Two members had blanks in their adj: columns (why only 2?) (G657131 and N039812) (is that a 0 or O make sure) 
+SAVED LOG in _logs/log_20230330_fix_elig1618.log  
 
+  1. HAVE COST?
+	Checked utilization dataset (int.util_1620) and neither were in there so had no costs / visits  
+	(util_02_get_prep_ana_util.sas file, rows 42 around there - I had created member eligibility file and it got lost
+	when SAS terminated unexpectedly, so couldn't find how I created it again but it had the exact right N so I think I created it right) 
+	
+  ELIGIBLE? 	
+  2. checked ana.qry_longitudinal to see if they were eligible for those years (used scratch file so here's code):   
+    
+			proc print data = ana.qry_longitudinal ; 
+			where mcaid_id in ("G657131" "N039812")
+			AND   month ge '01JUL2016'd
+			AND   month le '30JUN2019'd; 
+			RUN ; 
+	
+	G657131 had records for 2016, 2017, 2018 (so all FY's at least one month) BUT was rae_assign = 0 for all except 2018 (rae_assign = 1) 
+	N039812 had records for       2017, 2018 FY only (not eligible for 2016) and rae_assign for at least one month in each so should be there  
+	
+  3. Checked int.memlist and int.memlist_attr_qrtr_1921 and they were noth on there for the relevant quarters it looked like... 
+	
+  4. Just started over with eligibility to test it --> util_02_get_prep_ana_util, start row 137
+	 4a. elig1618_memlist0
+		  Get records from qry_longitudinal where months filtered 16-19 and pcmp_loc_id ne ' ' to start 
+			**** ---- NOT rae_assign!! DUDE learn your lesson *** 
+		  Also created 'ind' so you can make a dummy var when transposing years
+		  [30167936 obs 5 var] (created FY for compound primary key)  
+	 4b. rows 148:150 elig1618_memlist1 
+		 Reduced to unique on compound primary key {mcaid_id, FY} 
+		 [3169382 : 3]
+	 4c. rows 155:160 elig1618_memlist 
+		 get members that exist in memlist only (that has budget group, age subsetting) 
+		 [2534025 : 3]
+	 4d. check all again in the analysis dataset  
+	 
+
+
+****************************************************************************
+03/28 Working Notes 
+****************************************************************************
 
 file: util_03_create_final_dataset...
 
@@ -22,10 +65,8 @@ Check 103320 alternating months int*imp
 
 
 ****************************************************************************
-MTG NOTES KW/MG  
+03/22 MTG NOTES KW/MG  
 ****************************************************************************
-
-MTG MG KW 03/22
 - crosstabs, simple summary / run analysis file 
 - cost: univariates
 - cats: freq's 

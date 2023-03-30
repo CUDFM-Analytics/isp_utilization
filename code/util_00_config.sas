@@ -25,8 +25,10 @@ LOG
       ;
 
       %LET data = &util/data;   LIBNAME data "&data"; 
-      %LET raw = &data/raw;     LIBNAME raw "&raw";
-      %LET int = &data/interim; LIBNAME int "&int"; 
+      %LET raw = &data/raw;     
+/*        LIBNAME raw "&raw"; *comment out/ in as needed; */
+      %LET int = &data/interim; 
+        LIBNAME int "&int"; 
       %LET out = &util/out;     LIBNAME out "&out";
 
     * export folder for excel files output; 
@@ -62,25 +64,4 @@ if &var in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then &qrtr = 12;
 run;
 %mend create_qrtr;
 
-
-* THIS SUCKS because it shows 0.87% as 87% but SAS stopped rounding my proc freqs so I don't know what to do; 
-* Remove it if you can ever figure that out... ; 
-proc format;
- picture pctfmt low-high='000.00%';
-run; 
-ods path work.templat(update) sashelp.tmplmst(read);
-proc template;
- edit Base.Freq.OneWayList;
- edit Percent;
- header="; Relative Frequency ;";
- format= pctfmt.;
- justify= on;
- end;
- edit CumPercent;
- header = ";Cumulative; Relative Frequency;";
- format= pctfmt.;
- justify= on;
- end;
- end;
-run; 
 

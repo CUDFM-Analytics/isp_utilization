@@ -69,3 +69,5 @@ rsconnect/
 *.csv
 *.xlsx
 *.lck
+reports/eda_freq_20230329.pdf
+reports/eda_freqs_20230329.pdf

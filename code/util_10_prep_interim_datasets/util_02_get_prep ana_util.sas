@@ -132,18 +132,64 @@ RUN ; *1051841 ;
 Computer disconnected and I think I lost the code :( 
 total obs after doing sort nodupkey was 1594348 
 Ran checks and it looked good ;
+
+*** RECREATING HERE TO CHECK MY LIST UGH 3/30; 
+DATA elig1618_memlist0 ; 
+SET  ANA.QRY_LONGITUDINAL (KEEP= mcaid_ID month pcmp_loc_id);
+FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ; 
+WHERE pcmp_loc_ID ne ' ' 
+AND   month ge '01JUL2016'd 
+AND   month le '30JUN2019'd ; 
+RUN ; 
+* WORK.ELIG1618_MEMLIST0 has 30167936 observations and 4 variables.;
+
+PROC SORT DATA = elig1618_memlist0 nodupkey out=elig1618_memlist1 (KEEP=mcaid_id FY pcmp_loc_id); 
+BY mcaid_id FY ; 
+RUN ; 
+* WORK.ELIG1618_MEMLIST1 has  3169382 observations and 3 variables; 
+
+PROC SQL ; 
+CREATE TABLE elig1618_memlist2 AS 
+SELECT mcaid_id
+     , FY
+FROM elig1618_memlist1 
+WHERE mcaid_id IN (SELECT mcaid_id FROM int.memlist_attr_qrtr_1921) ;
+QUIT; * 2534025 : 3 ;
+
+PROC SORT DATA = elig1618_memlist2 ; BY FY ; RUN ; 
+
+PROC TRANSPOSE 
+DATA = elig1618_memlist2 
+OUT  = elig1618_memlist ; 
+BY   FY ; 
+ID   mcaid_id ; 
+VAR  FY ; 
+RUN ; 
+
+**** ; 
+
 PROC SQL ; 
 CREATE TABLE adj_cat AS 
 SELECT COALESCE (a.mcaid_id, b.mcaid_id) as mcaid_id
      , a.*
      , b.*
-FROM int.util_memlist_elig1618  as a
-FULL JOIN util_1618_cat as b
+FROM elig1618_memlist  as a
+FULL JOIN int.util_1618_cat as b
 on a.mcaid_id = b.mcaid_id ; 
-QUIT ; *1594348 ; 
+QUIT ; *2564034 ; 
+
+/*PROC SQL ; */
+/*CREATE TABLE adj_cat AS */
+/*SELECT COALESCE (a.mcaid_id, b.mcaid_id) as mcaid_id*/
+/*     , a.**/
+/*     , b.**/
+/*FROM int.util_memlist_elig1618  as a*/
+/*FULL JOIN util_1618_cat as b*/
+/*on a.mcaid_id = b.mcaid_id ; */
+/*QUIT ; *1594348 ; */
 
 PROC SQL ; 
-CREATE TABLE int.adj_pd_total_YYcat_final AS 
+CREATE TABLE int.adj_pd_total_YYcat_final_v2 AS 
 SELECT mcaid_id
      , case when ind_elig16 = 0 then '-1'
             when (ind_elig16 = 1 AND _2016 = .) then '0'
