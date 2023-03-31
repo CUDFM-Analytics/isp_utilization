@@ -1,7 +1,5 @@
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 libname int clear; 
-libname ana clear;
-libname out clear ; 
 /*proc options option=memsize value;*/
 /*run;*/
 
@@ -34,10 +32,34 @@ ods text = "cost_pc_tc: mean-preserving top coded inflation adjusted total Prima
 ods text = "";
 ods text = "";
 ods text = "";
+
 %LET dat = data.analysis_dataset; 
 
-proc contents data = &dat; 
+proc contents data = &dat VARNUM; 
 RUN ; 
+
+* probability model ;
+TITLE "probability model"; 
+proc gee data  = &dat desc;
+     class  mcaid_id 
+            age sex race rae_person_new budget_grp_new fqhc
+            bh_er2016 bh_er2017 bh_er2018 bh_hosp2016 bh_hosp2017 bh_hosp2018 bh_oth2016 bh_oth2016 bh_oth2016
+            adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+            time 
+            int 
+            int_imp 
+            ind_cost_pc ;
+     model ind_cost_pc = age sex race rae_person_new budget_grp_new fqhc
+                         bh_er2016 bh_er2017 bh_er2018 
+                         bh_hosp2016 bh_hosp2017 bh_hosp2018 
+                         bh_oth2016 bh_oth2016 bh_oth2016
+                         adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+                         time 
+                         int 
+                         int_imp / dist = binomial link = logit ; 
+  repeated subject = mcaid_id / type = exch;
+  store p_model;
+run;
 
 * probability model ;
 TITLE "probability model"; 
