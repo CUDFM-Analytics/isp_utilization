@@ -1,3 +1,19 @@
+data short_a8;
+set  data.a8 (obs=2000); 
+RUN; 
+
+proc sql; 
+create table want as 
+select mcaid_id
+     , count(distinct int) as n_int
+FROM short_a8
+group by mcaid_id
+having n_int > 1
+order by mcaid_id; 
+quit; 
+
+proc sort data = want ; by mcaid_id ; run; 
+
 PROC CONTENTS DATA = int.adj_pd_total_YYcat_final VARNUM;
 PROC CONTENTS DATA = int.bh_1618                  VARNUM;
 PROC CONTENTS DATA = data.a3                     VARNUM;
@@ -16,9 +32,11 @@ PROC UNIVARIATE DATA = data.a7 ;
 VAR cost_rx_tc cost_ffs_tc ; 
 RUN ;
 
-
-PROC PRINT DATA = data.analysis_dataset (obs=1000); 
-/*            where mcaid_id in ("P861019", "L155867"); */
+proc print data = int.a3; 
+            where mcaid_id in ("D460887");  
+            RUN ; 
+PROC PRINT DATA = int.elig1618_memlist2 ; 
+            where mcaid_id in ("D460887"); 
             run ; 
 
   proc print data = int.qrylong_1621 ; 

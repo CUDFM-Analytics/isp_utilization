@@ -29,7 +29,6 @@ LOG
 /*        LIBNAME raw "&raw"; *comment out/ in as needed; */
       %LET int = &data/interim; 
         LIBNAME int "&int"; 
-      %LET out = &util/out;     LIBNAME out "&out";
 
     * export folder for excel files output; 
       %LET report = &util/reports; 
@@ -37,8 +36,8 @@ LOG
 * EXT DATA SOURCES ---------------------------------------------------------------------------; 
 
     * Medicaid dats: keep attached for formats (until/if final fmts copied); 
-      %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
-      LIBNAME ana "&ana"; 
+/*      %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;*/
+/*      LIBNAME ana "&ana"; */
 
 * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------; 
 

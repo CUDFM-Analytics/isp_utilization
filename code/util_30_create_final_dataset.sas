@@ -9,7 +9,6 @@
 ***********************************************************************************************;
 * PROJECT PATHS, MAPPING; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas"; 
 
 
 * ==== Combine datasets with memlist_final ==================================;  
@@ -103,11 +102,11 @@ ON a.mcaid_id = d.mcaid_id AND a.time = d.time;
 
 QUIT;   * 40974871 : 28 ;
 
-PROC SORT DATA = int.a3 NODUPKEY ; BY _ALL_ ; RUN ;  *14347065 : 28 ; 
+PROC SORT DATA = int.a3 NODUPKEY OUT=int.a3a ; BY _ALL_ ; RUN ;  *14347065 : 28 ; 
       
 * replace bh_1618 cat var's where . with 0 ; 
-DATA  int.a3a;
-SET   int.a3  (DROP = sum_q_bh_hosp); 
+DATA  int.a3b;
+SET   int.a3a  (DROP = sum_q_bh_hosp); 
 ARRAY bher bh_er2016-bh_er2018;
         do over bher;
         if bher=. then bher=0;
@@ -120,11 +119,31 @@ ARRAY bhoth bh_oth2016-bh_oth2018;
         do over bhoth;
         if bhoth=. then bhoth=0;
       end;
-RUN ;  *14053953 : 21 ; 
+RUN ;  * 3/30 14347065 : 27 ; 
+
+DATA  int.a3c;
+SET   int.a3b;
+format adj_pd_16a adj_pd_17a adj_pd_18a 3. ;
+* make numeric; 
+adj_pd_16a = input(adj_pd_total_16cat, 3.);
+adj_pd_17a = input(adj_pd_total_17cat, 3.);
+adj_pd_18a = input(adj_pd_total_18cat, 3.);
+* make missing = -1 because they weren't eligible (checking with where int.a3b = '' like A001791); 
+adj_pd_total16 = coalesce(adj_pd_16a,-1);
+adj_pd_total17 = coalesce(adj_pd_17a,-1);
+adj_pd_total18 = coalesce(adj_pd_18a,-1);
+run;
+ 
+DATA int.a3d (rename=(adj_pd_total16 = adj_pd_total_16cat
+                      adj_pd_total17 = adj_pd_total_17cat
+                      adj_pd_total18 = adj_pd_total_18cat)) ; 
+SET  int.a3c (drop=adj_pd_16a adj_pd_17a adj_pd_18a adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat);
+RUN; *14347065 : 27; 
+
+Proc freq data = int.a3d; tables adj: ; run;
 
 * Join util 1921 values for cost PMPM total, PMPM rx and util ED visits (to join with BH) 
 * Join telehealth  ; 
-
 PROC SQL ; 
 CREATE TABLE int.a4 AS 
 SELECT a.*
@@ -138,18 +157,17 @@ SELECT a.*
     
        /* tele cols:      */
      , c.n_q_tele
-
-FROM int.a3a as a
+FROM int.a3d as a
 
 LEFT JOIN int.util1921_adj as b
-ON a.mcaid_id = b.mcaid_id
-AND a.time    = b.time
+    ON a.mcaid_id = b.mcaid_id
+    AND a.time    = b.time
 
 LEFT JOIN int.tele_1921 as c
-ON a.mcaid_id = c.mcaid_id
-AND a.time    = c.time ; 
-
+    ON a.mcaid_id = c.mcaid_id
+    AND a.time    = c.time ; 
 QUIT ; 
+
 
 DATA int.A5 ; 
 SET  int.A4 (DROP = sum_q_bh_er n_er_q ) ;
@@ -247,36 +265,55 @@ IF mu_pc >= &pcmin21 & FY = 2021 then mu_pc = &pcmu21 ;
 
 RUN ; 
 
-proc contents data = int.a7 ; 
-RUN ; 
 
-*** FINAL ; 
-DATA data.a8 ; 
-SET  data.a7 (DROP = n_months_per_q mu_rx_pctile mu_ffs_pctile mu_pc_pctile) ; 
-label age          = "Age (category)"
-      time         = "Quarter, FY19-21"
-      bh_n_er      = "BH visits: ER"
-      bh_n_other   = "BH visits: Other"
-      dob          = "Date of Birth" 
-      dt_prac_isp  = "Date ISP Enrollment"
+DATA int.a8 (DROP = pcmp_loc_type_cd FY); 
+SET  int.a7 (DROP = n_months_per_q mu_rx_pctile mu_ffs_pctile mu_pc_pctile) ; 
+
+FORMAT race race_rc_. ; 
+
+ind_cost_rx   = cost_rx_tc  > 0 ;
+ind_cost_ffs  = cost_ffs_tc > 0 ;
+ind_cost_pc   = cost_pc_tc  > 0 ;
+ind_util_pc   = util_pc     > 0 ;
+ind_util_er   = util_er     > 0 ;
+ind_util_bh_o = util_bh_o   > 0 ; 
+ind_util_tel  = util_tele   > 0 ;
+
+IF SEX =: 'U' then delete ; 
+
+IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 ; else fqhc = 0 ;
+
+LABEL age          = "Age (cat)"
+      sex          = "Sex (M, F)"
+      race         = "Race"
+      rae_person_new = "RAE ID" 
+      budget_grp_new = "Budget Group"
+      pcmp_loc_id  = "PCMP attr qrtr logic"
+      time         = "Quarters 1-12 (FY19-21)"
       int_imp      = "ISP: Time-Varying"
       int          = "ISP: Time-Invariant"
-      last_day_fy  = "Last Day of FY"
-      util_er      = "Visits: ER"
-      util_pc      = "Visits: PC"
-      util_tele    = "Visits: Tele"
-      util_bh_o    = "Visits: BH Other"
+      util_er      = "Visits: ER (q avg)"
+      util_pc      = "Visits: PC (q avg)"
+      util_tele    = "Visits: Tele (q avg)"
+      util_bh_o    = "Visits: BH Other (q avg)"
       cost_rx_tc   = "Cost FFS Rx: top-coded infl-adj qrtr avg"
       cost_ffs_tc  = "Cost FFS total: top-coded infl-adj qrtr avg"
       cost_pc_tc   = "Cost FFS Primary Care: top-coded infl-adj qrtr avg"
-      pcmp_type    = "PCMP type, original codes (to do)"
-      FY           = "Fiscal Year"
-      RAE_ID       = "RAE ID" 
-      bh_er2016    = "BH ER visits 2016: Binary"
-      bh_er2017    = "BH ER visits 2017: Binary"
-      bh_er2018    = "BH ER visits 2018: Binary"
+      bh_er2016    = "BH 2016, ER (0,1)"
+      bh_er2017    = "BH 2017, ER (0,1)"
+      bh_er2018    = "BH 2018, ER (0,1)"
+      bh_oth2016   = "BH 2016, Other (0,1)"
+      bh_oth2017   = "BH 2017, Other (0,1)"
+      bh_oth2018   = "BH 2017, Other (0,1)"
+      bh_hosp2016  = "BH 2016, Hosp (0,1)"
+      bh_hosp2017  = "BH 2017, Hosp (0,1)"
+      bh_hosp2018  = "BH 2018, Hosp (0,1)"
+      adj_pd_total_16cat = "Adj FFS total, 2016: Categorical"
+      adj_pd_total_17cat = "Adj FFS total, 2017: Categorical"
+      adj_pd_total_18cat = "Adj FFS total, 2018: Categorical"
       ;
-RUN; 
+RUN; * lost 88 people - all sex unknown? 
+* from 14347065 to 14346977;
 
 * Updated 3/29 per new spec file: 
     - include new categories for FQHC (binary 0,1), race
@@ -284,9 +321,7 @@ RUN;
     - remove sex observations where sex = unknown; 
 
 DATA data.analysis_dataset (drop=pcmp_loc_type_cd FY) ; 
-SET  data.a8 ;  
-FORMAT age age_cat_. 
-       race race_rc_. ; 
+SET  int.a8 ;  
 ind_cost_rx   = cost_rx_tc  > 0 ;
 ind_cost_ffs  = cost_ffs_tc > 0 ;
 ind_cost_pc   = cost_pc_tc  > 0 ;

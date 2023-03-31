@@ -1,5 +1,9 @@
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-LIBNAME VARLEN CLEAR ; 
+libname int clear; 
+libname ana clear;
+libname out clear ; 
+/*proc options option=memsize value;*/
+/*run;*/
 
 *** Take sample from final set ; 
 
@@ -19,51 +23,57 @@ util_er     : ED utilization (n FFS ED visits + n BH ED visits) - PMPM avg for q
 util_pc     : Primary Care Utilization (n PC visits in quarter) - PMPM avg for quarter 
 util_tele   : Primary Care telehealth utilizaton (n PC telehealth visits) - PMPM avg for a quarter; 
 
-proc contents data = data.Analysis_dataset; 
+ods pdf file = "&util/code/util_cost_pc_abr_20230330.pdf";
+
+ods text = "VARS"; 
+ods text = "time: categorical, linear quarters for FY, where 1 = 01JUL2019";
+ods text = "int: intervention of ISP if practice participated at any time (0,1)";
+ods text = "int_imp: time-varying covariate, ISP intervention based on month practice started"; 
+ods text = "ind_cost_pc: indicator variable if value of 0 or ge 1 for any DV"; 
+ods text = "cost_pc_tc: mean-preserving top coded inflation adjusted total Primary Care cost - PMPM avg for quarter"; 
+ods text = "";
+ods text = "";
+ods text = "";
+%LET dat = data.analysis_dataset; 
+
+proc contents data = &dat; 
 RUN ; 
 
 * probability model ;
-proc gee data  = data.analysis_dataset desc;
+TITLE "probability model"; 
+proc gee data  = &dat desc;
   class mcaid_id int int_imp time ind_cost_pc ;
   model ind_cost_pc = int int_imp time / dist = binomial link = logit ; 
   repeated subject = mcaid_id / type = exch;
   store p_model;
-/*  code file="S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/p_model.sas"; */
 run;
 
 * positive cost model ;
-proc gee data  = data.analysis_dataset desc;
+TITLE "cost model"; 
+proc gee data  = &dat desc;
 where cost_pc_tc > 0;
 class mcaid_id int int_imp time ind_cost_pc ;
 model cost_pc_tc = int int_imp time / dist = gamma link = log ;
 repeated subject = mcaid_id / type = exch;
 store c_model;
 run;
-
-/*proc gee data  = fake desc;*/
-/*where pd_amt_pc > 0;*/
-/*class id ind_isp_ever ind_isp_dtd month ind_pd ;*/
-/*model pd_amt_pc = ind_isp_ever ind_isp_dtd month / dist = gamma link = log ;*/
-/*repeated subject = id / type = exch;*/
-/*store c_model;*/
-/*run;*/
+TITLE; 
 
 * interest group ;
 * the group of interest (emancipated youth) is set twice, 
   the top in the stack will be recoded as not emancipated (unexposed)
-  the bottom group keeps the emancipated status
-;
+  the bottom group keeps the emancipated status;
+
 data intgroup;
-  set test test (in = b);
+  set &dat &dat (in = b);
   where int = 1;
-
   if ^b then int = 0;
-
   exposed = b;
 run;
-* with test data, 119479, 119479, 238958;
+*  1785893 for both with intgroup = 3571786;
 
 * the predictions for util and cost will be made for each person twice, once exposed and once unexposed;
+
 * prob of util ;
 proc plm restore=p_model;
    score data=intgroup out=p_intgroup predicted=p_prob / ilink;
@@ -77,15 +87,13 @@ run;
 * person average cost is calculated ;
 data meanCost;
   set cp_intgroup;
-
   a_cost = p_prob*p_cost;* (1-p term = 0);
-
 run;
 
 * group average cost is calculated and contrasted ;
 proc sql;
 
-create table apv_ana as
+create table apv_cost_pc as
   select mean(case when exposed=1 then a_cost else . end ) as cost_exposed,
          mean(case when exposed=0 then a_cost else . end ) as cost_unexposed,
   calculated cost_exposed - calculated cost_unexposed as cost_diff
@@ -93,7 +101,15 @@ create table apv_ana as
 
 quit;
 
-proc print data = apv_ana;
+TITLE "apv_cost_pc"; 
+proc print data = apv_cost_pc;
 run;
+
+ods pdf close; 
+
+proc means data = meancost;
+by exposed;
+var p_prob p_cost a_cost; 
+RUN; 
 
    

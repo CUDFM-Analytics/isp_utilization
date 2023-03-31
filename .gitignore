@@ -71,3 +71,5 @@ rsconnect/
 *.lck
 reports/eda_freq_20230329.pdf
 reports/eda_freqs_20230329.pdf
+code/util_cost_pc_abr_20230330.pdf
+*.mht
