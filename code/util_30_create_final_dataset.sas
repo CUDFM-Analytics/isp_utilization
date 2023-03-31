@@ -266,7 +266,7 @@ IF mu_pc >= &pcmin21 & FY = 2021 then mu_pc = &pcmu21 ;
 RUN ; 
 
 
-DATA int.a8 (DROP = pcmp_loc_type_cd FY); 
+DATA data.analysis_dataset (DROP = pcmp_loc_type_cd FY); 
 SET  int.a7 (DROP = n_months_per_q mu_rx_pctile mu_ffs_pctile mu_pc_pctile) ; 
 
 FORMAT race race_rc_. ; 
@@ -283,59 +283,42 @@ IF SEX =: 'U' then delete ;
 
 IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 ; else fqhc = 0 ;
 
-LABEL age          = "Age (cat)"
-      sex          = "Sex (M, F)"
-      race         = "Race"
+LABEL age            = "Age (cat)"
+      sex            = "Sex (M, F)"
+      race           = "Race"
       rae_person_new = "RAE ID" 
       budget_grp_new = "Budget Group"
-      pcmp_loc_id  = "PCMP attr qrtr logic"
-      time         = "Quarters 1-12 (FY19-21)"
-      int_imp      = "ISP: Time-Varying"
-      int          = "ISP: Time-Invariant"
-      util_er      = "Visits: ER (q avg)"
-      util_pc      = "Visits: PC (q avg)"
-      util_tele    = "Visits: Tele (q avg)"
-      util_bh_o    = "Visits: BH Other (q avg)"
-      cost_rx_tc   = "Cost FFS Rx: top-coded infl-adj qrtr avg"
-      cost_ffs_tc  = "Cost FFS total: top-coded infl-adj qrtr avg"
-      cost_pc_tc   = "Cost FFS Primary Care: top-coded infl-adj qrtr avg"
-      bh_er2016    = "BH 2016, ER (0,1)"
-      bh_er2017    = "BH 2017, ER (0,1)"
-      bh_er2018    = "BH 2018, ER (0,1)"
-      bh_oth2016   = "BH 2016, Other (0,1)"
-      bh_oth2017   = "BH 2017, Other (0,1)"
-      bh_oth2018   = "BH 2017, Other (0,1)"
-      bh_hosp2016  = "BH 2016, Hosp (0,1)"
-      bh_hosp2017  = "BH 2017, Hosp (0,1)"
-      bh_hosp2018  = "BH 2018, Hosp (0,1)"
+      pcmp_loc_id    = "PCMP attr qrtr logic"
+      time           = "Quarters 1-12 (FY19-21)"
+      int_imp        = "ISP: Time-Varying"
+      int            = "ISP: Time-Invariant"
+      util_er        = "Visits: ER (q avg)"
+      util_pc        = "Visits: PC (q avg)"
+      util_tele      = "Visits: Tele (q avg)"
+      util_bh_o      = "Visits: BH Other (q avg)"
+      cost_rx_tc     = "Cost FFS Rx: top-coded infl-adj qrtr avg"
+      cost_ffs_tc    = "Cost FFS total: top-coded infl-adj qrtr avg"
+      cost_pc_tc     = "Cost FFS Primary Care: top-coded infl-adj qrtr avg"
+      bh_er2016      = "BH 2016, ER (0,1)"
+      bh_er2017      = "BH 2017, ER (0,1)"
+      bh_er2018      = "BH 2018, ER (0,1)"
+      bh_oth2016     = "BH 2016, Other (0,1)"
+      bh_oth2017     = "BH 2017, Other (0,1)"
+      bh_oth2018     = "BH 2017, Other (0,1)"
+      bh_hosp2016    = "BH 2016, Hosp (0,1)"
+      bh_hosp2017    = "BH 2017, Hosp (0,1)"
+      bh_hosp2018    = "BH 2018, Hosp (0,1)"
       adj_pd_total_16cat = "Adj FFS total, 2016: Categorical"
       adj_pd_total_17cat = "Adj FFS total, 2017: Categorical"
       adj_pd_total_18cat = "Adj FFS total, 2018: Categorical"
+      fqhc = "FQHC (FQHC|IHS|RHS), Binary"
+      ind_cost_ffs = "Indicator, Cost: FFS Total > 0"
+      ind_cost_pc = "Indicator, Cost: Primary Care > 0"
+      ind_cost_rx = "Indicator, Cost: Rx > 0"
+      ind_util_bh_o = "Indicator, Util: BH Other n > 0"
+      ind_util_er   = "Indicator, Util: ER (Cap+FFS) n > 0"
+      ind_util_pc = "Indicator, Util: PC n > 0"
+      ind_util_tel = "Indicator, Util: Telehealth n > 0"
       ;
-RUN; * lost 88 people - all sex unknown? 
-* from 14347065 to 14346977;
-
-* Updated 3/29 per new spec file: 
-    - include new categories for FQHC (binary 0,1), race
-    - make sure age = age_cat_. format
-    - remove sex observations where sex = unknown; 
-
-DATA data.analysis_dataset (drop=pcmp_loc_type_cd FY) ; 
-SET  int.a8 ;  
-ind_cost_rx   = cost_rx_tc  > 0 ;
-ind_cost_ffs  = cost_ffs_tc > 0 ;
-ind_cost_pc   = cost_pc_tc  > 0 ;
-ind_util_pc   = util_pc     > 0 ;
-ind_util_er   = util_er     > 0 ;
-ind_util_bh_o = util_bh_o   > 0 ; 
-ind_util_tel  = util_tele   > 0 ;
-IF SEX =: 'U' then delete ; 
-IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 ;
-    else fqhc = 0 ;
-RUN ;
-*NOTE: There were 14347065 observations read from the data set DATA.A8.
-NOTE: The data set DATA.ANALYSIS_DATASET has 14346977 observations and 39 variables;
-
-
-PROC PRINTTO; 
-RUN ; 
+RUN; * 3/30 lost 88 people - all sex unknown? 
+* from 14347065 to 14346977 (same as before tho from earlier in the week);

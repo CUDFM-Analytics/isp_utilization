@@ -1,16 +1,13 @@
 /*%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; */
 
-pROC PRINT DATA  = &dat ; 
-where adj_pd_total_16cat = ' ' ; 
-RUN ; 
-
-ods pdf file = "&report./eda_freq_20230329.pdf";
-
 %let dat = data.analysis_dataset ; 
+
+
+ods pdf file = "&report./eda_freq_20230330.pdf";
 
 PROC CONTENTS DATA = &dat VARNUM ; RUN ;  
 
-ods text "Frequencies for categorical variables by Intervention (non-varying)" ; 
+ods text = "Frequencies for categorical variables by Intervention (non-varying)" ; 
 
 TITLE "Unique Member Count, Final Dataset"; 
 PROC SQL ; 
