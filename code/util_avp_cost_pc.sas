@@ -1,65 +1,60 @@
+**********************************************************************************************
+AUTHOR   : KTW
+PROJECT  : [PROJ NAME]
+PURPOSE  : 
+VERSION  : [2023-MM-DD] 
+DEPENDS  : [LIST DEPENDENCIES (files, macros, abbreviations)]
+REFS     : Visualize collinearity diagnostics in SAS, https://blogs.sas.com/content/iml/2020/02/17/visualize-collinearity-diagnostics.html
+           'Collinearity in regression: The COLLIN option in PROC REG' 
+            https://blogs.sas.com/content/iml/2020/01/23/collinearity-regression-collin-option.html;
+
+***********************************************************************************************;
+
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 libname int clear; 
 /*proc options option=memsize value;*/
 /*run;*/
 
-*** Take sample from final set ; 
+%LET dat = data.analysis_dataset ; 
 
-* Var description: 
-mcaid_id    : medicaid id (between 1 and 3 records per member: compound primary key with 'time' variable)
-time        : categorical, linear quarters for FY, where 1 = 01JUL2019
-int         : intervention of ISP if practice participated at any time (0,1) 
-int_imp     : time-varying covariate, ISP intervention based on month practice started
-ind_...     : indicator variable if value of 0 or ge 1 for any DV 
-              ind_cost_pc, ind_cost_ffs, ind_cost_rx, ind_util_bh_o, ind_util_er, ind_util_pc, ind_util_tel
+proc options option=memsize value;
+run;
 
-cost_ffs_tc : mean-preserving top coded inflation adjusted total FFS cost - PMPM avg for quarter  
-cost_rx_tc  : mean-preserving top coded inflation adjusted Pharmacy cost - PMPM avg for quarter  
-cost_pc_tc  : mean-preserving top coded inflation adjusted total Primary Care cost - PMPM avg for quarter  
-util_bh_o   : non-hospital, non_ED capitated BH Utilization (n visits) - PMPM avg for a quarter
-util_er     : ED utilization (n FFS ED visits + n BH ED visits) - PMPM avg for quarter
-util_pc     : Primary Care Utilization (n PC visits in quarter) - PMPM avg for quarter 
-util_tele   : Primary Care telehealth utilizaton (n PC telehealth visits) - PMPM avg for a quarter; 
+proc contents data = &dat ; run ; 
 
-ods pdf file = "&util/code/util_cost_pc_abr_20230330.pdf";
-
-ods text = "VARS"; 
-ods text = "time: categorical, linear quarters for FY, where 1 = 01JUL2019";
-ods text = "int: intervention of ISP if practice participated at any time (0,1)";
-ods text = "int_imp: time-varying covariate, ISP intervention based on month practice started"; 
-ods text = "ind_cost_pc: indicator variable if value of 0 or ge 1 for any DV"; 
-ods text = "cost_pc_tc: mean-preserving top coded inflation adjusted total Primary Care cost - PMPM avg for quarter"; 
-ods text = "";
-ods text = "";
-ods text = "";
-
-%LET dat = data.analysis_dataset; 
-
-proc contents data = &dat VARNUM; 
-RUN ; 
-
-* probability model ;
+* probability model 
+Per Mark, try without bh and adj vars, then we will slowly re-introduce if so;
 TITLE "probability model"; 
-proc gee data  = &dat desc;
-     class  mcaid_id 
-            age sex race rae_person_new budget_grp_new fqhc
-            bh_er2016 bh_er2017 bh_er2018 bh_hosp2016 bh_hosp2017 bh_hosp2018 bh_oth2016 bh_oth2016 bh_oth2016
-            adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+PROC GEE DATA  = &dat DESC;
+     CLASS  mcaid_id    
+            age         sex     race        
+            rae_person_new 
+            budget_grp_new          fqhc    
+            bh_er2016   bh_er2017   bh_er2018 
+            bh_hosp2016 bh_hosp2017 bh_hosp2018 
+            bh_oth2016  bh_oth2017  bh_oth2018
+/*            adj_pd_total_16cat */
+/*            adj_pd_total_17cat  */
+/*            adj_pd_total_18cat*/
             time 
             int 
             int_imp 
             ind_cost_pc ;
-     model ind_cost_pc = age sex race rae_person_new budget_grp_new fqhc
-                         bh_er2016 bh_er2017 bh_er2018 
-                         bh_hosp2016 bh_hosp2017 bh_hosp2018 
-                         bh_oth2016 bh_oth2016 bh_oth2016
-                         adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+     model ind_cost_pc = age            sex             race 
+                         rae_person_new budget_grp_new  fqhc
+                         bh_er2016      bh_er2017       bh_er2018 
+                         bh_hosp2016    bh_hosp2017     bh_hosp2018 
+                         bh_oth2016     bh_oth2017      bh_oth2018
+/*                         adj_pd_total_16cat */
+/*                         adj_pd_total_17cat */
+/*                         adj_pd_total_18cat*/
                          time 
-                         int 
-                         int_imp / dist = binomial link = logit ; 
+                         int_imp
+                         int / dist = binomial link = logit ; 
   repeated subject = mcaid_id / type = exch;
   store p_model;
 run;
+
 
 * probability model ;
 TITLE "probability model"; 
