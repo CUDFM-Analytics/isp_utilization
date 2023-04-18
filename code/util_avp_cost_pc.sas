@@ -30,24 +30,24 @@ PROC GEE DATA  = &dat DESC;
             age         sex     race        
             rae_person_new 
             budget_grp_new          fqhc    
-            bh_er2016   bh_er2017   bh_er2018 
-            bh_hosp2016 bh_hosp2017 bh_hosp2018 
-            bh_oth2016  bh_oth2017  bh_oth2018
+/*            bh_er2016   bh_er2017   bh_er2018 */
+/*            bh_hosp2016 bh_hosp2017 bh_hosp2018 */
+/*            bh_oth2016  bh_oth2017  bh_oth2018*/
 /*            adj_pd_total_16cat */
 /*            adj_pd_total_17cat  */
-/*            adj_pd_total_18cat*/
+            adj_pd_total_18cat
             time 
             int 
             int_imp 
             ind_cost_pc ;
      model ind_cost_pc = age            sex             race 
                          rae_person_new budget_grp_new  fqhc
-                         bh_er2016      bh_er2017       bh_er2018 
-                         bh_hosp2016    bh_hosp2017     bh_hosp2018 
-                         bh_oth2016     bh_oth2017      bh_oth2018
+/*                         bh_er2016      bh_er2017       bh_er2018 */
+/*                         bh_hosp2016    bh_hosp2017     bh_hosp2018 */
+/*                         bh_oth2016     bh_oth2017      bh_oth2018*/
 /*                         adj_pd_total_16cat */
 /*                         adj_pd_total_17cat */
-/*                         adj_pd_total_18cat*/
+                         adj_pd_total_18cat
                          time 
                          int_imp
                          int / dist = binomial link = logit ; 

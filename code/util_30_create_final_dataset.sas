@@ -185,7 +185,7 @@ DATA int.a6 (DROP = pd_rx_q_adj pd_tot_q_adj pd_pc_q_adj n_pc_q n_q_tele n_er_to
 SET  int.a5 ;
 mu_rx     = coalesce(mu_pd_rx, 0);
 mu_ffs    = coalesce(mu_pd_total,0);
-mu_pc   = coalesce(mu_pd_pc   ,0);
+mu_pc     = coalesce(mu_pd_pc   ,0);
 util_pc   = coalesce(mu_n_pc    ,0);
 util_tele = coalesce(mu_n_tele  ,0);
 util_er   = coalesce(mu_n_er    ,0);
@@ -322,3 +322,77 @@ LABEL age            = "Age (cat)"
       ;
 RUN; * 3/30 lost 88 people - all sex unknown? 
 * from 14347065 to 14346977 (same as before tho from earlier in the week);
+
+** UPDATE 04/13 per mark if practice started ISP in the third month of the quarter, show int as the next quarter
+    (i.e. mostly for practices that started in March 2020, he wanted them showing not as starting in the 
+     third linearized quarter but the fourth, then followed up with requesting the same for all practices that 
+     started in the third month of any quarter). ; 
+
+* Updated original dataset; 
+data data.isp_un_pcmp_dtstart; 
+set  int.isp_un_pcmp_dtstart;
+month = put(dt_prac_isp, monname3.);
+if month in ('Mar','Jun','Sep','Dec') then time2 = time+1;
+else time2 = time;
+run; 
+
+PROC FREQ 
+     DATA = int.isp_un_pcmp_dtstart;
+     TABLES time2 time month/ ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'Frequency time2 time month';
+RUN; 
+TITLE; 
+* reduced frequencies so now none are in time = 3 (previously was 44)
+time = 4 n=62 (from 19)
+time = 5 n=9  (from 8)
+time = 6 n=1  (from 1)
+time = 7 n=0  (from 3)
+time = 8 n=11 (from 8)
+time = 9 n=32 (from 33)
+time = 10 n=2 (from 1);
+
+PROC SORT DATA =  int.isp_un_pcmp_dtstart ;
+by time; 
+run; 
+
+PROC PRINT DATA = int.isp_un_pcmp_dtstart ;
+WHERE month in ('Mar','Jun','Sep','Dec');
+RUN; 
+
+DATA analysis_dataset; 
+SET  data.analysis_dataset (rename time=quarter);
+IF   
+
+PROC PRINT DATA = data.analysis_dataset (obs=100); 
+WHERE pcmp_loc_id = 101608 ; 
+RUN; 
+
+** Get isp info  ; 
+PROC SQL ; 
+CREATE TABLE data as 
+SELECT a.*
+     , b.time2 
+     , case when int=1 and a.time >= b.time2
+            then 1 
+            else 0 end 
+            as int_imp2
+FROM data.analysis_dataset as a
+LEFT JOIN int.isp_un_pcmp_dtstart as b
+ON   a.pcmp_loc_id = b.pcmp_loc_id ; 
+QUIT ; * 40974871 : 14 ; 
+
+DATA data.analysis_dataset2 (rename=(int_imp2=int_imp));
+SET  data (drop=int_imp time2);
+RUN;
+
+PROC SORT DATA = data ; by pcmp_loc_id time ; run; 
+
+PROC PRINT DATA = data (obs = 2000); 
+where time = 4 & int_imp=1 & int_imp2 = 0; 
+VAR pcmp_loc_id time time2 int int_imp int_imp2;
+run; 
+
+PROC FREQ DATA = data;
+tables time*int_imp time*int_imp2; 
+run; 
+* It's going to have fewer int_imp because we're just missing those now - they didn't move into the other categories; 

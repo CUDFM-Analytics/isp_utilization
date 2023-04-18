@@ -1,10 +1,54 @@
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+libname int clear; 
+
 %LET dat = data.analysis_dataset; 
 
-DATA allcomb0; 
+DATA data.allcomb_wide; 
 SET  &dat (KEEP = int adj: ); 
 RUN; 
 
-proc freq data = allcomb0; TABLES int*adj: ; run; 
+
+ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_cost_pc_allcomb_adj_v22.pdf" startpage=no;
+PROC FREQ DATA = data.allcomb_wide; 
+TABLE adj_pd_total_16cat*adj_pd_total_17cat*adj_pd_total_18cat*int / list; 
+RUN; 
+ods pdf close; 
+
+
+* Get separate datasets that include only each adj variable (by fy), intervention, and ds originated from: ;
+DATA adj16 (rename = (adj_pd_total_16cat = value ds16 = ds) keep = int adj_pd_total_16cat ds16 ) 
+     adj17 (rename = (adj_pd_total_17cat = value ds17 = ds) keep = int adj_pd_total_17cat ds17 ) 
+     adj18 (rename = (adj_pd_total_18cat = value ds18 = ds) keep = int adj_pd_total_18cat ds18 )  ;
+SET  &dat (KEEP = int adj: ); 
+ds16 = "adj16";
+ds17 = "adj17";
+ds18 = "adj18";
+RUN; 
+
+* append into one ds; 
+DATA data.allcomb_long;
+SET  adj16 adj17 adj18; 
+RUN; 
+
+
+
+
+ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_cost_pc_allcomb_adj.pdf" startpage=no;
+ods output table = tab_out; 
+proc tabulate data = allcomb0;
+class int ds value; 
+table value='Cat',
+      int='Intervention: Invariant'*ds='Year'*(n='n' colpctn='pct')*F=10./ RTS=13.;
+run; 
+
+ods output table = tab_out; 
+proc tabulate data = allcomb0;
+class int ds value; 
+table value='Cat',
+      ds='Year'*int='Intervention: Invariant'*(n='n' colpctn='pct')*F=10./ RTS=13.;
+run; 
+ods output close; 
+ods pdf close; 
 
 
 * find collinearity; 
