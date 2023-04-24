@@ -20,7 +20,7 @@ proc sort data = int.memlist_final; by mcaid_id ; run ;  *1594686;
 PROC SQL ; 
 CREATE TABLE int.a1 as 
 SELECT a.*
-     , b.time2 
+     , b.time2 as time_start_isp
      , case when b.time2 ne . AND a.time >= b.time2
             then 1 
             else 0 end 
@@ -33,8 +33,10 @@ QUIT ; * 40974871 : 14 ;
 * TESTS: - expecting time*int_imp to have all int_imp=0 for time 1,2
          - time_start_isp should only be 3> UPDATE 4>
          - ind_isp*int_imp should have values in both cols for 0 but where ind_isp = 0 all int_imp should be 0;         
+PROC CONTENTS DATA = int.a1; RUN; 
+
 PROC FREQ DATA = int.a1 ; 
-TABLES time*int_imp time2*int_imp ind_isp*int_imp; 
+TABLES time*int_imp time_start_isp*int_imp ind_isp*int_imp; 
 RUN ;
 
 *** JOIN PCMP TYPE ; 
@@ -46,23 +48,24 @@ pcmp = input(pcmp_loc_id, best12.);
 RUN ;
 
 PROC SQL ; 
-CREATE TABLE data.a2 AS 
+CREATE TABLE int.a2 AS 
 SELECT a.*
      , b.pcmp_loc_type_cd
-FROM data.a1 as a
+FROM int.a1 as a
 LEFT JOIN int.pcmp_types as b
 ON   a.pcmp_loc_id = b.pcmp ; 
 QUIT ; *40974871; 
 
 * tidy up ; 
-DATA data.a2a ; 
-SET  data.a2  (DROP = ENR_CNTY 
+DATA int.a2a ; 
+SET  int.a2  (DROP = ENR_CNTY 
                       TIME_START_ISP ) ;
 RENAME ind_isp=int ; 
 RUN ; *40974871 : 13; 
                       
-*** UPDATED 3/30 
-new adj file with all (no missing yay) and changed lib to int;
+*** 
+UPDATED 4/24: adj file with actually correct values
+UPDATED 3/30: new adj file with all (no missing yay) and changed lib to int;
 proc sql; 
 create table int.a3 as 
 select a.*
@@ -123,6 +126,13 @@ ARRAY bhoth bh_oth2016-bh_oth2018;
       end;
 RUN ;  * 3/30 14347065 : 27 ; 
 
+* Some adj's are blank - weren't eligible / not in file? ; 
+PROC PRINT DATA = int.a3b (obs=100) ; where adj_pd_total_16cat = ''; RUN; 
+
+* ADJ -1 values: adj dataset created in util_02_get_prep_ana_util from a full join using all
+qry_monthlyutilization and qry_longitudinal values from FYs 16-18
+ID's not present in int.a3b were not eligible and can be marked with -1 as they were not present in either ana dataset; 
+
 DATA  int.a3c;
 SET   int.a3b;
 format adj_pd_16a adj_pd_17a adj_pd_18a 3. ;
@@ -130,7 +140,7 @@ format adj_pd_16a adj_pd_17a adj_pd_18a 3. ;
 adj_pd_16a = input(adj_pd_total_16cat, 3.);
 adj_pd_17a = input(adj_pd_total_17cat, 3.);
 adj_pd_18a = input(adj_pd_total_18cat, 3.);
-* make missing = -1 because they weren't eligible (checking with where int.a3b = '' like A001791); 
+* make missing = -1 because they weren't eligible (checking with where int.a3b = '' like A001791 etc in zscratch); 
 adj_pd_total16 = coalesce(adj_pd_16a,-1);
 adj_pd_total17 = coalesce(adj_pd_17a,-1);
 adj_pd_total18 = coalesce(adj_pd_18a,-1);
