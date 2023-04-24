@@ -3,6 +3,9 @@ set  data.a8 (obs=2000);
 RUN; 
 PROC SORT DATA int.isp_un_pcmp_dtstart ; by time_start_isp; run; 
 
+proc freq data = isp_un_pcmp_dtstart; tables month; run; 
+
+
 ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\interim_reports\isp_start_dates.pdf" startpage=no;
 TITLE; 
 proc print data = int.isp_un_pcmp_dtstart ; 
@@ -17,6 +20,23 @@ tables dt_prac_isp*time;
 RUN; 
 
 ods pdf close; 
+
+
+ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\interim_reports\isp_start_dates.pdf" startpage=no;
+TITLE; 
+proc print data = int.isp_un_pcmp_dtstart ; 
+TITLE2 "March 2020 start dates only"; 
+VAR dt_prac_isp pcmp_loc_id dt_qrtr time;
+where dt_prac_isp = '01MAR2020'd; 
+RUN ; 
+
+proc freq data = int.isp_un_pcmp_dtstart;
+TITLE2 "Frequency start date by quarter (linearized)" ;
+tables dt_prac_isp*time; 
+RUN; 
+
+ods pdf close; 
+
 
 proc sql; 
 create table want as 

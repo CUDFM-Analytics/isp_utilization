@@ -19,9 +19,8 @@ CREATE TABLE util AS
 SELECT * 
 FROM   ana.qry_monthlyutilization 
 WHERE  month ge '01Jul2016'd 
-AND    month le '30Jun2022'd
-AND    mcaid_id IN  (SELECT mcaid_id FROM int.memlist);  
-QUIT; * 663676624;
+AND    month le '30Jun2022'd;  
+QUIT; *66382081 4/24 //  663676624;
 
 * COST: rx, pc, total
 * UTIL: PC, ED (no total) > summed months in case there was > 1 month? ; 
@@ -59,7 +58,7 @@ select mcaid_id
      , sum(n_ffs_er) as n_er_q
 from util1621a
 group by MCAID_ID, dt_qrtr; 
-quit; *Table int.UTIL_1621 created, with 27092342 rows and 7 columns. ;
+quit; *Table int.UTIL_1621 created, with 32835706 rows and 8 columns. ;
 
 PROC SORT DATA = util1621b NODUPKEY ; BY _ALL_ ; RUN ; * 13941142 ; 
 
@@ -71,15 +70,15 @@ SELECT a.*
 FROM util1621b as a 
 LEFT JOIN int.adj as b 
 ON a.dt_qrtr = b.date ; 
-QUIT ; *13941142 ; 
+QUIT ; *16692009 rows and 9 columns ; 
 
 * calculate adjusted costs; 
 DATA int.util1621_adj (DROP=pd_rx_q pd_pc_q pd_tot_q index_2021_1); 
 SET  util1621_adj ;
-pd_rx_q_adj = index_2021_1 * pd_rx_q;
-pd_pc_q_adj = index_2021_1 * pd_pc_q;
+pd_rx_q_adj  = index_2021_1 * pd_rx_q;
+pd_pc_q_adj  = index_2021_1 * pd_pc_q;
 pd_tot_q_adj = index_2021_1 * pd_tot_q;
-RUN; *13941142 ; 
+RUN; *16692009 rows and 8 columns ; 
 
 * SPLIT INTO 1618 for cat and 19-21 for outcomes ; 
 DATA util_1921 util_1618 (keep = mcaid_id FY dt_qrtr pd_tot_q_adj ); 
@@ -87,8 +86,8 @@ SET  int.util1621_adj ;
 IF   FY in ('2019','2020','2021') THEN OUTPUT util_1921;
 ELSE OUTPUT util_1618;
 RUN; 
-* NOTE: The data set WORK.UTIL_1921 has 7681680 observations and 8 variables.
-  NOTE: The data set WORK.UTIL_1618 has 6259462 observations and 4 variables;
+* NOTE: The data set WORK.UTIL_1921 has 8430032 observations and 8 variables.
+  NOTE: The data set WORK.UTIL_1618 has 8261977 observations and 4 variables;
 
 *----------------------------------------------------------------------------------------------
 SECTION 01d.2 16-18 categorical variables 
@@ -101,8 +100,11 @@ select mcaid_id
      , sum(pd_tot_q_adj) as pd_tot_fy_adj
 from util_1618
 group by MCAID_ID, FY;
-quit; *2396891 : 3 - reduced to approx 1/5th ;
+quit; *3252795 : 3 - reduced to approx 1/5th ;
 
+PROC SORT DATA = int.util_1618_long; by FY; RUN; 
+
+*https://support.sas.com/kb/22/759.html shows to use rank and groups=100; 
 PROC RANK DATA = int.util_1618_long
      GROUPS    = 100 
      OUT       = util1618r;
@@ -125,7 +127,32 @@ SET  util1618r2     ;
 adj_pd_total_16cat_A = put(_2016, adj_pd_total_YRcat_.);
 adj_pd_total_17cat_A = put(_2017, adj_pd_total_YRcat_.);
 adj_pd_total_18cat_A = put(_2018, adj_pd_total_YRcat_.);
-RUN ; *1051841 ; 
+RUN ; *1552079: 7 ; 
+
+PROC FREQ DATA = int.util_1618_cat; 
+tables adj_pd_total_16cat_A 
+       adj_pd_total_17cat_A 
+       adj_pd_total_18cat_A 
+       _2016*adj_pd_total_16cat_A
+       _2017*adj_pd_total_17cat_A
+       _2018*adj_pd_total_18cat_A;
+RUN; 
+
+PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; 
+CLASS  adj_pd_total_16cat_A ;
+VAR _2016;
+RUN; 
+
+PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; 
+CLASS  adj_pd_total_17cat_A ;
+VAR _2017;
+RUN; 
+
+PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; 
+CLASS  adj_pd_total_18cat_A ;
+VAR _2018;
+RUN; 
+
 
 ****
 03/22  SOMEWHERE I CREATED int.util_memlist_elig1618 but it's lost!! 
@@ -165,28 +192,39 @@ SELECT COALESCE (a.mcaid_id, b.mcaid_id) as mcaid_id
 FROM int.elig1618c as a
 FULL JOIN int.util_1618_cat as b
 on a.mcaid_id = b.mcaid_id ; 
-QUIT ; * 2066292 ; 
+QUIT ; * 2066673 ; 
+
+PROC FREQ DATA = adj_cat; 
+tables adj: ; 
+RUN; 
 
 DATA adj_cat2; 
 SET  adj_cat ; 
 ind_elig16 = coalesce(ind_elig2016,0);
 ind_elig17 = coalesce(ind_elig2017,0);
 ind_elig18 = coalesce(ind_elig2018,0);
-RUN ; *2066292 ; 
+RUN ; *2066673 ; 
+
+PROC FREQ DATA = adj_cat2; 
+tables adj: ; 
+RUN; 
+
+PROC PRINT DATA = adj_cat2 (obs =30);
+run; 
 
 PROC SQL ; 
 CREATE TABLE int.adj_pd_total_YYcat AS 
 SELECT mcaid_id
-     , case when ind_elig16 = 0 then '-1'
-            when (ind_elig16 = 1 AND _2016 = .) then '0'
+     , case when (_2016 = . AND ind_elig16 = 0) then '-1'
+            when (_2016 = . AND ind_elig16 = 1) then '0'
             else adj_pd_total_16cat_A
             end as adj_pd_total_16cat
-     , case when ind_elig17 = 0 then '-1'
-            when (ind_elig17 = 1 and _2017 = .) then '0'
+     , case when (_2017 = . AND ind_elig17 = 0) then '-1'
+            when (_2017 = . AND ind_elig17 = 1) then '0'
             else adj_pd_total_17cat_A
             end as adj_pd_total_17cat
-     , case when ind_elig18 = 0 then '-1'
-            when (ind_elig18 = 1 AND _2018 = .) then '0'
+     , case when (_2018 = . AND ind_elig18 = 0) then '-1'
+            when (_2018 = . AND ind_elig18 = 1) then '0'
             else adj_pd_total_18cat_A
             end as adj_pd_total_18cat
      , adj_pd_total_16cat_A
@@ -199,9 +237,9 @@ SELECT mcaid_id
      , _2017
      , _2018
 FROM adj_cat2 ; 
-QUIT ; *2066292; 
+QUIT ; *2066673; 
 
-PROC FREQ DATA = int.adj_pd_total_YYcat; 
+PROC FREQ DATA = int.adj_pd_total_YYcat2; 
 tables adj: ;
 RUN ; 
 

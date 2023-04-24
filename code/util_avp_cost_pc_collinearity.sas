@@ -8,7 +8,7 @@ SET  &dat (KEEP = int adj: );
 RUN; 
 
 
-ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_cost_pc_allcomb_adj_v22.pdf" startpage=no;
+ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_cost_pc_allcomb_adj_v2.pdf" startpage=no;
 PROC FREQ DATA = data.allcomb_wide; 
 TABLE adj_pd_total_16cat*adj_pd_total_17cat*adj_pd_total_18cat*int / list; 
 RUN; 

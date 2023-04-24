@@ -23,8 +23,9 @@ VALUE adj_pd_total_YRcat_
     0 = 0
     1 - 50  = 1
     51 - 75 = 2
-    76 - 95 = 3
-    96 - 99 = 4 
+    76 - 90 = 3
+	91 - 95 = 4
+    96 - 99 = 5 
     Other = .;
 
 VALUE age_cat_              

@@ -6,6 +6,8 @@
  INPUT FILE/S     : 
  OUTPUT FILE/S    : SECTION01 > 
  SPECS            : ISP_Utilization_Analytic_Plan_20221118.docx, 
+ VERSION          : 04/24/2023 re-ran all - updated time2 variable from int.isp_un_pcmp_dtstart and 
+                                            updated adj variables from int.adj_pd_total_yycat;
 ***********************************************************************************************;
 * PROJECT PATHS, MAPPING; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
@@ -16,10 +18,10 @@ proc sort data = int.memlist_final; by mcaid_id ; run ;  *1594686;
 
 ** Get isp info  ; 
 PROC SQL ; 
-CREATE TABLE data.a1 as 
+CREATE TABLE int.a1 as 
 SELECT a.*
-     , b.time_start_isp 
-     , case when b.time_start_isp ne . AND a.time >= b.time_start_isp 
+     , b.time2 
+     , case when b.time2 ne . AND a.time >= b.time2
             then 1 
             else 0 end 
             as int_imp
@@ -29,10 +31,10 @@ ON   a.pcmp_loc_id = b.pcmp_loc_id ;
 QUIT ; * 40974871 : 14 ; 
 
 * TESTS: - expecting time*int_imp to have all int_imp=0 for time 1,2
-         - time_start_isp should only be 3>
+         - time_start_isp should only be 3> UPDATE 4>
          - ind_isp*int_imp should have values in both cols for 0 but where ind_isp = 0 all int_imp should be 0;         
-PROC FREQ DATA = data.a1 ; 
-TABLES time*int_imp time_start_isp*int_imp ind_isp*int_imp; 
+PROC FREQ DATA = int.a1 ; 
+TABLES time*int_imp time2*int_imp ind_isp*int_imp; 
 RUN ;
 
 *** JOIN PCMP TYPE ; 
@@ -133,7 +135,9 @@ adj_pd_total16 = coalesce(adj_pd_16a,-1);
 adj_pd_total17 = coalesce(adj_pd_17a,-1);
 adj_pd_total18 = coalesce(adj_pd_18a,-1);
 run;
- 
+
+PROC PRINT DATA = int.a3c (obs=25); where adj_pd_16a = .; RUN; 
+PROC PRINT DATA = data.analysis_dataset3 (obs=25) ; where adj_pd_total_16cat = ' '; RUN; 
 DATA int.a3d (rename=(adj_pd_total16 = adj_pd_total_16cat
                       adj_pd_total17 = adj_pd_total_17cat
                       adj_pd_total18 = adj_pd_total_18cat)) ; 
