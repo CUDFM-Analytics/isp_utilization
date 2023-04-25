@@ -121,97 +121,11 @@ from util_1618
 group by MCAID_ID, FY;
 quit; *3252795 : 3 - reduced to approx 1/5th, should have 0 values still  ;
 
-PROC PRINT DATA = int.util_1618_long (obs=10); where adj_pd_total_FY = 0; RUN; 
-/**/
-/*PROC SORT DATA = int.util_1618_long; by FY; RUN; */
-/**/
-/**https://support.sas.com/kb/22/759.html shows to use rank and groups=100; */
-/*PROC RANK DATA = int.util_1618_long*/
-/*     GROUPS    = 100 */
-/*     OUT       = int.util_1618_long_rank_non0;*/
-/*     VAR       adj_pd_total_FY ; */
-/*     BY        FY ; */
-/*     RANKS     adj_pd_FY_rank ;*/
-/*     WHERE     adj_pd_total_FY > 0;*/
-/*RUN ; */
-/**/
-/*PROC FREQ DATA = int.util_1618_long_rank_non0;*/
-/*tables adj_pd_FY_rank*FY;*/
-/*where adj_pd_FY_rank > 94; */
-/*RUN; */
-/**/
-/** Check with another way too; */
-/*PROC UNIVARIATE DATA = int.util_1618_long;*/
-/*var adj_pd_total_FY;*/
-/*BY  FY;*/
-/*output out = int.util_1618_check_95p*/
-/*pctlpts = 95*/
-/*pctlpre = P_;*/
-/*WHERE adj_pd_total_FY ge 0;*/
-/*RUN; * 2016 = 22420.23, 2017 24956.73, 2018 28276.199;*/
-/**/
-/** Merge back in the 0's ; */
-/*PROC SQL; */
-/*CREATE TABLE int.util_1618_long_rank_full AS */
-/*SELECT a.**/
-/*     , b.**/
-/*FROM int.util_1618_long as A*/
-/*FULL JOIN int.util_1618_long_rank_non0 as B*/
-/*ON a.mcaid_id = b.mcaid_id*/
-/*AND a.FY = b.FY; */
-/*QUIT; */
-/**/
-/*PROC SORT DATA = int.util_1618_long_rank_non0; by mcaid_id adj_pd_FY_rank; RUN ;  *3229688; */
-/*PROC PRINT DATA = int.util_1618_long_rank_non0; */
-/*** CHECK mcaid ID values where there were o's; */
-/*PROC PRINT DATA = int.util_1618_long_rank_non0 (obs=10); */
-/*/*WHERE mcaid_id in ("A005784","A023340","A072859","A101013");*/*/
-/*WHERE adj_pd_FY_rank = 95 AND FY=2016;*/
-/*RUN;*/
-/**/
-/*** CHECK mcaid ID values where there were o's; */
-/*PROC PRINT DATA = int.util_1618_long_rank_full (obs=10); */
-/*/*WHERE mcaid_id in ("A005784","A023340","A072859","A101013");*/*/
-/*WHERE adj_pd_FY_rank = 95 AND FY=2016;*/
-/*RUN;*/
-/**/
-/*PROC TRANSPOSE DATA = int.util_1618_long_rank_non0 */
-/*     OUT = util_1618_wide_rank (DROP= _NAME_ _LABEL_);*/
-/*by mcaid_id ;*/
-/*ID FY ; */
-/*VAR adj_pd_FY_rank; */
-RUN;  * 1552079 : 4 ;
-
-/*PROC TRANSPOSE DATA = int.util_1618_long_rank_non0 */
-/*     OUT = util_1618_wide_pd (DROP= _NAME_ _LABEL_);*/
-/*by mcaid_id ;*/
-/*ID FY ; */
-/*VAR adj_pd_total_FY; */
-/*RUN;  * 1552079 : 4 ; */
-/*     */
-/** Make cats but keep the original vals to check ; */
-/*DATA int.util_1618_cat  ; */
-/*SET  util1618r2     ; */
-/*adj_pd_total_16cat_A = put(_2016, adj_pd_total_YRcat_.);*/
-/*adj_pd_total_17cat_A = put(_2017, adj_pd_total_YRcat_.);*/
-/*adj_pd_total_18cat_A = put(_2018, adj_pd_total_YRcat_.);*/
-/*RUN ; *1552079: 7 ; */
-/**/
-/*PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; */
-/*CLASS  adj_pd_total_16cat_A ;*/
-/*VAR _2016;*/
-/*RUN; */
-/**/
-/*PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; */
-/*CLASS  adj_pd_total_17cat_A ;*/
-/*VAR _2017;*/
-/*RUN; */
-/**/
-/*PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; */
-/*CLASS  adj_pd_total_18cat_A ;*/
-/*VAR _2018;*/
-/*RUN; */
-
+PROC TRANSPOSE DATA=int.util_1618_FY OUT=util_1618_FY_wide (DROP=_NAME_); 
+     BY   mcaid_id ; 
+     ID   FY ; 
+     VAR  adj_pd_total_FY ; 
+RUN ; * 2065238 : 4 ; 
 
 ****
 03/22  SOMEWHERE I CREATED int.util_memlist_elig1618 but it's lost!! 
@@ -240,69 +154,50 @@ PROC TRANSPOSE DATA=int.elig1618b prefix=ind_elig OUT=int.elig1618c (DROP=_NAME_
      VAR  ind ; 
 RUN ; * 2065238 : 4 ; 
 
-/*proc delete data=int.elig1618_memlist1; */
-/*RUN ; */
-
-PROC SQL ; 
-CREATE TABLE adj_cat AS 
-SELECT COALESCE (a.mcaid_id, b.mcaid_id) as mcaid_id
-     , a.*
-     , b.*
-FROM int.elig1618c as a
-FULL JOIN int.util_1618_cat as b
-on a.mcaid_id = b.mcaid_id ; 
-QUIT ; * 2066673 ; 
-
-PROC FREQ DATA = adj_cat; 
-tables adj: ; 
-RUN; 
-
-DATA adj_cat2; 
-SET  adj_cat ; 
+* 4/24; 
+DATA int.elig1618d (DROP=ind_elig2016
+                         ind_elig2017
+                         ind_elig2018); 
+SET  int.elig1618c; 
 ind_elig16 = coalesce(ind_elig2016,0);
 ind_elig17 = coalesce(ind_elig2017,0);
 ind_elig18 = coalesce(ind_elig2018,0);
-RUN ; *2066673 ; 
+RUN ; *2065238 ; 
 
-PROC FREQ DATA = adj_cat2; 
-tables adj: ; 
-RUN; 
-
-PROC PRINT DATA = adj_cat2 (obs =30);
-run; 
+* Combine eligibility indicator (from qry_longitudinal) and costs from utilization; 
+PROC SQL; 
+CREATE TABLE elig_and_util AS 
+SELECT a.*
+     , b.*
+FROM int.elig1618d AS A
+FULL JOIN int.util_1618_fy_wide as B
+ON a.mcaid_id=b.mcaid_id 
+; 
+QUIT; * nobs 2066673 : matches the largest one and has all members from eligd; 
 
 PROC SQL ; 
-CREATE TABLE int.adj_pd_total_YYcat AS 
+CREATE TABLE int.adj_pd_total_YY AS 
 SELECT mcaid_id
-     , case when (_2016 = . AND ind_elig16 = 0) then '-1'
-            when (_2016 = . AND ind_elig16 = 1) then '0'
-            else adj_pd_total_16cat_A
-            end as adj_pd_total_16cat
-     , case when (_2017 = . AND ind_elig17 = 0) then '-1'
-            when (_2017 = . AND ind_elig17 = 1) then '0'
-            else adj_pd_total_17cat_A
-            end as adj_pd_total_17cat
-     , case when (_2018 = . AND ind_elig18 = 0) then '-1'
-            when (_2018 = . AND ind_elig18 = 1) then '0'
-            else adj_pd_total_18cat_A
-            end as adj_pd_total_18cat
-     , adj_pd_total_16cat_A
-     , adj_pd_total_17cat_A
-     , adj_pd_total_18cat_A
+     , case when (_2016 = . AND ind_elig16 = 0) then -1
+            when (_2016 = . AND ind_elig16 = 1) then 0
+            else _2016
+            end as adj_pd_total_16_cost
+     , case when (_2017 = . AND ind_elig17 = 0) then -1
+            when (_2017 = . AND ind_elig17 = 1) then 0
+            else _2017
+            end as adj_pd_total_17_cost
+     , case when (_2018 = . AND ind_elig18 = 0) then -1
+            when (_2018 = . AND ind_elig18 = 1) then 0
+            else _2018
+            end as adj_pd_total_18_cost
      , ind_elig16
      , ind_elig17
      , ind_elig18
      , _2016
      , _2017
      , _2018
-FROM adj_cat2 ; 
+FROM elig_and_util; 
 QUIT ; *2066673; 
-
-PROC FREQ DATA = int.adj_pd_total_YYcat; 
-tables adj: ;
-RUN ; 
-
-
 
 *----------------------------------------------------------------------------------------------
 SECTION 01d.3 19-21 
@@ -331,18 +226,5 @@ FROM util1921a as a
 inner join int.memlist_attr_qrtr_1921 as b 
 on a.mcaid_id=b.mcaid_id and a.cat_qrtr = b.time ; 
 QUIT ; *04/24 7982472;
-
-/** join quarter memlist attrib ; */
-/*PROC SQL ; */
-/*CREATE TABLE int.util1921_adj AS */
-/*SELECT a.**/
-/*     , b.pcmp_loc_id*/
-/*     , b.n_months_per_q*/
-/*     , b.ind_isp*/
-/*FROM util1921a as a*/
-/*left join int.memlist_attr_qrtr_1921 as b */
-/*on a.mcaid_id=b.mcaid_id and a.cat_qrtr = b.time ; */
-/*QUIT ; *04/24 8430032, 12*/
-/*7681680 rows and 13 columns;*/
 
 PROC SORT DATA = int.util1921_adj ; BY FY ; RUN ; 
