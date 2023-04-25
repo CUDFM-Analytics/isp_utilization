@@ -54,7 +54,15 @@ SELECT a.*
 FROM int.a1 as a
 LEFT JOIN int.pcmp_types as b
 ON   a.pcmp_loc_id = b.pcmp ; 
-QUIT ; *40974871; 
+QUIT ; *14353570; 
+
+PROC SQL; 
+CREATE TABLE n_ids AS 
+SELECT mcaid_id
+     , count(mcaid_id) as n_id
+FROM int.a2
+GROUP BY mcaid_id; 
+QUIT; *1594074 : 1; 
 
 * tidy up ; 
 DATA int.a2a ; 
