@@ -56,14 +56,6 @@ LEFT JOIN int.pcmp_types as b
 ON   a.pcmp_loc_id = b.pcmp ; 
 QUIT ; *14039876; 
 
-PROC SQL; 
-CREATE TABLE n_ids AS 
-SELECT mcaid_id
-     , count(mcaid_id) as n_id
-FROM int.a2
-GROUP BY mcaid_id; 
-QUIT; *1594074 : 1; 
-
 * tidy up 4/24 removed enr_county because there were somehow duplicates/ lost rae_person_new; 
 DATA int.a2a ; 
 SET  int.a2  (DROP = TIME_START_ISP ) ;
@@ -112,9 +104,9 @@ ON a.mcaid_id = c.mcaid_id
 LEFT JOIN int.bh_1921 AS d
 ON a.mcaid_id = d.mcaid_id AND a.time = d.time;
 
-QUIT;   * 40974871 : 28 ;
+QUIT;   * 14039876 : 26 ;
 
-PROC SORT DATA = int.a3 NODUPKEY OUT=int.a3a ; BY _ALL_ ; RUN ;  *14347065 : 28 ; 
+PROC SORT DATA = int.a3 NODUPKEY OUT=int.a3a ; BY _ALL_ ; RUN ;  *0; 
       
 * replace bh_1618 cat var's where . with 0 ; 
 DATA  int.a3b;
@@ -165,48 +157,62 @@ RUN; *14347065 : 27;
 
 Proc freq data = int.a3d; tables adj: ; run;
 
+proc contents data = int.util1921_adj; run; 
+
 * Join util 1921 values for cost PMPM total, PMPM rx and util ED visits (to join with BH) 
 * Join telehealth  ; 
 PROC SQL ; 
 CREATE TABLE int.a4 AS 
 SELECT a.*
        /* util1921_adj cols: n_pc_q n_er_q pd_rx_q_adj pd_pc_q_adj on cat_qrtr (= time)      */
-     , b.n_pc_q 
-     , b.n_er_q 
-     , b.pd_rx_q_adj as pd_rx_q_adj
-     , b.pd_tot_q_adj as pd_tot_q_adj
-     , b.pd_pc_q_adj 
-     , sum(b.n_er_q, a.sum_q_bh_er) as n_er_total
-    
+     , b.n_primary_care_qrtr  
+     , b.n_er_qrtr            
+     , b.adj_pd_pharmacy_qrtr 
+     , b.adj_pd_total_qrtr    
+     , b.adj_pd_primary_care_qrtr
+     , sum(b.n_er_qrtr, a.sum_q_bh_er) as n_er_total
        /* tele cols:      */
      , c.n_q_tele
 FROM int.a3d as a
 
 LEFT JOIN int.util1921_adj as b
     ON a.mcaid_id = b.mcaid_id
-    AND a.time    = b.time
+    AND a.time    = b.cat_qrtr
 
 LEFT JOIN int.tele_1921 as c
     ON a.mcaid_id = c.mcaid_id
     AND a.time    = c.time ; 
 QUIT ; 
 
-
 DATA int.A5 ; 
-SET  int.A4 (DROP = sum_q_bh_er n_er_q ) ;
-mu_pd_rx    = pd_rx_q_adj    /n_months_per_q ; 
-mu_pd_total = pd_tot_q_adj   /n_months_per_q ; 
-mu_pd_pc    = pd_pc_q_adj    /n_months_per_q ; 
-mu_n_pc     = n_pc_q         /n_months_per_q ; 
-mu_n_tele   = n_q_tele       /n_months_per_q ; 
-mu_n_er     = n_er_total     /n_months_per_q ; 
-mu_n_bh_oth = sum_q_bh_other /n_months_per_q ; 
+SET  int.A4 (DROP = sum_q_bh_er n_er_qrtr ) ;
+mu_pd_rx    = adj_pd_pharmacy_qrtr     /n_months_per_q ; 
+mu_pd_total = adj_pd_total_qrtr        /n_months_per_q ; 
+mu_pd_pc    = adj_pd_Primary_care_qrtr /n_months_per_q ; 
+mu_n_pc     = n_Primary_care_qrtr      /n_months_per_q ; 
+mu_n_tele   = n_q_tele                 /n_months_per_q ; 
+mu_n_er     = n_er_total               /n_months_per_q ; 
+mu_n_bh_oth = sum_q_bh_other           /n_months_per_q ; 
 RUN ; 
 
 * 3/27 do same for pc (top coded) ; 
-DATA int.a6 (DROP = pd_rx_q_adj pd_tot_q_adj pd_pc_q_adj n_pc_q n_q_tele n_er_total sum_q_bh_other mu_pd_pc); 
-SET  int.a5 ;
-mu_rx     = coalesce(mu_pd_rx, 0);
+DATA int.a6 (DROP = mu_pd_rx
+                    mu_pd_total
+                    mu_pd_pc
+                    mu_n_pc
+                    mu_n_tele
+                    mu_n_er
+                    mu_n_bh_oth
+                    ); 
+SET  int.a5 (DROP = adj_pd_pharmacy_qrtr 
+                    adj_pd_total_qrtr
+                    adj_pd_Primary_care_qrtr
+                    n_Primary_care_qrtr
+                    n_q_tele 
+                    n_er_total 
+                    sum_q_bh_other 
+             );
+mu_rx     = coalesce(mu_pd_rx,   0);
 mu_ffs    = coalesce(mu_pd_total,0);
 mu_pc     = coalesce(mu_pd_pc   ,0);
 util_pc   = coalesce(mu_n_pc    ,0);
@@ -214,6 +220,8 @@ util_tele = coalesce(mu_n_tele  ,0);
 util_er   = coalesce(mu_n_er    ,0);
 util_bh_o = coalesce(mu_n_bh_oth,0);
 run ; * 14347065 ; 
+
+proc contents data = int.a6; run; 
 
 *** TOP CODE cost vars ; 
 PROC SORT DATA = int.a6 ; BY FY ; RUN ; 
@@ -235,9 +243,9 @@ OUTPUT OUT = &output (DROP=_TYPE_ _FREQ_);
 RUN; 
 %mend; 
 
-%mu_ge95(mu_pd_rx, mu_rx_pctile,  int.mu_rx_topcode ); 
-%mu_ge95(mu_ffs,   mu_ffs_pctile, int.mu_ffs_topcode); 
-%mu_ge95(mu_pc,    mu_pc_pctile, int.mu_pc_topcode); 
+%mu_ge95(mu_rx,  mu_rx_pctile,  int.mu_rx_topcode ); 
+%mu_ge95(mu_ffs, mu_ffs_pctile, int.mu_ffs_topcode); 
+%mu_ge95(mu_pc,  mu_pc_pctile,  int.mu_pc_topcode); 
 
 title; 
 
@@ -257,10 +265,9 @@ PROC PRINT DATA = int.mu_pc_topcode ; RUN ;
 %LET pcmin20 = 189.62; %LET pcmu20  = 328.85; 
 %LET pcmin21 = 193.03; %LET pcmu21  = 332.67; 
 
-
-DATA int.a7  (rename = (mu_ffs= cost_ffs_tc 
+DATA int.a7  (rename = ( mu_ffs= cost_ffs_tc 
                          mu_rx = cost_rx_tc
-                         mu_pc = cost_pc_tc)); 
+                         mu_pc = cost_pc_tc )); 
 SET  int.a6a (DROP= mu_pd_rx mu_pd_total mu_n_pc mu_n_tele mu_n_er mu_n_bh_oth) ; 
 
 * ffs total : Replace 96th percentile & up with mean ; 
@@ -275,11 +282,14 @@ IF mu_rx >= &rxmin21 & FY = 2021 then mu_rx = &rxmu21 ;
 
 * ffs pc  : Replace 96th percentile & up with mean ; 
 IF mu_pc >= &pcmin19 & FY = 2019 then mu_pc = &pcmu19 ; 
+
 IF mu_pc >= &pcmin20 & FY = 2020 then mu_pc = &pcmu20 ; 
 IF mu_pc >= &pcmin21 & FY = 2021 then mu_pc = &pcmu21 ; 
 
 RUN ; * 14347065 : 35; 
 
+PROC PRINT DATA = int.a7 (obs=100); run; 
+PROC CONTENTS DATA = int.a7; run; 
 
 DATA data.analysis_dataset (DROP = pcmp_loc_type_cd FY); 
 SET  int.a7 (DROP = n_months_per_q mu_rx_pctile mu_ffs_pctile mu_pc_pctile) ; 
