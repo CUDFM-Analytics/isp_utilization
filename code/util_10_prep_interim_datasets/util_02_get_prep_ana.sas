@@ -7,7 +7,7 @@ DEPENDS  : ana subset folder, config file [dependencies]
 NEXT     : [left off on row... or what step to do next... ]  ;
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-
+libname ana clear; 
 ***********************************************************************************************;
 
 * ==== SECTION01 ==============================================================================
@@ -112,6 +112,8 @@ SET  qrylong_1621a    ;
   age = age_end_fy;
 RUN; *82160141;
 
+proc print data = int.qrylong_1622; where mcaid_id = "A066638"; Run; 
+
 PROC SORT 
 DATA  = int.qrylong_1622 NODUPKEY OUT = int.memlist ;
 WHERE pcmp_loc_ID ne ' ' 
@@ -141,6 +143,11 @@ RUN ; *73404937: 11;
 
 %create_qrtr(data=int.qrylong_1622_months, set=int.qrylong_1622, var=month,qrtr=time);
 
+PROC CONTENTS DATA = int.qrylong_1622_months; run; 
+
+PROC SORT DATA = int.qrylong_1622_months; by mcaid_id time; run; 
+
+PROC CONTENTS DATA = int.qrylong_1622_time; run; 
 DATA int.qrylong_1622_time; 
 SET  int.qrylong_1622 (DROP = month) ;
 RUN ;  *82160141;
@@ -152,18 +159,19 @@ NOTE: The data set INT.QRYLONG_1622_TIME has 30594825 observations and 10 variab
 
 PROC PRINT DATA = int.qrylong_1622_time (obs = 1000); RUN; 
 
-PROC CONTENTS DATA = int.memlist VARNUM; RUN; 
+PROC CONTENTS DATA = int.memlist_final VARNUM; RUN; 
 
-* JOIN memlist with memlist_attr for pcmps for mcaid_ids in memlist (keep memlist mcaid_ids);
+* LAST UPDATED 4/24 (all above to here)
+JOIN memlist with memlist_attr for pcmps for mcaid_ids in memlist (keep memlist mcaid_ids);
 PROC SQL ; 
 CREATE TABLE int.memlist_final AS 
 SELECT a.mcaid_id
-     , a.enr_cnty
+/*     , a.enr_cnty*/
      , a.age
      , a.sex
      , a.race
-     , a.rae_person_new
-     , a.budget_group
+/*     , a.rae_person_new*/
+/*     , a.budget_group*/
      , a.FY
      , a.time 
 
@@ -177,7 +185,28 @@ LEFT JOIN int.memlist_attr_qrtr_1921 as b
 ON a.mcaid_id=b.mcaid_id 
 AND a.time = b.time ; 
 
-QUIT ; * 4097481 : 12 ; 
+QUIT ; *4/24 40958727 //  4097481 : 12 ; 
+
+/*DATA int.memlist_final (drop=budget_group); */
+/*SET  int.memlist_final ; */
+/*budget_grp_new = put(budget_group, budget_grp_new_.);*/
+/*RUN;*/
+
+PROC SORT DATA = int.memlist_final NODUPKEY; BY _ALL_; RUN; *14039876; 
+
+PROC SQL; 
+CREATE TABLE n_mcaid_ID AS 
+SELECT mcaid_id
+     , count(mcaid_id) as n
+FROM int.memlist_final
+GROUP by mcaid_id; 
+QUIT; 
+
+PROC FREQ DATA = n_mcaid_id; tables n; run; 
+
+PROC PRINT DATA = n_mcaid_ID (obs = 100) ; where n>12; run; 
+
+PROC PRINT DATA = int.memlist_final; where mcaid_id = "A066638"; run; 
 
 **************************************************************************
 * ---- SECTION03 BH Capitated --------------------------------------------

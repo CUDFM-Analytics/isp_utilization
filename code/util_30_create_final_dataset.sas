@@ -14,7 +14,7 @@
 
 
 * ==== Combine datasets with memlist_final ==================================;  
-proc sort data = int.memlist_final; by mcaid_id ; run ;  *1594686; 
+proc sort data = int.memlist_final; by mcaid_id ; run ;  
 
 ** Get isp info  ; 
 PROC SQL ; 
@@ -28,7 +28,7 @@ SELECT a.*
 FROM int.memlist_final as a
 LEFT JOIN int.isp_un_pcmp_dtstart as b
 ON   a.pcmp_loc_id = b.pcmp_loc_id ; 
-QUIT ; * 40974871 : 14 ; 
+QUIT ; *14039876; 
 
 * TESTS: - expecting time*int_imp to have all int_imp=0 for time 1,2
          - time_start_isp should only be 3> UPDATE 4>
@@ -54,7 +54,7 @@ SELECT a.*
 FROM int.a1 as a
 LEFT JOIN int.pcmp_types as b
 ON   a.pcmp_loc_id = b.pcmp ; 
-QUIT ; *14353570; 
+QUIT ; *14039876; 
 
 PROC SQL; 
 CREATE TABLE n_ids AS 
@@ -64,10 +64,9 @@ FROM int.a2
 GROUP BY mcaid_id; 
 QUIT; *1594074 : 1; 
 
-* tidy up ; 
+* tidy up 4/24 removed enr_county because there were somehow duplicates/ lost rae_person_new; 
 DATA int.a2a ; 
-SET  int.a2  (DROP = ENR_CNTY 
-                      TIME_START_ISP ) ;
+SET  int.a2  (DROP = TIME_START_ISP ) ;
 RENAME ind_isp=int ; 
 RUN ; *40974871 : 13; 
                       
