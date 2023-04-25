@@ -1,3 +1,7 @@
+# pdfs too large for github 
+*.pdf
+
+
 # Data folders
 */05_Results/*
 */03_data/*
