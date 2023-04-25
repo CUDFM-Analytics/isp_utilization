@@ -22,67 +22,86 @@ WHERE  month ge '01Jul2016'd
 AND    month le '30Jun2022'd;  
 QUIT; *66382081 4/24 //  663676624;
 
-* COST: rx, pc, total
-* UTIL: PC, ED (no total) > summed months in case there was > 1 month? ; 
+data util_0; 
+set util; 
+where month ge '01Jul2016'd and month le '30Jun2022'd;
+quarter_beg=intnx('QTR', month, 0, 'BEGINNING'); 
+format quarter_beg date9.;
+run;
+
 proc sql;
-create table int.util_1621 as
-select mcaid_id
-     , month
-     , sum(case when clmClass = 2 then pd_amt else 0 end) as pd_ffs_rx
-     , sum(case when clmClass = 4 then pd_amt else 0 end) as pd_ffs_pc
-     , sum(pd_amt)                                        as pd_ffs_total
-     , sum(case when clmClass = 4 then count  else 0 end) as n_ffs_pc
-     , sum(case when clmClass = 3 then count  else 0 end) as n_ffs_er
-from util
-group by MCAID_ID, month ; 
-quit; *Table int.UTIL_1621 created, with 27092342 rows and 7 columns. ;
+create table int.util_1622_0 as
+select a.*, (a.pd_amt/b.index_2021_1) as adj_pd_amount  /*divBY has no missing values*/
+from util_0 as a
+left join int.adj as b on a.quarter_beg=b.date;
+quit; *66382081 : 7 cols; 
+
+
+proc sort data=int.util_1622_0; by MCAID_ID month; run;
+
+proc sql;
+ create table int.util_1622_1 as
+ select
+ MCAID_ID,month,
+  sum(case when clmClass=1 then count else 0 end) as n_Hospitalizations,
+  sum(case when clmClass=4 then count else 0 end) as n_Primary_care,
+  sum(case when clmClass=3 then count else 0 end) as n_ER,
+  sum(case when clmClass=2 then count else 0 end) as n_Pharmacy,
+  sum(case when clmClass=5 then count else 0 end) as n_FFS_BH,
+  sum(case when clmClass=6 then count else 0 end) as n_Ancillary,
+  sum(case when clmClass=7 then count else 0 end) as n_HH_Therapy,
+  sum(case when clmClass=8 then count else 0 end) as n_Diagnostic_Procedures,
+  sum(case when clmClass=9 then count else 0 end) as n_Transportation,
+  sum(case when clmClass=10 then count else 0 end) as n_EE_Services,
+  sum(case when clmClass=10000 then count else 0 end) as n_Other,
+
+  sum(adj_pd_amount) as adj_pd_total,
+  sum(case when clmClass=1 then adj_pd_amount else 0 end) as adj_pd_Hospitalizations,
+  sum(case when clmClass=4 then adj_pd_amount else 0 end) as adj_pd_Primary_care,
+  sum(case when clmClass=3 then adj_pd_amount else 0 end) as adj_pd_ER,
+  sum(case when clmClass=2 then adj_pd_amount else 0 end) as adj_pd_Pharmacy,
+  sum(case when clmClass=5 then adj_pd_amount else 0 end) as adj_pd_FFS_BH,
+  sum(case when clmClass=6 then adj_pd_amount else 0 end) as adj_pd_Ancillary,
+  sum(case when clmClass=7 then adj_pd_amount else 0 end) as adj_pd_HH_Therapy,
+  sum(case when clmClass=8 then adj_pd_amount else 0 end) as adj_pd_Diagnostic_Procedures,
+  sum(case when clmClass=9 then adj_pd_amount else 0 end) as adj_pd_Transportation,
+  sum(case when clmClass=10 then adj_pd_amount else 0 end) as adj_pd_EE_Services,
+  sum(case when clmClass=10000 then adj_pd_amount else 0 end) as adj_pd_Other
+  
+from int.util_1622_0
+group by MCAID_ID,month;
+quit; *32835706, 25; 
+
+PROC CONTENTS DATA = int.util_1622_1; RUN; 
 
 * Create FY variable, get beginning of quarter from month variables to match to adj ; 
-DATA util1621a     ; 
-SET  int.util_1621 ; 
+DATA int.util1622_month; 
+SET  int.util_1622_1 ; 
 FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ; 
 format dt_qrtr date9.; * create quarter beginning date to get quarters ; 
 dt_qrtr = intnx('quarter', month ,0,'b');
-RUN; *27092342 rows and 7 columns. ;
+RUN; *32835706 rows and 27 columns. ;
 
 * Sum by quarters ; 
 proc sql;
-create table util1621b as
+create table int.util1622_qrtr as
 select mcaid_id
      , FY
      , dt_qrtr
-     , sum(pd_ffs_rx) as pd_rx_q
-     , sum(pd_ffs_pc) as pd_pc_q
-     , sum(pd_ffs_total) as pd_tot_q                           
-     , sum(n_ffs_pc) as n_pc_q
-     , sum(n_ffs_er) as n_er_q
-from util1621a
+     , sum(adj_pd_pharmacy)     as adj_pd_pharmacy_qrtr
+     , sum(adj_pd_Primary_care) as adj_pd_Primary_care_qrtr
+     , sum(adj_pd_total       ) as adj_pd_total_qrtr                      
+     , sum(n_Primary_care)      as n_Primary_care_qrtr
+     , sum(n_ER)                as n_ER_qrtr
+from util1622
 group by MCAID_ID, dt_qrtr; 
 quit; *Table int.UTIL_1621 created, with 32835706 rows and 8 columns. ;
 
-PROC SORT DATA = util1621b NODUPKEY ; BY _ALL_ ; RUN ; * 13941142 ; 
-
-* Join price adj index ; 
-PROC SQL ; 
-CREATE TABLE util1621_adj AS
-SELECT a.*
-     , b.index_2021_1
-FROM util1621b as a 
-LEFT JOIN int.adj as b 
-ON a.dt_qrtr = b.date ; 
-QUIT ; *16692009 rows and 9 columns ; 
-
-* calculate adjusted costs; 
-DATA int.util1621_adj (DROP=pd_rx_q pd_pc_q pd_tot_q index_2021_1); 
-SET  util1621_adj ;
-pd_rx_q_adj  = index_2021_1 * pd_rx_q;
-pd_pc_q_adj  = index_2021_1 * pd_pc_q;
-pd_tot_q_adj = index_2021_1 * pd_tot_q;
-RUN; *16692009 rows and 8 columns ; 
+PROC SORT DATA = int.util1622_qrtr NODUPKEY ; BY _ALL_ ; RUN ; * 16692009 : 8 ; 
 
 * SPLIT INTO 1618 for cat and 19-21 for outcomes ; 
-DATA util_1921 util_1618 (keep = mcaid_id FY dt_qrtr pd_tot_q_adj ); 
-SET  int.util1621_adj ; 
+DATA util_1921 util_1618 (keep = mcaid_id FY dt_qrtr adj_pd_total_qrtr); 
+SET  int.util1622_qrtr ; 
 IF   FY in ('2019','2020','2021') THEN OUTPUT util_1921;
 ELSE OUTPUT util_1618;
 RUN; 
@@ -97,7 +116,7 @@ proc sql;
 create table int.util_1618_long as
 select mcaid_id
      , FY
-     , sum(pd_tot_q_adj) as pd_tot_fy_adj
+     , sum(adj_pd_total_qrtr) as adj_pd_total_FY
 from util_1618
 group by MCAID_ID, FY;
 quit; *3252795 : 3 - reduced to approx 1/5th ;
@@ -108,18 +127,19 @@ PROC SORT DATA = int.util_1618_long; by FY; RUN;
 PROC RANK DATA = int.util_1618_long
      GROUPS    = 100 
      OUT       = util1618r;
-     VAR       pd_tot_fy_adj ; 
+     VAR       adj_pd_total_FY ; 
      BY        FY ; 
-     RANKS     adj_pd_rank ;
+     RANKS     adj_pd_FY_rank ;
 RUN ; 
 
 PROC SORT DATA = util1618r ; by mcaid_id ; RUN ;  
+
 PROC TRANSPOSE DATA = util1618r 
      OUT = util1618r2 (DROP= _NAME_ _LABEL_);
 by mcaid_id ;
 ID FY ; 
-VAR adj_pd_rank; 
-RUN;  * 105841 : 4 ; 
+VAR adj_pd_FY_rank; 
+RUN;  * 1552079 : 4 ; 
      
 * Make cats but keep the original vals to check ; 
 DATA int.util_1618_cat  ; 
@@ -128,15 +148,6 @@ adj_pd_total_16cat_A = put(_2016, adj_pd_total_YRcat_.);
 adj_pd_total_17cat_A = put(_2017, adj_pd_total_YRcat_.);
 adj_pd_total_18cat_A = put(_2018, adj_pd_total_YRcat_.);
 RUN ; *1552079: 7 ; 
-
-PROC FREQ DATA = int.util_1618_cat; 
-tables adj_pd_total_16cat_A 
-       adj_pd_total_17cat_A 
-       adj_pd_total_18cat_A 
-       _2016*adj_pd_total_16cat_A
-       _2017*adj_pd_total_17cat_A
-       _2018*adj_pd_total_18cat_A;
-RUN; 
 
 PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; 
 CLASS  adj_pd_total_16cat_A ;
@@ -239,9 +250,11 @@ SELECT mcaid_id
 FROM adj_cat2 ; 
 QUIT ; *2066673; 
 
-PROC FREQ DATA = int.adj_pd_total_YYcat2; 
+PROC FREQ DATA = int.adj_pd_total_YYcat; 
 tables adj: ;
 RUN ; 
+
+
 
 *----------------------------------------------------------------------------------------------
 SECTION 01d.3 19-21 
@@ -264,12 +277,24 @@ PROC SQL ;
 CREATE TABLE int.util1921_adj AS 
 SELECT a.*
      , b.pcmp_loc_id
-     , b.n_pcmp_per_q
+     , b.n_months_per_q
      , b.ind_isp
-     , b.ind_nonisp
 FROM util1921a as a
-left join int.memlist_attr_qrtr_1921 as b 
-on a.mcaid_id=b.mcaid_id and a.cat_qrtr = b.q ; 
-QUIT ; *7681680 rows and 13 columns;
+inner join int.memlist_attr_qrtr_1921 as b 
+on a.mcaid_id=b.mcaid_id and a.cat_qrtr = b.time ; 
+QUIT ; *04/24 7982472;
+
+/** join quarter memlist attrib ; */
+/*PROC SQL ; */
+/*CREATE TABLE int.util1921_adj AS */
+/*SELECT a.**/
+/*     , b.pcmp_loc_id*/
+/*     , b.n_months_per_q*/
+/*     , b.ind_isp*/
+/*FROM util1921a as a*/
+/*left join int.memlist_attr_qrtr_1921 as b */
+/*on a.mcaid_id=b.mcaid_id and a.cat_qrtr = b.time ; */
+/*QUIT ; *04/24 8430032, 12*/
+/*7681680 rows and 13 columns;*/
 
 PROC SORT DATA = int.util1921_adj ; BY FY ; RUN ; 

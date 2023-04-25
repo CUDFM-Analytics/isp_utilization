@@ -1,8 +1,8 @@
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 
-%let dat = data.analysis_dataset ; 
+%let dat = data.analysis_dataset; 
 
-ods pdf file = "&report./eda_freq_20230330.pdf";
+ods pdf file = "&report./eda_freq_20230424.pdf";
 
 PROC CONTENTS DATA = &dat VARNUM ; RUN ;  
 
@@ -44,6 +44,11 @@ QUIT;
 Title "Time Frequency by Member" ; 
 PROC FREQ DATA = data._max_time ; 
 tables time / nopercent norow; 
+RUN; 
+
+Title "Time Frequency by Member" ; 
+PROC FREQ DATA = &dat; 
+tables adj: ; 
 RUN; 
 
 Title "Time Frequency by Member, Intervention (non-varying)"; 
@@ -117,41 +122,30 @@ RUN;
 
 ODS pdf close; 
 
-    
-PROC PRINT DATA = int.adj_pd_total_yycat (obs=50);
-WHERE adj_pd_total_16cat = '-1' & _2016 >0; 
-RUN;
 * where eligibility = -1 and cost > 0, why? Is possible? 
 check mcaidids "A049816", "A371525", "A653864", "A789247"; 
 * Checked qry_longitudinal and qry_monthlyutilization; 
-
-PROC PRINT DATA = ana.qry_longitudinal (obs=1000);
-where mcaid_id in ("A049816", "A371525", "A653864", "A789247")
-AND   month ge "01JAN2016"d
-AND   month le "31DEC2016"d; 
-RUN; 
-
-PROC PRINT DATA = ana.qry_monthlyutilization (obs=1000);
-where mcaid_id in ("A049816", "A371525", "A653864", "A789247")
-AND   month ge "01JAN2016"d
-AND   month le "31DEC2016"d; 
-RUN; 
-************************************************************************************
-FIX adj variables - get new ones from int.adj_pd_total_yycat and rewrite final dataset
-************************************************************************************; 
-DATA final; 
-SET  data.analysis_dataset2 (DROP=adj:);
-RUN; 
-
-PROC CONTENTS DATA = int.adj_pd_total_yycat; run; 
-
-PROC SQL;
-CREATE TABLE data.analysis_dataset3 AS 
-SELECT a.*
-     , b.adj_pd_total_16cat
-     , b.adj_pd_total_17cat
-     , b.adj_pd_total_18cat
-FROM final as A
-LEFT JOIN int.adj_pd_total_yycat as B
-ON a.mcaid_id = b.mcaid_id; 
-QUIT; 
+/**/
+/*PROC PRINT DATA = ana.qry_longitudinal (obs=1000);*/
+/*where mcaid_id in ("A049816", "A371525", "A653864", "A789247")*/
+/*AND   month ge "01JAN2016"d*/
+/*AND   month le "31DEC2016"d; */
+/*RUN; */
+/**/
+/*PROC PRINT DATA = ana.qry_monthlyutilization (obs=1000);*/
+/*where mcaid_id in ("A049816", "A371525", "A653864", "A789247")*/
+/*AND   month ge "01JAN2016"d*/
+/*AND   month le "31DEC2016"d; */
+/*RUN; */
+/**/
+/*PROC PRINT DATA = ana.qry_monthlyutilization (obs=1000);*/
+/*where mcaid_id in ("A001791", "A009133", "A009604", "A010792")*/
+/*AND   month ge "01JAN2016"d*/
+/*AND   month le "31DEC2016"d; */
+/*RUN; */
+/**/
+/*PROC PRINT DATA = ana.qry_longitudinal (obs=1000);*/
+/*where mcaid_id in ("A001791", "A009133", "A009604", "A010792")*/
+/*AND   month ge "01JAN2016"d*/
+/*AND   month le "31DEC2016"d; */
+/*RUN; */

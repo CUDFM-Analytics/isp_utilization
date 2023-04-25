@@ -41,10 +41,6 @@ run;
 %one_adj(adjvar=adj_pd_total_17cat); * success; 
 %one_adj(adjvar=adj_pd_total_18cat); * success; 
 
-
-
-
-
 * probability model 
 Per Mark, try without bh and adj vars, then we will slowly re-introduce if so;
 
@@ -241,9 +237,9 @@ PROC GEE DATA  = &dat DESC;
             bh_er2016   bh_er2017   bh_er2018 
             bh_hosp2016 bh_hosp2017 bh_hosp2018 
             bh_oth2016  bh_oth2017  bh_oth2018
-            adj_pd_total_16cat (ref="0")
-            adj_pd_total_17cat (ref="0")
-            adj_pd_total_18cat (ref="0")
+            adj_pd_total_16cat (ref="-1")
+            adj_pd_total_17cat (ref="-1")
+            adj_pd_total_18cat (ref="-1")
             time (ref="1")
             int (ref="0")
             int_imp (ref="0")
@@ -262,6 +258,8 @@ PROC GEE DATA  = &dat DESC;
   repeated subject = mcaid_id / type = exch;
   store p_model;
 run;
+
+
 
 
 * probability model ;

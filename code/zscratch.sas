@@ -68,8 +68,9 @@ PROC UNIVARIATE DATA = data.a7 ;
 VAR cost_rx_tc cost_ffs_tc ; 
 RUN ;
 
-proc print data = int.a3; 
-            where mcaid_id in ("D460887");  
+proc print data = &dat (obs=100); 
+VAR mcaid_id adj: ; 
+            where adj_pd_total_16cat = -1 ;  
             RUN ; 
 PROC PRINT DATA = int.elig1618_memlist2 ; 
             where mcaid_id in ("D460887"); 
