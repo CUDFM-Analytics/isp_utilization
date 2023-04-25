@@ -221,7 +221,7 @@ util_er   = coalesce(mu_n_er    ,0);
 util_bh_o = coalesce(mu_n_bh_oth,0);
 run ; * 14347065 ; 
 
-proc contents data = int.a6; run; 
+proc contents data = int.a6a; run; 
 
 *** TOP CODE cost vars ; 
 PROC SORT DATA = int.a6 ; BY FY ; RUN ; 
@@ -253,22 +253,22 @@ PROC PRINT DATA = int.mu_rx_topcode ;
 PROC PRINT DATA = int.mu_ffs_topcode;  
 PROC PRINT DATA = int.mu_pc_topcode ; RUN ; 
 
-%LET ffsmin19 = 2092.41; %LET ffsmu19  = 6565.38; 
-%LET ffsmin20 = 2068.44; %LET ffsmu20  = 6620.08; 
-%LET ffsmin21 = 2119.57; %LET ffsmu21  = 6877.58; 
+%LET ffsmin19 = 2270.66; %LET ffsmu19  = 7130.55; 
+%LET ffsmin20 = 2119.90; %LET ffsmu20  = 6783.28; 
+%LET ffsmin21 = 2076.88; %LET ffsmu21  = 6755.72; 
 
-%LET rxmin19 = 305.24; %LET rxmu19  = 1686.94; 
-%LET rxmin20 = 317.11; %LET rxmu20  = 1759.34; 
-%LET rxmin21 = 333.34; %LET rxmu21  = 1873.25; 
+%LET rxmin19 = 329.97; %LET rxmu19  = 1826.92; 
+%LET rxmin20 = 324.61; %LET rxmu20  = 1801.09; 
+%LET rxmin21 = 324.50; %LET rxmu21  = 1827.30; 
 
-%LET pcmin19 = 191.60; %LET pcmu19  = 320.68; 
-%LET pcmin20 = 189.62; %LET pcmu20  = 328.85; 
-%LET pcmin21 = 193.03; %LET pcmu21  = 332.67; 
+%LET pcmin19 = 206.71; %LET pcmu19  = 346.20; 
+%LET pcmin20 = 191.70; %LET pcmu20  = 333.94; 
+%LET pcmin21 = 187.23; %LET pcmu21  = 323.26; 
 
 DATA int.a7  (rename = ( mu_ffs= cost_ffs_tc 
                          mu_rx = cost_rx_tc
                          mu_pc = cost_pc_tc )); 
-SET  int.a6a (DROP= mu_pd_rx mu_pd_total mu_n_pc mu_n_tele mu_n_er mu_n_bh_oth) ; 
+SET  int.a6a ; 
 
 * ffs total : Replace 96th percentile & up with mean ; 
 IF mu_ffs >= &ffsmin19 & FY = 2019 then mu_ffs = &ffsmu19 ; 
@@ -282,11 +282,10 @@ IF mu_rx >= &rxmin21 & FY = 2021 then mu_rx = &rxmu21 ;
 
 * ffs pc  : Replace 96th percentile & up with mean ; 
 IF mu_pc >= &pcmin19 & FY = 2019 then mu_pc = &pcmu19 ; 
-
 IF mu_pc >= &pcmin20 & FY = 2020 then mu_pc = &pcmu20 ; 
 IF mu_pc >= &pcmin21 & FY = 2021 then mu_pc = &pcmu21 ; 
 
-RUN ; * 14347065 : 35; 
+RUN ; * 14039876 : 35; 
 
 PROC PRINT DATA = int.a7 (obs=100); run; 
 PROC CONTENTS DATA = int.a7; run; 
@@ -345,5 +344,11 @@ LABEL age            = "Age (cat)"
       ind_util_pc = "Indicator, Util: PC n > 0"
       ind_util_tel = "Indicator, Util: Telehealth n > 0"
       ;
-RUN; * 3/30 lost 88 people - all sex unknown? 
+RUN; * 4/24 NOTE: There were 14039876 observations read from the data set INT.A7.
+NOTE: The data set DATA.ANALYSIS_DATASET has 14039803 observations and 35 variables.
+
+3/30 lost 88 people - all sex unknown? 
 * from 14347065 to 14346977 (same as before tho from earlier in the week);
+
+proc contents data = data.analysis_dataset; 
+run; 

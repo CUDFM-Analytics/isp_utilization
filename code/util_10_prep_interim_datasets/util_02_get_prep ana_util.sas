@@ -10,7 +10,7 @@ DEPENDS  : ana subset folder, config file [dependencies]
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 ***********************************************************************************************;
-libname ana clear ; 
+/*libname ana clear ; */
 *----------------------------------------------------------------------------------------------
 SECTION 01d.1 Get Monthly Utilization Data 16-21 for memlist
 ----------------------------------------------------------------------------------------------;
@@ -113,56 +113,104 @@ SECTION 01d.2 16-18 categorical variables
 ----------------------------------------------------------------------------------------------;
 * SUM the year total per member ; 
 proc sql;
-create table int.util_1618_long as
+create table int.util_1618_FY as
 select mcaid_id
      , FY
      , sum(adj_pd_total_qrtr) as adj_pd_total_FY
 from util_1618
 group by MCAID_ID, FY;
-quit; *3252795 : 3 - reduced to approx 1/5th ;
+quit; *3252795 : 3 - reduced to approx 1/5th, should have 0 values still  ;
 
-PROC SORT DATA = int.util_1618_long; by FY; RUN; 
+PROC PRINT DATA = int.util_1618_long (obs=10); where adj_pd_total_FY = 0; RUN; 
+/**/
+/*PROC SORT DATA = int.util_1618_long; by FY; RUN; */
+/**/
+/**https://support.sas.com/kb/22/759.html shows to use rank and groups=100; */
+/*PROC RANK DATA = int.util_1618_long*/
+/*     GROUPS    = 100 */
+/*     OUT       = int.util_1618_long_rank_non0;*/
+/*     VAR       adj_pd_total_FY ; */
+/*     BY        FY ; */
+/*     RANKS     adj_pd_FY_rank ;*/
+/*     WHERE     adj_pd_total_FY > 0;*/
+/*RUN ; */
+/**/
+/*PROC FREQ DATA = int.util_1618_long_rank_non0;*/
+/*tables adj_pd_FY_rank*FY;*/
+/*where adj_pd_FY_rank > 94; */
+/*RUN; */
+/**/
+/** Check with another way too; */
+/*PROC UNIVARIATE DATA = int.util_1618_long;*/
+/*var adj_pd_total_FY;*/
+/*BY  FY;*/
+/*output out = int.util_1618_check_95p*/
+/*pctlpts = 95*/
+/*pctlpre = P_;*/
+/*WHERE adj_pd_total_FY ge 0;*/
+/*RUN; * 2016 = 22420.23, 2017 24956.73, 2018 28276.199;*/
+/**/
+/** Merge back in the 0's ; */
+/*PROC SQL; */
+/*CREATE TABLE int.util_1618_long_rank_full AS */
+/*SELECT a.**/
+/*     , b.**/
+/*FROM int.util_1618_long as A*/
+/*FULL JOIN int.util_1618_long_rank_non0 as B*/
+/*ON a.mcaid_id = b.mcaid_id*/
+/*AND a.FY = b.FY; */
+/*QUIT; */
+/**/
+/*PROC SORT DATA = int.util_1618_long_rank_non0; by mcaid_id adj_pd_FY_rank; RUN ;  *3229688; */
+/*PROC PRINT DATA = int.util_1618_long_rank_non0; */
+/*** CHECK mcaid ID values where there were o's; */
+/*PROC PRINT DATA = int.util_1618_long_rank_non0 (obs=10); */
+/*/*WHERE mcaid_id in ("A005784","A023340","A072859","A101013");*/*/
+/*WHERE adj_pd_FY_rank = 95 AND FY=2016;*/
+/*RUN;*/
+/**/
+/*** CHECK mcaid ID values where there were o's; */
+/*PROC PRINT DATA = int.util_1618_long_rank_full (obs=10); */
+/*/*WHERE mcaid_id in ("A005784","A023340","A072859","A101013");*/*/
+/*WHERE adj_pd_FY_rank = 95 AND FY=2016;*/
+/*RUN;*/
+/**/
+/*PROC TRANSPOSE DATA = int.util_1618_long_rank_non0 */
+/*     OUT = util_1618_wide_rank (DROP= _NAME_ _LABEL_);*/
+/*by mcaid_id ;*/
+/*ID FY ; */
+/*VAR adj_pd_FY_rank; */
+RUN;  * 1552079 : 4 ;
 
-*https://support.sas.com/kb/22/759.html shows to use rank and groups=100; 
-PROC RANK DATA = int.util_1618_long
-     GROUPS    = 100 
-     OUT       = util1618r;
-     VAR       adj_pd_total_FY ; 
-     BY        FY ; 
-     RANKS     adj_pd_FY_rank ;
-RUN ; 
-
-PROC SORT DATA = util1618r ; by mcaid_id ; RUN ;  
-
-PROC TRANSPOSE DATA = util1618r 
-     OUT = util1618r2 (DROP= _NAME_ _LABEL_);
-by mcaid_id ;
-ID FY ; 
-VAR adj_pd_FY_rank; 
-RUN;  * 1552079 : 4 ; 
-     
-* Make cats but keep the original vals to check ; 
-DATA int.util_1618_cat  ; 
-SET  util1618r2     ; 
-adj_pd_total_16cat_A = put(_2016, adj_pd_total_YRcat_.);
-adj_pd_total_17cat_A = put(_2017, adj_pd_total_YRcat_.);
-adj_pd_total_18cat_A = put(_2018, adj_pd_total_YRcat_.);
-RUN ; *1552079: 7 ; 
-
-PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; 
-CLASS  adj_pd_total_16cat_A ;
-VAR _2016;
-RUN; 
-
-PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; 
-CLASS  adj_pd_total_17cat_A ;
-VAR _2017;
-RUN; 
-
-PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; 
-CLASS  adj_pd_total_18cat_A ;
-VAR _2018;
-RUN; 
+/*PROC TRANSPOSE DATA = int.util_1618_long_rank_non0 */
+/*     OUT = util_1618_wide_pd (DROP= _NAME_ _LABEL_);*/
+/*by mcaid_id ;*/
+/*ID FY ; */
+/*VAR adj_pd_total_FY; */
+/*RUN;  * 1552079 : 4 ; */
+/*     */
+/** Make cats but keep the original vals to check ; */
+/*DATA int.util_1618_cat  ; */
+/*SET  util1618r2     ; */
+/*adj_pd_total_16cat_A = put(_2016, adj_pd_total_YRcat_.);*/
+/*adj_pd_total_17cat_A = put(_2017, adj_pd_total_YRcat_.);*/
+/*adj_pd_total_18cat_A = put(_2018, adj_pd_total_YRcat_.);*/
+/*RUN ; *1552079: 7 ; */
+/**/
+/*PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; */
+/*CLASS  adj_pd_total_16cat_A ;*/
+/*VAR _2016;*/
+/*RUN; */
+/**/
+/*PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; */
+/*CLASS  adj_pd_total_17cat_A ;*/
+/*VAR _2017;*/
+/*RUN; */
+/**/
+/*PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX; */
+/*CLASS  adj_pd_total_18cat_A ;*/
+/*VAR _2018;*/
+/*RUN; */
 
 
 ****

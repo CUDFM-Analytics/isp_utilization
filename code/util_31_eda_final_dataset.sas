@@ -72,7 +72,7 @@ RUN ;
 proc univariate data = &dat ; 
 VAR cost_rx_tc cost_ffs_tc cost_pc_tc ; 
 RUN; 
-ods text "By intervention: univariates"; 
+ods text ="By intervention: univariates"; 
 proc univariate data = &dat ; 
 by int ; 
 VAR cost_rx_tc cost_ffs_tc cost_pc_tc ; 

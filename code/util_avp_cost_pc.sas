@@ -232,8 +232,9 @@ TITLE "probability model";
 PROC GEE DATA  = &dat DESC;
      CLASS  mcaid_id    
             age         sex     race        
-            rae_person_new 
-            budget_grp_new          fqhc    
+/*            rae_person_new */
+/*            budget_grp_new          */
+            fqhc    
             bh_er2016   bh_er2017   bh_er2018 
             bh_hosp2016 bh_hosp2017 bh_hosp2018 
             bh_oth2016  bh_oth2017  bh_oth2018
@@ -245,7 +246,8 @@ PROC GEE DATA  = &dat DESC;
             int_imp (ref="0")
             ind_cost_pc (ref="0");
      model ind_cost_pc = age            sex             race 
-                         rae_person_new budget_grp_new  fqhc
+/*                         rae_person_new budget_grp_new  */
+                         fqhc
                          bh_er2016      bh_er2017       bh_er2018 
                          bh_hosp2016    bh_hosp2017     bh_hosp2018 
                          bh_oth2016     bh_oth2017      bh_oth2018
