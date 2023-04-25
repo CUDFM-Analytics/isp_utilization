@@ -12,7 +12,6 @@
 * PROJECT PATHS, MAPPING; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 
-
 * ==== Combine datasets with memlist_final ==================================;  
 proc sort data = int.memlist_final; by mcaid_id ; run ;  
 
@@ -129,6 +128,29 @@ RUN ;  * 3/30 14347065 : 27 ;
 PROC PRINT DATA = int.a3b (obs=100) ; where adj_pd_total_16cat = ''; RUN; 
 
 * int.a3c
+
+* ADJ pctile values ; 
+proc sql noprint;
+  select 
+    name, 
+    cats(':',name)
+  into 
+    :COL_NAMES separated by ',', 
+    :MVAR_NAMES separated by ','
+  from sashelp.vcolumn 
+  where 
+    libname = "INT" 
+    and memname = "INT.PCTILE_VALS"
+  ;
+  select &COL_NAMES into &MVAR_NAMES
+  from int.pctile_vals;
+quit;
+
+%put &col_names; 
+%put &mvar_names; 
+
+
+
 ADJ `-1` values below: adj dataset created in util_02_get_prep_ana_util from a full join using all
 qry_monthlyutilization and qry_longitudinal values from FYs 16-18
 ID's not present in int.a3b were not eligible and can be marked with -1 as they were not present in either ana dataset; 

@@ -7,18 +7,9 @@ DEPENDS  : ana subset folder, config file [dependencies]
 NEXT     : [left off on row... or what step to do next... ]  ;
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-libname ana clear; 
 ***********************************************************************************************;
 
 * ==== SECTION01 ==============================================================================
-get original longitudinal & demographics files 
-process: 15_22 dataset, 19_22 dataset, and memlist (S4), join RAE
-create vars: FY, last_day_fy, age for subsetting 0-64
-Inputs      ana.qry_longitudinal  [1,177,273,652 : 25] 2023-03-14
-            ana.qry_demographics  [      3008709 :  7] 2023-03-14
-Outputs     UPDATE       [     78680146 : 25]
-Notes       Got from Jake and did all in R, just got the _c var here 
-;
 
 * copy datasets from ana.;
 PROC CONTENTS DATA = ana.qry_demographics VARNUM ; RUN ; 
@@ -55,8 +46,6 @@ RUN;  * 95582030 4/24 : 95609204  observations and 10;
 /*DATA int.pcmp_type_qrylong ; */
 /*SET  int.qrylong_1621 (KEEP = pcmp_loc_id pcmp_loc_type_cd num_pcmp_type pcmp_type) ; */
 /*RUN ; */
-
-libname ana clear; 
 
 PROC SORT DATA = int.pcmp_type_qrylong NODUPKEY ; BY _ALL_ ; RUN ; 
 
@@ -112,22 +101,15 @@ SET  qrylong_1621a    ;
   age = age_end_fy;
 RUN; *82160141;
 
-proc print data = int.qrylong_1622; where mcaid_id = "A066638"; Run; 
+PROC CONTENTS DATA = int.qrylong_1622 varnum; run; 
 
-PROC SORT 
-DATA  = int.qrylong_1622 NODUPKEY OUT = int.memlist ;
+DATA  int.memlist; 
+SET   int.qrylong_1622;
 WHERE pcmp_loc_ID ne ' ' 
 AND   rae_person_new ne .
 AND   month ge '01JUL2019'd
 AND   month le '30JUN2022'd;
-BY    MCAID_ID month;
-RUN ;  *4/24 memlist 40958728, memlist = n40974871 ;
-
-        * Unique mcaid_ids;
-        PROC SQL ; 
-        SELECT COUNT (DISTINCT mcaid_id) as n_mcaid_id 
-        FROM int.memlist ; 
-        QUIT ; * 1593607 WHY 4/24 // 1594074 ; 
+RUN ;  *4/24 memlist 40958727, memlist = n40974871 ;
 
 * add time to memlit ; 
 %create_qrtr(data=int.memlist, set=int.memlist, var= dt_qrtr, qrtr=time);
@@ -135,64 +117,142 @@ RUN ;  *4/24 memlist 40958728, memlist = n40974871 ;
 PROC SORT DATA = int.qrylong_1622 ; BY mcaid_id ; 
 PROC SORT DATA = int.memlist      ; BY mcaid_id ; RUN ; 
 
-DATA  int.qrylong_1622_months ; 
+DATA  int.qrylong_1622_memlist ; 
 MERGE int.qrylong_1622 (in=a) int.memlist (in=b KEEP=mcaid_id) ; 
 BY    mcaid_id; 
 IF    a and b; 
 RUN ; *73404937: 11; 
 
-%create_qrtr(data=int.qrylong_1622_months, set=int.qrylong_1622, var=month,qrtr=time);
+%create_qrtr(data=int.qrylong_1622_memlist, set=int.qrylong_1622_memlist, var=dt_qrtr,qrtr=time);
 
-PROC CONTENTS DATA = int.qrylong_1622_months; run; 
-
-PROC SORT DATA = int.qrylong_1622_months; by mcaid_id time; run; 
-
-PROC CONTENTS DATA = int.qrylong_1622_time; run; 
-DATA int.qrylong_1622_time; 
-SET  int.qrylong_1622 (DROP = month) ;
-RUN ;  *82160141;
-
-PROC SORT DATA = int.qrylong_1622_time NODUPKEY ; BY _ALL_ ; RUN ; 
+PROC SORT DATA = int.qrylong_1622_month NODUPKEY ; BY _ALL_ ; RUN ; 
+*32115823 observations on 4/25; 
 *NOTE: There were 82160141 observations read from the data set INT.QRYLONG_1622_TIME.
 NOTE: 51565316 observations with duplicate key values were deleted.
 NOTE: The data set INT.QRYLONG_1622_TIME has 30594825 observations and 10 variables.;
 
-PROC PRINT DATA = int.qrylong_1622_time (obs = 1000); RUN; 
+PROC PRINT DATA = int.qrylong_1622_time (obs = 100); RUN; 
+PROC CONTENTS DATA = int.qrylong_1921              ; RUN;
+PROC CONTENTS DATA = int.memlist ; RUN; 
 
-PROC CONTENTS DATA = int.memlist_final VARNUM; RUN; 
+* Get MAX COUNTY (there were duplicates where member had > 1 county per quarter) ; 
+PROC SQL; 
+CREATE TABLE county AS
+SELECT mcaid_id
+     , dt_qrtr
+     , enr_cnty
+     , time
+FROM (SELECT *
+           , max(month) AS max_mon_by_cnty 
+      FROM (SELECT *
+                 , count(enr_cnty) as n_county 
+            FROM int.memlist
+            GROUP BY mcaid_id 
+                   , dt_qrtr
+                   , enr_cnty) 
+      GROUP BY mcaid_id, dt_qrtr, n_county)  
+GROUP BY mcaid_id, dt_qrtr
+HAVING max(n_county)=n_county
+AND    month=max_mon_by_cnty;
+QUIT; *14039876; 
+
+PROC SQL; 
+CREATE TABLE budget AS
+SELECT mcaid_id
+     , dt_qrtr
+     , budget_group
+     , time
+FROM (SELECT *
+           , max(month) AS max_mon_by_budget
+      FROM (SELECT *
+                 , count(budget_group) as n_budget_group 
+            FROM int.memlist
+            GROUP BY mcaid_id 
+                   , dt_qrtr
+                   , budget_group) 
+      GROUP BY mcaid_id, dt_qrtr, n_budget_group)  
+GROUP BY mcaid_id, dt_qrtr
+HAVING max(n_budget_group)=n_budget_group
+AND    month=max_mon_by_budget;
+QUIT; *14039876; 
+
+PROC SQL; 
+CREATE TABLE rae AS
+SELECT mcaid_id
+     , dt_qrtr
+     , rae_person_new
+     , time
+FROM (SELECT *
+           , max(month) AS max_mon_by_rae
+      FROM (SELECT *
+                 , count(rae_person_new) as n_rae_person_new 
+            FROM int.memlist
+            GROUP BY mcaid_id 
+                   , dt_qrtr
+                   , rae_person_new) 
+      GROUP BY mcaid_id, dt_qrtr, n_rae_person_new)  
+GROUP BY mcaid_id, dt_qrtr
+HAVING max(n_rae_person_new)=n_rae_person_new
+AND    month=max_mon_by_rae;
+QUIT; *14039876; 
+
+proc sql; 
+create table n_ids_budget AS 
+select mcaid_id
+	 , count(mcaid_id) as n_ids
+FROM budget
+GROUP BY mcaid_ID;
+quit; 
+
+*macro will pull ids >12; 
+%macro check_n_id(ds=);
+proc sql; 
+create table n_ids_&ds AS 
+select mcaid_id
+	 , count(mcaid_id) as n_ids
+FROM &ds
+GROUP BY mcaid_ID
+having n_ids>12;
+quit; 
+%mend;
+
+%check_n_id(ds=budget); *0;
+%check_n_id(ds=county); *0;
+%check_n_id(ds=rae);    *0;
 
 * LAST UPDATED 4/24 (all above to here)
 JOIN memlist with memlist_attr for pcmps for mcaid_ids in memlist (keep memlist mcaid_ids);
 PROC SQL ; 
 CREATE TABLE int.memlist_final AS 
 SELECT a.mcaid_id
-/*     , a.enr_cnty*/
      , a.age
      , a.sex
      , a.race
-/*     , a.rae_person_new*/
-/*     , a.budget_group*/
      , a.FY
      , a.time 
-
      , b.pcmp_loc_id 
      , b.n_months_per_q
      , b.ind_isp
- 
+     , c.budget_group
+     , d.enr_cnty
+     , e.rae_person_new
 FROM int.memlist as a
+
 LEFT JOIN int.memlist_attr_qrtr_1921 as b
+ON a.mcaid_id=b.mcaid_id AND a.time = b.time 
 
-ON a.mcaid_id=b.mcaid_id 
-AND a.time = b.time ; 
+LEFT JOIN budget AS c
+ON a.mcaid_id=c.mcaid_id AND a.time = c.time 
 
-QUIT ; *4/24 40958727 //  4097481 : 12 ; 
+LEFT JOIN county AS d
+ON a.mcaid_id=d.mcaid_id AND a.time = d.time 
 
-/*DATA int.memlist_final (drop=budget_group); */
-/*SET  int.memlist_final ; */
-/*budget_grp_new = put(budget_group, budget_grp_new_.);*/
-/*RUN;*/
+LEFT JOIN rae AS e
+ON a.mcaid_id=e.mcaid_id AND a.time = e.time ;
+QUIT ; *4/24 40958727 (twice, and second time with the joins) //  4097481 : 12 ; 
 
 PROC SORT DATA = int.memlist_final NODUPKEY; BY _ALL_; RUN; *14039876; 
+%check_n_id(var=budget); *0;
 
 PROC SQL; 
 CREATE TABLE n_mcaid_ID AS 

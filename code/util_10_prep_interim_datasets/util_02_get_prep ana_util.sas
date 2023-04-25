@@ -199,6 +199,9 @@ SELECT mcaid_id
 FROM elig_and_util; 
 QUIT ; *2066673; 
 
+PROC PRINT DATA = int.adj_pd_total_yy (obs=20); run; 
+
+
 *----------------------------------------------------------------------------------------------
 SECTION 01d.3 19-21 
 1) Create quarter variable in util1921
@@ -228,3 +231,27 @@ on a.mcaid_id=b.mcaid_id and a.cat_qrtr = b.time ;
 QUIT ; *04/24 7982472;
 
 PROC SORT DATA = int.util1921_adj ; BY FY ; RUN ; 
+
+** GET PERCENTILES FOR ALL & TOP CODE DV's ; 
+* 1618; 
+%macro pctl_1618(var,out,pctlpre);
+proc univariate noprint data=int.adj_pd_total_yy; 
+where &var gt 0; 
+var &var; 
+output out=&out pctlpre=&pctlpre pctlpts= 50, 75, 90, 95; 
+run;
+%mend; 
+
+%pctl_1618(var=adj_pd_total_16_cost,
+             int.pd16pct,
+             pctlpre = P_p16_); 
+
+%pctl_1618(var=adj_pd_total_17_cost,
+             int.pd17pct,
+             pctlpre = P_p17_); 
+
+%pctl_1618(var=adj_pd_total_18_cost,
+             int.pd18pct,
+             pctlpre = P_p18_); 
+
+data int.pctile_vals; merge pd16pct pd17pct pd18pct ; run;

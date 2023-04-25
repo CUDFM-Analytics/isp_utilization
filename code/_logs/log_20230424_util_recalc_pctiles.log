@@ -1,0 +1,1213 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           2.75 seconds
+      cpu time            0.87 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+
+68   PROC PRINT DATA = int.util_1618_long_rank_full;
+NOTE: Writing HTML Body file: sashtml.htm
+69   WHERE mcaid_id in ("A005784","A023340","A072859","A101013");
+70   RUN;
+
+NOTE: There were 9 observations read from the data set INT.UTIL_1618_LONG_RANK_FULL.
+      WHERE mcaid_id in ('A005784', 'A023340', 'A072859', 'A101013');
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           1:17.96
+      cpu time            0.40 seconds
+
+
+71   ** CHECK mcaid ID values where there were o's;
+72   PROC PRINT DATA = int.util_1618_long_rank_full (obs=10);
+73   /*WHERE mcaid_id in ("A005784","A023340","A072859","A101013");*/
+74   WHERE adj_pd_FY_rank = 95 ;
+75   RUN;
+
+NOTE: There were 10 observations read from the data set INT.UTIL_1618_LONG_RANK_FULL.
+      WHERE adj_pd_FY_rank=95;
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           2.00 seconds
+      cpu time            0.03 seconds
+
+
+76   PROC PRINT DATA = int.util_1618_long_rank_full (obs=10);
+77   /*WHERE mcaid_id in ("A005784","A023340","A072859","A101013");*/
+78   WHERE adj_pd_FY_rank = 95 AND FY=2016;
+79   RUN;
+
+NOTE: There were 10 observations read from the data set INT.UTIL_1618_LONG_RANK_FULL.
+      WHERE (adj_pd_FY_rank=95) and (FY=2016);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           3.34 seconds
+      cpu time            0.06 seconds
+
+
+80   PROC SORT DATA = int.util_1618_long_rank_non0; by mcaid_id FY adj_pd_FY_rank; RUN ;
+
+NOTE: There were 3229688 observations read from the data set INT.UTIL_1618_LONG_RANK_NON0.
+NOTE: The data set INT.UTIL_1618_LONG_RANK_NON0 has 3229688 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:01.48
+      cpu time            1.06 seconds
+
+
+
+81   ** CHECK mcaid ID values where there were o's;
+82   PROC PRINT DATA = int.util_1618_long_rank_non0 (obs=10);
+83   /*WHERE mcaid_id in ("A005784","A023340","A072859","A101013");*/
+84   WHERE adj_pd_FY_rank = 95 AND FY=2016;
+85   RUN;
+
+NOTE: There were 10 observations read from the data set INT.UTIL_1618_LONG_RANK_NON0.
+      WHERE (adj_pd_FY_rank=95) and (FY=2016);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.60 seconds
+      cpu time            0.00 seconds
+
+
+86   PROC SORT DATA = int.util_1618_long_rank_non0; by mcaid_id adj_pd_FY_rank; RUN ;
+
+NOTE: There were 3229688 observations read from the data set INT.UTIL_1618_LONG_RANK_NON0.
+NOTE: The data set INT.UTIL_1618_LONG_RANK_NON0 has 3229688 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           54.68 seconds
+      cpu time            1.37 seconds
+
+
+
+87   PROC PRINT DATA = int.util_1618_long_rank_non0 (obs=10);
+88   /*WHERE mcaid_id in ("A005784","A023340","A072859","A101013");*/
+89   WHERE adj_pd_FY_rank = 95 AND FY=2016;
+90   RUN;
+
+NOTE: There were 10 observations read from the data set INT.UTIL_1618_LONG_RANK_NON0.
+      WHERE (adj_pd_FY_rank=95) and (FY=2016);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           5.21 seconds
+      cpu time            0.00 seconds
+
+
+91   PROC TRANSPOSE DATA = int.util_1618_long_rank_non0
+92        OUT = util_1618_wide_rank_non0 (DROP= _NAME_ _LABEL_);
+93   by mcaid_id ;
+94   ID FY ;
+95   VAR adj_pd_FY_rank adj_pd_total_FY;
+96   RUN;
+
+NOTE: There were 3229688 observations read from the data set INT.UTIL_1618_LONG_RANK_NON0.
+NOTE: The data set WORK.UTIL_1618_WIDE_RANK_NON0 has 3088124 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           1:31.86
+      cpu time            5.31 seconds
+
+
+96 !       * 1552079 : 4 ;
+
+97   PROC TRANSPOSE DATA = int.util_1618_long_rank_non0
+98        OUT = util_1618_wide_rank (DROP= _NAME_ _LABEL_);
+99   by mcaid_id ;
+100  ID FY ;
+101  VAR adj_pd_FY_rank;
+102  RUN;
+
+NOTE: There were 3229688 observations read from the data set INT.UTIL_1618_LONG_RANK_NON0.
+NOTE: The data set WORK.UTIL_1618_WIDE_RANK has 1544062 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           30.11 seconds
+      cpu time            4.85 seconds
+
+
+102!       * 1552079 : 4 ;
+103
+104  PROC TRANSPOSE DATA = int.util_1618_long_rank_non0
+105       OUT = util_1618_wide_pd (DROP= _NAME_ _LABEL_);
+106  by mcaid_id ;
+107  ID FY ;
+108  VAR adj_pd_total_FY;
+109  RUN;
+
+WARNING: The variable _LABEL_ in the DROP, KEEP, or RENAME list has never been referenced.
+NOTE: There were 3229688 observations read from the data set INT.UTIL_1618_LONG_RANK_NON0.
+NOTE: The data set WORK.UTIL_1618_WIDE_PD has 1544062 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           4.53 seconds
+      cpu time            4.51 seconds
+
+
+109!       * 1552079 : 4 ;
+
+110  proc sql;
+111  create table int.util_1618_FY as
+112  select mcaid_id
+113       , FY
+114       , sum(adj_pd_total_qrtr) as adj_pd_total_FY
+115  from util_1618
+116  group by MCAID_ID, FY;
+ERROR: File WORK.UTIL_1618.DATA does not exist.
+117  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+117!       *3252795 : 3 - reduced to approx 1/5th, should have 0 values still  ;
+
+
+118  DATA util_1921 util_1618 (keep = mcaid_id FY dt_qrtr adj_pd_total_qrtr);
+119  SET  int.util1622_qrtr ;
+120  IF   FY in ('2019','2020','2021') THEN OUTPUT util_1921;
+121  ELSE OUTPUT util_1618;
+122  RUN;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      120:6
+NOTE: There were 16692009 observations read from the data set INT.UTIL1622_QRTR.
+NOTE: The data set WORK.UTIL_1921 has 8430032 observations and 8 variables.
+NOTE: The data set WORK.UTIL_1618 has 8261977 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:49.82
+      cpu time            2.53 seconds
+
+
+123  * NOTE: The data set WORK.UTIL_1921 has 8430032 observations and 8 variables.
+124    NOTE: The data set WORK.UTIL_1618 has 8261977 observations and 4 variables;
+125
+126  *----------------------------------------------------------------------------------------------
+127  SECTION 01d.2 16-18 categorical variables
+128  ----------------------------------------------------------------------------------------------;
+129  * SUM the year total per member ;
+130  proc sql;
+131  create table int.util_1618_FY as
+132  select mcaid_id
+133       , FY
+134       , sum(adj_pd_total_qrtr) as adj_pd_total_FY
+135  from util_1618
+136  group by MCAID_ID, FY;
+NOTE: Table INT.UTIL_1618_FY created, with 3252795 rows and 3 columns.
+
+137
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           6:18.65
+      cpu time            7.21 seconds
+
+
+138  DATA int.elig1618d;
+139  SET  int.elig1618c;
+140  ind_elig16 = coalesce(ind_elig2016,0);
+141  ind_elig17 = coalesce(ind_elig2017,0);
+142  ind_elig18 = coalesce(ind_elig2018,0);
+143  RUN ;
+
+NOTE: There were 2065238 observations read from the data set INT.ELIG1618C.
+NOTE: The data set INT.ELIG1618D has 2065238 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           50.73 seconds
+      cpu time            0.37 seconds
+
+
+143!       *2066673 ;
+
+144  DATA int.elig1618d (DROP=ind_elig2016
+145                           ind_elig2017
+146                           ind_elig2018);
+147  SET  int.elig1618c;
+148  ind_elig16 = coalesce(ind_elig2016,0);
+149  ind_elig17 = coalesce(ind_elig2017,0);
+150  ind_elig18 = coalesce(ind_elig2018,0);
+151  RUN ;
+
+NOTE: There were 2065238 observations read from the data set INT.ELIG1618C.
+NOTE: The data set INT.ELIG1618D has 2065238 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           17.57 seconds
+      cpu time            0.29 seconds
+
+
+151!       *2066673 ;
+
+152  PROC CONTENTS DATA = int.elig1618d;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.46 seconds
+      cpu time            0.01 seconds
+
+
+153  PROC CONTENTS DATA = int.util_1618_fy; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           1.65 seconds
+      cpu time            0.01 seconds
+
+
+154  PROC TRANSPOSE DATA=int.util_1618_FY OUT=int.util_1618_FY_wide (DROP=_NAME_);
+155       BY   mcaid_id ;
+156       ID   FY ;
+157       VAR  adj_pd_total_FY ;
+158  RUN ;
+
+NOTE: There were 3252795 observations read from the data set INT.UTIL_1618_FY.
+NOTE: The data set INT.UTIL_1618_FY_WIDE has 1552079 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           1:16.51
+      cpu time            4.64 seconds
+
+
+159  PROC TRANSPOSE DATA=int.util_1618_FY OUT=util_1618_FY_wide (DROP=_NAME_);
+160       BY   mcaid_id ;
+161       ID   FY ;
+162       VAR  adj_pd_total_FY ;
+163  RUN ;
+
+NOTE: There were 3252795 observations read from the data set INT.UTIL_1618_FY.
+NOTE: The data set WORK.UTIL_1618_FY_WIDE has 1552079 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           20.71 seconds
+      cpu time            4.40 seconds
+
+
+163!       * 2065238 : 4 ;
+
+164  PROC CONTENTS DATA = int.elig1618d;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           1.71 seconds
+      cpu time            0.03 seconds
+
+
+165  PROC CONTENTS DATA = int.util_1618_fy_wide; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           2.84 seconds
+      cpu time            0.00 seconds
+
+
+166  PROC SQL;
+167  CREATE TABLE elig_and_util AS
+168  SELECT a.*
+169       , b.*
+170  FROM ind.elig1618d AS A
+171  FULL JOIN ind.util_1618_fy_wide as B
+172  ON a.mcaid_id=b.mcaid_id
+173  ;
+ERROR: Libref IND is not assigned.
+ERROR: Libref IND is not assigned.
+174  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+175  PROC SQL;
+176  CREATE TABLE elig_and_util AS
+177  SELECT a.*
+178       , b.*
+179  FROM int.elig1618d AS A
+180  FULL JOIN int.util_1618_fy_wide as B
+181  ON a.mcaid_id=b.mcaid_id
+182  ;
+WARNING: Variable MCAID_ID already exists on file WORK.ELIG_AND_UTIL.
+NOTE: Table WORK.ELIG_AND_UTIL created, with 2066673 rows and 7 columns.
+
+183  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2:04.50
+      cpu time            1.23 seconds
+
+
+184
+185  PROC SQL ;
+186  CREATE TABLE adj_pd_total_YY AS
+187  SELECT mcaid_id
+188       , case when (_2016 = . AND ind_elig16 = 0) then '-1'
+189              when (_2016 = . AND ind_elig16 = 1) then '0'
+190              else adj_pd_total_16_A
+191              end as adj_pd_total_16
+192       , case when (_2017 = . AND ind_elig17 = 0) then '-1'
+193              when (_2017 = . AND ind_elig17 = 1) then '0'
+194              else adj_pd_total_17_A
+195              end as adj_pd_total_17
+196       , case when (_2018 = . AND ind_elig18 = 0) then '-1'
+197              when (_2018 = . AND ind_elig18 = 1) then '0'
+198              else adj_pd_total_18_A
+199              end as adj_pd_total_18
+200       , adj_pd_total_16_A
+201       , adj_pd_total_17_A
+202       , adj_pd_total_18_A
+203       , ind_elig16
+204       , ind_elig17
+205       , ind_elig18
+206       , _2016
+207       , _2017
+208       , _2018
+209  FROM elig_and_util;
+ERROR: The following columns were not found in the contributing tables: adj_pd_total_16_A,
+       adj_pd_total_17_A, adj_pd_total_18_A.
+210  QUIT ;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+210!        *2066673;
+
+
+211  PROC PRINT DATA = elig_and_util (obs=100);
+212  RUN;
+
+NOTE: There were 100 observations read from the data set WORK.ELIG_AND_UTIL.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+213  PROC SQL ;
+214  CREATE TABLE adj_pd_total_YY AS
+215  SELECT mcaid_id
+216       , case when (_2016 = . AND ind_elig16 = 0) then '-1'
+217              when (_2016 = . AND ind_elig16 = 1) then '0'
+218              end as adj_pd_total_16_cost
+219       , case when (_2017 = . AND ind_elig17 = 0) then '-1'
+220              when (_2017 = . AND ind_elig17 = 1) then '0'
+221              end as adj_pd_total_17_cost
+222       , case when (_2018 = . AND ind_elig18 = 0) then '-1'
+223              when (_2018 = . AND ind_elig18 = 1) then '0'
+224              end as adj_pd_total_18_cost
+225       , ind_elig16
+226       , ind_elig17
+227       , ind_elig18
+228       , _2016
+229       , _2017
+230       , _2018
+231  FROM elig_and_util;
+NOTE: A CASE expression has no ELSE clause. Cases not accounted for by the WHEN clauses will result
+      in a missing value for the CASE expression.
+NOTE: A CASE expression has no ELSE clause. Cases not accounted for by the WHEN clauses will result
+      in a missing value for the CASE expression.
+NOTE: A CASE expression has no ELSE clause. Cases not accounted for by the WHEN clauses will result
+      in a missing value for the CASE expression.
+NOTE: Table WORK.ADJ_PD_TOTAL_YY created, with 2066673 rows and 10 columns.
+
+232  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.38 seconds
+      cpu time            0.39 seconds
+
+
+232!        *2066673;
+
+233  PROC SQL ;
+234  CREATE TABLE adj_pd_total_YY AS
+235  SELECT mcaid_id
+236       , case when (_2016 = . AND ind_elig16 = 0) then '-1'
+237              when (_2016 = . AND ind_elig16 = 1) then '0'
+238              else _2016
+239              end as adj_pd_total_16_cost
+240       , case when (_2017 = . AND ind_elig17 = 0) then '-1'
+241              when (_2017 = . AND ind_elig17 = 1) then '0'
+242              else _2017
+243              end as adj_pd_total_17_cost
+244       , case when (_2018 = . AND ind_elig18 = 0) then '-1'
+245              when (_2018 = . AND ind_elig18 = 1) then '0'
+246              else _2018
+247              end as adj_pd_total_18_cost
+248       , ind_elig16
+249       , ind_elig17
+250       , ind_elig18
+251       , _2016
+252       , _2017
+253       , _2018
+254  FROM elig_and_util;
+ERROR: Result of WHEN clause 3 is not the same data type as the preceding results.
+ERROR: Result of WHEN clause 3 is not the same data type as the preceding results.
+ERROR: Result of WHEN clause 3 is not the same data type as the preceding results.
+255  QUIT ;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+255!        *2066673;
+
+
+256  PROC SQL ;
+257  CREATE TABLE adj_pd_total_YY AS
+258  SELECT mcaid_id
+259       , case when (_2016 = . AND ind_elig16 = 0) then -1
+260              when (_2016 = . AND ind_elig16 = 1) then 0
+261              else _2016
+262              end as adj_pd_total_16_cost
+263       , case when (_2017 = . AND ind_elig17 = 0) then -1
+264              when (_2017 = . AND ind_elig17 = 1) then 0
+265              else _2017
+266              end as adj_pd_total_17_cost
+267       , case when (_2018 = . AND ind_elig18 = 0) then -1
+268              when (_2018 = . AND ind_elig18 = 1) then 0
+269              else _2018
+270              end as adj_pd_total_18_cost
+271       , ind_elig16
+272       , ind_elig17
+273       , ind_elig18
+274       , _2016
+275       , _2017
+276       , _2018
+277  FROM elig_and_util;
+NOTE: Table WORK.ADJ_PD_TOTAL_YY created, with 2066673 rows and 10 columns.
+
+278  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.32 seconds
+      cpu time            0.31 seconds
+
+
+278!        *2066673;
+
+279
+280  PROC SQL ;
+281  CREATE TABLE int.adj_pd_total_YY AS
+282  SELECT mcaid_id
+283       , case when (_2016 = . AND ind_elig16 = 0) then -1
+284              when (_2016 = . AND ind_elig16 = 1) then 0
+285              else _2016
+286              end as adj_pd_total_16_cost
+287       , case when (_2017 = . AND ind_elig17 = 0) then -1
+288              when (_2017 = . AND ind_elig17 = 1) then 0
+289              else _2017
+290              end as adj_pd_total_17_cost
+291       , case when (_2018 = . AND ind_elig18 = 0) then -1
+292              when (_2018 = . AND ind_elig18 = 1) then 0
+293              else _2018
+294              end as adj_pd_total_18_cost
+295       , ind_elig16
+296       , ind_elig17
+297       , ind_elig18
+298       , _2016
+299       , _2017
+300       , _2018
+301  FROM elig_and_util;
+NOTE: Table INT.ADJ_PD_TOTAL_YY created, with 2066673 rows and 10 columns.
+
+302  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:19.10
+      cpu time            0.81 seconds
+
+
+302!        *2066673;
+
+303  PROC PRINT DATA = int.util_1618_YY (obs=20); run;
+ERROR: File INT.UTIL_1618_YY.DATA does not exist.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+
+304  PROC PRINT DATA = int.adj_pd_total_yy (obs=20); run;
+
+NOTE: There were 20 observations read from the data set INT.ADJ_PD_TOTAL_YY.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           2.63 seconds
+      cpu time            0.04 seconds
+
+
+
+305  data test;
+306   do group='a','b';
+307     do i=1 to 10000;
+308        x=ranuni(i)*12345;
+309        output;
+310     end;
+311   end;
+312     drop i;
+313  run;
+
+NOTE: The data set WORK.TEST has 20000 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+314
+315  proc sort data=test;
+316     by group x;
+317  run;
+
+NOTE: There were 20000 observations read from the data set WORK.TEST.
+NOTE: The data set WORK.TEST has 20000 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+318  data test;
+319   do group='a','b';
+320     do i=1 to 10000;
+321        x=ranuni(i)*12345;
+322        output;
+323     end;
+324   end;
+325     drop i;
+326  run;
+
+NOTE: The data set WORK.TEST has 20000 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+327
+328  proc sort data=test;
+329     by group x;
+330  run;
+
+NOTE: There were 20000 observations read from the data set WORK.TEST.
+NOTE: The data set WORK.TEST has 20000 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+331
+332
+333  %macro generate_percentiles(ptile1,ptile2);
+334  /* Output desired percentile values by group */
+335  proc summary data=test;
+336     by group;
+337     var x;
+338     output out=test1 &ptile1= &ptile2= / autoname;
+339  run;
+340
+341  /* Create macro variables for each value of the BY variable */
+342  /* Create macro variables for the percentile values for each BY group */
+343  /* Create a macro variable that is the count of the unique
+344  values of the BY variable */
+345  data _null_;
+346    retain count 0;
+347     set test1;
+348     by group;
+349     if first.group then do;
+350      count+1;
+351      call symputx('val'||left(count),group);
+352      call symputx("&ptile1"||'_'||left(count), x_&ptile1);
+353      call symputx("&ptile2"||'_'||left(count), x_&ptile2);
+354     end;
+355    call symput('last',left(count));
+356  run;
+357  %put _user_;
+358
+359  /* Loops through each value of the BY variable */
+360  %do i=1 %to &last;
+361
+362  data test&i;
+363     set test;
+364     where group="&&val&i";
+365  /* Use an IF statement to subset the data */
+366     if x le &&&ptile1._&i or x ge &&&ptile2._&i;
+367  run;
+368
+369  proc print;
+370  run;
+371
+372  %end;
+373  %mend;
+
+374  options mprint mlogic symbolgen;
+375  %generate_percentiles(p1,p99)
+MLOGIC(GENERATE_PERCENTILES):  Beginning execution.
+MLOGIC(GENERATE_PERCENTILES):  Parameter PTILE1 has value p1
+MLOGIC(GENERATE_PERCENTILES):  Parameter PTILE2 has value p99
+MPRINT(GENERATE_PERCENTILES):   proc summary data=test;
+MPRINT(GENERATE_PERCENTILES):   by group;
+MPRINT(GENERATE_PERCENTILES):   var x;
+SYMBOLGEN:  Macro variable PTILE1 resolves to p1
+SYMBOLGEN:  Macro variable PTILE2 resolves to p99
+MPRINT(GENERATE_PERCENTILES):   output out=test1 p1= p99= / autoname;
+MPRINT(GENERATE_PERCENTILES):   run;
+
+NOTE: There were 20000 observations read from the data set WORK.TEST.
+NOTE: The data set WORK.TEST1 has 2 observations and 5 variables.
+NOTE: PROCEDURE SUMMARY used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+MPRINT(GENERATE_PERCENTILES):   data _null_;
+MPRINT(GENERATE_PERCENTILES):   retain count 0;
+MPRINT(GENERATE_PERCENTILES):   set test1;
+MPRINT(GENERATE_PERCENTILES):   by group;
+MPRINT(GENERATE_PERCENTILES):   if first.group then do;
+MPRINT(GENERATE_PERCENTILES):   count+1;
+MPRINT(GENERATE_PERCENTILES):   call symputx('val'||left(count),group);
+SYMBOLGEN:  Macro variable PTILE1 resolves to p1
+SYMBOLGEN:  Macro variable PTILE1 resolves to p1
+MPRINT(GENERATE_PERCENTILES):   call symputx("p1"||'_'||left(count), x_p1);
+SYMBOLGEN:  Macro variable PTILE2 resolves to p99
+SYMBOLGEN:  Macro variable PTILE2 resolves to p99
+MPRINT(GENERATE_PERCENTILES):   call symputx("p99"||'_'||left(count), x_p99);
+MPRINT(GENERATE_PERCENTILES):   end;
+MPRINT(GENERATE_PERCENTILES):   call symput('last',left(count));
+MPRINT(GENERATE_PERCENTILES):   run;
+
+NOTE: Numeric values have been converted to character values at the places given by:
+      (Line):(Column).
+      491:235   2:40      2:98      2:152
+NOTE: There were 2 observations read from the data set WORK.TEST1.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+MLOGIC(GENERATE_PERCENTILES):  %PUT _user_
+GENERATE_PERCENTILES LAST 2
+GENERATE_PERCENTILES P1_1 123.22158288
+GENERATE_PERCENTILES P1_2 117.09430314
+GENERATE_PERCENTILES P99_1 12232.136483
+GENERATE_PERCENTILES P99_2 12240.953875
+GENERATE_PERCENTILES PTILE1 p1
+GENERATE_PERCENTILES PTILE2 p99
+GENERATE_PERCENTILES VAL1 a
+GENERATE_PERCENTILES VAL2 b
+GLOBAL DATA S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+GLOBAL HCPF S:/FHPC/DATA/HCPF_Data_files_SECURE
+GLOBAL INT S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/interim
+GLOBAL RAW S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/raw
+GLOBAL REPORT S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports
+GLOBAL SQLEXITCODE 0
+GLOBAL SQLOBS 2066673
+GLOBAL SQLOOPS 4133361
+GLOBAL SQLRC 0
+GLOBAL SQLXOBS 0
+GLOBAL SQLXOPENERRS 0
+GLOBAL SYS_SQL_IP_ALL -1
+GLOBAL SYS_SQL_IP_STMT
+GLOBAL UTIL S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable LAST resolves to 2
+MLOGIC(GENERATE_PERCENTILES):  %DO loop beginning; index variable I; start value is 1; stop value
+      is 2; by value is 1.
+SYMBOLGEN:  Macro variable I resolves to 1
+MPRINT(GENERATE_PERCENTILES):   data test1;
+MPRINT(GENERATE_PERCENTILES):   set test;
+SYMBOLGEN:  && resolves to &.
+SYMBOLGEN:  Macro variable I resolves to 1
+SYMBOLGEN:  Macro variable VAL1 resolves to a
+MPRINT(GENERATE_PERCENTILES):   where group="a";
+SYMBOLGEN:  && resolves to &.
+SYMBOLGEN:  Macro variable PTILE1 resolves to p1
+SYMBOLGEN:  Macro variable I resolves to 1
+SYMBOLGEN:  Macro variable P1_1 resolves to 123.22158288
+SYMBOLGEN:  && resolves to &.
+SYMBOLGEN:  Macro variable PTILE2 resolves to p99
+SYMBOLGEN:  Macro variable I resolves to 1
+SYMBOLGEN:  Macro variable P99_1 resolves to 12232.136483
+MPRINT(GENERATE_PERCENTILES):   if x le 123.22158288 or x ge 12232.136483;
+MPRINT(GENERATE_PERCENTILES):   run;
+
+NOTE: There were 10000 observations read from the data set WORK.TEST.
+      WHERE group='a';
+NOTE: The data set WORK.TEST1 has 200 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+MPRINT(GENERATE_PERCENTILES):   proc print;
+MPRINT(GENERATE_PERCENTILES):   run;
+NOTE: There were 200 observations read from the data set WORK.TEST1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+MLOGIC(GENERATE_PERCENTILES):  %DO loop index variable I is now 2; loop will iterate again.
+SYMBOLGEN:  Macro variable I resolves to 2
+MPRINT(GENERATE_PERCENTILES):   data test2;
+MPRINT(GENERATE_PERCENTILES):   set test;
+SYMBOLGEN:  && resolves to &.
+SYMBOLGEN:  Macro variable I resolves to 2
+SYMBOLGEN:  Macro variable VAL2 resolves to b
+MPRINT(GENERATE_PERCENTILES):   where group="b";
+SYMBOLGEN:  && resolves to &.
+SYMBOLGEN:  Macro variable PTILE1 resolves to p1
+SYMBOLGEN:  Macro variable I resolves to 2
+SYMBOLGEN:  Macro variable P1_2 resolves to 117.09430314
+SYMBOLGEN:  && resolves to &.
+SYMBOLGEN:  Macro variable PTILE2 resolves to p99
+SYMBOLGEN:  Macro variable I resolves to 2
+SYMBOLGEN:  Macro variable P99_2 resolves to 12240.953875
+MPRINT(GENERATE_PERCENTILES):   if x le 117.09430314 or x ge 12240.953875;
+MPRINT(GENERATE_PERCENTILES):   run;
+
+NOTE: There were 10000 observations read from the data set WORK.TEST.
+      WHERE group='b';
+NOTE: The data set WORK.TEST2 has 200 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+MPRINT(GENERATE_PERCENTILES):   proc print;
+MPRINT(GENERATE_PERCENTILES):   run;
+NOTE: There were 200 observations read from the data set WORK.TEST2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+MLOGIC(GENERATE_PERCENTILES):  %DO loop index variable I is now 3; loop will not iterate again.
+MLOGIC(GENERATE_PERCENTILES):  Ending execution.
+
+376  proc univariate noprint data=int.adj_pd_total_yy;
+377  where adj_pd_total_16_cost gt 0;
+378  var adj_pd_total_16_cost;
+379  output out=pd16pct pctlpre=P_p16_ pctlpts= 50, 75, 90, 95;
+380  run;
+
+NOTE: The data set WORK.PD16PCT has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           33.61 seconds
+      cpu time            1.64 seconds
+
+
+381  %macro pct_95_non0(var,out,pctlpre);
+382  proc univariate noprint data=int.adj_pd_total_yy;
+383  where &var gt 0;
+384  var &var;
+385  output out=&out pctlpre=&pctlpre pctlpts= 50, 75, 90, 95;
+386  run;
+387  %mend;
+
+388
+389  %pct_95_non0(var=adj_pd_total_16_cost,
+MLOGIC(PCT_95_NON0):  Beginning execution.
+390               out=pd16pct2,
+391               pctlpre = P_p16_);
+MLOGIC(PCT_95_NON0):  Parameter VAR has value adj_pd_total_16_cost
+MLOGIC(PCT_95_NON0):  Parameter OUT has value pd16pct2
+MLOGIC(PCT_95_NON0):  Parameter PCTLPRE has value P_p16_
+MPRINT(PCT_95_NON0):   proc univariate noprint data=int.adj_pd_total_yy;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_16_cost
+MPRINT(PCT_95_NON0):   where adj_pd_total_16_cost gt 0;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_16_cost
+MPRINT(PCT_95_NON0):   var adj_pd_total_16_cost;
+SYMBOLGEN:  Macro variable OUT resolves to pd16pct2
+SYMBOLGEN:  Macro variable PCTLPRE resolves to P_p16_
+MPRINT(PCT_95_NON0):   output out=pd16pct2 pctlpre=P_p16_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCT_95_NON0):   run;
+
+NOTE: The data set WORK.PD16PCT2 has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           26.85 seconds
+      cpu time            1.54 seconds
+
+
+MLOGIC(PCT_95_NON0):  Ending execution.
+
+392  %pct_95_non0(var=adj_pd_total_17_cost,
+MLOGIC(PCT_95_NON0):  Beginning execution.
+393               out=pd17pct,
+394               pctlpre = P_p17_);
+MLOGIC(PCT_95_NON0):  Parameter VAR has value adj_pd_total_17_cost
+MLOGIC(PCT_95_NON0):  Parameter OUT has value pd17pct
+MLOGIC(PCT_95_NON0):  Parameter PCTLPRE has value P_p17_
+MPRINT(PCT_95_NON0):   proc univariate noprint data=int.adj_pd_total_yy;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_17_cost
+MPRINT(PCT_95_NON0):   where adj_pd_total_17_cost gt 0;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_17_cost
+MPRINT(PCT_95_NON0):   var adj_pd_total_17_cost;
+SYMBOLGEN:  Macro variable OUT resolves to pd17pct
+SYMBOLGEN:  Macro variable PCTLPRE resolves to P_p17_
+MPRINT(PCT_95_NON0):   output out=pd17pct pctlpre=P_p17_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCT_95_NON0):   run;
+
+NOTE: The data set WORK.PD17PCT has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           34.39 seconds
+      cpu time            1.46 seconds
+
+
+MLOGIC(PCT_95_NON0):  Ending execution.
+395
+396  %pct_95_non0(var=adj_pd_total_18_cost,
+MLOGIC(PCT_95_NON0):  Beginning execution.
+397               out=pd18pct,
+398               pctlpre = P_p18_);
+MLOGIC(PCT_95_NON0):  Parameter VAR has value adj_pd_total_18_cost
+MLOGIC(PCT_95_NON0):  Parameter OUT has value pd18pct
+MLOGIC(PCT_95_NON0):  Parameter PCTLPRE has value P_p18_
+MPRINT(PCT_95_NON0):   proc univariate noprint data=int.adj_pd_total_yy;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_18_cost
+MPRINT(PCT_95_NON0):   where adj_pd_total_18_cost gt 0;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_18_cost
+MPRINT(PCT_95_NON0):   var adj_pd_total_18_cost;
+SYMBOLGEN:  Macro variable OUT resolves to pd18pct
+SYMBOLGEN:  Macro variable PCTLPRE resolves to P_p18_
+MPRINT(PCT_95_NON0):   output out=pd18pct pctlpre=P_p18_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCT_95_NON0):   run;
+
+NOTE: The data set WORK.PD18PCT has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1.34 seconds
+      cpu time            1.31 seconds
+
+
+MLOGIC(PCT_95_NON0):  Ending execution.
+
+399  %macro pctl_1618(var,out,pctlpre);
+400  proc univariate noprint data=int.adj_pd_total_yy;
+401  where &var gt 0;
+402  var &var;
+403  output out=&out pctlpre=&pctlpre pctlpts= 50, 75, 90, 95;
+404  run;
+405  %mend;
+
+406  %pctl_1618(var=adj_pd_total_16_cost,
+MLOGIC(PCTL_1618):  Beginning execution.
+407               out=pd16pct,
+408               pctlpre = P_p16_);
+MLOGIC(PCTL_1618):  Parameter VAR has value adj_pd_total_16_cost
+MLOGIC(PCTL_1618):  Parameter OUT has value pd16pct
+MLOGIC(PCTL_1618):  Parameter PCTLPRE has value P_p16_
+MPRINT(PCTL_1618):   proc univariate noprint data=int.adj_pd_total_yy;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_16_cost
+MPRINT(PCTL_1618):   where adj_pd_total_16_cost gt 0;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_16_cost
+MPRINT(PCTL_1618):   var adj_pd_total_16_cost;
+SYMBOLGEN:  Macro variable OUT resolves to pd16pct
+SYMBOLGEN:  Macro variable PCTLPRE resolves to P_p16_
+MPRINT(PCTL_1618):   output out=pd16pct pctlpre=P_p16_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCTL_1618):   run;
+
+NOTE: The data set WORK.PD16PCT has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1:09.02
+      cpu time            1.64 seconds
+
+
+MLOGIC(PCTL_1618):  Ending execution.
+409
+410  %pctl_1618(var=adj_pd_total_17_cost,
+MLOGIC(PCTL_1618):  Beginning execution.
+411               out=pd17pct,
+412               pctlpre = P_p17_);
+MLOGIC(PCTL_1618):  Parameter VAR has value adj_pd_total_17_cost
+MLOGIC(PCTL_1618):  Parameter OUT has value pd17pct
+MLOGIC(PCTL_1618):  Parameter PCTLPRE has value P_p17_
+MPRINT(PCTL_1618):   proc univariate noprint data=int.adj_pd_total_yy;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_17_cost
+MPRINT(PCTL_1618):   where adj_pd_total_17_cost gt 0;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_17_cost
+MPRINT(PCTL_1618):   var adj_pd_total_17_cost;
+SYMBOLGEN:  Macro variable OUT resolves to pd17pct
+SYMBOLGEN:  Macro variable PCTLPRE resolves to P_p17_
+MPRINT(PCTL_1618):   output out=pd17pct pctlpre=P_p17_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCTL_1618):   run;
+
+NOTE: The data set WORK.PD17PCT has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1.42 seconds
+      cpu time            1.42 seconds
+
+
+MLOGIC(PCTL_1618):  Ending execution.
+413
+414  %pctl_1618(var=adj_pd_total_18_cost,
+MLOGIC(PCTL_1618):  Beginning execution.
+415               out=pd18pct,
+416               pctlpre = P_p18_);
+MLOGIC(PCTL_1618):  Parameter VAR has value adj_pd_total_18_cost
+MLOGIC(PCTL_1618):  Parameter OUT has value pd18pct
+MLOGIC(PCTL_1618):  Parameter PCTLPRE has value P_p18_
+MPRINT(PCTL_1618):   proc univariate noprint data=int.adj_pd_total_yy;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_18_cost
+MPRINT(PCTL_1618):   where adj_pd_total_18_cost gt 0;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_18_cost
+MPRINT(PCTL_1618):   var adj_pd_total_18_cost;
+SYMBOLGEN:  Macro variable OUT resolves to pd18pct
+SYMBOLGEN:  Macro variable PCTLPRE resolves to P_p18_
+MPRINT(PCTL_1618):   output out=pd18pct pctlpre=P_p18_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCTL_1618):   run;
+
+NOTE: The data set WORK.PD18PCT has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1.29 seconds
+      cpu time            1.29 seconds
+
+
+MLOGIC(PCTL_1618):  Ending execution.
+
+417  %macro pct_95_non0(var,out,pctlpre);
+418  proc univariate noprint data=int.adj_pd_total_yy;
+419  where &var gt 0;
+420  var &var;
+421  output out=&out pctlpre=&pctlpre pctlpts= 95;
+422  run;
+423  %mend;
+
+424  %macro pct_95_non0(var,out,pctlpre);
+425  proc univariate noprint data=int.util1921_adj;
+426  where &var gt 0;
+427  var &var;
+428  output out=&out pctlpre=&pctlpre pctlpts= 95;
+429  run;
+430  %mend;
+
+431  PROC CONTENTS DATA = int.util1921_adj; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.38 seconds
+      cpu time            0.04 seconds
+
+
+432  %macro pct_95_non0(var,out,pctlpre);
+433  proc univariate noprint data=int.util1921_adj;
+434  BY FY;
+435  where &var gt 0;
+436  var &var;
+437  output out=&out pctlpre=&pctlpre pctlpts= 95;
+438  run;
+439  %mend;
+
+440  %pct_95_non0(var=adj_pd_primary_care_qrtr,
+MLOGIC(PCT_95_NON0):  Beginning execution.
+441               out=pd_pc,
+442               pctlpre = p_pc_);
+MLOGIC(PCT_95_NON0):  Parameter VAR has value adj_pd_primary_care_qrtr
+MLOGIC(PCT_95_NON0):  Parameter OUT has value pd_pc
+MLOGIC(PCT_95_NON0):  Parameter PCTLPRE has value p_pc_
+MPRINT(PCT_95_NON0):   proc univariate noprint data=int.util1921_adj;
+MPRINT(PCT_95_NON0):   BY FY;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_primary_care_qrtr
+MPRINT(PCT_95_NON0):   where adj_pd_primary_care_qrtr gt 0;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_primary_care_qrtr
+MPRINT(PCT_95_NON0):   var adj_pd_primary_care_qrtr;
+SYMBOLGEN:  Macro variable OUT resolves to pd_pc
+SYMBOLGEN:  Macro variable PCTLPRE resolves to p_pc_
+MPRINT(PCT_95_NON0):   output out=pd_pc pctlpre=p_pc_ pctlpts= 95;
+MPRINT(PCT_95_NON0):   run;
+
+NOTE: The data set WORK.PD_PC has 3 observations and 2 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1:02.22
+      cpu time            4.14 seconds
+
+
+MLOGIC(PCT_95_NON0):  Ending execution.
+
+443  data pctile_macro_vars; merge pd16pct pd17pct pd18pct ; run;
+
+NOTE: There were 1 observations read from the data set WORK.PD16PCT.
+NOTE: There were 1 observations read from the data set WORK.PD17PCT.
+NOTE: There were 1 observations read from the data set WORK.PD18PCT.
+NOTE: The data set WORK.PCTILE_MACRO_VARS has 1 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+444  proc sql noprint;
+445    select
+446      name,
+447      cats(':',name)
+448    into
+449      :COL_NAMES separated by ',',
+450      :MVAR_NAMES separated by ','
+451    from sashelp.vcolumn
+452    where
+453      libname = "WORK"
+454      and memname = "PCTILE_MACRO_VARS"
+455    ;
+SYMBOLGEN:  Macro variable COL_NAMES resolves to
+            P_p16_50,P_p16_75,P_p16_90,P_p16_95,P_p17_50,P_p17_75,P_p17_90,P_p17_95,P_p18_50,P_p18_7
+            5,P_p18_90,P_p18_95
+456    select &COL_NAMES into &MVAR_NAMES
+SYMBOLGEN:  Macro variable MVAR_NAMES resolves to
+            :P_p16_50,:P_p16_75,:P_p16_90,:P_p16_95,:P_p17_50,:P_p17_75,:P_p17_90,:P_p17_95,:P_p18_5
+            0,:P_p18_75,:P_p18_90,:P_p18_95
+457    from pctile_macro_vars;
+458  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+459  %put &col_names;
+SYMBOLGEN:  Macro variable COL_NAMES resolves to
+            P_p16_50,P_p16_75,P_p16_90,P_p16_95,P_p17_50,P_p17_75,P_p17_90,P_p17_95,P_p18_50,P_p18_7
+            5,P_p18_90,P_p18_95
+P_p16_50,P_p16_75,P_p16_90,P_p16_95,P_p17_50,P_p17_75,P_p17_90,P_p17_95,P_p18_50,P_p18_75,P_p18_90,P
+_p18_95
+460  %put &mvar_names;
+SYMBOLGEN:  Macro variable MVAR_NAMES resolves to
+            :P_p16_50,:P_p16_75,:P_p16_90,:P_p16_95,:P_p17_50,:P_p17_75,:P_p17_90,:P_p17_95,:P_p18_5
+            0,:P_p18_75,:P_p18_90,:P_p18_95
+:P_p16_50,:P_p16_75,:P_p16_90,:P_p16_95,:P_p17_50,:P_p17_75,:P_p17_90,:P_p17_95,:P_p18_50,:P_p18_75,
+:P_p18_90,:P_p18_95
+461
+462  %pctl_1618(var=adj_pd_total_16_cost,
+MLOGIC(PCTL_1618):  Beginning execution.
+463               out=int.pd16pct,
+464               pctlpre = P_p16_);
+MLOGIC(PCTL_1618):  Parameter VAR has value adj_pd_total_16_cost
+MLOGIC(PCTL_1618):  Parameter OUT has value int.pd16pct
+MLOGIC(PCTL_1618):  Parameter PCTLPRE has value P_p16_
+MPRINT(PCTL_1618):   proc univariate noprint data=int.adj_pd_total_yy;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_16_cost
+MPRINT(PCTL_1618):   where adj_pd_total_16_cost gt 0;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_16_cost
+MPRINT(PCTL_1618):   var adj_pd_total_16_cost;
+SYMBOLGEN:  Macro variable OUT resolves to int.pd16pct
+SYMBOLGEN:  Macro variable PCTLPRE resolves to P_p16_
+MPRINT(PCTL_1618):   output out=int.pd16pct pctlpre=P_p16_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCTL_1618):   run;
+
+NOTE: The data set INT.PD16PCT has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           33.75 seconds
+      cpu time            1.54 seconds
+
+
+MLOGIC(PCTL_1618):  Ending execution.
+465
+466  %pctl_1618(var=adj_pd_total_17_cost,
+MLOGIC(PCTL_1618):  Beginning execution.
+467               out=int.pd17pct,
+468               pctlpre = P_p17_);
+MLOGIC(PCTL_1618):  Parameter VAR has value adj_pd_total_17_cost
+MLOGIC(PCTL_1618):  Parameter OUT has value int.pd17pct
+MLOGIC(PCTL_1618):  Parameter PCTLPRE has value P_p17_
+MPRINT(PCTL_1618):   proc univariate noprint data=int.adj_pd_total_yy;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_17_cost
+MPRINT(PCTL_1618):   where adj_pd_total_17_cost gt 0;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_17_cost
+MPRINT(PCTL_1618):   var adj_pd_total_17_cost;
+SYMBOLGEN:  Macro variable OUT resolves to int.pd17pct
+SYMBOLGEN:  Macro variable PCTLPRE resolves to P_p17_
+MPRINT(PCTL_1618):   output out=int.pd17pct pctlpre=P_p17_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCTL_1618):   run;
+
+NOTE: The data set INT.PD17PCT has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1.50 seconds
+      cpu time            1.40 seconds
+
+
+MLOGIC(PCTL_1618):  Ending execution.
+469
+470  %pctl_1618(var=adj_pd_total_18_cost,
+MLOGIC(PCTL_1618):  Beginning execution.
+471               out=int.pd18pct,
+472               pctlpre = P_p18_);
+MLOGIC(PCTL_1618):  Parameter VAR has value adj_pd_total_18_cost
+MLOGIC(PCTL_1618):  Parameter OUT has value int.pd18pct
+MLOGIC(PCTL_1618):  Parameter PCTLPRE has value P_p18_
+MPRINT(PCTL_1618):   proc univariate noprint data=int.adj_pd_total_yy;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_18_cost
+MPRINT(PCTL_1618):   where adj_pd_total_18_cost gt 0;
+SYMBOLGEN:  Macro variable VAR resolves to adj_pd_total_18_cost
+MPRINT(PCTL_1618):   var adj_pd_total_18_cost;
+SYMBOLGEN:  Macro variable OUT resolves to int.pd18pct
+SYMBOLGEN:  Macro variable PCTLPRE resolves to P_p18_
+MPRINT(PCTL_1618):   output out=int.pd18pct pctlpre=P_p18_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCTL_1618):   run;
+
+NOTE: The data set INT.PD18PCT has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1.75 seconds
+      cpu time            1.45 seconds
+
+
+MLOGIC(PCTL_1618):  Ending execution.
+
+473
+474  data pctile_vals; merge pd16pct pd17pct pd18pct ; run;
+
+NOTE: There were 1 observations read from the data set WORK.PD16PCT.
+NOTE: There were 1 observations read from the data set WORK.PD17PCT.
+NOTE: There were 1 observations read from the data set WORK.PD18PCT.
+NOTE: The data set WORK.PCTILE_VALS has 1 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+475
+476  proc sql noprint;
+477    select
+478      name,
+479      cats(':',name)
+480    into
+481      :COL_NAMES separated by ',',
+482      :MVAR_NAMES separated by ','
+483    from sashelp.vcolumn
+484    where
+485      libname = "WORK"
+486      and memname = "PCTILE_VALS"
+487    ;
+SYMBOLGEN:  Macro variable COL_NAMES resolves to
+            P_p16_50,P_p16_75,P_p16_90,P_p16_95,P_p17_50,P_p17_75,P_p17_90,P_p17_95,P_p18_50,P_p18_7
+            5,P_p18_90,P_p18_95
+488    select &COL_NAMES into &MVAR_NAMES
+SYMBOLGEN:  Macro variable MVAR_NAMES resolves to
+            :P_p16_50,:P_p16_75,:P_p16_90,:P_p16_95,:P_p17_50,:P_p17_75,:P_p17_90,:P_p17_95,:P_p18_5
+            0,:P_p18_75,:P_p18_90,:P_p18_95
+489    from pctile_vals;
+490  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+SYMBOLGEN:  Macro variable COL_NAMES resolves to
+            P_p16_50,P_p16_75,P_p16_90,P_p16_95,P_p17_50,P_p17_75,P_p17_90,P_p17_95,P_p18_50,P_p18_7
+            5,P_p18_90,P_p18_95
+491
+492  %put &col_names;
+P_p16_50,P_p16_75,P_p16_90,P_p16_95,P_p17_50,P_p17_75,P_p17_90,P_p17_95,P_p18_50,P_p18_75,P_p18_90,P
+_p18_95
+493  %put &mvar_names;
+SYMBOLGEN:  Macro variable MVAR_NAMES resolves to
+            :P_p16_50,:P_p16_75,:P_p16_90,:P_p16_95,:P_p17_50,:P_p17_75,:P_p17_90,:P_p17_95,:P_p18_5
+            0,:P_p18_75,:P_p18_90,:P_p18_95
+:P_p16_50,:P_p16_75,:P_p16_90,:P_p16_95,:P_p17_50,:P_p17_75,:P_p17_90,:P_p17_95,:P_p18_50,:P_p18_75,
+:P_p18_90,:P_p18_95
+494
+495
+496  data int.pctile_vals; merge pd16pct pd17pct pd18pct ; run;
+
+NOTE: There were 1 observations read from the data set WORK.PD16PCT.
+NOTE: There were 1 observations read from the data set WORK.PD17PCT.
+NOTE: There were 1 observations read from the data set WORK.PD18PCT.
+NOTE: The data set INT.PCTILE_VALS has 1 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.53 seconds
+      cpu time            0.03 seconds
+
+

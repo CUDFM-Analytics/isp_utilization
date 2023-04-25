@@ -59,6 +59,9 @@ PROC CONTENTS
 VARNUM;
 RUN;
 
+PROC PRINT DATA = elig_and_util (obs=100); 
+RUN; 
+
 PROC MEANS DATA = int.qrylong_1621  ; 
 VAR pd_tot_q_adj ;
 BY FY ; 
