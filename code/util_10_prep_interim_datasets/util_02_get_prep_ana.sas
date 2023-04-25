@@ -2,11 +2,12 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization Analysis
 PURPOSE  : Gather, Process datasets from analytic subset dir
-VERSION  : 2023-03-16 [date last updated]
+VERSION  : 2023-04-24 somehow had >1 mcaid_id from budget group_new idk [date last updated]
 DEPENDS  : ana subset folder, config file [dependencies]
 NEXT     : [left off on row... or what step to do next... ]  ;
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+
 ***********************************************************************************************;
 
 * ==== SECTION01 ==============================================================================
@@ -40,7 +41,7 @@ SET    ana.qry_longitudinal ( DROP = FED_POV:
                               ) ; 
 * Recode pcmp loc type with format above; 
 num_pcmp_type = input(pcmp_loc_type_cd, 7.);
-pcmp_type     = put(num_pcmp_type, pcmp_type_rc.);     
+/*pcmp_type     = put(num_pcmp_type, pcmp_type_rc.);     */
 
 format dt_qrtr date9.; * create quarter beginning date to get quarters ; 
 dt_qrtr = intnx('quarter', month ,0,'b'); 
@@ -48,12 +49,14 @@ dt_qrtr = intnx('quarter', month ,0,'b');
 WHERE  month ge '01Jul2016'd 
 AND    month le '30Jun2022'd 
 AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
-RUN;  * 95609204  observations and 10;
+RUN;  * 95582030 4/24 : 95609204  observations and 10;
 
 ** Set aside pcmp type for now - match it to memlist_qrtr and memlist; 
-DATA int.pcmp_type_qrylong ; 
-SET  int.qrylong_1621 (KEEP = pcmp_loc_id pcmp_loc_type_cd num_pcmp_type pcmp_type) ; 
-RUN ; 
+/*DATA int.pcmp_type_qrylong ; */
+/*SET  int.qrylong_1621 (KEEP = pcmp_loc_id pcmp_loc_type_cd num_pcmp_type pcmp_type) ; */
+/*RUN ; */
+
+libname ana clear; 
 
 PROC SORT DATA = int.pcmp_type_qrylong NODUPKEY ; BY _ALL_ ; RUN ; 
 
@@ -83,13 +86,12 @@ on        a.enr_cnty = c.hcpf_county_code_c
 
 WHERE  managedcare = 0;
 QUIT; 
-* 85536949, 14
+* 85514116 : 10 on 4/24
+85536949, 14
   NB Some RAE ID and enr-county will be missing bc rae's not assigned until 2018 so it's okay in this set for now;
  
-DATA int.qrylong_1621 ( DROP = age_end_fy last_day_fy dob ); 
+DATA int.qrylong_1622 ( DROP = age_end_fy last_day_fy dob ); 
 SET  qrylong_1621a    ;
-
-budget_grp_new = put(budget_group, budget_grp_new_.) ; 
 
 * create age variable;
   IF      month ge '01Jul2016'd AND month le '30Jun2017'd THEN last_day_fy='30Jun2017'd;
@@ -108,57 +110,49 @@ budget_grp_new = put(budget_group, budget_grp_new_.) ;
   FY  = year(intnx('year.7', month, 0, 'BEGINNING'));
 
   age = age_end_fy;
-  format age age_cat_.;
-RUN; *;
+RUN; *82160141;
 
 PROC SORT 
-DATA  = int.qrylong_1621 NODUPKEY OUT = int.memlist ;
+DATA  = int.qrylong_1622 NODUPKEY OUT = int.memlist ;
 WHERE pcmp_loc_ID ne ' ' 
 AND   rae_person_new ne .
 AND   month ge '01JUL2019'd
 AND   month le '30JUN2022'd;
 BY    MCAID_ID month;
-RUN ;  * memlist = n40974871 ;
+RUN ;  *4/24 memlist 40958728, memlist = n40974871 ;
 
         * Unique mcaid_ids;
         PROC SQL ; 
         SELECT COUNT (DISTINCT mcaid_id) as n_mcaid_id 
         FROM int.memlist ; 
-        QUIT ; * 1594074 ; 
+        QUIT ; * 1593607 WHY 4/24 // 1594074 ; 
 
 * add time to memlit ; 
 %create_qrtr(data=int.memlist, set=int.memlist, var= dt_qrtr, qrtr=time);
 
-PROC SORT DATA = int.qrylong_1621 ; BY mcaid_id ; 
+PROC SORT DATA = int.qrylong_1622 ; BY mcaid_id ; 
 PROC SORT DATA = int.memlist      ; BY mcaid_id ; RUN ; 
 
-DATA  int.qrylong_1621_months ; 
-MERGE int.qrylong_1621 (in=a) int.memlist (in=b KEEP=mcaid_id) ; 
+DATA  int.qrylong_1622_months ; 
+MERGE int.qrylong_1622 (in=a) int.memlist (in=b KEEP=mcaid_id) ; 
 BY    mcaid_id; 
 IF    a and b; 
-RUN ; 
+RUN ; *73404937: 11; 
 
-%create_qrtr(data=int.qrylong_1621_months, set=int.qrylong_1621, var=month,qrtr=time);
+%create_qrtr(data=int.qrylong_1622_months, set=int.qrylong_1622, var=month,qrtr=time);
 
-DATA int.qrylong_1621_time; 
-SET  int.qrylong_1621 (DROP = month) ;
-RUN ;  
+DATA int.qrylong_1622_time; 
+SET  int.qrylong_1622 (DROP = month) ;
+RUN ;  *82160141;
 
-PROC SORT DATA = int.qrylong_1621_time NODUPKEY ; BY _ALL_ ; RUN ; 
-*NOTE: There were 73434456 observations read from the data set INT.QRYLONG_1621_TIME.
-NOTE: The data set INT.QRYLONG_1621_TIME has 27098419 observations and 12 variables.';
-/**/
-/*PROC SQL ; */
-/*CREATE TABLE qrylong_1921 AS */
-/*SELECT **/
-/*FROM  int.qrylong_1621_time*/
-/*WHERE mcaid_id IN ( SELECT mcaid_id FROM int.memlist ) */
-/*AND   month ge '01JUL2019'd */
-/*AND   month le '30JUN2022'd */
-/*AND   pcmp_loc_id ne ' ' ;*/
-/*QUIT ; * 41000008 : 16 ; */
-/**/
-/*%create_qrtr(data=int.qrylong_1921,set=qrylong_1921,var=month,qrtr=time);*/
+PROC SORT DATA = int.qrylong_1622_time NODUPKEY ; BY _ALL_ ; RUN ; 
+*NOTE: There were 82160141 observations read from the data set INT.QRYLONG_1622_TIME.
+NOTE: 51565316 observations with duplicate key values were deleted.
+NOTE: The data set INT.QRYLONG_1622_TIME has 30594825 observations and 10 variables.;
+
+PROC PRINT DATA = int.qrylong_1622_time (obs = 1000); RUN; 
+
+PROC CONTENTS DATA = int.memlist VARNUM; RUN; 
 
 * JOIN memlist with memlist_attr for pcmps for mcaid_ids in memlist (keep memlist mcaid_ids);
 PROC SQL ; 
@@ -169,7 +163,7 @@ SELECT a.mcaid_id
      , a.sex
      , a.race
      , a.rae_person_new
-     , a.budget_grp_new
+     , a.budget_group
      , a.FY
      , a.time 
 
