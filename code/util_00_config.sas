@@ -36,14 +36,38 @@ LOG
 * EXT DATA SOURCES ---------------------------------------------------------------------------; 
 
     * Medicaid dats: keep attached for formats (until/if final fmts copied); 
-/*      %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;*/
-/*      LIBNAME ana "&ana"; */
+      %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
+      LIBNAME ana "&ana"; 
 
 * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------; 
 
  OPTIONS NOFMTERR
          MPRINT MLOGIC SYMBOLGEN
          FMTSEARCH =(ana, datasets, data, util, work);
+
+%macro concat_id_time(ds=);
+DATA &ds;
+SET  &ds;
+id_time_helper = CATX('_', mcaid_id, time); 
+RUN; 
+%mend; 
+
+ %macro check_n_id(ds=);
+            proc sql; 
+            create table n_ids_&ds AS 
+            select mcaid_id
+                 , count(mcaid_id) as n_ids
+            FROM &ds
+            GROUP BY mcaid_ID
+            having n_ids>12;
+            quit; 
+ %mend;
+
+%macro sort4merge(ds1=,ds2=,by=);
+PROC SORT DATA = &ds1; by &by;
+PROC SORT DATA = &ds2; by &by; 
+RUN; 
+%mend;
 
 %macro create_qrtr(data=,set=,var=,qrtr=);
 data &data;

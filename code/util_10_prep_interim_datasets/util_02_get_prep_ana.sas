@@ -17,7 +17,7 @@ DATA qry_longitudinal;            SET ana.qry_longitudinal;            RUN; *02/
 DATA qry_demographics;            SET ana.qry_demographics;            RUN; *02/09/23 [  3008709     :  7];
 
 * **B** subset qrylong to dates within FY's and get var's needed ;  
-DATA   qrylong_1621;
+DATA   raw.qrylong_1622;
 LENGTH mcaid_id $11; 
 SET    ana.qry_longitudinal ( DROP = FED_POV: 
                                      DISBLD_IND 
@@ -39,19 +39,21 @@ dt_qrtr = intnx('quarter', month ,0,'b');
 
 WHERE  month ge '01Jul2016'd 
 AND    month le '30Jun2022'd 
-AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
-RUN;  * 95582030 4/24 : 95609204  observations and 10;
+AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
+AND    managedCare = 0;
+RUN;  * with mgdcare = 0 then 85514116
+95582030 4/24 : 95609204  observations and 10;
 
 ** Set aside pcmp type for now - match it to memlist_qrtr and memlist; 
-/*DATA int.pcmp_type_qrylong ; */
-/*SET  int.qrylong_1621 (KEEP = pcmp_loc_id pcmp_loc_type_cd num_pcmp_type pcmp_type) ; */
-/*RUN ; */
+DATA int.pcmp_type_qrylong ; 
+SET  int.qrylong_1622 (KEEP = pcmp_loc_id pcmp_loc_type_cd num_pcmp_type pcmp_type) ; 
+RUN ; 
 
 PROC SORT DATA = int.pcmp_type_qrylong NODUPKEY ; BY _ALL_ ; RUN ; 
 
 ** join with demographics to get required demographics in all years ; 
 PROC SQL; 
-CREATE TABLE qrylong_1621a AS
+CREATE TABLE qrylong_1622a AS
 SELECT a.mcaid_id
      , a.pcmp_loc_id
      , a.month
@@ -130,6 +132,115 @@ PROC SORT DATA = int.qrylong_1622_month NODUPKEY ; BY _ALL_ ; RUN ;
 *NOTE: There were 82160141 observations read from the data set INT.QRYLONG_1622_TIME.
 NOTE: 51565316 observations with duplicate key values were deleted.
 NOTE: The data set INT.QRYLONG_1622_TIME has 30594825 observations and 10 variables.;
+
+
+
+* Don't remove the following variables from memlist until you have selected the unique max grouped values, then remove and re-join
+  - enr_cnty
+  - budget
+  - rae
+
+Get MAX COUNTY (there were duplicates where member had > 1 county per quarter) ; 
+* 4/26; 
+PROC SQL; 
+CREATE TABLE county AS
+SELECT mcaid_id
+     , dt_qrtr
+     , enr_cnty
+     , time
+FROM (SELECT *
+           , max(month) AS max_mon_by_cnty 
+      FROM (SELECT *
+                 , count(enr_cnty) as n_county 
+            FROM int.memlist
+            GROUP BY mcaid_id 
+                   , dt_qrtr
+                   , enr_cnty) 
+      GROUP BY mcaid_id, dt_qrtr, n_county)  
+GROUP BY mcaid_id, dt_qrtr
+HAVING max(n_county)=n_county
+AND    month=max_mon_by_cnty;
+QUIT; * 4/24 14039876; 
+
+* 4/26; 
+PROC SQL; 
+CREATE TABLE budget AS
+SELECT mcaid_id
+     , dt_qrtr
+     , budget_group
+     , time
+FROM (SELECT *
+           , max(month) AS max_mon_by_budget
+      FROM (SELECT *
+                 , count(budget_group) as n_budget_group 
+            FROM int.memlist
+            GROUP BY mcaid_id 
+                   , dt_qrtr
+                   , budget_group) 
+      GROUP BY mcaid_id, dt_qrtr, n_budget_group)  
+GROUP BY mcaid_id, dt_qrtr
+HAVING max(n_budget_group)=n_budget_group
+AND    month=max_mon_by_budget;
+QUIT; *14039876; 
+
+* 4/26; 
+PROC SQL; 
+CREATE TABLE rae AS
+SELECT mcaid_id
+     , dt_qrtr
+     , rae_person_new
+     , time
+FROM (SELECT *
+           , max(month) AS max_mon_by_rae
+      FROM (SELECT *
+                 , count(rae_person_new) as n_rae_person_new 
+            FROM int.memlist
+            GROUP BY mcaid_id 
+                   , dt_qrtr
+                   , rae_person_new) 
+      GROUP BY mcaid_id, dt_qrtr, n_rae_person_new)  
+GROUP BY mcaid_id, dt_qrtr
+HAVING max(n_rae_person_new)=n_rae_person_new
+AND    month=max_mon_by_rae;
+QUIT; *14039876; 
+
+            *macro to find instances where n_ids >12 (should be 0); 
+            %check_n_id(ds=budget); *0;
+            %check_n_id(ds=county); *0;
+            %check_n_id(ds=rae);    *0;
+
+* Created helper var for joins (was taking a long time and creating rows without id, idk why, so did this as quick fix for now); 
+%concat_id_time(ds=county);
+%concat_id_time(ds=budget);
+%concat_id_time(ds=rae);
+%concat_id_time(ds=int.memlist_attr_qrtr_1921);
+
+* NOW you can remove the values that were creating duplicates (budget, rae, enr_cnty) and merge the unique ones below after
+creating a helper matching function; 
+
+        proc contents data = int.memlist; RUN; 
+        %macro check_memlist_ids;
+            proc sql; 
+            create table n_ids_memlist AS 
+            select mcaid_id
+                 , count(mcaid_id) as n_ids
+            FROM int.memlist
+            GROUP BY mcaid_ID
+            having n_ids>12;
+            quit; 
+        %mend;
+
+        %check_memlist_ids; *1251533 rows so a lot had duplicates due to month of course but also budget group and county 
+        (some had >1 per quarter for these variables
+        pcmp_loc_id is in memlist_attr_qrtr); 
+
+DATA memlist0;
+SET  int.memlist (drop=month dt_qrtr enr_cnty rae_person_new budget_group pcmp_loc_id);
+RUN; *40958727 : 11; 
+
+PROC SORT DATA = memlist0 NODUPKEY OUT=memlist; BY _ALL_; RUN; 
+
+%concat_id_time(ds=memlist);
 
 **************************************************************************
 * ---- SECTION03 BH Capitated --------------------------------------------

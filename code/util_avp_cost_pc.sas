@@ -167,7 +167,8 @@ PROC GEE DATA  = &dat DESC;
 /*  store p_model;*/
 run;
 
-TITLE "Model 3: Probability Model with Intercept, Time, and adj vars (x3)"; 
+%LET dat = test; 
+%put &dat; 
 PROC GEE DATA  = &dat DESC;
      CLASS  mcaid_id    
             adj_pd_total_16cat 
@@ -178,8 +179,8 @@ PROC GEE DATA  = &dat DESC;
                          adj_pd_total_17cat 
                          adj_pd_total_18cat
                          time  / dist = binomial link = logit ; 
-  repeated subject = mcaid_id / type = ind ; *exch;
-  store p_model;
+  repeated subject = mcaid_id / type = exch ; *ind;
+/*  store p_model;*/
 run;
 
 ods pdf close; 

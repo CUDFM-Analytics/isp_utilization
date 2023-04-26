@@ -14,8 +14,13 @@ DEPENDS  : ana subset folder, config file [dependencies]
 *----------------------------------------------------------------------------------------------
 SECTION 01d.1 Get Monthly Utilization Data 16-21 for memlist
 ----------------------------------------------------------------------------------------------;
+/*%LET raw = &data/_raw;*/
+/*LIBNAME raw "&raw"; */
+/**/
+/*libname ana clear;*/
+
 PROC SQL ; 
-CREATE TABLE util AS 
+CREATE TABLE util0 AS 
 SELECT * 
 FROM   ana.qry_monthlyutilization 
 WHERE  month ge '01Jul2016'd 
@@ -23,8 +28,7 @@ AND    month le '30Jun2022'd;
 QUIT; *66382081 4/24 //  663676624;
 
 data util_0; 
-set util; 
-where month ge '01Jul2016'd and month le '30Jun2022'd;
+set  ana.qry_monthlyutilization (WHERE=(month ge '01Jul2016'd AND month le '30Jun2022'd));
 quarter_beg=intnx('QTR', month, 0, 'BEGINNING'); 
 format quarter_beg date9.;
 run;
@@ -35,7 +39,6 @@ select a.*, (a.pd_amt/b.index_2021_1) as adj_pd_amount  /*divBY has no missing v
 from util_0 as a
 left join int.adj as b on a.quarter_beg=b.date;
 quit; *66382081 : 7 cols; 
-
 
 proc sort data=int.util_1622_0; by MCAID_ID month; run;
 
@@ -71,6 +74,40 @@ proc sql;
 from int.util_1622_0
 group by MCAID_ID,month;
 quit; *32835706, 25; 
+
+/**/
+/*data v21618; */
+/*set  int.util_1622_1 (keep=clnt_id fy6 month adj_pd_total adj_pd_pharmacy pdj_pd_primary_care bho_n_hosp bho_n_er bho_n_other); where month lt '01Jul2019'd; run;*/
+/*proc sql;*/
+/* create table firstyears2 as*/
+/* select*/
+/* clnt_id,*/
+/* max(case when fy6=2016 then 1 else 0 end) as health_1st_CO16t, */
+/* max(case when fy6=2017 then 1 else 0 end) as health_1st_CO17t,*/
+/* max(case when fy6=2018 then 1 else 0 end) as health_1st_CO18t,*/
+/**/
+/* avg(case when fy6=2016 then adj_pd_total else 0 end) as adj_pd_total_16pm, */
+/* avg(case when fy6=2017 then adj_pd_total else 0 end) as adj_pd_total_17pm, */
+/* avg(case when fy6=2018 then adj_pd_total else 0 end) as adj_pd_total_18pm,*/
+/**/
+/* avg(case when fy6=2016 then bho_n_hosp else 0 end) as bho_n_hosp_16pm, */
+/* avg(case when fy6=2017 then bho_n_hosp else 0 end) as bho_n_hosp_17pm, */
+/* avg(case when fy6=2018 then bho_n_hosp else 0 end) as bho_n_hosp_18pm,*/
+/* avg(case when fy6=2016 then bho_n_er else 0 end) as bho_n_er_16pm, */
+/* avg(case when fy6=2017 then bho_n_er else 0 end) as bho_n_er_17pm, */
+/* avg(case when fy6=2018 then bho_n_er else 0 end) as bho_n_er_18pm,*/
+/* avg(case when fy6=2016 then bho_n_other else 0 end) as bho_n_other_16pm, */
+/* avg(case when fy6=2017 then bho_n_other else 0 end) as bho_n_other_17pm, */
+/* avg(case when fy6=2018 then bho_n_other else 0 end) as bho_n_other_18pm*/
+/* from firstyears1*/
+/* group by clnt_id;*/
+/*quit; */
+/**/
+
+PROC PRINT DATA = int.util_1622_1;
+WHERE mcaid_id IN ("A003219")
+;
+RUN; 
 
 PROC CONTENTS DATA = int.util_1622_1; RUN; 
 
@@ -137,7 +174,6 @@ Ran checks and it looked good ;
 DATA int.elig1618a; 
 SET  ANA.QRY_LONGITUDINAL (KEEP= mcaid_ID month pcmp_loc_id);
 FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ; 
-ind = 1 ; 
 WHERE month ge '01JUL2016'd 
 AND   month le '30JUN2019'd ; 
 RUN ; 
@@ -201,7 +237,6 @@ QUIT ; *2066673;
 
 PROC PRINT DATA = int.adj_pd_total_yy (obs=20); run; 
 
-
 *----------------------------------------------------------------------------------------------
 SECTION 01d.3 19-21 
 1) Create quarter variable in util1921
@@ -232,3 +267,10 @@ QUIT ; *04/24 7982472;
 
 PROC SORT DATA = int.util1921_adj ; BY FY ; RUN ; 
 
+
+
+PROC PRINT DATA = ana.qry_longitudinal;
+WHERE mcaid_id IN ("A003219")
+AND   month ge "01JUL2016"d
+AND   month le "30JUN2017"d;
+RUN; 
