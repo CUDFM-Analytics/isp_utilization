@@ -12,6 +12,171 @@
 * PROJECT PATHS, MAPPING; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 
+*** JOIN PCMP TYPE (4/14 ran - don't need to run again, but it's here in case); 
+*   Create numeric pcmp_loc_id ; 
+/*DATA int.pcmp_types ; */
+/*SET  int.pcmp_types ; */
+/*LENGTH pcmp 8 ; */
+/*pcmp = input(pcmp_loc_id, best12.); */
+/*RUN ;*/
+
+* Create a mcaid_id / time var that you can match on more easily / faster
+Used after county / budget / rae for joining to memlist_attr_qrtr; 
+%macro concat_id_time(ds=);
+DATA &ds;
+SET  &ds;
+id_time_helper = CATX('_', mcaid_id, time); 
+RUN; 
+%mend; 
+
+* Don't remove the following variables from memlist until you have selected the unique max grouped values, then remove and re-join
+  - enr_cnty
+  - budget
+  - rae
+
+Get MAX COUNTY (there were duplicates where member had > 1 county per quarter) ; 
+* 4/26; 
+PROC SQL; 
+CREATE TABLE county AS
+SELECT mcaid_id
+     , dt_qrtr
+     , enr_cnty
+     , time
+FROM (SELECT *
+           , max(month) AS max_mon_by_cnty 
+      FROM (SELECT *
+                 , count(enr_cnty) as n_county 
+            FROM int.memlist
+            GROUP BY mcaid_id 
+                   , dt_qrtr
+                   , enr_cnty) 
+      GROUP BY mcaid_id, dt_qrtr, n_county)  
+GROUP BY mcaid_id, dt_qrtr
+HAVING max(n_county)=n_county
+AND    month=max_mon_by_cnty;
+QUIT; * 4/24 14039876; 
+
+* 4/26; 
+PROC SQL; 
+CREATE TABLE budget AS
+SELECT mcaid_id
+     , dt_qrtr
+     , budget_group
+     , time
+FROM (SELECT *
+           , max(month) AS max_mon_by_budget
+      FROM (SELECT *
+                 , count(budget_group) as n_budget_group 
+            FROM int.memlist
+            GROUP BY mcaid_id 
+                   , dt_qrtr
+                   , budget_group) 
+      GROUP BY mcaid_id, dt_qrtr, n_budget_group)  
+GROUP BY mcaid_id, dt_qrtr
+HAVING max(n_budget_group)=n_budget_group
+AND    month=max_mon_by_budget;
+QUIT; *14039876; 
+
+* 4/26; 
+PROC SQL; 
+CREATE TABLE rae AS
+SELECT mcaid_id
+     , dt_qrtr
+     , rae_person_new
+     , time
+FROM (SELECT *
+           , max(month) AS max_mon_by_rae
+      FROM (SELECT *
+                 , count(rae_person_new) as n_rae_person_new 
+            FROM int.memlist
+            GROUP BY mcaid_id 
+                   , dt_qrtr
+                   , rae_person_new) 
+      GROUP BY mcaid_id, dt_qrtr, n_rae_person_new)  
+GROUP BY mcaid_id, dt_qrtr
+HAVING max(n_rae_person_new)=n_rae_person_new
+AND    month=max_mon_by_rae;
+QUIT; *14039876; 
+
+            *macro to find instances where n_ids >12 (should be 0); 
+            %macro check_n_id(ds=);
+            proc sql; 
+            create table n_ids_&ds AS 
+            select mcaid_id
+                 , count(mcaid_id) as n_ids
+            FROM &ds
+            GROUP BY mcaid_ID
+            having n_ids>12;
+            quit; 
+            %mend;
+
+            %check_n_id(ds=budget); *0;
+            %check_n_id(ds=county); *0;
+            %check_n_id(ds=rae);    *0;
+
+* Created helper var for joins (was taking a long time and creating rows without id, idk why, so did this as quick fix for now); 
+%concat_id_time(ds=county);
+%concat_id_time(ds=budget);
+%concat_id_time(ds=rae);
+%concat_id_time(ds=int.memlist_attr_qrtr_1921);
+
+* NOW you can remove the values that were creating duplicates (budget, rae, enr_cnty) and merge the unique ones below after
+creating a helper matching function; 
+
+        proc contents data = int.memlist; RUN; 
+        %macro check_memlist_ids;
+            proc sql; 
+            create table n_ids_memlist AS 
+            select mcaid_id
+                 , count(mcaid_id) as n_ids
+            FROM int.memlist
+            GROUP BY mcaid_ID
+            having n_ids>12;
+            quit; 
+        %mend;
+
+        %check_memlist_ids; *1251533 rows so a lot had duplicates due to month of course but also budget group and county 
+        (some had >1 per quarter for these variables
+        pcmp_loc_id is in memlist_attr_qrtr); 
+
+DATA memlist0;
+SET  int.memlist (drop=month dt_qrtr enr_cnty rae_person_new budget_group pcmp_loc_id);
+RUN; *40958727 : 11; 
+
+PROC SORT DATA = memlist0 NODUPKEY OUT=memlist; BY _ALL_; RUN; 
+
+%concat_id_time(ds=memlist);
+
+* LAST UPDATED 4/24 (all above to here)
+JOIN memlist with memlist_attr for pcmps for mcaid_ids in memlist (keep memlist mcaid_ids);
+PROC SQL ; 
+CREATE TABLE int.memlist_final AS 
+SELECT a.mcaid_id
+     , a.FY
+     , a.age
+     , a.race
+     , a.sex
+     , a.time
+     , a.id_time_helper
+
+     , b.pcmp_loc_id 
+     , b.n_months_per_q
+     , b.ind_isp
+
+     , c.budget_group
+     , d.enr_cnty
+     , e.rae_person_new
+     , f.pcmp_loc_type_cd
+
+FROM memlist AS A
+
+LEFT JOIN int.memlist_attr_qrtr_1921 AS B   ON A.id_time_helper = B.id_time_helper
+LEFT JOIN budget AS C                       ON A.id_time_helper = C.id_time_helper
+LEFT JOIN county AS D                       ON A.id_time_helper = D.id_time_helper
+LEFT JOIN rae AS E                          ON A.id_time_helper = E.id_time_helper
+LEFT JOIN int.pcmp_types as F               ON B.pcmp_loc_id    = F.pcmp              ; * the numeric var made for matching;  
+QUIT ; *4/23 14039876!!! WOOT!! (twice, and second time with the joins) //  4097481 : 12 ; 
+
 * ==== Combine datasets with memlist_final ==================================;  
 proc sort data = int.memlist_final; by mcaid_id ; run ;  
 
@@ -32,46 +197,29 @@ QUIT ; *14039876;
 * TESTS: - expecting time*int_imp to have all int_imp=0 for time 1,2
          - time_start_isp should only be 3> UPDATE 4>
          - ind_isp*int_imp should have values in both cols for 0 but where ind_isp = 0 all int_imp should be 0;         
-PROC CONTENTS DATA = int.a1; RUN; 
+        PROC CONTENTS DATA = int.a1; RUN; 
 
-PROC FREQ DATA = int.a1 ; 
-TABLES time*int_imp time_start_isp*int_imp ind_isp*int_imp; 
-RUN ;
+        PROC FREQ DATA = int.a1 ; 
+        TABLES time*int_imp time_start_isp*int_imp ind_isp*int_imp; 
+        RUN ;
 
-*** JOIN PCMP TYPE ; 
-*   Create numeric pcmp_loc_id ; 
-DATA int.pcmp_types ; 
-SET  int.pcmp_types ; 
-LENGTH pcmp 8 ; 
-pcmp = input(pcmp_loc_id, best12.); 
-RUN ;
-
-PROC SQL ; 
-CREATE TABLE int.a2 AS 
-SELECT a.*
-     , b.pcmp_loc_type_cd
-FROM int.a1 as a
-LEFT JOIN int.pcmp_types as b
-ON   a.pcmp_loc_id = b.pcmp ; 
-QUIT ; *14039876; 
-
-* tidy up 4/24 removed enr_county because there were somehow duplicates/ lost rae_person_new; 
+*; 
 DATA int.a2a ; 
 SET  int.a2  (DROP = TIME_START_ISP ) ;
 RENAME ind_isp=int ; 
-RUN ; *40974871 : 13; 
+RUN ; *14039876 : 11;
                       
 *** 
-UPDATED 4/24: adj file with actually correct values
+UPDATED 4/25: adj file with actually correct values
 UPDATED 3/30: new adj file with all (no missing yay) and changed lib to int;
 proc sql; 
 create table int.a3 as 
 select a.*
 
      /* join monthly */
-     , b.adj_pd_total_16cat
-     , b.adj_pd_total_17cat
-     , b.adj_pd_total_18cat
+     , b.adj_pd_total_16_cost
+     , b.adj_pd_total_17_cost
+     , b.adj_pd_total_18_cost
 
      /* join bh_cat  */
      , c.bh_er2016
@@ -92,7 +240,7 @@ select a.*
 FROM int.a2a AS a
 
 /*only needs to be joined on mcaid_id bc the cat's are wide not long */
-LEFT JOIN int.adj_pd_total_YYcat AS b
+LEFT JOIN int.adj_pd_total_YY AS b
 ON a.mcaid_id = b.mcaid_id 
 
 /*only needs to be joined on mcaid_id bc the cols are wide not long */
@@ -125,10 +273,28 @@ ARRAY bhoth bh_oth2016-bh_oth2018;
 RUN ;  * 3/30 14347065 : 27 ; 
 
 * Some adj's are blank - weren't eligible / not in file? ; 
-PROC PRINT DATA = int.a3b (obs=100) ; where adj_pd_total_16cat = ''; RUN; 
+PROC PRINT DATA = int.a3b (obs=100) ; where adj_pd_total_16_cost = .; RUN; 
+
+*
+ADJ `-1` values below: adj dataset created in util_02_get_prep_ana_util from a full join using all
+qry_monthlyutilization and qry_longitudinal values from FYs 16-18
+ID's not present in int.a3b were not eligible and can be marked with -1 as they were not present in either ana dataset; 
+DATA  int.a3c;
+SET   int.a3b;
+format adj_pd_16a adj_pd_17a adj_pd_18a 3. ;
+* make numeric; 
+adj_pd_16a = input(adj_pd_total_16cat, 3.);
+adj_pd_17a = input(adj_pd_total_17cat, 3.);
+adj_pd_18a = input(adj_pd_total_18cat, 3.);
+* make missing = -1 because they weren't eligible (checking with where int.a3b = '' like A001791 etc in zscratch); 
+adj_pd_total16 = coalesce(adj_pd_16a,-1);
+adj_pd_total17 = coalesce(adj_pd_17a,-1);
+adj_pd_total18 = coalesce(adj_pd_18a,-1);
+run;
+
 
 * int.a3c
-
+* https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 * ADJ pctile values ; 
 proc sql noprint;
   select 
@@ -148,24 +314,6 @@ quit;
 
 %put &col_names; 
 %put &mvar_names; 
-
-
-
-ADJ `-1` values below: adj dataset created in util_02_get_prep_ana_util from a full join using all
-qry_monthlyutilization and qry_longitudinal values from FYs 16-18
-ID's not present in int.a3b were not eligible and can be marked with -1 as they were not present in either ana dataset; 
-DATA  int.a3c;
-SET   int.a3b;
-format adj_pd_16a adj_pd_17a adj_pd_18a 3. ;
-* make numeric; 
-adj_pd_16a = input(adj_pd_total_16cat, 3.);
-adj_pd_17a = input(adj_pd_total_17cat, 3.);
-adj_pd_18a = input(adj_pd_total_18cat, 3.);
-* make missing = -1 because they weren't eligible (checking with where int.a3b = '' like A001791 etc in zscratch); 
-adj_pd_total16 = coalesce(adj_pd_16a,-1);
-adj_pd_total17 = coalesce(adj_pd_17a,-1);
-adj_pd_total18 = coalesce(adj_pd_18a,-1);
-run;
 
 PROC PRINT DATA = int.a3c (obs=25); where adj_pd_16a = .; RUN; *(looking to make sure adj_pd_total16 = -1);
 

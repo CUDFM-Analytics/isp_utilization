@@ -242,6 +242,7 @@ output out=&out pctlpre=&pctlpre pctlpts= 50, 75, 90, 95;
 run;
 %mend; 
 
+
 %pctl_1618(var=adj_pd_total_16_cost,
              int.pd16pct,
              pctlpre = P_p16_); 
@@ -255,3 +256,65 @@ run;
              pctlpre = P_p18_); 
 
 data int.pctile_vals; merge pd16pct pd17pct pd18pct ; run;
+
+PROC FORMAT; 
+INVALUE adj_1618_rank_cat_   
+    1  - 50 = 1
+    51 - 75 = 2
+    76 - 90 = 3
+    91 - 95 = 4
+    96 - 99 = 5 
+    Other = .;
+RUN; 
+
+%macro pctile_1618_adj(var=,year=);
+PROC RANK 
+DATA = int.adj_pd_total_yy out=rank_&year (keep=&var pctile_&year) groups=100;
+VAR   &var;
+RANKS pctile_&year;
+WHERE &var gt 0;
+RUN;
+%mend;
+
+%pctile_1618_adj(var=adj_pd_total_16_cost,year=16);
+%pctile_1618_adj(var=adj_pd_total_17_cost,year=17);
+%pctile_1618_adj(var=adj_pd_total_18_cost,year=18);
+
+proc means data = rank_16; var pctile_16; run; 
+
+%macro format_cats(ds=,var=,year=);
+DATA int.&ds; 
+SET  &ds;
+if &var < 50 then cat_&year =1;
+else if 50 <= &var < 74  then cat_&year=2;
+else if 75 <= &var < 89  then cat_&year=3;
+else if 90 <= &var < 94  then cat_&year=4;
+else if 95 <= &var < 100 then cat_&year=5;
+RUN; 
+%mend;
+
+%format_cats(ds=int.rank_16, var=pctile_16, year=16); *1125921; 
+%format_cats(ds=int.rank_17, var=pctile_17, year=17); *1076063; 
+%format_cats(ds=int.rank_18, var=pctile_18, year=18);
+
+PROC SORT DATA = int.rank_16 NODUPKEY; BY _ALL_ ; RUN; *986493;
+PROC SORT DATA = int.rank_17 NODUPKEY; BY _ALL_ ; RUN; *943689; 
+PROC SORT DATA = int.rank_18 NODUPKEY; BY _ALL_ ; RUN; *907352; 
+
+PROC UNIVARIATE DATA = int.adj_pd_total_yy;
+VAR  _2016 _2017 _2018;
+RUN; 
+
+PROC SQL; 
+CREATE TABLE int.adj_pd_1618_cat AS 
+SELECT a.*
+     , b.*
+     , c.*
+     , d.*
+FROM int.adj_pd_total_yy as A       
+LEFT JOIN int.rank_16 as B          ON a._2016=b.adj_pd_total_16_cost
+LEFT JOIN int.rank_17 as C          ON a._2017=C.adj_pd_total_17_cost
+LEFT JOIN int.rank_18 as D          ON a._2018=D.adj_pd_total_18_cost;
+QUIT; 
+
+PROC SORT DATA = int.adj_pd_1618_cat ; BY mcaid_id; RUN; 

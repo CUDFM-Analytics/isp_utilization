@@ -5,6 +5,11 @@ PROC SORT DATA int.isp_un_pcmp_dtstart ; by time_start_isp; run;
 
 proc freq data = isp_un_pcmp_dtstart; tables month; run; 
 
+PROC CONTENTS DATA = memlist;
+PROC CONTENTS DATA = int.memlist_attr_qrtr_1921;
+PROC CONTENTS DATA = int.pcmp_types; 
+RUN;
+
 
 ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\interim_reports\isp_start_dates.pdf" startpage=no;
 TITLE; 

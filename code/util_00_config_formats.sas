@@ -19,14 +19,6 @@ VALUE $race_rc_
     Other     = "Unknown Race/Ethnicity";
 
 * Formats for values created originally in the util files; 
-VALUE adj_pd_total_YRcat_   
-    0 = 0
-    1 - 50  = 1
-    51 - 75 = 2
-    76 - 90 = 3
-	91 - 95 = 4
-    96 - 99 = 5 
-    Other = .;
 
 VALUE age_cat_              
     0 - 5 = 1

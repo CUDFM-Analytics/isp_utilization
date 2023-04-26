@@ -1,0 +1,297 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.99 seconds
+      cpu time            0.96 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+
+68   PROC SQL;
+69   CREATE TABLE county AS
+70   SELECT mcaid_id
+71        , dt_qrtr
+72        , enr_cnty
+73        , time
+74   FROM (SELECT *
+75              , max(month) AS max_mon_by_cnty
+76         FROM (SELECT *
+77                    , count(enr_cnty) as n_county
+78               FROM int.memlist
+79               GROUP BY mcaid_id
+80                      , dt_qrtr
+81                      , enr_cnty)
+82         GROUP BY mcaid_id, dt_qrtr, n_county)
+83   GROUP BY mcaid_id, dt_qrtr
+84   HAVING max(n_county)=n_county
+85   AND    month=max_mon_by_cnty;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.COUNTY created, with 14039876 rows and 4 columns.
+
+86   QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           59.48 seconds
+      cpu time            42.86 seconds
+
+
+86 !       *14039876;
+87
+88   PROC SQL;
+89   CREATE TABLE budget AS
+90   SELECT mcaid_id
+91        , dt_qrtr
+92        , budget_group
+93        , time
+94   FROM (SELECT *
+95              , max(month) AS max_mon_by_budget
+96         FROM (SELECT *
+97                    , count(budget_group) as n_budget_group
+98               FROM int.memlist
+99               GROUP BY mcaid_id
+100                     , dt_qrtr
+101                     , budget_group)
+102        GROUP BY mcaid_id, dt_qrtr, n_budget_group)
+103  GROUP BY mcaid_id, dt_qrtr
+104  HAVING max(n_budget_group)=n_budget_group
+105  AND    month=max_mon_by_budget;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.BUDGET created, with 14039876 rows and 4 columns.
+
+106  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           28.35 seconds
+      cpu time            45.04 seconds
+
+
+106!       *14039876;
+107
+108  PROC SQL;
+109  CREATE TABLE rae AS
+110  SELECT mcaid_id
+111       , dt_qrtr
+112       , rae_person_new
+113       , time
+114  FROM (SELECT *
+115             , max(month) AS max_mon_by_rae
+116        FROM (SELECT *
+117                   , count(rae_person_new) as n_rae_person_new
+118              FROM int.memlist
+119              GROUP BY mcaid_id
+120                     , dt_qrtr
+121                     , rae_person_new)
+122        GROUP BY mcaid_id, dt_qrtr, n_rae_person_new)
+123  GROUP BY mcaid_id, dt_qrtr
+124  HAVING max(n_rae_person_new)=n_rae_person_new
+125  AND    month=max_mon_by_rae;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.RAE created, with 14039876 rows and 4 columns.
+
+126  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           29.57 seconds
+      cpu time            47.50 seconds
+
+
+126!       *14039876;
+
+127  DATA county;
+128  SET  county;
+129  id_time_helper = CAT(mcaid_id, time);
+130  RUN;
+
+NOTE: There were 14039876 observations read from the data set WORK.COUNTY.
+NOTE: The data set WORK.COUNTY has 14039876 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.55 seconds
+      cpu time            3.54 seconds
+
+
+131  DATA county;
+132  SET  county;
+133  id_time_helper = CATX('_', mcaid_id, time);
+134  RUN;
+
+NOTE: There were 14039876 observations read from the data set WORK.COUNTY.
+NOTE: The data set WORK.COUNTY has 14039876 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.17 seconds
+      cpu time            4.09 seconds
+
+
+135  %macro concat_id_time(ds=);
+136  DATA &ds;
+137  SET  &ds;
+138  id_time_helper = CATX('_', mcaid_id, time);
+139  RUN;
+140  %mend;
+
+141  %concat_id_time(ds=county);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value county
+SYMBOLGEN:  Macro variable DS resolves to county
+MPRINT(CONCAT_ID_TIME):   DATA county;
+SYMBOLGEN:  Macro variable DS resolves to county
+MPRINT(CONCAT_ID_TIME):   SET county;
+MPRINT(CONCAT_ID_TIME):   id_time_helper = CATX('_', mcaid_id, time);
+MPRINT(CONCAT_ID_TIME):   RUN;
+
+NOTE: There were 14039876 observations read from the data set WORK.COUNTY.
+NOTE: The data set WORK.COUNTY has 14039876 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.13 seconds
+      cpu time            4.18 seconds
+
+
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+
+142  %concat_id_time(ds=budget);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value budget
+SYMBOLGEN:  Macro variable DS resolves to budget
+MPRINT(CONCAT_ID_TIME):   DATA budget;
+SYMBOLGEN:  Macro variable DS resolves to budget
+MPRINT(CONCAT_ID_TIME):   SET budget;
+MPRINT(CONCAT_ID_TIME):   id_time_helper = CATX('_', mcaid_id, time);
+MPRINT(CONCAT_ID_TIME):   RUN;
+
+NOTE: There were 14039876 observations read from the data set WORK.BUDGET.
+NOTE: The data set WORK.BUDGET has 14039876 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.96 seconds
+      cpu time            3.95 seconds
+
+
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+143  %concat_id_time(ds=rae);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value rae
+SYMBOLGEN:  Macro variable DS resolves to rae
+MPRINT(CONCAT_ID_TIME):   DATA rae;
+SYMBOLGEN:  Macro variable DS resolves to rae
+MPRINT(CONCAT_ID_TIME):   SET rae;
+MPRINT(CONCAT_ID_TIME):   id_time_helper = CATX('_', mcaid_id, time);
+MPRINT(CONCAT_ID_TIME):   RUN;
+
+NOTE: There were 14039876 observations read from the data set WORK.RAE.
+NOTE: The data set WORK.RAE has 14039876 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.73 seconds
+      cpu time            3.72 seconds
+
+
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+
+144  %concat_id_time(ds=int.memlist_attr_qrtr_1921);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value int.memlist_attr_qrtr_1921
+SYMBOLGEN:  Macro variable DS resolves to int.memlist_attr_qrtr_1921
+MPRINT(CONCAT_ID_TIME):   DATA int.memlist_attr_qrtr_1921;
+SYMBOLGEN:  Macro variable DS resolves to int.memlist_attr_qrtr_1921
+MPRINT(CONCAT_ID_TIME):   SET int.memlist_attr_qrtr_1921;
+MPRINT(CONCAT_ID_TIME):   id_time_helper = CATX('_', mcaid_id, time);
+MPRINT(CONCAT_ID_TIME):   RUN;
+
+NOTE: There were 14649660 observations read from the data set INT.MEMLIST_ATTR_QRTR_1921.
+NOTE: The data set INT.MEMLIST_ATTR_QRTR_1921 has 14649660 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:30.91
+      cpu time            5.53 seconds
+
+
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+
+145  DATA memlist;
+146  SET  int.memlist (drop=month);
+147  RUN;
+
+NOTE: There were 40958727 observations read from the data set INT.MEMLIST.
+NOTE: The data set WORK.MEMLIST has 40958727 observations and 11 variables.
+NOTE: DATA statement used (Total process time):
+      real time           36.96 seconds
+      cpu time            3.37 seconds
+
+
+148
+149  %concat_id_time(ds=memlist);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value memlist
+SYMBOLGEN:  Macro variable DS resolves to memlist
+MPRINT(CONCAT_ID_TIME):   DATA memlist;
+SYMBOLGEN:  Macro variable DS resolves to memlist
+MPRINT(CONCAT_ID_TIME):   SET memlist;
+MPRINT(CONCAT_ID_TIME):   id_time_helper = CATX('_', mcaid_id, time);
+MPRINT(CONCAT_ID_TIME):   RUN;
+
+NOTE: There were 40958727 observations read from the data set WORK.MEMLIST.
+NOTE: The data set WORK.MEMLIST has 40958727 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           12.09 seconds
+      cpu time            12.03 seconds
+
+
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+
+150  DATA memlist0;
+151  SET  int.memlist (drop=month);
+152  RUN;
+
+NOTE: There were 40958727 observations read from the data set INT.MEMLIST.
+NOTE: The data set WORK.MEMLIST0 has 40958727 observations and 11 variables.
+NOTE: DATA statement used (Total process time):
+      real time           34.86 seconds
+      cpu time            3.45 seconds
+
+
+153
+154  PROC SORT DATA = memlist0 NODUPKEY OUT=memlist; BY _ALL_; RUN;
+
+NOTE: There were 40958727 observations read from the data set WORK.MEMLIST0.
+NOTE: 26380585 observations with duplicate key values were deleted.
+NOTE: The data set WORK.MEMLIST has 14578142 observations and 11 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           7.79 seconds
+      cpu time            15.86 seconds
+
+
+155
+156  %concat_id_time(ds=memlist);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value memlist
+SYMBOLGEN:  Macro variable DS resolves to memlist
+MPRINT(CONCAT_ID_TIME):   DATA memlist;
+SYMBOLGEN:  Macro variable DS resolves to memlist
+MPRINT(CONCAT_ID_TIME):   SET memlist;
+MPRINT(CONCAT_ID_TIME):   id_time_helper = CATX('_', mcaid_id, time);
+MPRINT(CONCAT_ID_TIME):   RUN;
+
+NOTE: There were 14578142 observations read from the data set WORK.MEMLIST.
+NOTE: The data set WORK.MEMLIST has 14578142 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.41 seconds
+      cpu time            4.23 seconds
+
+
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+
