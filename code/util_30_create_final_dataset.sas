@@ -147,7 +147,7 @@ PROC SORT DATA = memlist0 NODUPKEY OUT=memlist; BY _ALL_; RUN;
 
 %concat_id_time(ds=memlist);
 
-* LAST UPDATED 4/24 (all above to here)
+* LAST UPDATED 4/26 (all above to here)
 JOIN memlist with memlist_attr for pcmps for mcaid_ids in memlist (keep memlist mcaid_ids);
 PROC SQL ; 
 CREATE TABLE int.memlist_final AS 
@@ -177,11 +177,31 @@ LEFT JOIN rae AS E                          ON A.id_time_helper = E.id_time_help
 LEFT JOIN int.pcmp_types as F               ON B.pcmp_loc_id    = F.pcmp              ; * the numeric var made for matching;  
 QUIT ; *4/23 14039876!!! WOOT!! (twice, and second time with the joins) //  4097481 : 12 ; 
 
+        %macro count_ids_memlist_final;
+            PROC SQL; 
+            SELECT count(distinct mcaid_id)
+            FROM int.memlist_final;
+            QUIT; 
+        %mend;
 
-** GET PERCENTILES FOR ALL & TOP CODE DV's ; 
+        %count_ids_memlist_final; *1593607! WOOT
+
+***********************************************************************************
+*** SECTION TWO : Getting ADJ 1618 VARS & joining them             ****************
+***********************************************************************************
+
+** SUBSET int.adj_pt_total_yy (incl. all records in qry_longitudinal and qry_monthlyutil) to int.memlist mcaid_id's only; 
+PROC SQL; 
+CREATE TABLE int.adj_pd_total_yy_memlist AS 
+SELECT *
+FROM   int.adj_pd_total_yy
+WHERE  mcaid_id IN (SELECT mcaid_id FROM int.memlist_final); 
+QUIT;  * FROM 1550644 to 1050185; 
+
+** GET PERCENTILES FOR ALL & TOP CODE DV's FOR MEMBERS ONLY ; 
 * 1618; 
 %macro pctl_1618(var,out,pctlpre);
-proc univariate noprint data=int.adj_pd_total_yy; 
+proc univariate noprint data=int.adj_pd_total_yy_memlist; 
 where &var gt 0; 
 var &var; 
 output out=&out pctlpre=&pctlpre pctlpts= 50, 75, 90, 95; 
@@ -204,6 +224,9 @@ data int.pctile_vals; merge pd16pctle pd17pctle pd18pctle ; run;
 
 PROC PRINT DATA = int.pctile_vals; RUN; 
 /*Obs p16_50  p16_75   p16_90    p16_95      p17_50  p17_75  p17_90   p17_95        p18_50  p18_75  p18_90  p18_95 */
+/*    995.665 2999.26 9368.52 18499.59       1011.85 3045.41 9712.56 19963.22       1032.91 3178.07 10435.04 22052.47 */
+
+*FROM ORIGINAL LIST (included entire original util linelist members, not subset - just here for reference);
 /*1   921.582 3034.06  10387.39  22590.99    966.845 3173.37 11080.45 25173.98      1011.10 3410.40 12288.92 28563.99 */
 
 proc sql noprint;
@@ -256,21 +279,14 @@ RUN;
 ;
 %mend;
 
-* Made separate ds's for testing but merge if poss later; 
-%insert_pctile(ds_in = int.adj_pd_total_yy, ds_out = adj_final0, year = 16);
-%insert_pctile(ds_in = adj_final0,          ds_out = adj_final1, year = 17);
-%insert_pctile(ds_in = adj_final1,          ds_out = adj_final2, year = 18);
+* Made separate ds's for testing but merge if poss later, save final to data/; 
+%insert_pctile(ds_in = int.adj_pd_total_yy_memlist, ds_out = adj_final0,          year = 16);
+%insert_pctile(ds_in = adj_final0,                  ds_out = adj_final1,          year = 17);
+%insert_pctile(ds_in = adj_final1,                  ds_out = data.adj_1618_final, year = 18); *1050185;
 
-PROC FREQ DATA = adj_final2; 
-TABLES adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat; 
-RUN; 
-
-PROC PRINT DATA = adj_final (obs=100) ; where adj_pd_total_16cat = . ; RUN;
-
-PROC UNIVARIATE DATA = int.adj_pd_total_yy;
-VAR  _2016 _2017 _2018;
-RUN; 
-
+/*            PROC FREQ DATA = adj_final2; */
+/*            TABLES adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat; */
+/*            RUN; */
 
 * ==== Combine datasets with memlist_final ==================================;  
 proc sort data = int.memlist_final; by mcaid_id ; run ;  
@@ -288,19 +304,19 @@ FROM int.memlist_final as a
 LEFT JOIN int.isp_un_pcmp_dtstart as b
 ON   a.pcmp_loc_id = b.pcmp_loc_id ; 
 QUIT ; *14039876; 
-
-* TESTS: - expecting time*int_imp to have all int_imp=0 for time 1,2
-         - time_start_isp should only be 3> UPDATE 4>
-         - ind_isp*int_imp should have values in both cols for 0 but where ind_isp = 0 all int_imp should be 0;         
+/**/
+/** TESTS: - expecting time*int_imp to have all int_imp=0 for time 1,2*/
+/*         - time_start_isp should only be 3> UPDATE 4>*/
+/*         - ind_isp*int_imp should have values in both cols for 0 but where ind_isp = 0 all int_imp should be 0;         */
         PROC CONTENTS DATA = int.a1; RUN; 
-
-        PROC FREQ DATA = int.a1 ; 
-        TABLES time*int_imp time_start_isp*int_imp ind_isp*int_imp; 
-        RUN ;
+/**/
+/*        PROC FREQ DATA = int.a1 ; */
+/*        TABLES time*int_imp time_start_isp*int_imp ind_isp*int_imp; */
+/*        RUN ;*/
 
 *; 
-DATA int.a2a ; 
-SET  int.a2  (DROP = TIME_START_ISP ) ;
+DATA int.a2 ; 
+SET  int.a1  (DROP = TIME_START_ISP ) ;
 RENAME ind_isp=int ; 
 RUN ; *14039876 : 11;
                       
@@ -312,9 +328,9 @@ create table int.a3 as
 select a.*
 
      /* join monthly */
-     , b.adj_pd_total_16_cost
-     , b.adj_pd_total_17_cost
-     , b.adj_pd_total_18_cost
+     , b.adj_pd_total_16cat
+     , b.adj_pd_total_17cat
+     , b.adj_pd_total_18cat
 
      /* join bh_cat  */
      , c.bh_er2016
@@ -332,20 +348,12 @@ select a.*
      , d.sum_q_bh_er
      , d.sum_q_bh_other
 
-FROM int.a2a AS a
+FROM int.a2 AS a
 
-/*only needs to be joined on mcaid_id bc the cat's are wide not long */
-LEFT JOIN int.adj_pd_total_YY AS b
-ON a.mcaid_id = b.mcaid_id 
-
-/*only needs to be joined on mcaid_id bc the cols are wide not long */
-LEFT JOIN int.bh_1618 AS c
-ON a.mcaid_id = c.mcaid_id 
-
-/*needs to be joined on qrtr and mcaid_id */
-LEFT JOIN int.bh_1921 AS d
-ON a.mcaid_id = d.mcaid_id AND a.time = d.time;
-
+LEFT JOIN data.adj_1618_final AS B   ON a.mcaid_id = b.mcaid_id 
+LEFT JOIN int.bh_1618         AS C   ON a.mcaid_id = c.mcaid_id 
+LEFT JOIN int.bh_1921         AS D   ON a.mcaid_id = d.mcaid_id AND a.time = d.time
+;
 QUIT;   * 14039876 : 26 ;
 
 PROC SORT DATA = int.a3 NODUPKEY OUT=int.a3a ; BY _ALL_ ; RUN ;  *0; 
