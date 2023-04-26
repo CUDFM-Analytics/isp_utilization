@@ -229,6 +229,7 @@ PROC PRINT DATA = int.pctile_vals; RUN;
 *FROM ORIGINAL LIST (included entire original util linelist members, not subset - just here for reference);
 /*1   921.582 3034.06  10387.39  22590.99    966.845 3173.37 11080.45 25173.98      1011.10 3410.40 12288.92 28563.99 */
 
+* https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 proc sql noprint;
   select 
     name, 
@@ -247,7 +248,6 @@ quit;
 
 %put &col_names; 
 %put &mvar_names; 
-
 
 %macro insert_pctile(ds_in,ds_out,year);
 DATA &ds_out; 
@@ -280,9 +280,9 @@ RUN;
 %mend;
 
 * Made separate ds's for testing but merge if poss later, save final to data/; 
-%insert_pctile(ds_in = int.adj_pd_total_yy_memlist, ds_out = adj_final0,          year = 16);
-%insert_pctile(ds_in = adj_final0,                  ds_out = adj_final1,          year = 17);
-%insert_pctile(ds_in = adj_final1,                  ds_out = data.adj_1618_final, year = 18); *1050185;
+%insert_pctile(ds_in = int.adj_pd_total_yy_memlist, ds_out = adj_final0,         year = 16);
+%insert_pctile(ds_in = adj_final0,                  ds_out = adj_final1,         year = 17);
+%insert_pctile(ds_in = adj_final1,                  ds_out = int.adj_1618_final, year = 18); *1050185;
 
 /*            PROC FREQ DATA = adj_final2; */
 /*            TABLES adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat; */
@@ -350,9 +350,9 @@ select a.*
 
 FROM int.a2 AS a
 
-LEFT JOIN data.adj_1618_final AS B   ON a.mcaid_id = b.mcaid_id 
-LEFT JOIN int.bh_1618         AS C   ON a.mcaid_id = c.mcaid_id 
-LEFT JOIN int.bh_1921         AS D   ON a.mcaid_id = d.mcaid_id AND a.time = d.time
+LEFT JOIN int.adj_1618_final    AS B    ON a.mcaid_id = b.mcaid_id 
+LEFT JOIN int.bh_1618           AS C    ON a.mcaid_id = c.mcaid_id 
+LEFT JOIN int.bh_1921           AS D    ON a.mcaid_id = d.mcaid_id AND a.time = d.time
 ;
 QUIT;   * 14039876 : 26 ;
 
@@ -373,31 +373,29 @@ ARRAY bhoth bh_oth2016-bh_oth2018;
         do over bhoth;
         if bhoth=. then bhoth=0;
       end;
-RUN ;  * 3/30 14347065 : 27 ; 
+RUN ;  *4/24 14039876 ; 
 
-* Some adj's are blank - weren't eligible / not in file? ; 
-PROC PRINT DATA = int.a3b (obs=100) ; where adj_pd_total_16_cost = .; RUN; 
-
+* Some adj's are blank - weren't on qry_longitudinal for fY 1618 (int.elig1618d comes exclusively from qry_longitudinal records); 
+        PROC PRINT DATA = int.a3b (obs=100) ; where adj_pd_total_16cat = .; RUN; 
+        PROC FREQ DATA = int.a3b; TABLES adj: ; RUN; 
+        * "A001791", "A009133", "A009604","A012277";
+        PROC PRINT DATA = int.elig1618d;
+        WHERE mcaid_id IN ("A001791", "A009133", "A009604","A012277"); 
+        RUN; 
 *
 ADJ `-1` values below: adj dataset created in util_02_get_prep_ana_util from a full join using all
 qry_monthlyutilization and qry_longitudinal values from FYs 16-18
 ID's not present in int.a3b were not eligible and can be marked with -1 as they were not present in either ana dataset; 
-DATA  int.a3c;
+DATA  int.a3c (;
 SET   int.a3b;
-format adj_pd_16a adj_pd_17a adj_pd_18a 3. ;
-* make numeric; 
-adj_pd_16a = input(adj_pd_total_16cat, 3.);
-adj_pd_17a = input(adj_pd_total_17cat, 3.);
-adj_pd_18a = input(adj_pd_total_18cat, 3.);
 * make missing = -1 because they weren't eligible (checking with where int.a3b = '' like A001791 etc in zscratch); 
-adj_pd_total16 = coalesce(adj_pd_16a,-1);
-adj_pd_total17 = coalesce(adj_pd_17a,-1);
-adj_pd_total18 = coalesce(adj_pd_18a,-1);
+adj_pd_total16 = coalesce(adj_pd_total_16cat,-1);
+adj_pd_total17 = coalesce(adj_pd_total_17cat,-1);
+adj_pd_total18 = coalesce(adj_pd_total_18cat,-1);
 run;
 
 
 * int.a3c
-* https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 * ADJ pctile values ; 
 PROC PRINT DATA = int.a3c (obs=25); where adj_pd_16a = .; RUN; *(looking to make sure adj_pd_total16 = -1);
 
