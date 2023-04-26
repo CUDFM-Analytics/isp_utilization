@@ -170,7 +170,7 @@ CREATE TABLE elig_and_util AS
 SELECT a.*
      , b.*
 FROM int.elig1618d AS A
-FULL JOIN int.util_1618_fy_wide as B
+INNER JOIN int.util_1618_fy_wide as B
 ON a.mcaid_id=b.mcaid_id 
 ; 
 QUIT; * nobs 2066673 : matches the largest one and has all members from eligd; 
@@ -242,79 +242,86 @@ output out=&out pctlpre=&pctlpre pctlpts= 50, 75, 90, 95;
 run;
 %mend; 
 
+%pctl_1618(var     = adj_pd_total_16_cost,
+           out     = pd16pctle,
+           pctlpre = p16_); 
 
-%pctl_1618(var=adj_pd_total_16_cost,
-             int.pd16pct,
-             pctlpre = P_p16_); 
+%pctl_1618(var     = adj_pd_total_17_cost,
+           out     = pd17pctle,
+           pctlpre = p17_); 
 
-%pctl_1618(var=adj_pd_total_17_cost,
-             int.pd17pct,
-             pctlpre = P_p17_); 
+%pctl_1618(var     = adj_pd_total_18_cost,
+           out     = pd18pctle,
+           pctlpre = p18_); 
 
-%pctl_1618(var=adj_pd_total_18_cost,
-             int.pd18pct,
-             pctlpre = P_p18_); 
+data int.pctile_vals; merge pd16pctle pd17pctle pd18pctle ; run;
 
-data int.pctile_vals; merge pd16pct pd17pct pd18pct ; run;
+PROC PRINT DATA = int.pctile_vals; RUN; 
+/*Obs p16_50  p16_75   p16_90    p16_95      p17_50  p17_75  p17_90   p17_95        p18_50  p18_75  p18_90  p18_95 */
+/*1   921.582 3034.06  10387.39  22590.99    966.845 3173.37 11080.45 25173.98      1011.10 3410.40 12288.92 28563.99 */
 
-PROC FORMAT; 
-INVALUE adj_1618_rank_cat_   
-    1  - 50 = 1
-    51 - 75 = 2
-    76 - 90 = 3
-    91 - 95 = 4
-    96 - 99 = 5 
-    Other = .;
+proc sql noprint;
+  select 
+    name, 
+    cats(':',name)
+  into 
+    :COL_NAMES separated by ',', 
+    :MVAR_NAMES separated by ','
+  from sashelp.vcolumn 
+  where 
+    libname = "INT" 
+    and memname = "PCTILE_VALS"
+  ;
+  select &COL_NAMES into &MVAR_NAMES
+  from int.pctile_vals;
+quit;
+
+%put &col_names; 
+%put &mvar_names; 
+
+
+%macro insert_pctile(ds_in,ds_out,year);
+DATA &ds_out; 
+SET  &ds_in;
+
+* For values 0, -1, retain original value; 
+IF      adj_pd_total_&year._cost le 0 
+                                                THEN adj_pd_total_&year.cat = adj_pd_total_&year._cost;
+* Values > 0 but <= 50th p = category 1; 
+ELSE IF adj_pd_total_&year._cost gt 0 
+    AND adj_pd_total_&year._cost le &&p&year._50 THEN adj_pd_total_&year.cat=1;
+
+* Values > 50thp but <= 75th p = category 2; 
+ELSE IF adj_pd_total_&year._cost gt &&p&year._50 
+    AND adj_pd_total_&year._cost le &&p&year._75 THEN adj_pd_total_&year.cat=2;
+
+* Values > 75thp but <= 90th p = category 3; 
+ELSE IF adj_pd_total_&year._cost gt &&p&year._75 
+    AND adj_pd_total_&year._cost le &&p&year._90 THEN adj_pd_total_&year.cat=3;
+
+* Values > 90thp but <= 95th p = category 4; 
+ELSE IF adj_pd_total_&year._cost gt &&p&year._90 
+    AND adj_pd_total_&year._cost le &&p&year._95 THEN adj_pd_total_&year.cat=4;
+
+* Values > 95thp = category 5; 
+ELSE IF adj_pd_total_&year._cost gt &&p&year._95 THEN adj_pd_total_&year.cat=5;
+
 RUN; 
-
-%macro pctile_1618_adj(var=,year=);
-PROC RANK 
-DATA = int.adj_pd_total_yy out=rank_&year (keep=&var pctile_&year) groups=100;
-VAR   &var;
-RANKS pctile_&year;
-WHERE &var gt 0;
-RUN;
+;
 %mend;
 
-%pctile_1618_adj(var=adj_pd_total_16_cost,year=16);
-%pctile_1618_adj(var=adj_pd_total_17_cost,year=17);
-%pctile_1618_adj(var=adj_pd_total_18_cost,year=18);
+* Made separate ds's for testing but merge if poss later; 
+%insert_pctile(ds_in = int.adj_pd_total_yy, ds_out = adj_final0, year = 16);
+%insert_pctile(ds_in = adj_final0,          ds_out = adj_final1, year = 17);
+%insert_pctile(ds_in = adj_final1,          ds_out = adj_final2, year = 18);
 
-proc means data = rank_16; var pctile_16; run; 
-
-%macro format_cats(ds=,var=,year=);
-DATA int.&ds; 
-SET  &ds;
-if &var < 50 then cat_&year =1;
-else if 50 <= &var < 74  then cat_&year=2;
-else if 75 <= &var < 89  then cat_&year=3;
-else if 90 <= &var < 94  then cat_&year=4;
-else if 95 <= &var < 100 then cat_&year=5;
+PROC FREQ DATA = adj_final2; 
+TABLES adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat; 
 RUN; 
-%mend;
 
-%format_cats(ds=int.rank_16, var=pctile_16, year=16); *1125921; 
-%format_cats(ds=int.rank_17, var=pctile_17, year=17); *1076063; 
-%format_cats(ds=int.rank_18, var=pctile_18, year=18);
-
-PROC SORT DATA = int.rank_16 NODUPKEY; BY _ALL_ ; RUN; *986493;
-PROC SORT DATA = int.rank_17 NODUPKEY; BY _ALL_ ; RUN; *943689; 
-PROC SORT DATA = int.rank_18 NODUPKEY; BY _ALL_ ; RUN; *907352; 
+PROC PRINT DATA = adj_final (obs=100) ; where adj_pd_total_16cat = . ; RUN;
 
 PROC UNIVARIATE DATA = int.adj_pd_total_yy;
 VAR  _2016 _2017 _2018;
 RUN; 
 
-PROC SQL; 
-CREATE TABLE int.adj_pd_1618_cat AS 
-SELECT a.*
-     , b.*
-     , c.*
-     , d.*
-FROM int.adj_pd_total_yy as A       
-LEFT JOIN int.rank_16 as B          ON a._2016=b.adj_pd_total_16_cost
-LEFT JOIN int.rank_17 as C          ON a._2017=C.adj_pd_total_17_cost
-LEFT JOIN int.rank_18 as D          ON a._2018=D.adj_pd_total_18_cost;
-QUIT; 
-
-PROC SORT DATA = int.adj_pd_1618_cat ; BY mcaid_id; RUN; 

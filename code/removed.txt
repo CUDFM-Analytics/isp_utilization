@@ -1,0 +1,30 @@
+proc sql; 
+create table n_ids_budget AS 
+select mcaid_id
+	 , count(mcaid_id) as n_ids
+FROM budget
+GROUP BY mcaid_ID;
+quit; 
+
+PROC FORMAT; 
+INVALUE adj_1618_rank_cat_   
+    1  - 50 = 1
+    51 - 75 = 2
+    76 - 90 = 3
+    91 - 95 = 4
+    96 - 99 = 5 
+    Other = .;
+RUN; 
+
+%macro pctile_1618_adj(var=,year=);
+PROC RANK 
+DATA = int.adj_pd_total_yy out=rank_&year (keep=&var pctile_&year) groups=100;
+VAR   &var;
+RANKS pctile_&year;
+WHERE &var gt 0;
+RUN;
+%mend;
+
+%pctile_1618_adj(var=adj_pd_total_16_cost,year=16);
+%pctile_1618_adj(var=adj_pd_total_17_cost,year=17);
+%pctile_1618_adj(var=adj_pd_total_18_cost,year=18);
