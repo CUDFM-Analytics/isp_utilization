@@ -467,10 +467,13 @@ proc univariate noprint data=newfinal2; where adj_pd_total_16pm gt 0; var adj_pd
 proc univariate noprint data=newfinal2; where adj_pd_total_17pm gt 0; var adj_pd_total_17pm; output out=pd17pct pctlpre=P_p17_ pctlpts= 50, 75, 90, 95; run;
 proc univariate noprint data=newfinal2; where adj_pd_total_18pm gt 0; var adj_pd_total_18pm; output out=pd18pct pctlpre=P_p18_ pctlpts= 50, 75, 90, 95; run;
 /*proc contents data=pd16pct; run;*/
+
 proc univariate noprint data=newfinal2; where adj_pd_total_pm gt 0; var adj_pd_total_pm; output out=pdallpct pctlpre=P_allp_ pctlpts= 95; run;
 proc univariate noprint data=newfinal2; where adj_pd_Pharmacy_pm gt 0; var adj_pd_Pharmacy_pm; output out=phallpct pctlpre=P_ph_ pctlpts= 95; run;
+
 proc sql noprint; select P_allp_95 into :P_allp_95 from pdallpct; quit;
 proc sql noprint; select P_ph_95 into :P_ph_95 from phallpct; quit;
+
 proc univariate noprint data=newfinal2; where adj_pd_total_pm gt &P_allp_95; var adj_pd_total_pm; output out=pdallmean mean=meanall95; run;
 proc univariate noprint data=newfinal2; where adj_pd_Pharmacy_pm gt &P_ph_95; var adj_pd_Pharmacy_pm; output out=phallmean mean=meanph95; run;
 

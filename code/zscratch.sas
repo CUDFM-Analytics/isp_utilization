@@ -11,6 +11,18 @@ PROC CONTENTS DATA = int.pcmp_types;
 RUN;
 
 
+
+ods listing close;
+ods output summary=s;
+proc means data=int.A5 stackods min mean nmiss n median max;
+var mu:;
+run;
+ods output close;
+ods listing;
+proc print;
+run;
+
+
 ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\interim_reports\isp_start_dates.pdf" startpage=no;
 TITLE; 
 proc print data = int.isp_un_pcmp_dtstart ; 

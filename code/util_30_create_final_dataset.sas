@@ -386,7 +386,7 @@ RUN ;  *4/24 14039876 ;
 ADJ `-1` values below: adj dataset created in util_02_get_prep_ana_util from a full join using all
 qry_monthlyutilization and qry_longitudinal values from FYs 16-18
 ID's not present in int.a3b were not eligible and can be marked with -1 as they were not present in either ana dataset; 
-DATA  int.a3c (;
+DATA  int.a3c;
 SET   int.a3b;
 * make missing = -1 because they weren't eligible (checking with where int.a3b = '' like A001791 etc in zscratch); 
 adj_pd_total16 = coalesce(adj_pd_total_16cat,-1);
@@ -473,49 +473,56 @@ util_er   = coalesce(mu_n_er    ,0);
 util_bh_o = coalesce(mu_n_bh_oth,0);
 run ; * 14347065 ; 
 
-proc contents data = int.a6a; run; 
+proc contents data = int.a6 VARNUM; run; 
 
-*** TOP CODE cost vars ; 
-PROC SORT DATA = int.a6 ; BY FY ; RUN ; 
-
-PROC RANK DATA = int.a6
-     GROUPS    = 100 
-     OUT       = int.a6a ;
-     VAR       mu_rx mu_ffs mu_pc; 
-     BY        FY ; 
-     RANKS     mu_rx_pctile mu_ffs_pctile mu_pc_pctile;
-RUN ; 
-
-%macro mu_ge95(var, where_var, output);
-PROC MEANS DATA = int.a6a;
-VAR &var; 
-BY  FY; 
-WHERE &where_var > 95; 
-OUTPUT OUT = &output (DROP=_TYPE_ _FREQ_); 
-RUN; 
+* Get 95th percentiles;
+%macro dv_95pctl(var,out,pctlpre);
+proc univariate noprint data = int.a6;
+where &var gt 0; 
+var   &var;
+output out=&out pctlpre=&pctlpre pctlpts=95;
+run; 
 %mend; 
 
-%mu_ge95(mu_rx,  mu_rx_pctile,  int.mu_rx_topcode ); 
-%mu_ge95(mu_ffs, mu_ffs_pctile, int.mu_ffs_topcode); 
-%mu_ge95(mu_pc,  mu_pc_pctile,  int.mu_pc_topcode); 
+%dv_95pctl(var     = mu_rx,
+           out     = rx_95pctl,
+           pctlpre = rx_); 
 
-title; 
+%dv_95pctl(var     = mu_ffs,
+           out     = ffs_95pctl,
+           pctlpre = ffs_); 
 
-PROC PRINT DATA = int.mu_rx_topcode ; 
-PROC PRINT DATA = int.mu_ffs_topcode;  
-PROC PRINT DATA = int.mu_pc_topcode ; RUN ; 
+%dv_95pctl(var     = mu_pc,
+           out     = pc_95pctl,
+           pctlpre = pc_); 
 
-%LET ffsmin19 = 2270.66; %LET ffsmu19  = 7130.55; 
-%LET ffsmin20 = 2119.90; %LET ffsmu20  = 6783.28; 
-%LET ffsmin21 = 2076.88; %LET ffsmu21  = 6755.72; 
+PROC SQL NOPRINT;   
+SELECT rx_95  INTO :rx_95     FROM rx_95pctl ;
+SELECT ffs_95 INTO :ffs_95    FROM ffs_95pctl;
+SELECT pc_95  INTO :pc_95pctl FROM pc_95pctl ;
+QUIT; 
 
-%LET rxmin19 = 329.97; %LET rxmu19  = 1826.92; 
-%LET rxmin20 = 324.61; %LET rxmu20  = 1801.09; 
-%LET rxmin21 = 324.50; %LET rxmu21  = 1827.30; 
+* Get means for where values are > 95th pctile; 
+%macro mu_dv_ge95th(var, out, value);
+PROC UNIVARIATE DATA = int.a6;
+BY   FY;
+WHERE &var gt &value;
+VAR   &var; 
+output out = &out mean=&out;
+RUN; 
+%mend;
 
-%LET pcmin19 = 206.71; %LET pcmu19  = 346.20; 
-%LET pcmin20 = 191.70; %LET pcmu20  = 333.94; 
-%LET pcmin21 = 187.23; %LET pcmu21  = 323.26; 
+
+ ***NEXT *** ; 
+PROC UNIVARIATE DATA = int.a6;
+BY FY; 
+WHERE mu_rx gt &rx_95;
+VAR   mu_rx; 
+output out = mean_rx_gt95 mean=mean_rx_95;
+RUN; *3924 - sound right??
+
+
+
 
 DATA int.a7  (rename = ( mu_ffs= cost_ffs_tc 
                          mu_rx = cost_rx_tc
