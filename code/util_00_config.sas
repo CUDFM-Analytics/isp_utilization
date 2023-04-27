@@ -56,7 +56,7 @@ id_time_helper = CATX('_', mcaid_id, time);
 RUN; 
 %mend; 
 
- %macro check_n_id(ds=);
+ %macro check_ids_n12(ds=);
             proc sql; 
             create table n_ids_&ds AS 
             select mcaid_id

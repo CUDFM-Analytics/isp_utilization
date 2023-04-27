@@ -8,23 +8,13 @@ NEXT     : [left off on row... or what step to do next... ]  ;
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 ***********************************************************************************************;
- 
-DATA bho_0;
-SET  ana.qry_bho_monthlyutil_working; 
-month2 = month;
-FORMAT month2 date9.;
-DROP   month;
-RENAME month2 = month; 
-WHERE  month ge '01Jul2016'd
-AND    month le '01Jul2022'd;
-FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
-run; *4208734 observations and 6 variables;
+
 
 PROC SQL ; 
 CREATE TABLE memlist_bh_1621 AS 
 SELECT *
 FROM   bho_0 
-WHERE  mcaid_id IN (SELECT mcaid_id FROM int.memlist) ; 
+WHERE  mcaid_id IN (SELECT mcaid_id FROM int.memlist_final) ; 
 QUIT ; *3617805 just to get fewer records, subset to memlist ; 
 
 * get FY1618 and FY1921 - 1618 will be binary, simpler outcomes ; 

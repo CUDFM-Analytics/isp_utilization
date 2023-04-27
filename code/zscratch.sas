@@ -1,3 +1,7 @@
+PROC FREQ DATA = raw.pcmp_type2;
+tables pcmp_loc_type_cd fqhc; 
+run; 
+
 data short_a8;
 set  data.a8 (obs=2000); 
 RUN; 
@@ -10,10 +14,12 @@ PROC CONTENTS DATA = int.memlist_attr_qrtr_1921;
 PROC CONTENTS DATA = int.pcmp_types; 
 RUN;
 
+PROC FREQ DATA = raw.memlist0; tables sex; run; 
+
 TITLE "qrylong0"; proc print data = raw.qrylong0; where mcaid_id in ("G732953"); RUN; 
 TITLE "qrylong1"; proc print data = raw.qrylong1; where mcaid_id in ("G732953"); RUN; 
 TITLE "qrylong2"; proc print data = raw.qrylong2; where mcaid_id in ("G732953"); RUN; 
-TITLE "qrylong3"; proc print data = raw.qrylong3; where mcaid_id in ("G732953"); RUN; 
+TITLE "qrylong4"; proc print data = raw.qrylong4; where mcaid_id in ("G732953"); RUN; 
 
 TITLE "memlist0"; proc print data = raw.memlist0; where mcaid_id in ("G732953"); RUN; 
 TITLE "memlist1"; proc print data = raw.memlist1; where mcaid_id in ("G732953"); RUN; 

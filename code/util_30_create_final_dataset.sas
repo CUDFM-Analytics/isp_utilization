@@ -137,18 +137,7 @@ RUN;
 proc sort data = int.memlist_final; by mcaid_id ; run ;  
 
 ** Get isp info  ; 
-PROC SQL ; 
-CREATE TABLE int.a1 as 
-SELECT a.*
-     , b.time2 as time_start_isp
-     , case when b.time2 ne . AND a.time >= b.time2
-            then 1 
-            else 0 end 
-            as int_imp
-FROM int.memlist_final as a
-LEFT JOIN int.isp_un_pcmp_dtstart as b
-ON   a.pcmp_loc_id = b.pcmp_loc_id ; 
-QUIT ; *14039876; 
+
 /**/
 /** TESTS: - expecting time*int_imp to have all int_imp=0 for time 1,2*/
 /*         - time_start_isp should only be 3> UPDATE 4>*/
@@ -415,7 +404,7 @@ ind_util_er   = util_er     > 0 ;
 ind_util_bh_o = util_bh_o   > 0 ; 
 ind_util_tel  = util_tele   > 0 ;
 
-IF SEX =: 'U' then delete ; 
+/*IF SEX =: 'U' then delete ; ADDED TO create_final_memlist*/
 
 /*IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 ; else fqhc = 0 ;*/
 

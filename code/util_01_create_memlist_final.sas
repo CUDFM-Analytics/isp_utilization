@@ -82,7 +82,8 @@ RUN; *1pm 4/27 70204806 : 11;
 * Create time variable from dt_qrtr (or month, but dt_qrtr faster bc same); 
 %create_qrtr(data=raw.qrylong2, set=raw.qrylong2, var= dt_qrtr, qrtr=time);
 
-DATA  raw.memlist0 (drop = month dt_qrtr); 
+* DO NOT DROP dt_qrtr or month until you have removed the vars and gotten unique group max / if thens; 
+DATA  raw.memlist0 ; 
 SET   raw.qrylong2 (WHERE=(rae_person_new ne . AND FY in (2019,2020,2021) AND SEX IN ('F','M')));
 RUN ;  *4/24 memlist 40958510;
 
@@ -357,6 +358,7 @@ ODS PDF FILE = "&report/eda_memlist_final_20230427.pdf";
 %LET memlist = int.memlist_final; 
 %LET qrylong = int.qrylong1622; 
 
+TITLE "int.memlist_final"; 
 PROC CONTENTS DATA = &memlist VARNUM; RUN; 
 
 PROC FREQ DATA = &memlist; 
