@@ -10,7 +10,19 @@ PROC CONTENTS DATA = int.memlist_attr_qrtr_1921;
 PROC CONTENTS DATA = int.pcmp_types; 
 RUN;
 
+TITLE "qrylong0"; proc print data = raw.qrylong0; where mcaid_id in ("G732953"); RUN; 
+TITLE "qrylong1"; proc print data = raw.qrylong1; where mcaid_id in ("G732953"); RUN; 
+TITLE "qrylong2"; proc print data = raw.qrylong2; where mcaid_id in ("G732953"); RUN; 
+TITLE "qrylong3"; proc print data = raw.qrylong3; where mcaid_id in ("G732953"); RUN; 
 
+TITLE "memlist0"; proc print data = raw.memlist0; where mcaid_id in ("G732953"); RUN; 
+TITLE "memlist1"; proc print data = raw.memlist1; where mcaid_id in ("G732953"); RUN; 
+TITLE "memlist2"; proc print data = raw.memlist2; where mcaid_id in ("G732953"); RUN; 
+TITLE "memlist_attr"; proc print data = int.memlist_attr_qrtr_1921; where mcaid_id in ("G732953"); RUN; 
+
+
+proc print data = int.memlist_attr_qrtr_1921; where mcaid_id in ("G732953"); RUN; 
+proc print data = raw.qrylong2; where mcaid_id in ("G732953"); RUN; 
 
 ods listing close;
 ods output summary=s;

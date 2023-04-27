@@ -417,7 +417,7 @@ ind_util_tel  = util_tele   > 0 ;
 
 IF SEX =: 'U' then delete ; 
 
-IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 ; else fqhc = 0 ;
+/*IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 ; else fqhc = 0 ;*/
 
 LABEL age            = "Age (cat)"
       sex            = "Sex (M, F)"

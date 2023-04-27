@@ -5,7 +5,7 @@
 %LET refs = &data/_refs;
 LIBNAME refs "&refs";
 
-/*DATA int.jake_ibh_adj; */
+/*DATA jake_ibh_adj; */
 /*set  upl.ibh_adjpaid_16_17_18; */
 /*RUN; */
 
@@ -13,16 +13,16 @@ PROC FREQ DATA = refs.jake_ibh_adj;
 tables adj: ; 
 RUN; 
 
-/*proc sql ; */
-/*CREATE TABLE jake_compare_ibh AS */
-/*SELECT a.* */
-/*     , b.adj_pd_total_16cat+1 as kw_adj16*/
-/*     , b.adj_pd_total_17cat+1 as kw_adj17*/
-/*     , b.adj_pd_total_18cat+1 as kw_adj18*/
-/*FROM int.jake_ibh_adj as a*/
-/*LEFT JOIN unique_adj_isp as b*/
-/*on a.clnt_id = b.mcaid_id;*/
-/*QUIT; */
+proc sql ; 
+CREATE TABLE jake_compare_ibh AS 
+SELECT a.* 
+     , b.adj_pd_total_16cat+1 as kw_adj16
+     , b.adj_pd_total_17cat+1 as kw_adj17
+     , b.adj_pd_total_18cat+1 as kw_adj18
+FROM refs.jake_ibh_adj as a
+LEFT JOIN test as b
+on a.clnt_id = b.mcaid_id;
+QUIT; 
 
 DATA jake_compare2; 
 SET  jake_compare_ibh;

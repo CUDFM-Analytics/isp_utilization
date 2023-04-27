@@ -266,6 +266,14 @@ QUIT ; *4/27 14274091 WHY??   4/23 14039876!!! WOOT!! (twice, and second time wi
 
         %count_ids_memlist_final; *4/27 still got 1593607... ;
 
+******************************************************************************************************
+*** PROBLEM : FIX LATER - 27 that are missing. Create qrylong4 where pcmp_ not ne, 
+        but come back to qrylong3 when get logic right; 
+******************************************************************************************************;
+DATA raw.qrylong4; 
+SET  raw.qrylong3 (where=(pcmp_loc_id ne .)); 
+RUN; 
+
 DATA raw.memlist_pcmp_missing;
 SET  int.memlist_final ; 
 where pcmp_loc_id = . ; 
