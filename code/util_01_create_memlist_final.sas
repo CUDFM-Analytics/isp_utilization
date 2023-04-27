@@ -254,8 +254,9 @@ LEFT JOIN int.memlist_attr_qrtr_1921 AS B   ON A.id_time_helper = B.id_time_help
 LEFT JOIN budget                     AS C   ON A.id_time_helper = C.id_time_helper
 LEFT JOIN county                     AS D   ON A.id_time_helper = D.id_time_helper
 LEFT JOIN rae                        AS E   ON A.id_time_helper = E.id_time_helper
-LEFT JOIN raw.pcmp_type              AS F   ON B.pcmp_loc_id    = F.pcmp_loc_id   ;   
+LEFT JOIN raw.pcmp_type              AS F   ON B.pcmp_loc_id    = F.pcmp_loc_id   ;
 QUIT ; *4/27 14274091 WHY??   4/23 14039876!!! WOOT!! (twice, and second time with the joins) //  4097481 : 12 ; 
+
 
         %macro count_ids_memlist_final;
             PROC SQL; 
@@ -270,7 +271,11 @@ QUIT ; *4/27 14274091 WHY??   4/23 14039876!!! WOOT!! (twice, and second time wi
 *** PROBLEM : FIX LATER - 27 that are missing. Create qrylong4 where pcmp_ not ne, 
         but come back to qrylong3 when get logic right; 
 ******************************************************************************************************;
-DATA raw.qrylong4; 
+DATA int.memlist_final;
+SET  memlist_final (where=(pcmp_loc_id ne .));
+RUN; 
+
+DATA int.qrylong1622; 
 SET  raw.qrylong3 (where=(pcmp_loc_id ne .)); 
 RUN; 
 
