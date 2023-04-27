@@ -45,6 +45,10 @@ LOG
          MPRINT MLOGIC SYMBOLGEN
          FMTSEARCH =(ana, datasets, data, util, work);
 
+%macro nodupkey(ds, out);
+PROC SORT DATA = &ds NODUPKEY OUT=&out; BY _ALL_ ; RUN; 
+%mend;
+
 %macro concat_id_time(ds=);
 DATA &ds;
 SET  &ds;
