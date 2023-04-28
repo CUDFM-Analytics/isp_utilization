@@ -13,7 +13,7 @@ DEPENDS  : ana subset folder, config file [dependencies]
 *----------------------------------------------------------------------------------------------
 SECTION Get Monthly Utilization Data
 ----------------------------------------------------------------------------------------------;
-DATA    util_0; 
+DATA    util0; 
 SET     ana.qry_monthlyutilization (WHERE=(month ge '01Jul2016'd AND month le '30Jun2022'd));
 FORMAT  dt_qrtr date9.;
 dt_qrtr =intnx('QTR', month, 0, 'BEGINNING'); 
@@ -21,54 +21,38 @@ FY      =year(intnx('year.7', month, 0, 'BEGINNING'));
 run;
 
 PROC SQL;
-CREATE TABLE util_1 as
+CREATE TABLE util1 as
 SELECT a.*
-     , (a.pd_amt/b.index_2021_1) AS adj_pd_amount  /*divBY has no missing values*/
-FROM   util_0       AS A
+     , (a.pd_amt/b.index_2021_1) AS adj_pd_amount 
+FROM   util0       AS A
 LEFT JOIN int.adj   AS b    ON a.dt_qrtr=b.date;
 quit; *66382081 : 7 cols; 
 
 PROC SQL;
-CREATE TABLE util_2 AS
+CREATE TABLE util2 AS
 SELECT MCAID_ID
       , FY
       , month
-      , sum(case when clmClass=1     then count else 0 end) as n_hosp
       , sum(case when clmClass=4     then count else 0 end) as n_pc
       , sum(case when clmClass=3     then count else 0 end) as n_er
       , sum(case when clmClass=2     then count else 0 end) as n_rx
       , sum(case when clmClass=5     then count else 0 end) as n_ffs_bh
-      , sum(case when clmClass=6     then count else 0 end) as n_ancillary
-      , sum(case when clmClass=7     then count else 0 end) as n_hh_therapy
-      , sum(case when clmClass=8     then count else 0 end) as n_dx
-      , sum(case when clmClass=9     then count else 0 end) as n_transport
-      , sum(case when clmClass=10    then count else 0 end) as n_eeserv
-      , sum(case when clmClass=10000 then count else 0 end) as n_other
         
       , sum(adj_pd_amount) as adj_pd_total
-      , sum(case when clmClass=1     then adj_pd_amount else 0 end) as adj_pd_hosp
       , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pd_pc
       , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_pd_er
       , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_pd_rx
       , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_pd_ffs_bh
-      , sum(case when clmClass=6     then adj_pd_amount else 0 end) as adj_pd_ancillary
-      , sum(case when clmClass=7     then adj_pd_amount else 0 end) as adj_pd_hh_therapy
-      , sum(case when clmClass=8     then adj_pd_amount else 0 end) as adj_pd_dx
-      , sum(case when clmClass=9     then adj_pd_amount else 0 end) as adj_pd_transport
-      , sum(case when clmClass=10    then adj_pd_amount else 0 end) as adj_pd_eeserv
-      , sum(case when clmClass=10000 then adj_pd_amount else 0 end) as adj_pd_other
-FROM  util_1
+FROM  util1
 GROUP BY MCAID_ID,month;
-quit; *32835706, 25; 
+quit; *66382081 : 12; 
 
-%nodupkey(ds=util_2, out=util_3); *32835706, 26; 
-
-PROC CONTENTS DATA = util_3 VARNUM; RUN; 
+%nodupkey(ds=util2, out=raw.util3); *32835706, 12; 
 
 *----------------------------------------------------------------------------------------------
 SECTION 02 GET BH monthly utilization 
 ----------------------------------------------------------------------------------------------;
-DATA bh0;
+DATA raw.bh0;
 SET  ana.qry_bho_monthlyutilization; 
 
 format dt_qrtr month2 date9.; * create quarter beginning date to get quarters ; 
@@ -84,59 +68,55 @@ AND    month le '01Jul2022'd;
 FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
 run; *4208734 observations and 7 variables;
 
-%create_qrtr(data=bh1, set=bh0, var = dt_qrtr, qrtr=time);
+%create_qrtr(data=raw.bh1, set=raw.bh0, var = dt_qrtr, qrtr=time);
 
 * JOIN BH and util on memlist final where FY 2016-18; 
 PROC SQL; 
-CREATE TABLE util_all_memlist AS 
+CREATE TABLE raw.util_all_memlist AS 
 SELECT a.*
      , b.*
-     , c.month
-     , c.n_hosp
-     , c.n_pc
-     , c.n_er
-     , c.n_rx
-     , c.adj_pd_total
-     , c.adj_pd_hosp
-     , c.adj_pd_pc
-     , c.adj_pd_er
-     , c.adj_pd_rx
-     , c.adj_pd_ffs_bh
+     , c.*
      , d.n_q_tele
-FROM int.memlist_final AS A
-LEFT JOIN util_3 AS B ON a.mcaid_id=b.mcaid_id AND a.FY=b.FY
-LEFT JOIN bh1    AS C ON a.mcaid_id=c.mcaid_id AND a.FY=c.FY;
+FROM int.qrylong1622  AS A
+LEFT JOIN raw.bh1       AS B    ON a.mcaid_id=b.mcaid_id AND a.month=b.month
+LEFT JOIN raw.util3     AS C    ON a.mcaid_id=c.mcaid_id AND a.month=c.month
+LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time =d.time;
+QUIT;  *40958444 rows and 30 columns.;
+
+PROC CONTENTS DATA = raw.util_all_memlist VARNUM; RUN; 
+
+***************************************************************************
+* GET 1618 vars
+***************************************************************************; 
+DATA raw.FY1618_0; 
+SET  raw.util_all_memlist 
+     (KEEP = mcaid_id FY dt_qrtr month adj_pd_total bho_n_hosp bho_n_er bho_n_other); 
+WHERE month lt '01Jul2019'd; 
+RUN;
+
+PROC SQL;
+CREATE TABLE raw.FY1618_1 as
+SELECT mcaid_id
+     , max(case when FY = 2016 then 1 else 0 end) as elig2016
+     , max(case when FY = 2017 then 1 else 0 end) as elig2017
+     , max(case when FY = 2018 then 1 else 0 end) as elig2018
+
+     , avg(case when FY = 2016 then adj_pd_total else 0 end) as adj_pd_16pm
+     , avg(case when FY = 2017 then adj_pd_total else 0 end) as adj_pd_17pm
+     , avg(case when FY = 2018 then adj_pd_total else 0 end) as adj_pd_18pm
+
+     , avg(case when FY = 2016 then bho_n_hosp  else 0 end) as bho_n_hosp_16pm
+     , avg(case when FY = 2017 then bho_n_hosp  else 0 end) as bho_n_hosp_17pm 
+     , avg(case when FY = 2018 then bho_n_hosp  else 0 end) as bho_n_hosp_18pm
+     , avg(case when FY = 2016 then bho_n_er    else 0 end) as bho_n_er_16pm
+     , avg(case when FY = 2017 then bho_n_er    else 0 end) as bho_n_er_17pm 
+     , avg(case when FY = 2018 then bho_n_er    else 0 end) as bho_n_er_18pm
+     , avg(case when FY = 2016 then bho_n_other else 0 end) as bho_n_other_16pm 
+     , avg(case when FY = 2017 then bho_n_other else 0 end) as bho_n_other_17pm 
+     , avg(case when FY = 2018 then bho_n_other else 0 end) as bho_n_other_18pm
+FROM raw.FY1618_0
+GROUP BY mcaid_id;
 QUIT; 
-
-
-data int.util_1618_0; 
-set  int.util_1622_1 
-     (KEEP = mcaid_id FY month adj_pd_total adj_pd_pharmacy pdj_pd_primary_care bho_n_hosp bho_n_er bho_n_other); 
-where month lt '01Jul2019'd; run;
-proc sql;
- create table firstyears2 as
- select
- clnt_id,
- max(case when FY=2016 then 1 else 0 end) as health_1st_CO16t, 
- max(case when FY=2017 then 1 else 0 end) as health_1st_CO17t,
- max(case when FY=2018 then 1 else 0 end) as health_1st_CO18t,
-
- avg(case when fy6=2016 then adj_pd_total else 0 end) as adj_pd_total_16pm, 
- avg(case when fy6=2017 then adj_pd_total else 0 end) as adj_pd_total_17pm, 
- avg(case when fy6=2018 then adj_pd_total else 0 end) as adj_pd_total_18pm,
-
- avg(case when fy6=2016 then bho_n_hosp else 0 end) as bho_n_hosp_16pm, 
- avg(case when fy6=2017 then bho_n_hosp else 0 end) as bho_n_hosp_17pm, 
- avg(case when fy6=2018 then bho_n_hosp else 0 end) as bho_n_hosp_18pm,
- avg(case when fy6=2016 then bho_n_er else 0 end) as bho_n_er_16pm, 
- avg(case when fy6=2017 then bho_n_er else 0 end) as bho_n_er_17pm, 
- avg(case when fy6=2018 then bho_n_er else 0 end) as bho_n_er_18pm,
- avg(case when fy6=2016 then bho_n_other else 0 end) as bho_n_other_16pm, 
- avg(case when fy6=2017 then bho_n_other else 0 end) as bho_n_other_17pm, 
- avg(case when fy6=2018 then bho_n_other else 0 end) as bho_n_other_18pm
- from firstyears1
- group by clnt_id;
-quit; 
 
 
 PROC PRINT DATA = int.util_1622_1;

@@ -8,8 +8,6 @@ NEXT     : [left off on row... or what step to do next... ]  ;
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 ***********************************************************************************************;
-%LET raw = &data/_raw;
-LIBNAME raw "&raw";
 
 * ==== SECTION01 ==============================================================================
 * **B** subset qrylong to dates within FY's and get var's needed ;  
@@ -77,7 +75,7 @@ PCMP2 = input(pcmp_loc_id, best12.);
 drop pcmp_loc_id; 
 rename pcmp2 = pcmp_loc_id; 
 
-RUN; *1pm 4/27 70204806 : 11;
+RUN; *4/27 70204806 : 11;
 
 * Create time variable from dt_qrtr (or month, but dt_qrtr faster bc same); 
 %create_qrtr(data=raw.qrylong2, set=raw.qrylong2, var= dt_qrtr, qrtr=time);
@@ -85,12 +83,19 @@ RUN; *1pm 4/27 70204806 : 11;
 * DO NOT DROP dt_qrtr or month until you have removed the vars and gotten unique group max / if thens; 
 DATA  raw.memlist0 ; 
 SET   raw.qrylong2 (WHERE=(rae_person_new ne . AND FY in (2019,2020,2021) AND SEX IN ('F','M')));
-RUN ;  *4/24 memlist 40958510;
+RUN ;  *4/24 40958510;
 
 %sort4merge(ds1=raw.memlist0, ds2=raw.qrylong2, by=mcaid_id);
 
-* Keep only columns indicating eligibility // rest are now in from memlist and only need 19-21 values; 
-DATA  qrylong1622 (keep= mcaid_id FY time); 
+************************************************************************************
+***  RUNFILE HERE (need downstream) 
+***  Creates work.budget, work.county, work.rae, and check that no mcaid_id n>12;
+
+%INCLUDE "&util/code/incl_extract_check_memlist0.sas";
+************************************************************************************
+
+* Keep all values except the duplicated ones, use memlist only for subsetting above; 
+DATA  qrylong1622  (DROP = enr_cnty rae_person_new budget_group pcmp_loc_id); 
 MERGE raw.qrylong2 (in=a) raw.memlist0 (in=b KEEP=mcaid_id) ; 
 BY    mcaid_id; 
 IF    b; 
@@ -99,87 +104,19 @@ RUN ; *65420507: 11;
 %nodupkey(ds=qrylong1622, out=int.qrylong1622); *16485317 w 3 variables
 
 *** ASSERT STATEMENT QRYLONG1622: COUNT of id's for qrylong shouldn't be > 15... ;
- %macro check_ids_n15;
-            proc sql; 
-            create table n_qrylong1622 AS 
-            select mcaid_id
-                 , count(mcaid_id) as n_ids
-            FROM int.qrylong1622
-            GROUP BY mcaid_ID
-            having n_ids>15;
-            quit; 
- %mend;
+/* %macro check_ids_n15;*/
+/*            proc sql; */
+/*            create table n_qrylong1622 AS */
+/*            select mcaid_id*/
+/*                 , count(mcaid_id) as n_ids*/
+/*            FROM int.qrylong1622*/
+/*            GROUP BY mcaid_ID*/
+/*            having n_ids>15;*/
+/*            quit; */
+/* %mend;*/
+/**/
+/* %check_ids_n15; * 0 ROWS!!; */
 
- %check_ids_n15; * 0 ROWS!!; 
-
-*Get MAX COUNTY (there were duplicates where member had > 1 county per quarter) ; 
-* 4/26; 
-PROC SQL; 
-CREATE TABLE county AS
-SELECT mcaid_id 
-     , dt_qrtr
-     , enr_cnty
-     , time
-FROM (SELECT *
-           , max(month) AS max_mon_by_cnty 
-      FROM (SELECT *
-                 , count(enr_cnty) as n_county 
-            FROM raw.memlist0
-            GROUP BY mcaid_id 
-                   , dt_qrtr
-                   , enr_cnty) 
-      GROUP BY mcaid_id, dt_qrtr, n_county)  
-GROUP BY mcaid_id, dt_qrtr
-HAVING max(n_county)=n_county
-AND    month=max_mon_by_cnty;
-QUIT; * 4/24 14039876; 
-
-* 4/26; 
-PROC SQL; 
-CREATE TABLE budget AS
-SELECT mcaid_id
-     , dt_qrtr
-     , budget_group
-     , time
-FROM (SELECT *
-           , max(month) AS max_mon_by_budget
-      FROM (SELECT *
-                 , count(budget_group) as n_budget_group 
-            FROM raw.memlist0
-            GROUP BY mcaid_id 
-                   , dt_qrtr
-                   , budget_group) 
-      GROUP BY mcaid_id, dt_qrtr, n_budget_group)  
-GROUP BY mcaid_id, dt_qrtr
-HAVING max(n_budget_group)=n_budget_group
-AND    month=max_mon_by_budget;
-QUIT; *14039876; 
-
-* 4/26; 
-PROC SQL; 
-CREATE TABLE rae AS
-SELECT mcaid_id
-     , dt_qrtr
-     , rae_person_new
-     , time
-FROM (SELECT *
-           , max(month) AS max_mon_by_rae
-      FROM (SELECT *
-                 , count(rae_person_new) as n_rae_person_new 
-            FROM raw.memlist0
-            GROUP BY mcaid_id 
-                   , dt_qrtr
-                   , rae_person_new) 
-      GROUP BY mcaid_id, dt_qrtr, n_rae_person_new)  
-GROUP BY mcaid_id, dt_qrtr
-HAVING max(n_rae_person_new)=n_rae_person_new
-AND    month=max_mon_by_rae;
-QUIT; *14039876; 
-
-            *macro to find instances where n_ids >12 (should be 0 // in 00_config); 
-            %check_ids_n12(ds=budget); *0;
-            %check_ids_n12(ds=county); *0;
-            %check_ids_n12(ds=rae);    *0;
 
 %macro concat_id_time(ds=);
 DATA &ds;
@@ -193,31 +130,25 @@ RUN;
 %concat_id_time(ds=rae);
 %concat_id_time(ds=int.memlist_attr_qrtr_1921);
 
-* NOW you can remove the values that were creating duplicates (budget, rae, enr_cnty) and merge the unique ones below after
-creating a helper matching function; 
+/*        %macro check_memlist_ids;*/
+/*            proc sql; */
+/*            create table n_ids_memlist AS */
+/*            select mcaid_id*/
+/*                 , count(mcaid_id) as n_ids*/
+/*            FROM raw.memlist0*/
+/*            GROUP BY mcaid_ID*/
+/*            having n_ids>12;*/
+/*            quit; */
+/*        %mend;*/
+/**/
+/*        %check_memlist_ids; *1251533 rows so a lot had duplicates due to month of course but also budget group and county */
+/*        (some had >1 per quarter for these variables*/
+/*        pcmp_loc_id is in memlist_attr_qrtr); */
 
-        %macro check_memlist_ids;
-            proc sql; 
-            create table n_ids_memlist AS 
-            select mcaid_id
-                 , count(mcaid_id) as n_ids
-            FROM raw.memlist0
-            GROUP BY mcaid_ID
-            having n_ids>12;
-            quit; 
-        %mend;
-
-        %check_memlist_ids; *1251533 rows so a lot had duplicates due to month of course but also budget group and county 
-        (some had >1 per quarter for these variables
-        pcmp_loc_id is in memlist_attr_qrtr); 
-
+*keep month and dt_qrtr so you can merge util vars in later; 
 DATA raw.memlist1;
-SET  raw.memlist0 (drop=month dt_qrtr enr_cnty rae_person_new budget_group rename=(pcmp_loc_id=pcmp_og_qrylong));
+SET  raw.memlist0 (drop=enr_cnty rae_person_new budget_group);
 RUN; *4/27 40958510 : 11; 
-
-PROC SORT DATA = raw.memlist1 NODUPKEY OUT = raw.memlist2; 
-BY _ALL_; 
-RUN; *4/27 14273091 : 7;
 
 %concat_id_time(ds=raw.memlist2);
 
@@ -226,7 +157,6 @@ RUN; *4/27 14273091 : 7;
     GET pcmp type reference table from unique ID's in qrylong0 to capture all possible, 
         then left join to memlist 
 ******************************************************************************************************;
-
 DATA pcmp_type_qrylong ; 
 SET  raw.qrylong0 (KEEP = pcmp_loc_id pcmp_loc_type_cd num_pcmp_type pcmp_loc_type_cd 
                     WHERE = (pcmp_loc_id ne '')) ; 
@@ -245,26 +175,24 @@ RUN;
 *** CREATE int.memlist_final
     JOINS, Unique values, save as int.
 ******************************************************************************************************;
-
 PROC SQL ; 
 CREATE TABLE memlist_final AS 
 SELECT a.mcaid_id
+     , a.dt_qrtr
+     , a.month
      , a.FY
      , a.age
      , a.race
      , a.sex
      , a.time
      , a.id_time_helper
-
      , b.pcmp_loc_id 
      , b.n_months_per_q
      , b.ind_isp AS int
-
      , c.budget_group
      , d.enr_cnty
      , e.rae_person_new
      , f.fqhc
-
      , g.time2 as time_start_isp
      , case WHEN g.time2 ne . 
             AND  a.time >= g.time2
@@ -277,7 +205,7 @@ LEFT JOIN county                     AS D   ON A.id_time_helper = D.id_time_help
 LEFT JOIN rae                        AS E   ON A.id_time_helper = E.id_time_helper
 LEFT JOIN raw.pcmp_type              AS F   ON B.pcmp_loc_id    = F.pcmp_loc_id   
 LEFT JOIN int.isp_un_pcmp_dtstart    AS G   ON b.pcmp_loc_id    = G.pcmp_loc_id    ;
-QUIT ; *4/27 14273091 WHY??   4/23 14039876!!! WOOT!! (twice, and second time with the joins) //  4097481 : 12 ; 
+QUIT ;  *4/27 pm 40958510 : 18 ; 
 
 * PROBLEM : FIX LATER - 27 that are missing. Create qrylong4 where pcmp_ not ne, 
               but come back to qrylong3 when get logic right; 
@@ -297,8 +225,9 @@ LABEL pcmp_loc_id     = "PCMP_LOC_ID: src int.memlist_attr_qrtr_1921"
       fqhc            = "FQHC: 0 No, 1 Yes"
       int_imp         = "ISP Participation: Time-Varying"
       ;
-RUN; * 14273063 : 17; 
+RUN; *4/27 pm 40958444 : 18 ;
 
+* REMOVE DUPLICATES, then merge with int.qrylong1622;
 %nodupkey(int.memlist_final, int.memlist_final); *14039776;
 
         %macro count_ids_memlist_final;
@@ -308,24 +237,7 @@ RUN; * 14273063 : 17;
             QUIT; 
         %mend;
 
-        %count_ids_memlist_final; *4/27 later  got 1593591 // 4/27am still got 1593607... ;
-
-        %macro check_memlist_final;
-            proc sql; 
-            create table n_ids_memlist AS 
-            select mcaid_id
-                 , time
-                 , count(mcaid_id) as n_ids
-                 , count(time) as n_time
-            FROM int.memlist_final
-            GROUP BY mcaid_ID
-            having n_ids>12 ;
-            quit; 
-        %mend;
-
-        %check_memlist_final; *0;
-
-
+        %count_ids_memlist_final; *4/27 final run still got 1593591 ;
 
 ******************************************************************************************************
 *** FIND ISSUES where pcmp wasn't on attr file; 

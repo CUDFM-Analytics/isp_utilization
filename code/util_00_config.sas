@@ -33,6 +33,9 @@ LOG
     * export folder for excel files output; 
       %LET report = &util/reports; 
 
+      %LET raw = &data/_raw;
+        LIBNAME raw "&raw";
+
 * EXT DATA SOURCES ---------------------------------------------------------------------------; 
 
     * Medicaid dats: keep attached for formats (until/if final fmts copied); 
