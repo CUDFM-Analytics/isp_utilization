@@ -9,7 +9,7 @@ PROC SORT DATA int.isp_un_pcmp_dtstart ; by time_start_isp; run;
 
 proc freq data = isp_un_pcmp_dtstart; tables month; run; 
 
-PROC CONTENTS DATA = memlist;
+PROC CONTENTS DATA =  raw.util_all_memlist VARNUM; RUN; 
 PROC CONTENTS DATA = int.memlist_attr_qrtr_1921;
 PROC CONTENTS DATA = int.pcmp_types; 
 RUN;
@@ -25,6 +25,11 @@ TITLE "memlist0"; proc print data = raw.memlist0; where mcaid_id in ("G732953");
 TITLE "memlist1"; proc print data = raw.memlist1; where mcaid_id in ("G732953"); RUN; 
 TITLE "memlist2"; proc print data = raw.memlist2; where mcaid_id in ("G732953"); RUN; 
 TITLE "memlist_attr"; proc print data = int.memlist_attr_qrtr_1921; where mcaid_id in ("G732953"); RUN; 
+
+proc contents data = raw.fy1921_3 varnum; run; 
+proc print data = int.FY1618 (obs=25); 
+VAR mcaid_id adj:; 
+RUN; 
 
 
 proc print data = int.memlist_attr_qrtr_1921; where mcaid_id in ("G732953"); RUN; 

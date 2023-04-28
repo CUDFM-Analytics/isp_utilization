@@ -248,7 +248,7 @@ SELECT mcaid_id
      , avg(n_q_tele)            as n_tel_pm
      , avg(adj_pd_total)        as adj_total_pm
      , avg(adj_pd_pc)           as adj_pc_pm
-     , avg(adj_pd_ffs_bh)       as adj_er_pm
+     , avg(adj_pd_rx)           as adj_rx_pm
 
 FROM raw.FY1921_0
 GROUP BY mcaid_id, time;
@@ -260,7 +260,7 @@ QUIT; * 40978720 : 11;
 DATA raw.FY1921_3;
 SET  raw.FY1921_2; 
 ARRAY dv(*) n_pc_pm       n_ed_pm     n_ffs_bh_pm     n_tel_pm    
-            adj_total_pm  adj_pc_pm   adj_er_pm;
+            adj_total_pm  adj_pc_pm   adj_rx_pm;
 DO i=1 to dim(dv);
     IF dv(i)=. THEN dv(i)=0; 
     ELSE dv(i)=dv(i);
@@ -273,11 +273,8 @@ ind_ffs_bh_visit = n_ffs_bh_pm  > 0;
 ind_tel_visit    = n_tel_pm     > 0;
 ind_total_cost   = adj_total_pm > 0;
 ind_pc_cost      = adj_pc_pm    > 0;
-ind_er_cost      = adj_er_pm    > 0;
+ind_rx_cost      = adj_rx_pm    > 0;
 RUN; 
-
-DATA mu_1921;
-SET  raw.FY1921_3;
 
 proc sort data = raw.fy1921_3; BY FY; run; 
 
@@ -302,16 +299,16 @@ RUN;
 
 %pctl_1921(var = adj_total_pm,   out = adj_total_pctl,   pctlpre = adj_total_,  t_var = adj_total_95); 
 %pctl_1921(var = adj_pc_pm,      out = adj_pc_pctl,      pctlpre = adj_pc_,     t_var = adj_pc_95); 
-%pctl_1921(var = adj_er_pm,      out = adj_er_pctl,      pctlpre = adj_er_,     t_var = adj_er_95); 
+%pctl_1921(var = adj_rx_pm,      out = adj_rx_pctl,      pctlpre = adj_rx_,     t_var = adj_rx_95); 
 
-data int.pctl1921; merge adj_total_pctl_a adj_pc_pctl_a adj_er_pctl_a ; run;
+data int.pctl1921; merge adj_total_pctl_a adj_pc_pctl_a adj_rx_pctl_a ; run;
 
 PROC PRINT DATA = int.pctl1921; RUN; 
 /*Obs   adj_total_95p_19    adj_total_95p_20   adj_total_95p_21 
 /*1     4004.66 3           755.49             3691.84 
 
-        adj_pc_95p_19 adj_pc_95p_20 adj_pc_95p_21           adj_er_95p_19   adj_er_95p_20   adj_er_95p_21 
-        365.564       353.053       342.660                 5698.25         6149.95         7220.00 */
+        adj_pc_95p_19 adj_pc_95p_20 adj_pc_95p_21           adj_rx_95p_19   adj_rx_95p_20   adj_rx_95p_21 
+        365.564       353.053       342.660                 1076.74         1148.78         1160.32 */
 
 * https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 proc sql noprint;
@@ -339,10 +336,55 @@ OUTPUT OUT=&out MEAN=&mean; RUN;
 %means_95p(FY=2021, var=adj_total_pm, gt=&adj_total_95p_21, out=mu_total_21, mean=MEAN=Mu_total21);
 
 %means_95p(FY=2019, var=adj_pc_pm, gt=&adj_pc_95p_19, out=mu_pc_19, mean=MEAN=Mu_pc19);
-%means_95p(FY=2019, var=adj_pc_pm, gt=&adj_pc_95p_19, out=mu_pc_19, mean=MEAN=Mu_pc19);
-%means_95p(FY=2019, var=adj_pc_pm, gt=&adj_pc_95p_19, out=mu_pc_19, mean=MEAN=Mu_pc19);
+%means_95p(FY=2020, var=adj_pc_pm, gt=&adj_pc_95p_20, out=mu_pc_20, mean=MEAN=Mu_pc20);
+%means_95p(FY=2021, var=adj_pc_pm, gt=&adj_pc_95p_21, out=mu_pc_21, mean=MEAN=Mu_pc21);
 
-%means_95p(FY=2019, var=adj_total_pm, gt=&adj_total_95p_19, out=mu_total_19, mean=MEAN=Mu_total19);
-%means_95p(FY=2019, var=adj_total_pm, gt=&adj_total_95p_19, out=mu_total_19, mean=MEAN=Mu_total19);
-%means_95p(FY=2019, var=adj_total_pm, gt=&adj_total_95p_19, out=mu_total_19, mean=MEAN=Mu_total19);
+%means_95p(FY=2019, var=adj_rx_pm, gt=&adj_rx_95p_19, out=mu_rx_19, mean=MEAN=Mu_rx19);
+%means_95p(FY=2020, var=adj_rx_pm, gt=&adj_rx_95p_20, out=mu_rx_20, mean=MEAN=Mu_rx20);
+%means_95p(FY=2021, var=adj_rx_pm, gt=&adj_rx_95p_21, out=mu_rx_21, mean=MEAN=Mu_rx21);
 
+data int.mu_pctl_1921; 
+merge mu_total_19       mu_total_20     mu_total_21
+      mu_pc_19          mu_pc_20        mu_pc_21
+      mu_rx_19          mu_rx_20        mu_rx_21
+      adj_total_pctl_a  adj_pc_pctl_a   adj_rx_pctl_a;
+RUN; 
+
+proc sql noprint;
+  select name, cats(':',name)
+  into 
+    :COL_NAMES separated by ',', 
+    :MVAR_NAMES separated by ','
+  from sashelp.vcolumn 
+  where libname = "INT" 
+    and memname = "MU_PCTL_1921";
+  select &COL_NAMES into &MVAR_NAMES
+  from int.mu_pctl_1921;
+quit;
+
+PROC PRINT DATA = int.mu_pctl_1921; RUN; 
+RUN; 
+
+** DIDN"T WORK FOR ALL why not?!; 
+
+DATA int.FY1921;
+SET  raw.FY1921_3;
+* replace values >95p with mu95;
+IF      FY = 2019 AND adj_total_pm gt &adj_total_95p_19 THEN adj_pd_total_tc = &mu_total19; 
+ELSE IF FY = 2020 AND adj_total_pm gt &adj_total_95p_20 THEN adj_pd_total_tc = &mu_total20; 
+ELSE IF FY = 2021 AND adj_total_pm gt &adj_total_95p_21 THEN adj_pd_total_tc = &mu_total21; 
+ELSE adj_pd_total_tc = adj_total_pm;
+
+IF FY = 2019 AND adj_pc_pm         gt &adj_pc_95p_19         THEN adj_pd_pc_tc    = &mu_pc19;    
+ELSE IF FY = 2020 AND adj_pc_pm    gt &adj_pc_95p_20    THEN adj_pd_pc_tc    = &mu_pc20;    
+ELSE IF FY = 2021 AND adj_pc_pm    gt &adj_pc_95p_21    THEN adj_pd_pc_tc    = &mu_pc21;    
+ELSE adj_pd_pc_tc = adj_pc_pm;
+
+IF FY = 2019 AND adj_rx_pm         gt &adj_rx_95p_19    THEN adj_pd_rx_tc    = &mu_rx19;    
+ELSE IF FY = 2020 AND adj_rx_pm    gt &adj_rx_95p_20    THEN adj_pd_rx_tc    = &mu_rx20;    
+ELSE IF FY = 2021 AND adj_rx_pm    gt &adj_rx_95p_21    THEN adj_pd_rx_tc    = &mu_rx21;    
+ELSE adj_pd_rx_tc = adj_rx_pm;
+
+RUN; 
+
+**** START HERE IT's GREAT!!!; 
