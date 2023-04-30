@@ -2,6 +2,10 @@ PROC FREQ DATA = raw.pcmp_type2;
 tables pcmp_loc_type_cd fqhc; 
 run; 
 
+PROC PRINT DATA = int.qrylong1622 (obs=25);
+WHERE mcaid_id IN ("A001791");
+RUN; 
+
 data short_a8;
 set  data.a8 (obs=2000); 
 RUN; 

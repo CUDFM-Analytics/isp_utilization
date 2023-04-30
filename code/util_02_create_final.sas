@@ -225,6 +225,8 @@ RUN;
 %insert_pctile(ds_in = adj0,            ds_out = adj1,          year = 17);
 %insert_pctile(ds_in = adj1,            ds_out = int.FY1618,    year = 18); *1050185;
 
+
+
 ********************************************************************
 1921
 ********************************************************************;
@@ -362,10 +364,6 @@ proc sql noprint;
   from int.mu_pctl_1921;
 quit;
 
-PROC PRINT DATA = int.mu_pctl_1921; RUN; 
-RUN; 
-
-** DIDN"T WORK FOR ALL why not?!; 
 
 DATA int.FY1921;
 SET  raw.FY1921_3;
@@ -375,7 +373,7 @@ ELSE IF FY = 2020 AND adj_total_pm gt &adj_total_95p_20 THEN adj_pd_total_tc = &
 ELSE IF FY = 2021 AND adj_total_pm gt &adj_total_95p_21 THEN adj_pd_total_tc = &mu_total21; 
 ELSE adj_pd_total_tc = adj_total_pm;
 
-IF FY = 2019 AND adj_pc_pm         gt &adj_pc_95p_19         THEN adj_pd_pc_tc    = &mu_pc19;    
+IF FY = 2019 AND adj_pc_pm         gt &adj_pc_95p_19    THEN adj_pd_pc_tc    = &mu_pc19;    
 ELSE IF FY = 2020 AND adj_pc_pm    gt &adj_pc_95p_20    THEN adj_pd_pc_tc    = &mu_pc20;    
 ELSE IF FY = 2021 AND adj_pc_pm    gt &adj_pc_95p_21    THEN adj_pd_pc_tc    = &mu_pc21;    
 ELSE adj_pd_pc_tc = adj_pc_pm;
@@ -388,3 +386,44 @@ ELSE adj_pd_rx_tc = adj_rx_pm;
 RUN; 
 
 **** START HERE IT's GREAT!!!; 
+PROC SORT DATA = int.qrylong1622 (keep=mcaid_id) NODUPKEY OUT=int.final1; BY _ALL_; RUN; 
+
+PROC SQL; 
+CREATE TABLE int.final2 AS 
+SELECT a.mcaid_id
+     , b.FY             , b.time            , b.int     , b.int_imp
+     , b.age            , b.race            , b.sex     , b.pcmp_loc_id
+     , b.budget_group   , b.enr_cnty        , b.fqhc    , b.rae_person_new
+     , c.adj_pd_total_16cat, c.adj_pd_total_17cat,  c.adj_pd_total_18cat
+     , c.bho_n_hosp_16pm,    c.bho_n_hosp_17pm,     c.bho_n_hosp_18pm
+     , c.bho_n_other_16pm,   c.bho_n_other_17pm,    c.bho_n_other_18pm
+     , c.bho_n_er_16pm,      c.bho_n_er_17pm,       c.bho_n_er_18pm
+     , d.time
+     , d.FY
+     , d.n_pc_pm         ,d.ind_pc_visit
+     , d.n_ed_pm         ,d.ind_ed_visit
+     , d.n_ffs_bh_pm     ,d.ind_ffs_bh_visit
+     , d.n_tel_pm        ,d.ind_tel_visit
+     , d.adj_pd_total_tc AS adj_pd_total_pm_tc    , d.ind_total_cost
+     , d.adj_pd_rx_tc    AS adj_pd_rx_pm_tc       , d.ind_rx_cost
+     , d.adj_pd_pc_tc    AS adj_pd_pc_pm_tc       , d.ind_pc_cost
+FROM int.final1                AS A
+LEFT JOIN int.memlist_final    AS B   ON a.mcaid_id=b.mcaid_id
+LEFT JOIN int.fy1618           AS B   ON a.mcaid_id=c.mcaid_id
+LEFT JOIN int.fy1921           AS C   ON a.mcaid_id=d.mcaid_id and a.time=d.time;
+QUIT; 
+
+DATA missing; 
+SET  final2;
+nvals = N(of adj_pd_total_16cat--ind_pc_cost);
+nmiss = nmiss(of adj_pd_total_16cat--ind_pc_cost);
+proc print; 
+run; 
+
+DATA final3; 
+SET  final2;
+adj_pd_total_16cat = coalesce(adj_pd_total_16cat, -1);
+adj_pd_total_17cat = coalesce(adj_pd_total_17cat, -1);
+adj_pd_total_18cat = coalesce(adj_pd_total_18cat, -1);
+
+
