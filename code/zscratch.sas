@@ -2,8 +2,8 @@ PROC FREQ DATA = raw.pcmp_type2;
 tables pcmp_loc_type_cd fqhc; 
 run; 
 
-PROC PRINT DATA = int.qrylong1622 (obs=25);
-WHERE mcaid_id IN ("A001791");
+PROC PRINT DATA = raw.fy1618_0 (obs=25);
+WHERE mcaid_id IN ("A009604","A010792");
 RUN; 
 
 data short_a8;
@@ -23,12 +23,17 @@ PROC FREQ DATA = raw.memlist0; tables sex; run;
 TITLE "qrylong0"; proc print data = raw.qrylong0; where mcaid_id in ("G732953"); RUN; 
 TITLE "qrylong1"; proc print data = raw.qrylong1; where mcaid_id in ("G732953"); RUN; 
 TITLE "qrylong2"; proc print data = raw.qrylong2; where mcaid_id in ("G732953"); RUN; 
-TITLE "qrylong4"; proc print data = raw.qrylong4; where mcaid_id in ("G732953"); RUN; 
+
+
+TITLE "qrylong1"; proc print data = raw.qrylong0; where mcaid_id in ("F499669","G061622","G068936"); RUN; 
+* present in qrylong0 ... check memlist_attr_qrtr_1921
+  present in memlist attr l.... check final
+
 
 TITLE "memlist0"; proc print data = raw.memlist0; where mcaid_id in ("G732953"); RUN; 
 TITLE "memlist1"; proc print data = raw.memlist1; where mcaid_id in ("G732953"); RUN; 
 TITLE "memlist2"; proc print data = raw.memlist2; where mcaid_id in ("G732953"); RUN; 
-TITLE "memlist_attr"; proc print data = int.memlist_attr_qrtr_1921; where mcaid_id in ("G732953"); RUN; 
+TITLE "qry"; proc print data = int.memlist_attr_qrtr_1921; where mcaid_id in ("G732953"); RUN; 
 
 proc contents data = raw.fy1921_3 varnum; run; 
 proc print data = int.FY1618 (obs=25); 
@@ -64,7 +69,6 @@ tables dt_prac_isp*time;
 RUN; 
 
 ods pdf close; 
-
 
 ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\interim_reports\isp_start_dates.pdf" startpage=no;
 TITLE; 

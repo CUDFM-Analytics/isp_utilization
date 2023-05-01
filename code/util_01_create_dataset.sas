@@ -95,7 +95,7 @@ QUIT;
 
 ************************************************************************************
 ***  Creates work.budget, work.county, work.rae, and check that no mcaid_id n>12;
-%INCLUDE "&util/code/incl_extract_check_memlist0.sas";
+%INCLUDE "&util/code/incl_extract_check_fy19210.sas";
 ************************************************************************************
 
 %macro concat_id_time(ds=);
@@ -275,34 +275,9 @@ SET  raw.qrylong5;
 WHERE month lt '01Jul2019'd; 
 RUN; *24441787; 
 
+* WHOA TOTALLY DIFFERENT!!! ; 
 PROC SQL;
 CREATE TABLE raw.FY1618_1 as
-SELECT mcaid_id
-     , max(case when FY = 2016 then 1 else 0 end) as elig2016
-     , max(case when FY = 2017 then 1 else 0 end) as elig2017
-     , max(case when FY = 2018 then 1 else 0 end) as elig2018
-
-     , avg(case when FY = 2016 then adj_pd_total else . end) as adj_pd_16pm
-     , avg(case when FY = 2017 then adj_pd_total else . end) as adj_pd_17pm
-     , avg(case when FY = 2018 then adj_pd_total else . end) as adj_pd_18pm
-
-     , avg(case when FY = 2016 then bho_n_hosp  else 0 end) as bho_n_hosp_16pm
-     , avg(case when FY = 2017 then bho_n_hosp  else 0 end) as bho_n_hosp_17pm 
-     , avg(case when FY = 2018 then bho_n_hosp  else 0 end) as bho_n_hosp_18pm
-     , avg(case when FY = 2016 then bho_n_er    else 0 end) as bho_n_er_16pm
-     , avg(case when FY = 2017 then bho_n_er    else 0 end) as bho_n_er_17pm 
-     , avg(case when FY = 2018 then bho_n_er    else 0 end) as bho_n_er_18pm
-     , avg(case when FY = 2016 then bho_n_other else 0 end) as bho_n_other_16pm 
-     , avg(case when FY = 2017 then bho_n_other else 0 end) as bho_n_other_17pm 
-     , avg(case when FY = 2018 then bho_n_other else 0 end) as bho_n_other_18pm
-FROM raw.FY1618_0
-GROUP BY mcaid_id;
-QUIT; * 1148294;
-
-PROC CONTENTS DATA = raw.fy1618_1 VARNUM; RUN; 
-PROC PRINT DATA = raw.fy1618_1 (obs=100); VAR elig: adj: bho: ; RUN; 
-PROC SQL;
-CREATE TABLE raw.FY1618_1a as
 SELECT mcaid_id
      , max(case when FY = 2016 then 1 else 0 end) as elig2016
      , max(case when FY = 2017 then 1 else 0 end) as elig2017
@@ -328,7 +303,7 @@ QUIT; * 1148294;
 
 * change adj to if elig = 0, then adj var = -1 and set bh variables to 0 where .; 
 DATA raw.FY1618_2;
-SET  raw.FY1618_1a;
+SET  raw.FY1618_1;
 
 IF   elig2016 = 0    THEN adj_pd_16pm = -1; 
 ELSE IF elig2016 = 1 AND  adj_pd_16pm = .   THEN adj_pd_16pm = 0;
@@ -354,29 +329,6 @@ DROP i;
 
 RUN; 
 
-        **   checking percentiles ; 
-        PROC RANK DATA =  raw.fy1618_2 out=int.ranked_adj_FY16 
-             (keep=mcaid_id elig2016 adj_pd_16pm adj_pd_16pm_rank)  groups =100;
-        VAR   adj_pd_16pm;
-        RANKS adj_pd_16pm_rank;
-        WHERE adj_pd_16pm gt 0 ;
-        RUN; 
-
-        PROC RANK DATA =  raw.fy1618_2 out=int.ranked_adj_FY17 
-             (keep=mcaid_id elig2017 adj_pd_16pm adj_pd_17pm_rank) 
-            groups =100;
-        VAR   adj_pd_17pm;
-        RANKS adj_pd_17pm_rank;
-        WHERE adj_pd_17pm gt 0;
-        RUN; 
-
-        PROC RANK DATA =  raw.fy1618_2 out=int.ranked_adj_FY18 
-             (keep=mcaid_id elig2018 adj_pd_16pm adj_pd_18pm_rank) groups =100;
-        VAR   adj_pd_18pm;
-        RANKS adj_pd_18pm_rank;
-        WHERE adj_pd_18pm gt 0;
-        RUN; 
-
 ** GET PERCENTILES FOR ALL & TOP CODE DV's FOR MEMBERS ONLY ; 
 * 1618; 
 %macro pctl_1618(var,out,pctlpre);
@@ -386,6 +338,8 @@ var &var;
 output out=&out pctlpre=&pctlpre pctlpts= 50, 75, 90, 95; 
 run;
 %mend; 
+
+** SEE UTIL_02_CHECKS for code to investigate the values and check percentiles; 
 
 %pctl_1618(var     = adj_pd_16pm,
            out     = pd16pctle,
@@ -403,7 +357,7 @@ data int.pctl1618; merge pd16pctle pd17pctle pd18pctle ; run;
 
 PROC PRINT DATA = int.pctl1618; RUN; 
 /*Obs 2=p16_50  3=p16_75   4=p16_90+   5=p16_95+      p17_50  p17_75  p17_90   p17_95      2=p18_50  3=p18_75  4=p18_90  5=p18_95 */
-/*     >44.1008  >121.726   >332.824   >606.266     43.1492 117.327 341.071  659.856        >=100.590  >=293.408 >=773.223   >=1555.70 */
+/*      265.816 510.805    1191.77     2079.20        268.108 516.322 1231.88  2254.61      279.017  555.933   1382.46   2633.40 */
 
 * https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 proc sql noprint;
@@ -448,7 +402,7 @@ RUN;
 * Made separate ds's for testing but merge if poss later, save final to int/; 
 %insert_pctile(ds_in = raw.fy1618_2,    ds_out = adj0,          year = 16);
 %insert_pctile(ds_in = adj0,            ds_out = adj1,          year = 17);
-%insert_pctile(ds_in = adj1,            ds_out = int.FY1618,    year = 18); *1050185;
+%insert_pctile(ds_in = adj1,            ds_out = int.FY1618,    year = 18); *1148294;
 
 * Join to FY1618 to final in int.final_a ;
 PROC SQL;
@@ -529,7 +483,7 @@ ind_tel_visit      = n_tel_pm     > 0;
 ind_total_cost     = adj_total_pm > 0;
 ind_pc_cost        = adj_pc_pm    > 0;
 ind_rx_cost        = adj_rx_pm    > 0;
-RUN; 
+RUN;  *14039776 : 48 ; 
 
 * Keep final_c but remove some cols for final_d; 
 DATA int.final_d;
@@ -655,6 +609,19 @@ RUN;
 PROC CONTENTS DATA = data.analysis_dataset VARNUM; 
 RUn; 
 
+* COUNT MISSING VARIABLES, see if any exist;
+/* create a format to group missing and nonmissing */
+proc format;
+ value $missfmt ' '='Missing' other='Not Missing';
+ value  missfmt  . ='Missing' other='Not Missing';
+run;
+ 
+proc freq data=data.analysis_dataset; 
+format _CHAR_ $missfmt.; /* apply format for the duration of this PROC */
+tables _CHAR_ / missing missprint nocum nopercent;
+format _NUMERIC_ missfmt.;
+tables _NUMERIC_ / missing missprint nocum nopercent;
+run;
 
 DATA missing; 
 SET  data.analysis_dataset;
@@ -663,37 +630,11 @@ nmiss = nmiss(of FY--adj_pd_rx_tc);
 proc print; 
 run; 
 
-%LET dat = test; 
-%put &dat; 
-PROC GEE DATA  = &dat DESC;
-     CLASS  mcaid_id    
-            adj_pd_total_16cat 
-            adj_pd_total_17cat  
-            adj_pd_total_18cat
-            ind_cost_pc ;
-     model ind_cost_pc = adj_pd_total_16cat 
-                         adj_pd_total_17cat 
-                         adj_pd_total_18cat
-                         time  / dist = binomial link = logit ; 
-  repeated subject = mcaid_id / type = exch ; *ind;
-/*  store p_model;*/
-run;
-
-ods pdf close; 
-
-* try independent structure // 
- then logistic // 
- ;
-
-
 ******************************************************************************************************
 *** EXPORT PDF FREQUENCIES; 
 ******************************************************************************************************;
 
-ODS PDF FILE = "&report/eda_memlist_final_20230427.pdf";
-
-%LET memlist = int.memlist_final; 
-%LET qrylong = int.qrylong1622; 
+ODS PDF FILE = "&report/eda_memlist_final_20230501.pdf";
 
 TITLE "int.memlist_final"; 
 PROC CONTENTS DATA = &memlist VARNUM; RUN; 
