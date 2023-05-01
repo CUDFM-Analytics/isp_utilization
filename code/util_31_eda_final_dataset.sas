@@ -2,6 +2,29 @@
 
 %let dat = data.analysis_dataset; 
 
+******************************************************************************************************
+*** FIND ISSUES where pcmp wasn't on attr file; 
+******************************************************************************************************;
+
+DATA raw.memlist_pcmp_missing;
+SET  int.memlist_final ; 
+where pcmp_loc_id = . ; 
+RUN; 
+
+%sort4merge(ds1=raw.qrylong4, ds2=raw.memlist_pcmp_missing, by=mcaid_id);
+
+DATA raw.memlist_pcmp_find; 
+SET  raw.qrylong4 (in=a) raw.memlist_pcmp_missing (in=b);
+by   mcaid_id;
+IF   a and b;
+RUN; 
+
+PROC FREQ DATA = int.memlist_final;
+WHERE  pcmp_loc_id = . ; 
+TABLES mcaid_id / OUT = raw.memlist_pcmp_missing; 
+RUN; 
+
+
 ods pdf file = "&report./eda_freq_20230424.pdf";
 
 PROC CONTENTS DATA = &dat VARNUM ; RUN ;  

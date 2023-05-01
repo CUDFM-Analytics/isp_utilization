@@ -6,7 +6,7 @@ PURPOSE  : INCLUDE file that:
             2) selects max value when n=2 per quarter or most recent when n=1 and k>1 per quarter
             3) Checks that there are no mcaid_id's with >12 records (macro %check_ids_n12)
 VERSION  : 2023-04-26
-DEPENDS  : RAW.MEMLIST0 
+DEPENDS  : RAW.FY1921_0
 EXPORTS  : work.budget
            work.rae
            work.county
@@ -24,7 +24,7 @@ FROM (SELECT *
            , max(month) AS max_mon_by_cnty 
       FROM (SELECT *
                  , count(enr_cnty) as n_county 
-            FROM raw.memlist0
+            FROM raw.FY1921_0
             GROUP BY mcaid_id 
                    , dt_qrtr
                    , enr_cnty) 
@@ -45,7 +45,7 @@ FROM (SELECT *
            , max(month) AS max_mon_by_budget
       FROM (SELECT *
                  , count(budget_group) as n_budget_group 
-            FROM raw.memlist0
+            FROM raw.FY1921_0
             GROUP BY mcaid_id 
                    , dt_qrtr
                    , budget_group) 
@@ -66,7 +66,7 @@ FROM (SELECT *
            , max(month) AS max_mon_by_rae
       FROM (SELECT *
                  , count(rae_person_new) as n_rae_person_new 
-            FROM raw.memlist0
+            FROM raw.FY1921_0
             GROUP BY mcaid_id 
                    , dt_qrtr
                    , rae_person_new) 
