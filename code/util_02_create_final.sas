@@ -145,6 +145,27 @@ DROP i;
 
 RUN; 
 
+
+**   checking percentiles ; 
+PROC RANK DATA =  raw.fy1618_1 out=ranked_FY16 groups =100;
+VAR adj_pd_16pm;
+RANKS adj_pd_16pm_rank a;
+WHERE adj_pd_16pm gt 0 ;
+RUN; 
+
+PROC RANK DATA =  raw.fy1618_1 out=ranked_FY17 groups =100;
+VAR adj_pd_17pm;
+RANKS adj_pd_17pm_rank;
+WHERE adj_pd_17pm gt 0;
+RUN; 
+
+PROC RANK DATA =  raw.fy1618_1 out=ranked_FY18 groups =100;
+VAR adj_pd_18pm;
+RANKS adj_pd_18pm_rank;
+WHERE adj_pd_18pm gt 0;
+RUN; 
+
+
 ** GET PERCENTILES FOR ALL & TOP CODE DV's FOR MEMBERS ONLY ; 
 * 1618; 
 %macro pctl_1618(var,out,pctlpre);
@@ -224,8 +245,6 @@ RUN;
 %insert_pctile(ds_in = raw.fy1618_2,    ds_out = adj0,          year = 16);
 %insert_pctile(ds_in = adj0,            ds_out = adj1,          year = 17);
 %insert_pctile(ds_in = adj1,            ds_out = int.FY1618,    year = 18); *1050185;
-
-
 
 ********************************************************************
 1921
@@ -386,20 +405,42 @@ ELSE adj_pd_rx_tc = adj_rx_pm;
 RUN; 
 
 **** START HERE IT's GREAT!!!; 
-PROC SORT DATA = int.qrylong1622 (keep=mcaid_id) NODUPKEY OUT=int.final1; BY _ALL_; RUN; 
+* Create elig by year table; 
+PROC SORT DATA = int.qrylong1622 (keep=mcaid_id fy) nodupkey out=elig1622; BY _ALL_; RUN; 
+PROC SQL;
+CREATE TABLE int.elig1622 AS 
+SELECT mcaid_id
+     , max(case WHEN FY=2016 THEN 1 ELSE 0 end) AS elig_2016
+     , max(case WHEN FY=2017 THEN 1 ELSE 0 end) AS elig_2017
+     , max(case WHEN FY=2018 THEN 1 ELSE 0 end) AS elig_2018
+     , max(case WHEN FY=2019 THEN 1 ELSE 0 end) AS elig_2019
+     , max(case WHEN FY=2020 THEN 1 ELSE 0 end) AS elig_2020
+     , max(case WHEN FY=2021 THEN 1 ELSE 0 end) AS elig_2021
+FROM elig1622
+GROUP BY mcaid_id;
+QUIT;
 
 PROC SQL; 
-CREATE TABLE int.final2 AS 
+CREATE TABLE int.final0 AS 
 SELECT a.mcaid_id
-     , b.FY             , b.time            , b.int     , b.int_imp
-     , b.age            , b.race            , b.sex     , b.pcmp_loc_id
-     , b.budget_group   , b.enr_cnty        , b.fqhc    , b.rae_person_new
-     , c.adj_pd_total_16cat, c.adj_pd_total_17cat,  c.adj_pd_total_18cat
-     , c.bho_n_hosp_16pm,    c.bho_n_hosp_17pm,     c.bho_n_hosp_18pm
-     , c.bho_n_other_16pm,   c.bho_n_other_17pm,    c.bho_n_other_18pm
-     , c.bho_n_er_16pm,      c.bho_n_er_17pm,       c.bho_n_er_18pm
-     , d.time
-     , d.FY
+/*     join 1618 data*/
+     , b.adj_pd_total_16cat, b.adj_pd_total_17cat,  b.adj_pd_total_18cat
+     , b.bho_n_hosp_16pm,    b.bho_n_hosp_17pm,     b.bho_n_hosp_18pm
+     , b.bho_n_other_16pm,   b.bho_n_other_17pm,    b.bho_n_other_18pm
+     , b.bho_n_er_16pm,      b.bho_n_er_17pm,       b.bho_n_er_18pm
+/*      join memlist_final with demo*/
+     , c.int            , c.int_imp
+     , c.age            , c.race            , c.sex     , c.pcmp_loc_id
+     , c.budget_group   , c.enr_cnty        , c.fqhc    , c.rae_person_new
+FROM int.elig1622               AS A   
+LEFT JOIN int.FY1618            AS B    ON a.mcaid_id=B.mcaid_id
+LEFT JOIN int.memlist_final     AS C    ON a.mcaid_id=c.mcaid_id;
+QUIT; 
+
+PROC SORT DATA = int.final0 NODUPKEY OUT=int.final1; BY _ALL_; RUN; 
+
+
+
      , d.n_pc_pm         ,d.ind_pc_visit
      , d.n_ed_pm         ,d.ind_ed_visit
      , d.n_ffs_bh_pm     ,d.ind_ffs_bh_visit
@@ -407,11 +448,8 @@ SELECT a.mcaid_id
      , d.adj_pd_total_tc AS adj_pd_total_pm_tc    , d.ind_total_cost
      , d.adj_pd_rx_tc    AS adj_pd_rx_pm_tc       , d.ind_rx_cost
      , d.adj_pd_pc_tc    AS adj_pd_pc_pm_tc       , d.ind_pc_cost
-FROM int.final1                AS A
 LEFT JOIN int.memlist_final    AS B   ON a.mcaid_id=b.mcaid_id
-LEFT JOIN int.fy1618           AS B   ON a.mcaid_id=c.mcaid_id
-LEFT JOIN int.fy1921           AS C   ON a.mcaid_id=d.mcaid_id and a.time=d.time;
-QUIT; 
+LEFT JOIN int.fy1921           AS D   ON a.mcaid_id=d.mcaid_id and b.time=d.time;
 
 DATA missing; 
 SET  final2;
@@ -420,10 +458,33 @@ nmiss = nmiss(of adj_pd_total_16cat--ind_pc_cost);
 proc print; 
 run; 
 
-DATA final3; 
-SET  final2;
+DATA int.final3; 
+SET  int.final2;
 adj_pd_total_16cat = coalesce(adj_pd_total_16cat, -1);
 adj_pd_total_17cat = coalesce(adj_pd_total_17cat, -1);
 adj_pd_total_18cat = coalesce(adj_pd_total_18cat, -1);
+RUN; 
 
+PROC FREQ DATA = int.final3;
+tables adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat; 
+RUN; 
 
+%LET dat = int.final3; 
+%put &dat; 
+PROC GEE DATA  = &dat DESC;
+     CLASS  mcaid_id    
+            adj_pd_total_16cat 
+            adj_pd_total_17cat  
+            adj_pd_total_18cat
+            ind_pc_cost ;
+     model ind_pc_cost = adj_pd_total_16cat 
+                         adj_pd_total_17cat 
+                         adj_pd_total_18cat
+                         time  / dist = binomial link = logit ; 
+  repeated subject = mcaid_id / type = exch ; *ind;
+/*  store p_model;*/
+run;
+
+PROC FREQ DATA = int.JAKE_compare;
+tables adj:;
+RUN; 

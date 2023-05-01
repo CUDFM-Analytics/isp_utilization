@@ -57,19 +57,19 @@ LEFT JOIN int.rae              AS C ON a.enr_cnty = c.hcpf_county_code_c
 WHERE  pcmp_loc_id ne ' ';
 QUIT;   *4-26 72854378 rows and 10 columns ;
  
-DATA raw.qrylong2 (DROP = last_day_fy dob rename=(age_end_fy=age)); 
+DATA raw.qrylong2 (DROP = dob rename=(age_end_fy=age)); 
 SET  raw.qrylong1;
 
-FORMAT last_day_fy date9.;
-FY  = year(intnx('year.7', month, 0, 'BEGINNING'));
-IF      month ge '01Jul2016'd AND month le '30Jun2017'd THEN last_day_fy='30Jun2017'd;
-ELSE IF month ge '01Jul2017'd AND month le '30Jun2018'd THEN last_day_fy='30Jun2018'd;
-ELSE IF month ge '01Jul2018'd AND month le '30Jun2019'd THEN last_day_fy='30Jun2019'd;
-ELSE IF month ge '01Jul2019'd AND month le '30Jun2020'd THEN last_day_fy='30Jun2020'd;
-ELSE IF month ge '01Jul2020'd AND month le '30Jun2021'd THEN last_day_fy='30Jun2021'd;
-ELSE IF month ge '01Jul2021'd AND month le '30Jun2022'd THEN last_day_fy='30Jun2022'd;
-age_end_fy = floor((intck('month', dob, last_day_fy) - (day(last_day_fy) < min(day(dob), day(intnx ('month', last_day_fy, 1) -1)))) /12 );
-IF age_end_fy lt 0 or age_end_fy gt 64 THEN delete;
+FORMAT dt_end_fy dt_end_19 date9.;
+
+FY          = year(intnx('year.7', month, 0, 'BEGINNING'));
+dt_end_fy   = mdy(6,30,(FY+1));
+dt_end_19   = mdy(6,30,2019);
+age_end_FY  = floor( (intck('month', dob, date_end_fy) - (day(date_end_fy) < min(day(dob), day(intnx ('month', date_end_fy, 1) -1)))) /12 );
+age_end_19  = floor( (intck('month', dob, date_end_19) - (day(date_end_19) < min(day(dob), day(intnx ('month', date_end_19, 1) -1)))) /12 );
+if age_end_FY ge 65 then delete;
+if age_end_19 ge 65 then delete;
+run;
 
 PCMP2 = input(pcmp_loc_id, best12.);
 drop pcmp_loc_id; 
