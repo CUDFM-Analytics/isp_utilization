@@ -6,6 +6,92 @@
 *** FIND ISSUES where pcmp wasn't on attr file; 
 ******************************************************************************************************;
 
+* COUNT MISSING VARIABLES, see if any exist;
+/* create a format to group missing and nonmissing */
+proc format;
+ value $missfmt ' '='Missing' other='Not Missing';
+ value  missfmt  . ='Missing' other='Not Missing';
+run;
+ 
+proc freq data=data.analysis_dataset; 
+format _CHAR_ $missfmt.; /* apply format for the duration of this PROC */
+tables _CHAR_ / missing missprint nocum nopercent;
+format _NUMERIC_ missfmt.;
+tables _NUMERIC_ / missing missprint nocum nopercent;
+run;
+
+DATA missing; 
+SET  data.analysis_dataset;
+nvals = N(of FY--adj_pd_rx_tc);
+nmiss = nmiss(of FY--adj_pd_rx_tc);
+proc print; 
+run; 
+
+******************************************************************************************************
+*** EXPORT PDF FREQUENCIES; 
+******************************************************************************************************;
+
+ODS PDF FILE = "&report/eda_memlist_final_20230501.pdf";
+
+TITLE "int.memlist_final"; 
+PROC CONTENTS DATA = &memlist VARNUM; RUN; 
+
+PROC FREQ DATA = &memlist; 
+TABLES FY age race sex time n_months_per_q int int_imp fqhc; 
+RUN; 
+
+ods text = "Frequencies for categorical variables by Intervention (non-varying)" ; 
+
+TITLE "Unique Member Count, Final Dataset"; 
+PROC SQL ; 
+SELECT COUNT (DISTINCT mcaid_id ) 
+FROM &memlist ; 
+QUIT ; 
+
+Title "Unique PCMP count by Intervention Status (Non-Varying)"; 
+PROC SQL ; 
+SELECT COUNT(DISTINCT pcmp_loc_id) as n_pcmp
+     , int as intervention
+FROM &memlist
+GROUP BY int;
+QUIT; 
+TITLE ; 
+
+PROC FREQ DATA = &memlist ; 
+TABLES (FY age race sex time n_months_per_q int int_imp fqhc)*int; 
+RUN ;   
+
+TITLE "Max Time by Member" ;
+PROC SQL ; 
+CREATE TABLE data._max_time AS 
+SELECT mcaid_id
+     , MAX (time) as time
+     , MAX (int) as intervention
+FROM &memlist
+GROUP BY mcaid_id ; 
+QUIT; 
+
+Title "Time Frequency by Member" ; 
+PROC FREQ DATA = data._max_time ; 
+tables time / nopercent norow; 
+RUN; 
+
+Title "Time Frequency by Member, Intervention (non-varying)"; 
+PROC FREQ DATA = data._max_time ; 
+tables time*intervention / plots = freqplot(type=dot scale=percent) nopercent norow; 
+RUN; 
+
+PROC FREQ DATA = &memlist; 
+TABLES (ind_:)*int ; 
+TITLE "Indicator DVs by Intervention" ; 
+TITLE2 "If DV eq 0 then indicator = 0, > 0 then indicator = 1";
+format ind: comma20. ; 
+RUN ; 
+TITLE ; 
+TITLE2; 
+
+
+
 DATA raw.memlist_pcmp_missing;
 SET  int.memlist_final ; 
 where pcmp_loc_id = . ; 
