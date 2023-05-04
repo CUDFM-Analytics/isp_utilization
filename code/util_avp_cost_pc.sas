@@ -15,35 +15,7 @@ libname int clear;
 libname raw clear;  
 /*proc options option=memsize value;*/
 /*run;*/
-
-%LET dat = data.analysis_dataset ; 
-%put &dat; 
-
-proc options option=memsize value;
-run;
-
-
-PROC CONTENTS DATA = &dat VARNUM; RUN; 
-
-PROC GEE DATA  = &dat DESC;
-     CLASS  mcaid_id    
-            adj_pd_total_16cat (ref="-1")
-            adj_pd_total_17cat (ref="-1")
-            adj_pd_total_18cat (ref="-1")
-            time(ref="1")
-            ind_pc_cost(ref="0");
-     model ind_pc_cost = adj_pd_total_16cat 
-                         adj_pd_total_17cat 
-                         adj_pd_total_18cat
-                         time  / dist = binomial link = logit ; 
-  repeated subject = mcaid_id / type = exch ; *ind;
-/*  store p_model;*/
-run;
-
-
-TITLE "probability model"; 
-PROC GEE DATA  = data.analysis_dataset DESC;
-     CLASS  mcaid_id    
+   
 /*            age         sex     race        */
 /*            rae_person_new */
 /*            budget_group          */
@@ -51,29 +23,35 @@ PROC GEE DATA  = data.analysis_dataset DESC;
 /*            bho_n_er_16pm    bho_n_er_17pm    bho_n_er_18pm  */
 /*            bho_n_hosp_16pm  bho_n_hosp_17pm  bho_n_hosp_18pm*/
 /*            bh_n_other_16pm bh_n_other_17pm bh_n_other_18pm*/
-            adj_pd_total_16cat (ref="-1")
-            adj_pd_total_17cat (ref="-1")
-            adj_pd_total_18cat (ref="-1")
-            time        (ref="1")
-            int         (ref="0")
-            int_imp     (ref="0")
-            ind_cost_pc (ref="0");
-     model ind_cost_pc = adj_pd_total_16cat 
-                         adj_pd_total_17cat 
-                         adj_pd_total_18cat
-/*                         age            sex             race */
-/*                         rae_person_new budget_group  */
-/*                         fqhc*/
-/*                         bho_n_er_16pm    bho_n_er_17pm    bho_n_er_18pm  */
-/*                         bho_n_hosp_16pm  bho_n_hosp_17pm  bho_n_hosp_18pm*/
-/*                         bh_n_other_16pm bh_n_other_17pm bh_n_other_18pm*/
-                         time 
-                         int_imp
-                         int 
-                         / dist = binomial link = logit ; 
-  repeated subject = mcaid_id / type = exch;
-  store p_model;
+/*            adj_pd_total_16cat (ref="-1")*/
+/*            adj_pd_total_17cat (ref="-1")*/
+/*            adj_pd_total_18cat (ref="-1")*/
+/*            time        (ref="1")*/
+/*            int         (ref="0")*/
+/*            int_imp     (ref="0")*/
+/*            ind_cost_pc (ref="0");*/
+
+/*  adj_pd_total_16cat (ref="-1")*/
+/*            adj_pd_total_17cat (ref="-1")*/
+/*            adj_pd_total_18cat (ref="-1")*/
+
+%LET dat = data.analysis_dataset ; 
+%put &dat; 
+
+* Model 01, intercept and time only ; 
+TITLE "p model: DV ind_pc_cost, IV's adj*3, time, random intercept";
+TITLE "type=exch // class: mcaid_id, adj's, time, ind_pc_cost";  
+PROC GEE DATA  = &dat DESC;
+     CLASS  mcaid_id    
+          
+            time(ref="1")
+            ind_pc_cost(ref="0");
+     model ind_pc_cost = time  / dist = binomial link = logit ; 
+  repeated subject = mcaid_id / type = exch ; *ind;
+/*  store p_model;*/
 run;
+
+
 
 
 
