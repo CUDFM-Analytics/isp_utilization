@@ -612,5 +612,3 @@ RUn;
 DATA data.analysis_dataset;
 SET  data.analysis_dataset_allcols (DROP = FY n_months_per_q);
 RUN; 
-
-PROC CONTENTS DATA = data.analysis_dataset VARNUM; RUN; 

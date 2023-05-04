@@ -11,46 +11,46 @@ REFS     : Visualize collinearity diagnostics in SAS, https://blogs.sas.com/cont
 ***********************************************************************************************;
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-libname int clear; 
+libname int clear;
+libname raw clear;  
 /*proc options option=memsize value;*/
 /*run;*/
 
-%LET dat = data.analysis_dataset2 ; 
-* updated on 4/17 with int_imp quarters changed see create file; 
+%LET dat = data.analysis_dataset ; 
+%put &dat; 
 
 proc options option=memsize value;
 run;
 
-%LET dat = data.analysis_dataset; 
-%put &dat; 
 
 PROC CONTENTS DATA = &dat VARNUM; RUN; 
-/**/
-/*PROC GEE DATA  = &dat DESC;*/
-/*     CLASS  mcaid_id    */
-/*            adj_pd_total_16cat (ref="-1")*/
-/*            adj_pd_total_17cat (ref="-1")*/
-/*            adj_pd_total_18cat (ref="-1")*/
-/*            ind_pc_cost  (ref="0");*/
-/*     model ind_pc_cost = adj_pd_total_16cat */
-/*                         adj_pd_total_17cat */
-/*                         adj_pd_total_18cat*/
-/*                         time  / dist = binomial link = logit ; */
-/*  repeated subject = mcaid_id / type = exch ; *ind;*/
-/*/*  store p_model;*/*/
-/*run;*/
+
+PROC GEE DATA  = &dat DESC;
+     CLASS  mcaid_id    
+            adj_pd_total_16cat (ref="-1")
+            adj_pd_total_17cat (ref="-1")
+            adj_pd_total_18cat (ref="-1")
+            time(ref="1")
+            ind_pc_cost(ref="0");
+     model ind_pc_cost = adj_pd_total_16cat 
+                         adj_pd_total_17cat 
+                         adj_pd_total_18cat
+                         time  / dist = binomial link = logit ; 
+  repeated subject = mcaid_id / type = exch ; *ind;
+/*  store p_model;*/
+run;
 
 
 TITLE "probability model"; 
-PROC GEE DATA  = &dat DESC;
+PROC GEE DATA  = data.analysis_dataset DESC;
      CLASS  mcaid_id    
-            age         sex     race        
-            rae_person_new 
-            budget_group          
-            fqhc    
-            bho_n_er_16pm    bho_n_er_17pm    bho_n_er_18pm  
-            bho_n_hosp_16pm  bho_n_hosp_17pm  bho_n_hosp_18pm
-            bh_n_other_16pm bh_n_other_17pm bh_n_other_18pm
+/*            age         sex     race        */
+/*            rae_person_new */
+/*            budget_group          */
+/*            fqhc    */
+/*            bho_n_er_16pm    bho_n_er_17pm    bho_n_er_18pm  */
+/*            bho_n_hosp_16pm  bho_n_hosp_17pm  bho_n_hosp_18pm*/
+/*            bh_n_other_16pm bh_n_other_17pm bh_n_other_18pm*/
             adj_pd_total_16cat (ref="-1")
             adj_pd_total_17cat (ref="-1")
             adj_pd_total_18cat (ref="-1")
@@ -58,20 +58,21 @@ PROC GEE DATA  = &dat DESC;
             int         (ref="0")
             int_imp     (ref="0")
             ind_cost_pc (ref="0");
-     model ind_cost_pc = age            sex             race 
-                         rae_person_new budget_group  
-                         fqhc
-                         bho_n_er_16pm    bho_n_er_17pm    bho_n_er_18pm  
-                         bho_n_hosp_16pm  bho_n_hosp_17pm  bho_n_hosp_18pm
-                         bh_n_other_16pm bh_n_other_17pm bh_n_other_18pm
-                         adj_pd_total_16cat 
+     model ind_cost_pc = adj_pd_total_16cat 
                          adj_pd_total_17cat 
                          adj_pd_total_18cat
+/*                         age            sex             race */
+/*                         rae_person_new budget_group  */
+/*                         fqhc*/
+/*                         bho_n_er_16pm    bho_n_er_17pm    bho_n_er_18pm  */
+/*                         bho_n_hosp_16pm  bho_n_hosp_17pm  bho_n_hosp_18pm*/
+/*                         bh_n_other_16pm bh_n_other_17pm bh_n_other_18pm*/
                          time 
                          int_imp
-                         int / dist = binomial link = logit ; 
+                         int 
+                         / dist = binomial link = logit ; 
   repeated subject = mcaid_id / type = exch;
-/*  store p_model;*/
+  store p_model;
 run;
 
 
