@@ -1,0 +1,1181 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.00 seconds
+      cpu time            0.70 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: SASUSER.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.30 seconds
+      cpu time            0.17 seconds
+
+
+126  libname int clear;
+NOTE: Libref INT has been deassigned.
+127  libname raw clear;
+NOTE: Libref RAW has been deassigned.
+
+128  %LET dat = data.analysis_dataset ;
+129  %put &dat;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+data.analysis_dataset
+130  PROC CONTENTS DATA = &dat VARNUM; RUN;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.01 seconds
+
+
+131  DATA data.pc_cost;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+132  SET  &dat (KEEP mcaid_id--adj_pd_total_18cat ind_pc_cost adj_pd_pc_tc);
+                ---- --------
+                12   12
+ERROR 12-63: Missing '=' for option KEEP.
+
+133  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set DATA.PC_COST may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.00 seconds
+
+
+134  DATA data.pc_cost;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+135  SET  &dat (KEEP = mcaid_id--adj_pd_total_18cat ind_pc_cost adj_pd_pc_tc);
+136  RUN;
+
+NOTE: There were 14039776 observations read from the data set DATA.ANALYSIS_DATASET.
+NOTE: The data set DATA.PC_COST has 14039776 observations and 25 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:12.94
+      cpu time            2.57 seconds
+
+
+137  %LET data.pc_cost = data.pc_cost;
+ERROR: Expecting a variable name after %LET.
+138  PROC CONTENTS DATA = &pc_cost VARNUM; RUN;
+                          -
+                          22
+                          200
+WARNING: Apparent symbolic reference PC_COST not resolved.
+ERROR: File WORK.PC_COST.DATA does not exist.
+
+ERROR 22-322: Expecting a name.
+
+ERROR 200-322: The symbol is not recognized and will be ignored.
+
+NOTE: Statements not processed because of errors noted above.
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+NOTE: The SAS System stopped processing this step because of errors.
+
+139  %LET pc_cost = data.pc_cost;
+140  PROC CONTENTS DATA = &pc_cost VARNUM; RUN;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+141  TITLE "p model: DV ind_pc_cost with time (class) & random intercept";
+142  TITLE2 "type=exch";
+143  PROC GEE DATA  = &pc_cost DESC;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+144       CLASS  mcaid_id
+145              time(ref="1")
+146              ind_pc_cost(ref="0");
+147       model ind_pc_cost = time  / dist = binomial link = logit ;
+148    repeated subject = mcaid_id / type = exch ; *ind;
+149  /*  store p_model;*/
+150  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+ERROR: The generalized Hessian matrix is not positive definite. Iteration will be terminated.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           2:26.97
+      cpu time            2:02.84
+
+
+151  TITLE "p model: DV ind_pc_cost with time (class) & random intercept";
+152  TITLE2 "type=exch";
+153  PROC GEE DATA  = &pc_cost DESC;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+154       CLASS  mcaid_id
+155              ind_pc_cost(ref="0");
+156       model ind_pc_cost = time  / dist = binomial link = logit ;
+157    repeated subject = mcaid_id / type = exch ; *ind;
+158  /*  store p_model;*/
+159  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           2:08.37
+      cpu time            1:44.45
+
+
+160  TITLE "p model: DV ind_pc_cost with time (class), random intercept, & adj's for 16-18";
+161  TITLE2 "type=exch";
+162  PROC GEE DATA  = &pc_cost DESC;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+163       CLASS  mcaid_id
+164              time(ref="1")
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+NOTE: The SAS System stopped processing this step because of errors.
+165              ind_pc_cost(ref="0")
+166              adj_pd_total_16cat (ref="-1")*
+                                              -
+                                              22
+                                              200
+ERROR 22-322: Syntax error, expecting one of the following: a name, ;, /, _ALL_, _CHARACTER_,
+              _CHAR_, _NUMERIC_.
+ERROR 200-322: The symbol is not recognized and will be ignored.
+167              adj_pd_total_17cat (ref="-1")
+168              adj_pd_total_18cat (ref="-1");
+169       MODEL ind_pc_cost = time adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+170              / DIST=binomial LINK=logit ;
+171       REPEATED SUBJECT = mcaid_id
+172              / type=exch ;
+173  /*  store p_MODEL;*/
+174  run;
+
+
+175  TITLE "p model: DV ind_pc_cost with time (class), random intercept, & adj's for 16-18";
+176  TITLE2 "type=exch";
+177  PROC GEE DATA  = &pc_cost DESC;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+178       CLASS  mcaid_id
+179              time(ref="1")
+180              ind_pc_cost(ref="0")
+181              adj_pd_total_16cat (ref="-1")
+182              adj_pd_total_17cat (ref="-1")
+183              adj_pd_total_18cat (ref="-1");
+184       MODEL ind_pc_cost = time adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+185              / DIST=binomial LINK=logit ;
+186       REPEATED SUBJECT = mcaid_id
+187              / type=exch ;
+188  /*  store p_MODEL;*/
+189  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+ERROR: The generalized Hessian matrix is not positive definite. Iteration will be terminated.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           6:05.80
+      cpu time            5:41.85
+
+
+190  * Model 02a, intercept and time with adj's and time linear ;
+191  TITLE "p model: DV ind_pc_cost with time (class), random intercept, & adj's for 16-18";
+192  TITLE2 "type=exch";
+193  PROC GEE DATA  = &pc_cost DESC;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+194       CLASS  mcaid_id
+195              ind_pc_cost(ref="0")
+196              adj_pd_total_16cat (ref="-1")
+197              adj_pd_total_17cat (ref="-1")
+198              adj_pd_total_18cat (ref="-1");
+199       MODEL ind_pc_cost = time adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+200              / DIST=binomial LINK=logit ;
+201       REPEATED SUBJECT = mcaid_id
+202              / type=exch ;
+203  /*  store p_MODEL;*/
+204  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           3:41.04
+      cpu time            3:15.56
+
+
+205  DATA data.dat_reg_pc_cost;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+206  SET  &pc_cost;
+207  format sex_numeric race_numeric 8.;
+208  format budget_group;                    *remove formatting;
+209  if SEX = "M" then sex_numeric = 1;
+210  ELSE sex_numeric = 0;
+211  race_numeric = input(race, 8.);
+212  RUN;
+
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A089424 age=3 race=Unknown Race/Ethnicity sex=Male time=1 pcmp_loc_id=153151 int=0
+BUDGET_GROUP=11 rae_person_new=2 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=1 adj_pd_total_17cat=1
+adj_pd_total_18cat=1 ind_pc_cost=0 adj_pd_pc_tc=0 sex_numeric=1 race_numeric=. _ERROR_=1 _N_=996
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A089424 age=3 race=Unknown Race/Ethnicity sex=Male time=2 pcmp_loc_id=153151 int=0
+BUDGET_GROUP=11 rae_person_new=2 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=1 adj_pd_total_17cat=1
+adj_pd_total_18cat=1 ind_pc_cost=1 adj_pd_pc_tc=182.33147063 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=997
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A089424 age=3 race=Unknown Race/Ethnicity sex=Male time=3 pcmp_loc_id=153151 int=0
+BUDGET_GROUP=11 rae_person_new=2 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=1 adj_pd_total_17cat=1
+adj_pd_total_18cat=1 ind_pc_cost=0 adj_pd_pc_tc=0 sex_numeric=1 race_numeric=. _ERROR_=1 _N_=998
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A089424 age=3 race=Unknown Race/Ethnicity sex=Male time=4 pcmp_loc_id=169082 int=0
+BUDGET_GROUP=11 rae_person_new=2 fqhc=1 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=1 adj_pd_total_17cat=1
+adj_pd_total_18cat=1 ind_pc_cost=1 adj_pd_pc_tc=127.73861094 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=999
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A117530 age=6 race=Unknown Race/Ethnicity sex=Male time=1 pcmp_loc_id=4862 int=0
+BUDGET_GROUP=3 rae_person_new=4 fqhc=1 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=2 adj_pd_total_17cat=2
+adj_pd_total_18cat=2 ind_pc_cost=1 adj_pd_pc_tc=13.693302577 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=1330
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A117530 age=6 race=Unknown Race/Ethnicity sex=Male time=2 pcmp_loc_id=4862 int=0
+BUDGET_GROUP=3 rae_person_new=4 fqhc=1 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=2 adj_pd_total_17cat=2
+adj_pd_total_18cat=2 ind_pc_cost=1 adj_pd_pc_tc=75.432715704 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=1331
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A117530 age=6 race=Unknown Race/Ethnicity sex=Male time=3 pcmp_loc_id=4862 int=0
+BUDGET_GROUP=3 rae_person_new=4 fqhc=1 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=2 adj_pd_total_17cat=2
+adj_pd_total_18cat=2 ind_pc_cost=0 adj_pd_pc_tc=0 sex_numeric=1 race_numeric=. _ERROR_=1 _N_=1332
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A117530 age=6 race=Unknown Race/Ethnicity sex=Male time=4 pcmp_loc_id=4862 int=0
+BUDGET_GROUP=3 rae_person_new=4 fqhc=1 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=2 adj_pd_total_17cat=2
+adj_pd_total_18cat=2 ind_pc_cost=0 adj_pd_pc_tc=0 sex_numeric=1 race_numeric=. _ERROR_=1 _N_=1333
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A640234 age=4 race=Unknown Race/Ethnicity sex=Male time=1 pcmp_loc_id=117507 int=1
+BUDGET_GROUP=11 rae_person_new=4 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=1 BH_Oth18=1 adj_pd_total_16cat=3 adj_pd_total_17cat=2
+adj_pd_total_18cat=2 ind_pc_cost=1 adj_pd_pc_tc=157.32200219 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=5637
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A640234 age=4 race=Unknown Race/Ethnicity sex=Male time=2 pcmp_loc_id=117507 int=1
+BUDGET_GROUP=11 rae_person_new=4 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=1 BH_Oth18=1 adj_pd_total_16cat=3 adj_pd_total_17cat=2
+adj_pd_total_18cat=2 ind_pc_cost=1 adj_pd_pc_tc=131.09454905 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=5638
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A640234 age=4 race=Unknown Race/Ethnicity sex=Male time=3 pcmp_loc_id=117507 int=1
+BUDGET_GROUP=11 rae_person_new=4 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=1 BH_Oth18=1 adj_pd_total_16cat=3 adj_pd_total_17cat=2
+adj_pd_total_18cat=2 ind_pc_cost=1 adj_pd_pc_tc=176.62526291 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=5639
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=A640234 age=4 race=Unknown Race/Ethnicity sex=Male time=4 pcmp_loc_id=117507 int=1
+BUDGET_GROUP=11 rae_person_new=4 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=1 BH_Oth17=1 BH_Oth18=1 adj_pd_total_16cat=3 adj_pd_total_17cat=2
+adj_pd_total_18cat=2 ind_pc_cost=0 adj_pd_pc_tc=0 sex_numeric=1 race_numeric=. _ERROR_=1 _N_=5640
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=B039311 age=6 race=Unknown Race/Ethnicity sex=Male time=1 pcmp_loc_id=21706 int=0
+BUDGET_GROUP=3 rae_person_new=4 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=0 BH_Oth17=1 BH_Oth18=1 adj_pd_total_16cat=2 adj_pd_total_17cat=3
+adj_pd_total_18cat=3 ind_pc_cost=1 adj_pd_pc_tc=133.99423237 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=9051
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=B039311 age=6 race=Unknown Race/Ethnicity sex=Male time=2 pcmp_loc_id=21706 int=0
+BUDGET_GROUP=3 rae_person_new=4 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=0 BH_Oth17=1 BH_Oth18=1 adj_pd_total_16cat=2 adj_pd_total_17cat=3
+adj_pd_total_18cat=3 ind_pc_cost=1 adj_pd_pc_tc=185.51503599 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=9052
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=B039311 age=6 race=Unknown Race/Ethnicity sex=Male time=3 pcmp_loc_id=21706 int=0
+BUDGET_GROUP=3 rae_person_new=4 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=0 BH_Oth17=1 BH_Oth18=1 adj_pd_total_16cat=2 adj_pd_total_17cat=3
+adj_pd_total_18cat=3 ind_pc_cost=1 adj_pd_pc_tc=225.41467127 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=9053
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=B039311 age=6 race=Unknown Race/Ethnicity sex=Male time=4 pcmp_loc_id=21706 int=0
+BUDGET_GROUP=3 rae_person_new=4 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=0 BH_Oth17=1 BH_Oth18=1 adj_pd_total_16cat=2 adj_pd_total_17cat=3
+adj_pd_total_18cat=3 ind_pc_cost=1 adj_pd_pc_tc=69.75017198 sex_numeric=1 race_numeric=. _ERROR_=1
+_N_=9054
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=B218808 age=6 race=Unknown Race/Ethnicity sex=Male time=1 pcmp_loc_id=124725 int=0
+BUDGET_GROUP=6 rae_person_new=2 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=0 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=-1 adj_pd_total_17cat=-1
+adj_pd_total_18cat=0 ind_pc_cost=0 adj_pd_pc_tc=0 sex_numeric=1 race_numeric=. _ERROR_=1 _N_=10881
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=B218808 age=6 race=Unknown Race/Ethnicity sex=Male time=2 pcmp_loc_id=124725 int=0
+BUDGET_GROUP=6 rae_person_new=2 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=0 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=-1 adj_pd_total_17cat=-1
+adj_pd_total_18cat=0 ind_pc_cost=0 adj_pd_pc_tc=0 sex_numeric=1 race_numeric=. _ERROR_=1 _N_=10882
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+mcaid_id=B218808 age=6 race=Unknown Race/Ethnicity sex=Male time=3 pcmp_loc_id=124725 int=0
+BUDGET_GROUP=6 rae_person_new=2 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=0 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=-1 adj_pd_total_17cat=-1
+adj_pd_total_18cat=0 ind_pc_cost=0 adj_pd_pc_tc=0 sex_numeric=1 race_numeric=. _ERROR_=1 _N_=10883
+NOTE: Invalid argument to function INPUT at line 211 column 16.
+WARNING: Limit set by ERRORS= option reached.  Further errors of this type will not be printed.
+mcaid_id=B218808 age=6 race=Unknown Race/Ethnicity sex=Male time=4 pcmp_loc_id=124725 int=0
+BUDGET_GROUP=6 rae_person_new=2 fqhc=0 int_imp=0 BH_Hosp16=0 BH_Hosp17=0 BH_Hosp18=0 BH_ER16=0
+BH_ER17=0 BH_ER18=0 BH_Oth16=0 BH_Oth17=0 BH_Oth18=0 adj_pd_total_16cat=-1 adj_pd_total_17cat=-1
+adj_pd_total_18cat=0 ind_pc_cost=0 adj_pd_pc_tc=0 sex_numeric=1 race_numeric=. _ERROR_=1 _N_=10884
+NOTE: Mathematical operations could not be performed at the following places. The results of the
+      operations have been set to missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      227794 at 211:16
+NOTE: There were 14039776 observations read from the data set DATA.PC_COST.
+NOTE: The data set DATA.DAT_REG_PC_COST has 14039776 observations and 27 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:02.05
+      cpu time            3.40 seconds
+
+
+213
+214  PROC REG DATA = data.dat_reg_pc_cost;
+215  MODEL ind_cost_pc = age sex_numeric race_numeric
+ERROR: Variable IND_COST_PC not found.
+216                           budget_group
+217                           rae_person_new  fqhc
+218                           bh_er2016      bh_er2017       bh_er2018
+ERROR: Variable BH_ER2016 not found.
+ERROR: Variable BH_ER2017 not found.
+219                           bh_hosp2016    bh_hosp2017     bh_hosp2018
+ERROR: Variable BH_ER2018 not found.
+ERROR: Variable BH_HOSP2016 not found.
+ERROR: Variable BH_HOSP2017 not found.
+220                           bh_oth2016     bh_oth2017      bh_oth2018
+ERROR: Variable BH_HOSP2018 not found.
+ERROR: Variable BH_OTH2016 not found.
+ERROR: Variable BH_OTH2017 not found.
+221                           adj_pd_total_16cat
+ERROR: Variable BH_OTH2018 not found.
+222                           adj_pd_total_17cat
+223                           adj_pd_total_18cat
+224                           time
+225                           int_imp
+226                           int / tol vif collin ;
+NOTE: The previous statement has been deleted.
+227  ods select ParameterEstimates CollinDiag;
+228  ods output CollinDiag = Collin;
+229  RUN ;
+
+WARNING: No variables specified for an SSCP matrix. Execution terminating.
+NOTE: PROCEDURE REG used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+229!        Quit;
+WARNING: Output 'CollinDiag' was not created.  Make sure that the output object name, label, or
+         path is spelled correctly.  Also, verify that the appropriate procedure options are used
+         to produce the requested output object.  For example, verify that the NOPRINT option is
+         not used.
+WARNING: Output 'CollinDiag' was not created.  Make sure that the output object name, label, or
+         path is spelled correctly.  Also, verify that the appropriate procedure options are used
+         to produce the requested output object.  For example, verify that the NOPRINT option is
+         not used.
+WARNING: Output 'ParameterEstimates' was not created.  Make sure that the output object name,
+         label, or path is spelled correctly.  Also, verify that the appropriate procedure options
+         are used to produce the requested output object.  For example, verify that the NOPRINT
+         option is not used.
+
+
+230
+231  PROC REG DATA = data.dat_reg_pc_cost;
+232  MODEL ind_pc_cost = age sex_numeric race_numeric
+233                           budget_group
+234                           rae_person_new  fqhc
+235                           bh_er16      bh_er17       bh_er18
+236                           bh_hosp16    bh_hosp17     bh_hosp18
+237                           bh_oth16     bh_oth17      bh_oth18
+238                           adj_pd_total_16cat
+239                           adj_pd_total_17cat
+240                           adj_pd_total_18cat
+241                           time
+242                           int_imp
+243                           int / tol vif collin ;
+244  ods select ParameterEstimates CollinDiag;
+245  ods output CollinDiag = Collin;
+246  RUN ;
+
+WARNING: ODS graphics with more than 5000 points have been suppressed. Use the PLOTS(MAXPOINTS= )
+         option in the PROC REG statement to change or override the cutoff.
+246!        Quit;
+NOTE: The data set WORK.COLLIN has 22 observations and 27 variables.
+
+NOTE: PROCEDURE REG used (Total process time):
+      real time           38.53 seconds
+      cpu time            11.34 seconds
+
+
+247  TITLE "p model: DV ind_pc_cost with time (class), random intercept, & adj's for 16-18";
+248  TITLE2 "type=exch";
+249  PROC GEE DATA  = &pc_cost DESC;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+250       CLASS  mcaid_id
+251              time(ref="1")
+252              ind_pc_cost(ref="0")
+253              adj_pd_total_16cat(ref="0")
+254              adj_pd_total_17cat(ref="0")
+255              adj_pd_total_18cat(ref="0");
+256       MODEL ind_pc_cost = time adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+257              / DIST=binomial LINK=logit ;
+258       REPEATED SUBJECT = mcaid_id
+259              / type=exch ;
+260  /*  store p_MODEL;*/
+261  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+ERROR: The generalized Hessian matrix is not positive definite. Iteration will be terminated.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           6:43.88
+      cpu time            6:19.84
+
+
+262  PROC GEE DATA  = &pc_cost DESC;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+263       CLASS  mcaid_id
+264              ind_pc_cost(ref="0")
+265              adj_pd_total_16cat(ref="-1")
+266              adj_pd_total_17cat(ref="-1")
+267              adj_pd_total_18cat(ref="-1");
+268       MODEL ind_pc_cost = time adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+269              / DIST=binomial LINK=logit ;
+270       REPEATED SUBJECT = mcaid_id
+271              / type=exch ;
+272  /*  store p_MODEL;*/
+273  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           3:49.03
+      cpu time            3:21.61
+
+
+274
+275  proc format;
+276  value CollinFmt
+277    0.0 -<  0.4  = "PropLow"
+278    0.4 -<  0.5  = "PropMed"
+279    0.5 -<  1.0  = "PropHigh"
+280    1.0 -<  20   = "CondLow"
+281     20 -<  30   = "CondMed"
+282     30 -< 100   = "CondHigh"
+283     other       = "CondExtreme";
+NOTE: Format COLLINFMT has been output.
+284  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+285
+286  data CollinLong;
+287  length VarName $32 TextVal $5;
+288  set collin(drop=Model Dependent Eigenvalue);
+289  array v[*] _numeric_;
+290  do j = 2 to dim(v);
+291     VarName = vname(v[j]);
+292     Val = v[j];
+293     if j=2 then TextVal = put(Val, 5.0);
+294     else do;
+295        if Val<0.4 then TextVal = ' ';
+296        else TextVal = put(100*Val, 2.0); *convert proportion to pct;
+297     end;
+298     output;
+299  end;
+300  keep Number VarName Val TextVal;
+301  run;
+
+NOTE: There were 22 observations read from the data set WORK.COLLIN.
+NOTE: The data set WORK.COLLINLONG has 506 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+302
+303  Title "Collinearity Diagnostics Long";
+304  proc print data = collinlong ;
+305  run ;
+
+NOTE: There were 506 observations read from the data set WORK.COLLINLONG.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.06 seconds
+
+
+306  title;
+307
+308  /* create a discrete attribute map:
+309     https://blogs.sas.com/content/iml/2019/07/15/create-discrete-heat-map-sgplot.html
+310  */
+311  data Order;                            /* create discrete attribute map */
+312  length Value $15 FillColor $15;
+313  input raw FillColor;
+314  Value = put(raw, CollinFmt.);          /* use format to assign values */
+315  retain ID 'SortOrder'                  /* name of map */
+316       Show 'AttrMap';                   /* always show all groups in legend */
+317  datalines;
+
+NOTE: The data set WORK.ORDER has 7 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+325  ;
+326
+327  /* Create a discrete heat map and overlay text for the condition numbers
+328     and the important (high) cells of the proportion of variance. */
+329  title "Collinearity Diagnostics";
+330  proc sgplot data=CollinLong dattrmap=Order noautolegend;
+331    format Val CollinFmt.;
+332    heatmapparm x=VarName y=Number colorgroup=Val / outline
+333                attrid=SortOrder nomissingcolor discretey;
+334    text x=VarName y=Number text=TextVal / strip textattrs=(size=14);
+335    refline "ConditionIndex" / axis=x lineattrs=(color=DarkGray)
+336            discreteoffset=0.5 discretethickness=0.08;
+337    xaxis display=(nolabel);
+338  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.78 seconds
+      cpu time            0.32 seconds
+
+NOTE: There were 506 observations read from the data set WORK.COLLINLONG.
+NOTE: There were 7 observations read from the data set WORK.ORDER.
+
+339  PROC CONTENTS DATA = data.dat_reg_pc_cost VARNUM;
+340  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.03 seconds
+
+
+341  PROC REG DATA = data.dat_reg_pc_cost;
+342  MODEL ind_pc_cost = int int_imp time
+343                      age sex_numeric race_numeric
+344                           budget_group
+345                           rae_person_new  fqhc
+346                           bh_er16      bh_er17       bh_er18
+347                           bh_hosp16    bh_hosp17     bh_hosp18
+348                           bh_oth16     bh_oth17      bh_oth18
+349                           adj_pd_total_16cat
+350                           adj_pd_total_17cat
+351                           adj_pd_total_18cat / tol vif collin ;
+352  ods select ParameterEstimates CollinDiag;
+353  ods output CollinDiag = Collin;
+354  RUN ;
+
+WARNING: ODS graphics with more than 5000 points have been suppressed. Use the PLOTS(MAXPOINTS= )
+         option in the PROC REG statement to change or override the cutoff.
+354!        Quit;
+NOTE: The data set WORK.COLLIN has 22 observations and 27 variables.
+
+NOTE: PROCEDURE REG used (Total process time):
+      real time           38.38 seconds
+      cpu time            10.75 seconds
+
+
+355
+356
+357  proc format;
+358  value CollinFmt
+359    0.0 -<  0.4  = "PropLow"
+360    0.4 -<  0.5  = "PropMed"
+361    0.5 -<  1.0  = "PropHigh"
+362    1.0 -<  20   = "CondLow"
+363     20 -<  30   = "CondMed"
+364     30 -< 100   = "CondHigh"
+365     other       = "CondExtreme";
+NOTE: Format COLLINFMT is already on the library WORK.FORMATS.
+NOTE: Format COLLINFMT has been output.
+366  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+367
+368  data CollinLong;
+369  length VarName $32 TextVal $5;
+370  set collin(drop=Model Dependent Eigenvalue);
+371  array v[*] _numeric_;
+372  do j = 2 to dim(v);
+373     VarName = vname(v[j]);
+374     Val = v[j];
+375     if j=2 then TextVal = put(Val, 5.0);
+376     else do;
+377        if Val<0.4 then TextVal = ' ';
+378        else TextVal = put(100*Val, 2.0); *convert proportion to pct;
+379     end;
+380     output;
+381  end;
+382  keep Number VarName Val TextVal;
+383  run;
+
+NOTE: There were 22 observations read from the data set WORK.COLLIN.
+NOTE: The data set WORK.COLLINLONG has 506 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+384
+385  Title "Collinearity Diagnostics Long";
+386  proc print data = collinlong ;
+387  run ;
+
+NOTE: There were 506 observations read from the data set WORK.COLLINLONG.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.04 seconds
+
+
+388  title;
+389
+390  /* create a discrete attribute map:
+391     https://blogs.sas.com/content/iml/2019/07/15/create-discrete-heat-map-sgplot.html
+392  */
+393  data Order;                            /* create discrete attribute map */
+394  length Value $15 FillColor $15;
+395  input raw FillColor;
+396  Value = put(raw, CollinFmt.);          /* use format to assign values */
+397  retain ID 'SortOrder'                  /* name of map */
+398       Show 'AttrMap';                   /* always show all groups in legend */
+399  datalines;
+
+NOTE: The data set WORK.ORDER has 7 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.01 seconds
+
+
+407  ;
+408
+409  /* Create a discrete heat map and overlay text for the condition numbers
+410     and the important (high) cells of the proportion of variance. */
+411  title "Collinearity Diagnostics";
+412  proc sgplot data=CollinLong dattrmap=Order noautolegend;
+413    format Val CollinFmt.;
+414    heatmapparm x=VarName y=Number colorgroup=Val / outline
+415                attrid=SortOrder nomissingcolor discretey;
+416    text x=VarName y=Number text=TextVal / strip textattrs=(size=14);
+417    refline "ConditionIndex" / axis=x lineattrs=(color=DarkGray)
+418            discreteoffset=0.5 discretethickness=0.08;
+419    xaxis display=(nolabel);
+420  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.25 seconds
+      cpu time            0.03 seconds
+
+NOTE: There were 506 observations read from the data set WORK.COLLINLONG.
+NOTE: There were 7 observations read from the data set WORK.ORDER.
+
+421
+422
+423  ods pdf file =
+423! "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\proc_reg_collin_2023-05-08.pd
+423! f";
+NOTE: Writing ODS PDF output to DISK destination
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\proc_reg_collin_2023-05-08.p
+      df", printer "PDF".
+424
+425  PROC CONTENTS DATA = data.dat_reg_pc_cost VARNUM;
+NOTE: Writing HTML Body file: sashtml1.htm
+426  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.42 seconds
+      cpu time            0.31 seconds
+
+
+427
+428  PROC REG DATA = data.dat_reg_pc_cost;
+429  MODEL ind_pc_cost = int int_imp time
+430                      age sex_numeric race_numeric
+431                           budget_group
+432                           rae_person_new  fqhc
+433                           bh_er16      bh_er17       bh_er18
+434                           bh_hosp16    bh_hosp17     bh_hosp18
+435                           bh_oth16     bh_oth17      bh_oth18
+436                           adj_pd_total_16cat
+437                           adj_pd_total_17cat
+438                           adj_pd_total_18cat / tol vif collin ;
+439  ods select ParameterEstimates CollinDiag;
+440  ods output CollinDiag = Collin;
+441  RUN ;
+
+WARNING: ODS graphics with more than 5000 points have been suppressed. Use the PLOTS(MAXPOINTS= )
+         option in the PROC REG statement to change or override the cutoff.
+441!        Quit;
+NOTE: The data set WORK.COLLIN has 22 observations and 27 variables.
+
+NOTE: PROCEDURE REG used (Total process time):
+      real time           36.72 seconds
+      cpu time            10.85 seconds
+
+
+442
+443
+444  proc format;
+445  value CollinFmt
+446    0.0 -<  0.4  = "PropLow"
+447    0.4 -<  0.5  = "PropMed"
+448    0.5 -<  1.0  = "PropHigh"
+449    1.0 -<  20   = "CondLow"
+450     20 -<  30   = "CondMed"
+451     30 -< 100   = "CondHigh"
+452     other       = "CondExtreme";
+NOTE: Format COLLINFMT is already on the library WORK.FORMATS.
+NOTE: Format COLLINFMT has been output.
+453  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+454
+455  data CollinLong;
+456  length VarName $32 TextVal $5;
+457  set collin(drop=Model Dependent Eigenvalue);
+458  array v[*] _numeric_;
+459  do j = 2 to dim(v);
+460     VarName = vname(v[j]);
+461     Val = v[j];
+462     if j=2 then TextVal = put(Val, 5.0);
+463     else do;
+464        if Val<0.4 then TextVal = ' ';
+465        else TextVal = put(100*Val, 2.0); *convert proportion to pct;
+466     end;
+467     output;
+468  end;
+469  keep Number VarName Val TextVal;
+470  run;
+
+NOTE: There were 22 observations read from the data set WORK.COLLIN.
+NOTE: The data set WORK.COLLINLONG has 506 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+471
+472  Title "Collinearity Diagnostics Long";
+473  proc print data = collinlong ;
+474  run ;
+
+NOTE: There were 506 observations read from the data set WORK.COLLINLONG.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.12 seconds
+
+
+475  title;
+476
+477  /* create a discrete attribute map:
+478     https://blogs.sas.com/content/iml/2019/07/15/create-discrete-heat-map-sgplot.html
+479  */
+480  data Order;                            /* create discrete attribute map */
+481  length Value $15 FillColor $15;
+482  input raw FillColor;
+483  Value = put(raw, CollinFmt.);          /* use format to assign values */
+484  retain ID 'SortOrder'                  /* name of map */
+485       Show 'AttrMap';                   /* always show all groups in legend */
+486  datalines;
+
+NOTE: The data set WORK.ORDER has 7 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+494  ;
+495
+496  /* Create a discrete heat map and overlay text for the condition numbers
+497     and the important (high) cells of the proportion of variance. */
+498  title "Collinearity Diagnostics";
+499  proc sgplot data=CollinLong dattrmap=Order noautolegend;
+500    format Val CollinFmt.;
+501    heatmapparm x=VarName y=Number colorgroup=Val / outline
+502                attrid=SortOrder nomissingcolor discretey;
+503    text x=VarName y=Number text=TextVal / strip textattrs=(size=14);
+504    refline "ConditionIndex" / axis=x lineattrs=(color=DarkGray)
+505            discreteoffset=0.5 discretethickness=0.08;
+506    xaxis display=(nolabel);
+507  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           1.07 seconds
+      cpu time            0.62 seconds
+
+NOTE: Some of the tick values have been thinned.
+NOTE: There were 506 observations read from the data set WORK.COLLINLONG.
+NOTE: There were 7 observations read from the data set WORK.ORDER.
+
+508
+509  ods pdf close;
+NOTE: ODS PDF printed 21 pages to
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\proc_reg_collin_2023-05-08.pd
+      f.
+510
+511  data fitness;
+512     input Age Weight Oxygen RunTime RestPulse RunPulse MaxPulse @@;
+513     datalines;
+
+NOTE: SAS went to a new line when INPUT statement reached past the end of a line.
+NOTE: The data set WORK.FITNESS has 31 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+530  ;
+531
+532  proc reg data=fitness plots=none;
+533     model Oxygen = RunTime Age Weight RunPulse MaxPulse RestPulse / collin;
+534     ods select ParameterEstimates CollinDiag;
+535     ods output CollinDiag = CollinReg;
+536  quit;
+
+NOTE: The data set WORK.COLLINREG has 7 observations and 12 variables.
+NOTE: PROCEDURE REG used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+537  %LET pc_cost = data.pc_cost;
+538  PROC CONTENTS DATA = &pc_cost VARNUM; RUN;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.01 seconds
+
+
+539  PROC GEE DATA  = &pc_cost DESC;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+540  CLASS  mcaid_id
+541         age(ref='1')
+542         race
+543         sex(ref='M')
+544         time
+545         budget_group
+546         pcmp_loc_id
+547         int(ref='0')
+548         int_imp(ref='0')
+549         fqhc(ref='0')
+550         rae_person_new(ref='1')
+551         bh_er16(ref='0')
+552         bh_er17(ref='0')
+553         bh_er18(ref='0')
+554         bh_hosp16(ref='0')
+555         bh_hosp17(ref='0')
+556         bh_hosp18(ref='0')
+557         bh_oth16(ref='0')
+558         bh_oth17(ref='0')
+559         bh_oth18(ref='0')
+560         time(ref='1')
+561         ind_pc_cost(ref='0')
+562         adj_pd_total_16cat(ref='-1')
+563         adj_pd_total_17cat(ref='-1')
+564         adj_pd_total_18cat(ref='-1');
+565  MODEL  ind_pc_cost = age
+566                       race
+567                       sex
+568                       time
+569                       budget_group
+570                       pcmp_loc_id
+571                       int
+572                       int_imp
+573                       fqhc
+574                       rae_person_new
+575                       bh_er16
+576                       bh_er17
+577                       bh_er18
+578                       bh_hosp16
+579                       bh_hosp17
+580                       bh_hosp18
+581                       bh_oth16
+582                       bh_oth17
+583                       bh_oth18
+584                       time
+585                       ind_pc_cost
+586                       adj_pd_total_16cat
+587                       adj_pd_total_17cat
+588                       adj_pd_total_18cat
+589         / DIST=binomial LINK=logit ;
+590  REPEATED SUBJECT = mcaid_id
+591              / type=exch ;
+592  /*  store p_MODEL;*/
+593  run;
+
+ERROR: No valid observations due to invalid or missing values in the response, explanatory, offset,
+       frequency, or weight variable.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           36.99 seconds
+      cpu time            12.54 seconds
+
+
+594
+595  PROC FREQ DATA = &pc_cost ;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+596  TABLES age race sex
+597                       time
+598                       budget_group
+599                       pcmp_loc_id
+600                       int
+601                       int_imp
+602                       fqhc
+603                       rae_person_new
+604                       bh_er16
+605                       bh_er17
+606                       bh_er18
+607                       bh_hosp16
+608                       bh_hosp17
+609                       bh_hosp18
+610                       bh_oth16
+611                       bh_oth17
+612                       bh_oth18
+613                       time
+614                       ind_pc_cost
+615                       adj_pd_total_16cat
+616                       adj_pd_total_17cat
+617                       adj_pd_total_18cat;
+618  RUN;
+
+NOTE: There were 14039776 observations read from the data set DATA.PC_COST.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           29.57 seconds
+      cpu time            5.51 seconds
+
+
+619
+620  PROC FREQ DATA = &pc_cost ;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+621  TABLES age race sex
+622                       time
+623                       budget_group
+624                       int
+625                       int_imp
+626                       fqhc
+627                       rae_person_new
+628                       bh_er16
+629                       bh_er17
+630                       bh_er18
+631                       bh_hosp16
+632                       bh_hosp17
+633                       bh_hosp18
+634                       bh_oth16
+635                       bh_oth17
+636                       bh_oth18
+637                       time
+638                       ind_pc_cost
+639                       adj_pd_total_16cat
+640                       adj_pd_total_17cat
+641                       adj_pd_total_18cat;
+642  RUN;
+
+NOTE: There were 14039776 observations read from the data set DATA.PC_COST.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           28.31 seconds
+      cpu time            4.07 seconds
+
+
+643
+644  *  ;
+645  TITLE "p model with ind ";
+646  TITLE2 "type=ind";
+647  PROC GEE DATA  = &pc_cost DESC;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+648  CLASS  mcaid_id
+649         age(ref='1')
+650         race
+651         sex(ref='M')
+652         time
+653         budget_group
+654         int(ref='0')
+655         int_imp(ref='0')
+656         fqhc(ref='0')
+657         rae_person_new(ref='1')
+658         bh_er16(ref='0')
+659         bh_er17(ref='0')
+660         bh_er18(ref='0')
+661         bh_hosp16(ref='0')
+662         bh_hosp17(ref='0')
+663         bh_hosp18(ref='0')
+664         bh_oth16(ref='0')
+665         bh_oth17(ref='0')
+666         bh_oth18(ref='0')
+667         time(ref='1')
+668         ind_pc_cost(ref='0')
+669         adj_pd_total_16cat(ref='-1')
+670         adj_pd_total_17cat(ref='-1')
+671         adj_pd_total_18cat(ref='-1');
+672  MODEL  ind_pc_cost = age
+673                       race
+674                       sex
+675                       time
+676                       budget_group
+677                       int
+678                       int_imp
+679                       fqhc
+680                       rae_person_new
+681                       bh_er16
+682                       bh_er17
+683                       bh_er18
+684                       bh_hosp16
+685                       bh_hosp17
+686                       bh_hosp18
+687                       bh_oth16
+688                       bh_oth17
+689                       bh_oth18
+690                       time
+691                       ind_pc_cost
+692                       adj_pd_total_16cat
+693                       adj_pd_total_17cat
+694                       adj_pd_total_18cat
+695         / DIST=binomial LINK=logit ;
+696  REPEATED SUBJECT = mcaid_id
+697              / type=exch ;
+698  /*  store p_MODEL;*/
+699  run;
+
+ERROR: No valid observations due to invalid or missing values in the response, explanatory, offset,
+       frequency, or weight variable.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           34.65 seconds
+      cpu time            11.56 seconds
+
+
+700  PROC GEE DATA  = &pc_cost DESC;
+SYMBOLGEN:  Macro variable PC_COST resolves to data.pc_cost
+701  CLASS  mcaid_id
+702         age(ref='1')
+703         race
+704         sex
+705         time
+706         budget_group
+707         int(ref='0')
+708         int_imp(ref='0')
+709         fqhc(ref='0')
+710         rae_person_new(ref='1')
+711         bh_er16(ref='0')
+712         bh_er17(ref='0')
+713         bh_er18(ref='0')
+714         bh_hosp16(ref='0')
+715         bh_hosp17(ref='0')
+716         bh_hosp18(ref='0')
+717         bh_oth16(ref='0')
+718         bh_oth17(ref='0')
+719         bh_oth18(ref='0')
+720         time(ref='1')
+721         ind_pc_cost(ref='0')
+722         adj_pd_total_16cat
+723         adj_pd_total_17cat
+724         adj_pd_total_18cat;
+725  MODEL  ind_pc_cost = age
+726                       race
+727                       sex
+728                       time
+729                       budget_group
+730                       int
+731                       int_imp
+732                       fqhc
+733                       rae_person_new
+734                       bh_er16
+735                       bh_er17
+736                       bh_er18
+737                       bh_hosp16
+738                       bh_hosp17
+739                       bh_hosp18
+740                       bh_oth16
+741                       bh_oth17
+742                       bh_oth18
+743                       time
+744                       ind_pc_cost
+745                       adj_pd_total_16cat
+746                       adj_pd_total_17cat
+747                       adj_pd_total_18cat
+748         / DIST=binomial LINK=logit ;
+749  REPEATED SUBJECT = mcaid_id
+750              / type=exch ;
+751  /*  store p_MODEL;*/
+752  run;
+
+
+ERROR:  An exception has been encountered.
+Please contact technical support and provide them with the following traceback information:
+
+The SAS task name is [GEE]
+ERROR:  Read Access Violation GEE
+Exception occurred at (0BC383B0)
+Task Traceback
+Address   Frame     (DBGHELP API Version 4.0 rev 5)
+00007FFF0BC383B0  0000006E025FF450  sasgee:tkvercn1+0xA7370
+00007FFF0BBB95B4  0000006E025FF520  sasgee:tkvercn1+0x28574
+00007FFF0BB9A6B8  0000006E025FF580  sasgee:tkvercn1+0x9678
+00007FFF0BB91378  0000006E025FF770  sasgee:tkvercn1+0x338
+00007FFF1BA0F5A8  0000006E025FF778  sashost:Main+0x15268
+00007FFF1BA159CC  0000006E025FFAA0  sashost:Main+0x1B68C
+00007FFFA0D47604  0000006E025FFAA8  KERNEL32:BaseThreadInitThunk+0x14
+00007FFFA24026A1  0000006E025FFAD8  ntdll:RtlUserThreadStart+0x21
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           2:34.70
+      cpu time            2:11.51
+
+

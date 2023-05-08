@@ -31,8 +31,6 @@ SET  adj16 adj17 adj18;
 RUN; 
 
 
-
-
 ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_cost_pc_allcomb_adj.pdf" startpage=no;
 ods output table = tab_out; 
 proc tabulate data = allcomb0;
@@ -51,71 +49,49 @@ ods output close;
 ods pdf close; 
 
 
+/*VISUALIZE COLLINEARITY DIAGNOSTICS sas*/
+/*https://blogs.sas.com/content/iml/2020/02/17/visualize-collinearity-diagnostics.html*/
+
 * find collinearity; 
 * for reg have to convert char to numeric: vars race, sex, budget_grp_new; 
-DATA dat_reg ; 
-SET  &dat; 
-format sex_numeric race_numeric 8.;
-format budget_grp_new ; 
-if sex = "M" then sex_numeric = 1;
-else sex_numeric = 0;
-race_numeric = input(race, 8.);
-RUN ; 
 
-ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\proc_reg_collin_20230331.pdf";
 
-proc odstext; 
-     p "proc reg with collinearity metrics for probability model, ind_cost_pc" /style=header; 
-     p '  ';
+ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\proc_reg_collin_2023-05-08.pdf";
 
-proc reg data = dat_reg ; 
-model ind_cost_pc = age sex_numeric race_numeric
-/*                         budget_grp_new*/
+PROC CORR Data =  data.dat_reg_pc_cost outp=pc_cost_corr;
+VAR int int_imp time age sex_numeric race_numeric
+                         budget_group
                          rae_person_new  fqhc
-                         bh_er2016      bh_er2017       bh_er2018 
-                         bh_hosp2016    bh_hosp2017     bh_hosp2018 
-                         bh_oth2016     bh_oth2017      bh_oth2018
+                         bh_er16      bh_er17       bh_er18 
+                         bh_hosp16    bh_hosp17     bh_hosp18 
+                         bh_oth16     bh_oth17      bh_oth18
                          adj_pd_total_16cat 
                          adj_pd_total_17cat 
-                         adj_pd_total_18cat
-                         time 
-                         int_imp
-                         int / tol vif collin ; 
+                         adj_pd_total_18cat;
+RUN; 
+
+DATA pc_cost_corr_ge70 (drop=i);
+set  pc_cost_corr (where=(_TYPE_ in ("CORR")));
+array col(*) int--adj_pd_total_18cat;
+do i=1 to dim(col);
+if (col{i}<0.6 AND col{i}>-.6) OR col{i}=1 then col{i}=.; 
+end; 
+RUN; 
+
+PROC REG DATA = data.dat_reg_pc_cost;
+MODEL ind_pc_cost = int int_imp time 
+                    age sex_numeric race_numeric
+                         budget_group
+                         rae_person_new  fqhc
+                         bh_er16      bh_er17       bh_er18 
+                         bh_hosp16    bh_hosp17     bh_hosp18 
+                         bh_oth16     bh_oth17      bh_oth18
+                         adj_pd_total_16cat 
+                         adj_pd_total_17cat 
+                         adj_pd_total_18cat / tol vif collin ; 
 ods select ParameterEstimates CollinDiag; 
 ods output CollinDiag = Collin;
 RUN ;  Quit; 
-
-
-* trying proc glm since it allows class statements (proc reg doesn't) ; 
-PROC GLM DATA  = &dat ;
-     CLASS  mcaid_id    
-            age         sex     race        
-            rae_person_new 
-            budget_grp_new          fqhc    
-            bh_er2016   bh_er2017   bh_er2018 
-            bh_hosp2016 bh_hosp2017 bh_hosp2018 
-            bh_oth2016  bh_oth2017  bh_oth2018
-            adj_pd_total_16cat 
-            adj_pd_total_17cat  
-            adj_pd_total_18cat
-            time 
-            int 
-            int_imp 
-            ind_cost_pc ;
-     model ind_cost_pc = age            sex             race 
-                         rae_person_new budget_grp_new  fqhc
-                         bh_er2016      bh_er2017       bh_er2018 
-                         bh_hosp2016    bh_hosp2017     bh_hosp2018 
-                         bh_oth2016     bh_oth2017      bh_oth2018
-                         adj_pd_total_16cat 
-                         adj_pd_total_17cat 
-                         adj_pd_total_18cat
-                         time 
-                         int_imp
-                         int / dist = binomial link = logit ; 
-  repeated subject = mcaid_id / type = exch;
-  store p_model;
-run;
 
 proc format;
 value CollinFmt 
@@ -183,3 +159,4 @@ proc sgplot data=CollinLong dattrmap=Order noautolegend;
 run;
 
 ods pdf close; 
+

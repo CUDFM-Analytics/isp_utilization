@@ -13,47 +13,159 @@ REFS     : Visualize collinearity diagnostics in SAS, https://blogs.sas.com/cont
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 libname int clear;
 libname raw clear;  
-/*proc options option=memsize value;*/
-/*run;*/
-   
-/*            age         sex     race        */
-/*            rae_person_new */
-/*            budget_group          */
-/*            fqhc    */
-/*            bho_n_er_16pm    bho_n_er_17pm    bho_n_er_18pm  */
-/*            bho_n_hosp_16pm  bho_n_hosp_17pm  bho_n_hosp_18pm*/
-/*            bh_n_other_16pm bh_n_other_17pm bh_n_other_18pm*/
-/*            adj_pd_total_16cat (ref="-1")*/
-/*            adj_pd_total_17cat (ref="-1")*/
-/*            adj_pd_total_18cat (ref="-1")*/
-/*            time        (ref="1")*/
-/*            int         (ref="0")*/
-/*            int_imp     (ref="0")*/
-/*            ind_cost_pc (ref="0");*/
-
-/*  adj_pd_total_16cat (ref="-1")*/
-/*            adj_pd_total_17cat (ref="-1")*/
-/*            adj_pd_total_18cat (ref="-1")*/
 
 %LET dat = data.analysis_dataset ; 
 %put &dat; 
 
+
+PROC FREQ DATA = &dat; 
+TABLES time ind_pc_cost; 
+RUN; 
+
+PROC SQL; 
+CREATE TABLE n_time_id AS 
+SELECT mcaid_id
+     , count(time) as n_quarters
+FROM &dat
+GROUP BY mcaid_id;
+QUIT; 
+
+PROC FREQ DATA = n_time_id;
+TABLES n_quarters;
+RUN; 
+
+PROC FREQ DATA = &dat;
+TABLES time*ind_pc_cost;
+RUN; 
+
+PROC CORR DATA = &dat;
+var time ind_pc_cost; 
+RUN; 
+
+**********************************************************************************************
 * Model 01, intercept and time only ; 
-TITLE "p model: DV ind_pc_cost, IV's adj*3, time, random intercept";
-TITLE "type=exch // class: mcaid_id, adj's, time, ind_pc_cost";  
+TITLE "p model: DV ind_pc_cost with time (class) & random intercept";
+TITLE2 "type=exch";  
 PROC GEE DATA  = &dat DESC;
      CLASS  mcaid_id    
-          
             time(ref="1")
             ind_pc_cost(ref="0");
-     model ind_pc_cost = time  / dist = binomial link = logit ; 
-  repeated subject = mcaid_id / type = exch ; *ind;
-/*  store p_model;*/
+     MODEL ind_pc_cost = time  / DIST = binomial LINK = logit ; 
+  REPEATED SUBJECT = mcaid_id / type = exch ; *ind;
+/*  store p_MODEL;*/
 run;
 
+* Model 01, intercept and time only but type ind ; 
+TITLE "p model: DV ind_pc_cost with time (class) & random intercept";
+TITLE2 "type=exch";  
+PROC GEE DATA  = &dat DESC;
+     CLASS  mcaid_id    
+            time(ref="1")
+            ind_pc_cost(ref="0");
+     MODEL ind_pc_cost = time  / DIST = binomial LINK = logit ; 
+  REPEATED SUBJECT = mcaid_id / type = ind ; *ind;
+/*  store p_MODEL;*/
+run;
 
+**********************************************************************************************
+* MODEL 01a, time not in class statement just to check: ; 
+TITLE "p MODEL: DV ind_pc_cost with time (linear) & random intercept";
+TITLE2 "type=exch";  
+PROC GEE DATA  = &dat DESC;
+     CLASS  mcaid_id    
+            ind_pc_cost(ref="0");
+     MODEL ind_pc_cost = time  / DIST = binomial LINK = logit ; 
+  REPEATED SUBJECT = mcaid_id / type = exch ; *ind;
+/*  store p_MODEL;*/
+run;
 
+PROC FREQ DATA = &dat; 
+tables adj_pd_total_18cat; 
+RUN;
 
+***********************************************************************************************  ; 
+* took out budgetgroup'; 
+TITLE "p model with ind ";
+TITLE2 "type=exch";  
+PROC GEE DATA  = &dat DESC;
+CLASS  mcaid_id   
+       age (ref='1')
+       race
+       sex
+       time
+/*       budget_group*/
+       int            (ref='0')
+/*       int_imp        (ref='0')*/
+       fqhc           (ref='0')
+       rae_person_new (ref='1')
+       bh_er16        (ref='0')
+       bh_er17        (ref='0')
+       bh_er18        (ref='0')
+       bh_hosp16      (ref='0')
+       bh_hosp17      (ref='0')
+       bh_hosp18      (ref='0')
+       bh_oth16       (ref='0')
+       bh_oth17       (ref='0')
+       bh_oth18       (ref='0')
+       ind_pc_cost    (ref='0')
+       adj_pd_total_16cat
+       adj_pd_total_17cat
+       adj_pd_total_18cat;
+MODEL  ind_pc_cost = age
+                     race
+                     sex
+                     time
+/*                     budget_group      */
+                     int
+/*                     int_imp*/
+                     fqhc
+                     rae_person_new
+                     bh_er16
+                     bh_er17
+                     bh_er18
+                     bh_hosp16
+                     bh_hosp17
+                     bh_hosp18
+                     bh_oth16
+                     bh_oth17
+                     bh_oth18
+                     adj_pd_total_16cat
+                     adj_pd_total_17cat
+                     adj_pd_total_18cat / DIST=binomial LINK=logit ; 
+REPEATED SUBJECT = mcaid_id / type=exch ; 
+/*  store p_MODEL;*/
+run;
+
+* Model 02a, intercept and time with adj's and time linear ; 
+TITLE "p model: DV ind_pc_cost with time (class), random intercept, & adj's for 16-18";
+TITLE2 "type=exch";  
+PROC GEE DATA  = &pc_cost DESC;
+     CLASS  mcaid_id    
+            ind_pc_cost(ref="0")
+            adj_pd_total_16cat(ref="-1")
+            adj_pd_total_17cat(ref="-1")
+            adj_pd_total_18cat(ref="-1");
+     MODEL ind_pc_cost = time adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat 
+            / DIST=binomial LINK=logit ; 
+     REPEATED SUBJECT = mcaid_id 
+            / type=exch ; 
+/*  store p_MODEL;*/
+run;
+** NOTES It isn't taking -1 as the ref for 16cat... why?? It is for 17 and 18... "; 
+TITLE "p model: DV ind_pc_cost with time (class), random intercept, & adj's for 16-18";
+TITLE2 "type=exch";  
+PROC GEE DATA  = &pc_cost DESC;
+     CLASS  mcaid_id    
+            ind_pc_cost(ref="0")
+            adj_pd_total_16cat(ref="-1")
+            adj_pd_total_17cat(ref="-1")
+            adj_pd_total_18cat(ref="-1");
+     MODEL ind_pc_cost = time adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat 
+            / DIST=binomial LINK=logit ; 
+     REPEATED SUBJECT = mcaid_id 
+            / type=exch ; 
+/*  store p_MODEL;*/
+run;
 
 
 * probability model ;

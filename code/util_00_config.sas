@@ -95,3 +95,30 @@ run;
 %mend create_qrtr;
 
 
+
+proc format;
+ picture pctfmt (round) other="009.99%";
+run;
+
+proc template; 
+ edit Base.Freq.OneWayList;
+ edit h1;
+ text VARLABEL;
+ end; 
+ edit frequency; 
+ header="Count"; 
+ format=comma12.;
+ end; 
+ edit cumfrequency;
+ header="Cumulative Count";
+ format=comma12.; 
+ end;
+ edit percent;
+ header="Pct";
+ format=pctfmt.;
+ end; 
+ edit cumpercent;
+ format=pctfmt.; 
+ end; 
+ end;
+run; 

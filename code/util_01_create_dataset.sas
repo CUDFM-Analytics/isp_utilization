@@ -610,5 +610,40 @@ PROC CONTENTS DATA = data.analysis_dataset_allcols VARNUM;
 RUn; 
 
 DATA data.analysis_dataset;
-SET  data.analysis_dataset_allcols (DROP = FY n_months_per_q);
+SET  data.analysis_dataset_allcols (DROP = FY n_months_per_q 
+                                    RENAME=(bho_n_hosp_16pm = BH_Hosp16
+                                            bho_n_hosp_17pm = BH_Hosp17
+                                            bho_n_hosp_18pm = BH_Hosp18
+                                            bho_n_er_16pm   = BH_ER16
+                                            bho_n_er_17pm   = BH_ER17
+                                            bho_n_er_18pm   = BH_ER18
+                                            bho_n_other_16pm= BH_Oth16
+                                            bho_n_other_17pm= BH_Oth17
+                                            bho_n_other_18pm= BH_Oth18
+                                    ));
+
+ARRAY bh(*) BH_Hosp16  BH_Hosp17  BH_Hosp18
+            BH_ER16    BH_ER17    BH_ER18
+            BH_Oth16   BH_Oth17   BH_Oth18;
+
+DO i=1 to dim(bh);
+    IF bh(i)>0 THEN bh(i)=1; 
+    ELSE bh(i)=bh(i);
+    END;
+DROP i; 
+
 RUN; 
+
+PROC SQL; 
+ALTER TABLE data.analysis_dataset
+DROP enr_cnty;
+QUIT; 
+
+
+PROC SQL ; 
+SELECT count(mcaid_id) as n
+     , mcaid_id 
+FROM int.FY1618
+GROUP BY mcaid_id
+HAVING >12 n;
+QUIT; 
