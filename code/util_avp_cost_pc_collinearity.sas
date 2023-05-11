@@ -78,6 +78,14 @@ if (col{i}<0.6 AND col{i}>-.6) OR col{i}=1 then col{i}=.;
 end; 
 RUN; 
 
+%let keep_vars = _type_ _name_ int int_imp age budget_group; 
+DATA pc_cost_corr_print ;
+SET  pc_cost_corr_ge70 (keep = &keep_vars);
+RUN; 
+
+PROC PRINT DATA = pc_cost_corr_print; 
+RUN; 
+
 PROC REG DATA = data.dat_reg_pc_cost;
 MODEL ind_pc_cost = int int_imp time 
                     age sex_numeric race_numeric
@@ -88,7 +96,7 @@ MODEL ind_pc_cost = int int_imp time
                          bh_oth16     bh_oth17      bh_oth18
                          adj_pd_total_16cat 
                          adj_pd_total_17cat 
-                         adj_pd_total_18cat / tol vif collin ; 
+                         adj_pd_total_18cat / tol vif collin covb; 
 ods select ParameterEstimates CollinDiag; 
 ods output CollinDiag = Collin;
 RUN ;  Quit; 
@@ -160,3 +168,83 @@ run;
 
 ods pdf close; 
 
+proc logistic data = &dat;
+CLASS  mcaid_id   
+       age (ref='1')
+       race
+       sex
+       time
+       budget_group
+       int            (ref='0')
+       int_imp        (ref='0')
+       fqhc           (ref='0')
+       rae_person_new (ref='1')
+       bh_er16        (ref='0')
+       bh_er17        (ref='0')
+       bh_er18        (ref='0')
+       bh_hosp16      (ref='0')
+       bh_hosp17      (ref='0')
+       bh_hosp18      (ref='0')
+       bh_oth16       (ref='0')
+       bh_oth17       (ref='0')
+       bh_oth18       (ref='0')
+       ind_pc_cost    (ref='0')
+       adj_pd_total_16cat
+       adj_pd_total_17cat
+       adj_pd_total_18cat;
+MODEL ind_pc_cost = int int_imp time 
+                    age sex race
+                         budget_group
+                         rae_person_new  fqhc
+                         bh_er16      bh_er17       bh_er18 
+                         bh_hosp16    bh_hosp17     bh_hosp18 
+                         bh_oth16     bh_oth17      bh_oth18
+                         adj_pd_total_16cat 
+                         adj_pd_total_17cat 
+                         adj_pd_total_18cat ; 
+store logistic_pc_model / label = "cost_pc_logistic";
+ods select parameterEstimates;
+RUN; 
+
+proc plm restore= logistic_pc_model;
+   show Hessian CovB;
+   ods output Cov=CovB;
+run;
+
+proc iml;
+use CovB nobs p;                         /* read number of obs (p) */
+   cols = "Col1":("Col"+strip(char(p))); /* variable names are Col1 - Colp */
+   read all var cols into Cov;           /* read COVB matrix */
+   read all var "Parameter";             /* read names of parameters */
+close;
+
+/* Hessian and covariance matrices are inverses */
+Hessian = inv(Cov);
+print Hessian[r=Parameter c=Parameter F=BestD8.4];
+
+v = eigval(Hessian); /* show Hessian is positive definite */
+print v;
+
+/* incidentally, stderr are the sqrt of diagonal elements */
+stderr = sqrt(vecdiag(Cov)); 
+*print stderr;
+quit;
+
+
+ods GRAPHICS ON; 
+PROC PRINCOMP DATA = &DAT
+    std
+    OUT=PCOUT
+    PLOTS=(SCREE PROFILE PATTERN SCORE);
+var int int_imp time ind_pc_cost
+                    age 
+                         budget_group
+                         rae_person_new  fqhc
+                         bh_er16      bh_er17       bh_er18 
+                         bh_hosp16    bh_hosp17     bh_hosp18 
+                         bh_oth16     bh_oth17      bh_oth18
+                         adj_pd_total_16cat 
+                         adj_pd_total_17cat 
+                         adj_pd_total_18cat ;
+ods output eigenvectors=EV;
+RUN; 

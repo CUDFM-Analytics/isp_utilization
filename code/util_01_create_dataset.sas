@@ -110,7 +110,6 @@ RUN;
 %concat_id_time(ds=rae);
 %concat_id_time(ds=int.memlist_attr_qrtr_1921);
 
-
 *keep month and dt_qrtr so you can merge util vars in later; 
 DATA raw.FY1921_1;
 SET  raw.FY1921_0 (drop=enr_cnty rae_person_new budget_group);
@@ -156,7 +155,7 @@ SELECT a.mcaid_id
      , b.n_months_per_q
      , b.ind_isp AS int
      , c.budget_group
-     , d.enr_cnty
+/*     , d.enr_cnty*/
      , e.rae_person_new
      , f.fqhc
      , g.time2 as time_start_isp
@@ -167,11 +166,15 @@ SELECT a.mcaid_id
 FROM raw.FY1921_1                    AS A
 LEFT JOIN int.memlist_attr_qrtr_1921 AS B   ON A.id_time_helper = B.id_time_helper
 LEFT JOIN budget                     AS C   ON A.id_time_helper = C.id_time_helper
-LEFT JOIN county                     AS D   ON A.id_time_helper = D.id_time_helper
+/*LEFT JOIN county                     AS D   ON A.id_time_helper = D.id_time_helper*/
 LEFT JOIN rae                        AS E   ON A.id_time_helper = E.id_time_helper
 LEFT JOIN raw.pcmp_type              AS F   ON B.pcmp_loc_id    = F.pcmp_loc_id   
 LEFT JOIN int.isp_un_pcmp_dtstart    AS G   ON b.pcmp_loc_id    = G.pcmp_loc_id    ;
 QUIT ;  *4/27 pm 40958510 : 18 ; 
+
+proc freq data = raw.final0;
+tables dt_qrtr*time;
+RUN; 
 
 * PROBLEM : FIX LATER - 27 that are missing. Create qrylong4 where pcmp_ not ne, 
               but come back to qrylong3 when get logic right; 
@@ -199,7 +202,7 @@ RUN; *4/27 pm 40958444 : 18 ;
 ***********************************************************************************************
 ***  SECTION01 Get Monthly Utilization Data
 ***********************************************************************************************;
-DATA    util0; 
+DATA    raw.util0; 
 SET     ana.qry_monthlyutilization (WHERE=(month ge '01Jul2016'd AND month le '30Jun2022'd));
 FORMAT  dt_qrtr date9.;
 dt_qrtr =intnx('QTR', month, 0, 'BEGINNING'); 
@@ -207,15 +210,15 @@ FY      =year(intnx('year.7', month, 0, 'BEGINNING'));
 run;
 
 PROC SQL;
-CREATE TABLE util1 as
+CREATE TABLE raw.util1 as
 SELECT a.*
      , (a.pd_amt/b.index_2021_1) AS adj_pd_amount 
-FROM   util0        AS A
+FROM   raw.util0        AS A
 LEFT JOIN int.adj   AS b    ON a.dt_qrtr=b.date;
 quit; *66382081 : 7 cols; 
 
 PROC SQL;
-CREATE TABLE util2 AS
+CREATE TABLE raw.util2 AS
 SELECT MCAID_ID
       , FY
       , month
@@ -229,7 +232,7 @@ SELECT MCAID_ID
       , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_pd_er
       , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_pd_rx
       , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_pd_ffs_bh
-FROM  util1
+FROM  raw.util1
 GROUP BY MCAID_ID,month;
 quit; *66382081 : 12; 
 
@@ -599,8 +602,8 @@ PROC SORT DATA = int.final_e; by mcaid_id time; run;
 
 ****see 02_checks for elig table creation ; 
 
-DATA data.analysis_dataset_allcols; 
-SET  int.final_e (DROP = adj_total_pm adj_pc_pm adj_rx_pm) ; 
+DATA analysis_dataset_allcols; 
+SET  int.final_e (DROP = adj_total_pm adj_pc_pm adj_rx_pm enr_cnty) ; 
 FORMAT budget_group budget_grp_new_.
        race         $race_rc_.
        age          age_cat_. ;
@@ -609,17 +612,47 @@ RUN;
 PROC CONTENTS DATA = data.analysis_dataset_allcols VARNUM; 
 RUn; 
 
-DATA data.analysis_dataset;
-SET  data.analysis_dataset_allcols (DROP = FY n_months_per_q 
-                                    RENAME=(bho_n_hosp_16pm = BH_Hosp16
-                                            bho_n_hosp_17pm = BH_Hosp17
-                                            bho_n_hosp_18pm = BH_Hosp18
-                                            bho_n_er_16pm   = BH_ER16
-                                            bho_n_er_17pm   = BH_ER17
-                                            bho_n_er_18pm   = BH_ER18
-                                            bho_n_other_16pm= BH_Oth16
-                                            bho_n_other_17pm= BH_Oth17
-                                            bho_n_other_18pm= BH_Oth18
+*** UPDATE 05/10 add quarter variables, one with text for readability ; 
+proc format; 
+value fyqrtr_cat
+1  = "Q1"
+2  = "Q2"
+3  = "Q3"
+4  = "Q4"
+5  = "Q1"
+6  = "Q2"
+7  = "Q3"
+8  = "Q4"
+9  = "Q1"
+10 = "Q2"
+11 = "Q3"
+12 = "Q4";
+
+invalue fyqrtr_num
+1  = 1
+2  = 2
+3  = 3
+4  = 4
+5  = 1
+6  = 2
+7  = 3
+8  = 4
+9  = 1
+10 = 2
+11 = 3
+12 = 4;
+RUN;
+
+DATA data.analysis_allcols;
+SET  analysis_dataset_allcols (RENAME=(bho_n_hosp_16pm = BH_Hosp16
+                                       bho_n_hosp_17pm = BH_Hosp17
+                                       bho_n_hosp_18pm = BH_Hosp18
+                                       bho_n_er_16pm   = BH_ER16
+                                       bho_n_er_17pm   = BH_ER17
+                                       bho_n_er_18pm   = BH_ER18
+                                       bho_n_other_16pm= BH_Oth16
+                                       bho_n_other_17pm= BH_Oth17
+                                       bho_n_other_18pm= BH_Oth18
                                     ));
 
 ARRAY bh(*) BH_Hosp16  BH_Hosp17  BH_Hosp18
@@ -632,18 +665,34 @@ DO i=1 to dim(bh);
     END;
 DROP i; 
 
+fyqrtr_txt = put(time,   fyqrtr_cat.); 
+fyqrtr     = input(time, fyqrtr_num.);
+
+RUN; 
+
+PROC SORT DATA = data.analysis_allcols;
+BY mcaid_id time; 
+RUN; 
+
+PROC CONTENTS DATA = data.analysis_allcols VARNUM; RUN;
+
+* Remove some columns you won't use in analysis - if running frequencies, use the allcols ds ; 
+DATA data.analysis; 
+SET  data.analysis_allcols (DROP = pcmp_loc_id
+                                   n_months_per_q
+                                   fyqrtr_txt
+                                   FY);
 RUN; 
 
 PROC SQL; 
-ALTER TABLE data.analysis_dataset
-DROP enr_cnty;
-QUIT; 
-
-
-PROC SQL ; 
-SELECT count(mcaid_id) as n
-     , mcaid_id 
-FROM int.FY1618
-GROUP BY mcaid_id
-HAVING >12 n;
-QUIT; 
+CREATE TABLE data.analysis_meta AS 
+SELECT name as variable
+     , type
+     , length
+     , label
+     , format
+     , informat
+FROM sashelp.vcolumn
+WHERE LIBNAME = 'DATA' 
+AND   MEMNAME = 'ANALYSIS';
+quit;

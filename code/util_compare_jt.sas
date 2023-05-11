@@ -25,9 +25,6 @@ SET  jake_compare_ibh;
 IF adj_pd_total_16cat = kw_adj16 then match16 = 1; 
 IF adj_pd_total_17cat = kw_adj17 then match17 = 1; 
 IF adj_pd_total_18cat = kw_adj18 then match18 = 1; 
-diff16 = adj_pd_total_16cat - kw_adj16;
-diff17 = adj_pd_total_17cat - kw_adj17;
-diff18 = adj_pd_total_18cat - kw_adj18; 
 IF match16 = 1 AND match17 = 1 and match18 = 1 then allmatch = 1;
 RUN; 
 

@@ -1,12 +1,36 @@
-* Check id counts ; 
-%macro count_ids_memlist_final;
+
+PROC SQL ; 
+SELECT count(mcaid_id) as n
+     , mcaid_id 
+FROM int.FY1618
+GROUP BY mcaid_id
+HAVING >12 n;
+QUIT; 
+
+
+* Check id counts in some dataset; 
+%macro n_obs_per_id(ds=);
   PROC SQL; 
-  SELECT count(distinct mcaid_id)
-  FROM int.memlist_final;
+  CREATE TABLE n_records_per_id AS
+  SELECT mcaid_id
+       , count(mcaid_id) as n_id
+  FROM &ds
+  GROUP BY mcaid_id;
   QUIT; 
 %mend;
 
-   %count_ids_memlist_final; *4/27 final run still got 1593591 ;
+%n_obs_per_id(ds=data.analysis_dataset); *4/27 final run still got 1593591 ;
+
+PROC FREQ 
+     DATA = n_records_per_id;
+     TABLES n_id  ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+RUN; 
+
+PROC MEANS DATA = raw.util3;
+BY fy; 
+VAR adj:;
+WHERE mcaid_id in ("A000405");
+RUN; 
 
 /*  Row 380 ish in util_01_create dataset, checking percentiles for 1618*/
         **   checking percentiles ; 

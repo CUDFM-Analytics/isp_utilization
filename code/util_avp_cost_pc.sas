@@ -6,7 +6,9 @@ VERSION  : [2023-MM-DD]
 DEPENDS  : [LIST DEPENDENCIES (files, macros, abbreviations)]
 REFS     : Visualize collinearity diagnostics in SAS, https://blogs.sas.com/content/iml/2020/02/17/visualize-collinearity-diagnostics.html
            'Collinearity in regression: The COLLIN option in PROC REG' 
-            https://blogs.sas.com/content/iml/2020/01/23/collinearity-regression-collin-option.html;
+            https://blogs.sas.com/content/iml/2020/01/23/collinearity-regression-collin-option.html
+
+UPDATE   05/10 Per Mark can use time as linear, but include a qrtr variable for each to control for seasonal effects (var = qrtr) 
 
 ***********************************************************************************************;
 
@@ -17,74 +19,10 @@ libname raw clear;
 %LET dat = data.analysis_dataset ; 
 %put &dat; 
 
-
-PROC FREQ DATA = &dat; 
-TABLES time ind_pc_cost; 
-RUN; 
-
-PROC SQL; 
-CREATE TABLE n_time_id AS 
-SELECT mcaid_id
-     , count(time) as n_quarters
-FROM &dat
-GROUP BY mcaid_id;
-QUIT; 
-
-PROC FREQ DATA = n_time_id;
-TABLES n_quarters;
-RUN; 
-
-PROC FREQ DATA = &dat;
-TABLES time*ind_pc_cost;
-RUN; 
-
-PROC CORR DATA = &dat;
-var time ind_pc_cost; 
-RUN; 
-
 **********************************************************************************************
-* Model 01, intercept and time only ; 
-TITLE "p model: DV ind_pc_cost with time (class) & random intercept";
-TITLE2 "type=exch";  
-PROC GEE DATA  = &dat DESC;
-     CLASS  mcaid_id    
-            time(ref="1")
-            ind_pc_cost(ref="0");
-     MODEL ind_pc_cost = time  / DIST = binomial LINK = logit ; 
-  REPEATED SUBJECT = mcaid_id / type = exch ; *ind;
-/*  store p_MODEL;*/
-run;
 
-* Model 01, intercept and time only but type ind ; 
-TITLE "p model: DV ind_pc_cost with time (class) & random intercept";
-TITLE2 "type=exch";  
-PROC GEE DATA  = &dat DESC;
-     CLASS  mcaid_id    
-            time(ref="1")
-            ind_pc_cost(ref="0");
-     MODEL ind_pc_cost = time  / DIST = binomial LINK = logit ; 
-  REPEATED SUBJECT = mcaid_id / type = ind ; *ind;
-/*  store p_MODEL;*/
-run;
-
-**********************************************************************************************
-* MODEL 01a, time not in class statement just to check: ; 
-TITLE "p MODEL: DV ind_pc_cost with time (linear) & random intercept";
-TITLE2 "type=exch";  
-PROC GEE DATA  = &dat DESC;
-     CLASS  mcaid_id    
-            ind_pc_cost(ref="0");
-     MODEL ind_pc_cost = time  / DIST = binomial LINK = logit ; 
-  REPEATED SUBJECT = mcaid_id / type = exch ; *ind;
-/*  store p_MODEL;*/
-run;
-
-PROC FREQ DATA = &dat; 
-tables adj_pd_total_18cat; 
-RUN;
 
 ***********************************************************************************************  ; 
-* took out budgetgroup'; 
 TITLE "p model with ind ";
 TITLE2 "type=exch";  
 PROC GEE DATA  = &dat DESC;
@@ -92,10 +30,9 @@ CLASS  mcaid_id
        age (ref='1')
        race
        sex
-       time
 /*       budget_group*/
        int            (ref='0')
-/*       int_imp        (ref='0')*/
+       int_imp        (ref='0')
        fqhc           (ref='0')
        rae_person_new (ref='1')
        bh_er16        (ref='0')
@@ -110,14 +47,16 @@ CLASS  mcaid_id
        ind_pc_cost    (ref='0')
        adj_pd_total_16cat
        adj_pd_total_17cat
-       adj_pd_total_18cat;
+       adj_pd_total_18cat
+       qrtr;
 MODEL  ind_pc_cost = age
                      race
                      sex
                      time
+                     qrtr
 /*                     budget_group      */
                      int
-/*                     int_imp*/
+                     int_imp
                      fqhc
                      rae_person_new
                      bh_er16
