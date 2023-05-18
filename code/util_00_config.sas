@@ -30,6 +30,9 @@ LOG
       %LET int = &data/interim; 
         LIBNAME int "&int"; 
 
+      %LET out = &data/results_util; 
+        LIBNAME out "&out"; 
+
     * export folder for excel files output; 
       %LET report = &util/reports; 
 

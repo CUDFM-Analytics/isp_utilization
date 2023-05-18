@@ -2,7 +2,9 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization
 PURPOSE  : Hurdle Model, Primary Care Costs
-VERSION  : [2023-05-18] 
+VERSION  : 2023-05-18
+OUTPUT   : pdf & log file
+REFS     : enter some output into util_isp_predicted_costs.xlsx
 ***********************************************************************************************;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 
@@ -11,8 +13,8 @@ VERSION  : [2023-05-18]
 
 PROC PRINT DATA = data.analysis_meta; RUN;
 
-%LET log = S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_avp_cost_pc_2023-05-18.log;
-%LET pdf = S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_avp_cost_pc_2023-05-18.pdf;
+%LET log = S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_avp_cost_pc_.log;
+%LET pdf = S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_avp_cost_pc_.pdf;
 PROC PRINTTO LOG   ="&log"; RUN;
 ODS PDF FILE ="&pdf"; RUN;
 
@@ -29,7 +31,7 @@ CLASS  mcaid_id
        adj_pd_total_16cat(ref='-1')  
        adj_pd_total_17cat(ref='-1')   
        adj_pd_total_18cat(ref='-1')
-       ind_pc_cost       (ref= '0');
+       ind_pc_cost       (ref= '0') ;
 MODEL  ind_pc_cost = time       season1    season2     season3
                      int        int_imp 
                      age        race        sex       
@@ -87,7 +89,6 @@ data intgroup;
   if ^b then int = 0;
   exposed = b;
 run;
-*  1785893 for both with intgroup = 3571786;
 
 * the predictions for util and cost will be made for each person twice, once exposed and once unexposed;
 
@@ -102,24 +103,22 @@ proc plm restore=c_model;
 run;
 
 * person average cost is calculated ;
-data meanCost;
+data out.meanCost;
   set cp_intgroup;
   a_cost = p_prob*p_cost;* (1-p term = 0);
 run;
 
 * group average cost is calculated and contrasted ;
 proc sql;
-
-create table avp_cost_pc as
+create table out.avp_cost_pc as
   select mean(case when exposed=1 then a_cost else . end ) as cost_exposed,
          mean(case when exposed=0 then a_cost else . end ) as cost_unexposed,
   calculated cost_exposed - calculated cost_unexposed as cost_diff
   from meanCost;
-
 quit;
 
 TITLE "avp_cost_pc"; 
-proc print data = avp_cost_pc;
+proc print data = out.avp_cost_pc;
 run;
 
 proc means data = meancost;

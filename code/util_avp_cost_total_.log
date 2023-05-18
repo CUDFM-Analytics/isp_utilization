@@ -1,0 +1,50 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+410  ODS PDF FILE     ="&pdf"; RUN;
+SYMBOLGEN:  Macro variable PDF resolves to 
+            S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_avp_cost_total_.pd
+            f
+NOTE: Writing ODS PDF output to DISK destination 
+      "S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\code\util_avp_cost_total_.pdf", 
+      printer "PDF".
+411  
+412  TITLE "Probability Model: FFS Total Cost";
+413  PROC GEE DATA  = &dat DESC;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis
+414  CLASS  mcaid_id
+415         season1(ref='-1')    season2(ref='-1')     season3(ref='-1')
+416         int    (ref= '0')    int_imp(ref= '0')
+417         age    (ref= '1')    race                  sex
+418         budget_group         fqhc(ref= '0')        rae_person_new
+419         bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')
+420         bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')
+421         bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')
+422         adj_pd_total_16cat(ref='-1')
+423         adj_pd_total_17cat(ref='-1')
+424         adj_pd_total_18cat(ref='-1')
+425         ind_total_cost       (ref= '0') ;
+426  MODEL  ind_total_cost = time       season1    season2     season3
+427                          int        int_imp
+428                          age        race        sex
+429                          budget_group           fqhc       rae_person_new
+430                          bh_er16    bh_er17     bh_er18
+431                          bh_hosp16  bh_hosp17   bh_hosp18
+432                          bh_oth16   bh_oth17    bh_oth18
+433                          adj_pd_total_16cat
+434                          adj_pd_total_17cat
+435                          adj_pd_total_18cat
+436          / DIST=binomial LINK=logit ;
+437  REPEATED SUBJECT = mcaid_id / type=exch ;
+438  store p_MODEL;
+439  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_total_cost='1'.
+NOTE: The GEE procedure generated the model item store WORK.P_MODEL.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           11:26.75
+      cpu time            10:45.49
+      
