@@ -104,7 +104,7 @@ proc plm restore=c_model;
 run;
 
 * person average cost is calculated ;
-data out.meanCost;
+data out.meanCost_total;
   set cp_intgroup;
   a_cost = p_prob*p_cost;* (1-p term = 0);
 run;
@@ -115,14 +115,14 @@ create table out.avp_cost_total as
   select mean(case when exposed=1 then a_cost else . end ) as cost_exposed,
          mean(case when exposed=0 then a_cost else . end ) as cost_unexposed,
   calculated cost_exposed - calculated cost_unexposed as cost_diff
-  from meanCost;
+  from out.meanCost_total;
 quit;
 
 TITLE "avp_cost_total"; 
 proc print data = out.avp_cost_total;
 run;
 
-proc means data = out.meancost;
+proc means data = out.meancost_total;
 by exposed;
 var p_prob p_cost a_cost; 
 RUN; 
