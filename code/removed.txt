@@ -6,6 +6,21 @@ FROM budget
 GROUP BY mcaid_ID;
 quit; 
 
+%macro count_missing(ds);
+proc format;
+ value $missfmt ' '='Missing' other='Not Missing';
+ value  missfmt  . ='Missing' other='Not Missing';
+run;
+ 
+proc freq data=&ds; 
+format _CHAR_ $missfmt.; /* apply format for the duration of this PROC */
+tables _CHAR_ / missing missprint nocum nopercent;
+format _NUMERIC_ missfmt.;
+tables _NUMERIC_ / missing missprint nocum nopercent;
+run;
+%mend; 
+
+
 %macro dv_95pctl(var,out,pctlpre);
 proc univariate noprint data = int.a6;
 where &var gt 0; 

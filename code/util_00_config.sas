@@ -34,7 +34,7 @@ LOG
       %LET report = &util/reports; 
 
       %LET raw = &data/_raw;
-        LIBNAME raw "&raw";
+/*        LIBNAME raw "&raw";*/
 
 * EXT DATA SOURCES ---------------------------------------------------------------------------; 
 

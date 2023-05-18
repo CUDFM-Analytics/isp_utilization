@@ -674,25 +674,30 @@ PROC SORT DATA = data.analysis_allcols;
 BY mcaid_id time; 
 RUN; 
 
-PROC CONTENTS DATA = data.analysis_allcols VARNUM; RUN;
+PROC FREQ DATA = data.analysis_allcols;
+TABLES fyqrtr;
+RUN; 
 
+
+*** UPDATE 05-15-2023: Effect coding, creating season: for time via fyqrtr; 
 * Remove some columns you won't use in analysis - if running frequencies, use the allcols ds ; 
 DATA data.analysis; 
 SET  data.analysis_allcols (DROP = pcmp_loc_id
                                    n_months_per_q
                                    fyqrtr_txt
                                    FY);
+* Effect coding > Create seasonal effect indicator values; 
+IF      fyqrtr  = 1  THEN season1 = 1 ;
+ELSE IF fyqrtr  = 4  THEN season1 = -1;
+ELSE    season1 = 0; 
+
+IF      fyqrtr  = 2  THEN season2 = 1 ;
+ELSE IF fyqrtr  = 4  THEN season2 = -1;
+ELSE    season2 = 0;  
+
+IF      fyqrtr  = 3  THEN season3 = 1 ;
+ELSE IF fyqrtr  = 4  THEN season3 = -1;
+ELSE    season3 = 0;  
+
 RUN; 
 
-PROC SQL; 
-CREATE TABLE data.analysis_meta AS 
-SELECT name as variable
-     , type
-     , length
-     , label
-     , format
-     , informat
-FROM sashelp.vcolumn
-WHERE LIBNAME = 'DATA' 
-AND   MEMNAME = 'ANALYSIS';
-quit;

@@ -1,9 +1,16 @@
-/* 
-These are here for reference - if changing, change in util_03a_eda... as well
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+%let dat = data.analysis; 
+%let all = data.analysis_allcols; 
 
-  %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; */
-/*%let dat = data.analysis; */
-/*%let all = data.analysis_allcols; */
+PROC SQL NOPRINT;
+SELECT count(*) into :nobs from &dat;
+QUIT; 
+
+PROC SQL; 
+SELECT COUNT (DISTINCT mcaid_id ) into :nmem
+FROM &dat ; 
+QUIT ; 
+
 
 %macro univar_gt0(var, title);
 PROC UNIVARIATE DATA = &dat;
@@ -41,17 +48,15 @@ VALUE bh1618fy
 
 RUN; 
 
-ODS PDF FILE = "&report/eda_analysis_dataset_2023-05-10.pdf"
+ODS PDF FILE = "&report/eda_analysis_dataset_2023-05-18.pdf"
 STARTPAGE = no;
 
 ods proclabel 'Data Specs';
 * Print specs ; 
 PROC ODSTEXT;
-p "Update/s to 5/10 pdf report from 05/05:";
-p "-- Included fyqrtr variable in final analysis dataset";
-p "-- Moved categorical freq's to after column list";  
-p "-- Member record count included before categorical frequencies";  
-p " ";
+p "Update/s to data.analysis (final ds)";
+p "-- 5/15: Effect Coding time with season variables"; 
+p "-- 5/10: Included fyqrtr variable in final analysis dataset"; 
 p " ";
 
 p "Final Dataset Inclusion Rules"
@@ -91,9 +96,11 @@ p "Frequencies, Categorical Vars: Ungrouped" / style=systemtitle; RUN;
 
 PROC FREQ DATA = int.eda_n_ids; TABLES n_id; RUN; 
 
+* Categorical vars; 
 PROC FREQ 
 DATA   = &dat; 
-TABLES int: age race sex budget_group rae_person_new fqhc bh: ind:  adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat fyqrtr; 
+TABLES int: age race sex budget_group rae_person_new fqhc bh: ind:  
+       adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat fy: season:; 
 RUN ; 
 
 *******************************************************************************
@@ -167,9 +174,8 @@ p "Frequencies, Categorical Vars by ISP Participation (Time-Invariant Indicator 
 p "adj fy 1618 vars have their own section"; 
 RUN; 
 ods proclabel 'Frequencies, Cat Vars: Int Status'; RUN; 
-PROC FREQ DATA = &dat; 
-TABLES (int_imp age race sex time budget_group rae_person_new fqhc 
-        bh: ind:)   *int; 
+PROC FREQ DATA = &all; 
+TABLES (int_imp age race sex time budget_group rae_person_new fqhc fy: bh: ind:)*int; 
 RUN ; 
 
 **************************************************************************************
