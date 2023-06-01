@@ -1,0 +1,262 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+315  ODS PDF FILE     = "&pdf"
+SYMBOLGEN:  Macro variable PDF resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_co
+            st_total_results_2023-05-23.pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+316                      STARTPAGE = no;
+NOTE: Writing ODS PDF output to DISK destination 
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_cost_to
+      tal_results_2023-05-23.pdf", printer "PDF".
+317  
+318  %LET dat = data.analysis;
+319  
+320  proc odstext;
+SYMBOLGEN:  Macro variable TODAY resolves to 2023-05-23
+321  p "Date:              &today";
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis
+322  p "Data:           &dat";
+SYMBOLGEN:  Macro variable ROOT resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+323  p "Project Root: &root";
+324  p "Script:            %sysget(SAS_EXECFILENAME)";
+SYMBOLGEN:  Macro variable LOG resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_co
+            st_total_log_2023-05-23.txt
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+325  p "Log File:         &log";
+SYMBOLGEN:  Macro variable PDF resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_co
+            st_total_results_2023-05-23.pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+326  p "Results File:  &pdf";
+327  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+328  
+329  PROC PRINT DATA = data.analysis_meta; RUN;
+
+NOTE: There were 40 observations read from the data set DATA.ANALYSIS_META.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.01 seconds
+      
+
+330  
+331  PROC PRINTTO LOG ="&log"; RUN;
+SYMBOLGEN:  Macro variable LOG resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_co
+            st_total_log_2023-05-23.txt
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+      
+
+332  ODS PDF FILE     ="&pdf"; RUN;
+SYMBOLGEN:  Macro variable PDF resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_co
+            st_total_results_2023-05-23.pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+333  
+334  TITLE "Probability Model: FFS Total Cost";
+335  PROC GEE DATA  = &dat DESC;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis
+336  CLASS  mcaid_id
+337         season1(ref='-1')    season2(ref='-1')     season3(ref='-1')
+338         int    (ref= '0')    int_imp(ref= '0')
+339         age    (ref= '1')    race                  sex
+340         budget_group         fqhc(ref= '0')        rae_person_new
+341         bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')
+342         bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')
+343         bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')
+344         adj_pd_total_16cat(ref='-1')
+345         adj_pd_total_17cat(ref='-1')
+346         adj_pd_total_18cat(ref='-1')
+347         ind_total_cost       (ref= '0') ;
+348  MODEL  ind_total_cost = time       season1    season2     season3
+349                          int        int_imp
+350                          age        race        sex
+351                          budget_group           fqhc       rae_person_new
+352                          bh_er16    bh_er17     bh_er18
+353                          bh_hosp16  bh_hosp17   bh_hosp18
+354                          bh_oth16   bh_oth17    bh_oth18
+355                          adj_pd_total_16cat
+356                          adj_pd_total_17cat
+357                          adj_pd_total_18cat
+358          / DIST=binomial LINK=logit ;
+359  REPEATED SUBJECT = mcaid_id / type=exch ;
+360  store p_MODEL;
+361  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_total_cost='1'.
+NOTE: The GEE procedure generated the model item store WORK.P_MODEL.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           11:40.35
+      cpu time            11:00.39
+      
+
+362  
+363  * positive cost model ;
+364  TITLE "Cost Model: total";
+365  PROC GEE DATA  = &dat desc;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis
+366  WHERE adj_pd_total_tc > 0;
+367  CLASS mcaid_id
+368        season1(ref='-1')    season2(ref='-1')     season3(ref='-1')
+369        int    (ref= '0')    int_imp(ref= '0')
+370        age    (ref= '1')    race                  sex
+371        budget_group         fqhc(ref= '0')        rae_person_new
+372        bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')
+373        bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')
+374        bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')
+375        adj_pd_total_16cat(ref='-1')
+376        adj_pd_total_17cat(ref='-1')
+377        adj_pd_total_18cat(ref='-1');
+378  
+379  MODEL adj_pd_total_tc = time       season1    season2     season3
+380                          int        int_imp
+381                          age        race        sex
+382                          budget_group           fqhc       rae_person_new
+383                          bh_er16    bh_er17     bh_er18
+384                          bh_hosp16  bh_hosp17   bh_hosp18
+385                          bh_oth16   bh_oth17    bh_oth18
+386                          adj_pd_total_16cat
+387                          adj_pd_total_17cat
+388                          adj_pd_total_18cat     / dist = gamma link = log ;
+389  REPEATED SUBJECT = mcaid_id / type = exch;
+390  store c_model;
+391  RUN;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: The GEE procedure generated the model item store WORK.C_MODEL.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           11:44.44
+      cpu time            11:44.04
+      
+
+392  TITLE;
+393  
+394  * interest group ;
+395  * the group of interest (emancipated youth) is set twice,
+396    the top in the stack will be recoded as not emancipated (unexposed)
+397    the bottom group keeps the emancipated status;
+398  
+399  data intgroup;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis
+400    set &dat &dat (in = b);
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis
+401    where int = 1;
+402    if ^b then int = 0;
+403    exposed = b;
+404  run;
+
+NOTE: There were 1751759 observations read from the data set DATA.ANALYSIS.
+      WHERE int=1;
+NOTE: There were 1751759 observations read from the data set DATA.ANALYSIS.
+      WHERE int=1;
+NOTE: The data set WORK.INTGROUP has 3503518 observations and 41 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.24 seconds
+      cpu time            3.21 seconds
+      
+
+405  
+406  * the predictions for util and cost will be made for each person twice, once
+406! exposed and once unexposed;
+407  
+408  * prob of util ;
+409  proc plm restore=p_model;
+410     score data=intgroup out=p_intgroup predicted=p_prob / ilink;
+411  run;
+
+NOTE: The data set WORK.P_INTGROUP has 3503518 observations and 42 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           8.49 seconds
+      cpu time            8.47 seconds
+      
+
+412  
+413  * prob of cost ;
+414  proc plm restore=c_model;
+415     score data=p_intgroup out=cp_intgroup predicted=p_cost / ilink;
+416  run;
+
+NOTE: The data set WORK.CP_INTGROUP has 3503518 observations and 43 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           7.96 seconds
+      cpu time            7.92 seconds
+      
+
+417  
+418  * person average cost is calculated ;
+419  data out.meanCost_total;
+420    set cp_intgroup;
+421    a_cost = p_prob*p_cost;* (1-p term = 0);
+422  run;
+
+NOTE: There were 3503518 observations read from the data set WORK.CP_INTGROUP.
+NOTE: The data set OUT.MEANCOST_TOTAL has 3503518 observations and 44 variables.
+NOTE: DATA statement used (Total process time):
+      real time           15.87 seconds
+      cpu time            1.59 seconds
+      
+
+423  
+424  * group average cost is calculated and contrasted ;
+425  proc sql;
+426  create table out.avp_cost_total as
+427    select mean(case when exposed=1 then a_cost else . end ) as cost_exposed,
+428           mean(case when exposed=0 then a_cost else . end ) as cost_unexposed,
+429    calculated cost_exposed - calculated cost_unexposed as cost_diff
+430    from out.meanCost_total;
+NOTE: Table OUT.AVP_COST_TOTAL created, with 1 rows and 3 columns.
+
+431  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           11.54 seconds
+      cpu time            0.56 seconds
+      
+
+432  
+433  TITLE "avp_cost_total";
+434  proc print data = out.avp_cost_total;
+435  run;
+
+NOTE: There were 1 observations read from the data set OUT.AVP_COST_TOTAL.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+436  
+437  proc means data = out.meancost_total;
+438  by exposed;
+439  var p_prob p_cost a_cost;
+440  RUN;
+
+NOTE: There were 3503518 observations read from the data set OUT.MEANCOST_TOTAL.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           1.32 seconds
+      cpu time            1.31 seconds
+      
+
+441  
+442  PROC PRINTTO; RUN;
+

@@ -5,10 +5,11 @@ PURPOSE  : configs
 VERSION  : 2023-03-16 [date last updated]
 FILE/S   : 1) ISP-CTLP_Model_specifications.docx
 NOTES    : See ../../_rchive_utilization for LOGS and all archived docs, ds, code, etc 
-GIT      : github organization DFM, `isp_utilization`
+GIT      : github organization DFM, `isp_utilization
 
 LOG
 2023-03-16 Moved all archived/outdated files to Kim/_rchive_utilization due to new spec file from MG
+2023-05-30 Updated macro for quarter to incude qrtr 13, Jul-Sept 2022;
 ***********************************************************************************************;
 
 * SOM DIR -------------------------------------------------------------------------------------; 
@@ -25,8 +26,8 @@ LOG
       ;
 
       %LET data = &util/data;   LIBNAME data "&data"; 
-      %LET raw = &data/raw;     
-/*        LIBNAME raw "&raw"; *comment out/ in as needed; */
+      %LET raw = &data/_raw;     
+        LIBNAME raw "&raw"; *comment out/ in as needed; 
       %LET int = &data/interim; 
         LIBNAME int "&int"; 
 
@@ -42,8 +43,8 @@ LOG
 * EXT DATA SOURCES ---------------------------------------------------------------------------; 
 
     * Medicaid dats: keep attached for formats (until/if final fmts copied); 
-/*      %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;*/
-/*      LIBNAME ana "&ana"; */
+      %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
+      LIBNAME ana "&ana"; 
 
 * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------; 
 
@@ -55,6 +56,19 @@ LOG
 PROC SORT DATA = &ds NODUPKEY OUT=&out; BY _ALL_ ; RUN; 
 %mend;
 
+%macro missing(ds=);
+proc format;
+ value $missfmt ' '='Missing' other='Not Missing';
+ value  missfmt  . ='Missing' other='Not Missing';
+run;
+proc freq data=&ds; 
+format _CHAR_ $missfmt.; /* apply format for the duration of this PROC */
+tables _CHAR_ / missing missprint nocum nopercent;
+format _NUMERIC_ missfmt.;
+tables _NUMERIC_ / missing missprint nocum nopercent;
+run;
+%mend; 
+
 %macro concat_id_time(ds=);
 DATA &ds;
 SET  &ds;
@@ -62,14 +76,14 @@ id_time_helper = CATX('_', mcaid_id, time);
 RUN; 
 %mend; 
 
- %macro check_ids_n12(ds=);
+ %macro check_ids_n13(ds=);
             proc sql; 
             create table n_ids_&ds AS 
             select mcaid_id
                  , count(mcaid_id) as n_ids
             FROM &ds
             GROUP BY mcaid_ID
-            having n_ids>12;
+            having n_ids>13;
             quit; 
  %mend;
 
@@ -94,6 +108,7 @@ if &var in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then &qrtr = 9;
 if &var in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then &qrtr = 10;
 if &var in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then &qrtr = 11;
 if &var in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then &qrtr = 12;
+if &var in ('01JUL2022'd , '01AUG2022'd , '01SEP2022'd ) then &qrtr = 13;
 run;
 %mend create_qrtr;
 

@@ -1,13 +1,15 @@
+ 
 *
-AUTHOR   : KTW
-PROJECT  : ISP Utilization Analysis
-PURPOSE  : telehealth records, code from Carter
-VERSION  : 2023-05-30 
-DEPENDS  : ana subset folder, config file [dependencies]
-NOTES    : Updated 05/30 to include records through Sept 2022;
+date: 1-20-2023
 
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-***********************************************************************************************;
+Evaluating telehealth monthly utilization and costs.
+Definition form the OSPB study.
+;
+
+
+* database location ;
+libname ana 'M:\HCPF_SqlServer\AnalyticSubset\backup'; * reset to : M:\HCPF_SqlServer\AnalyticSubset ;
+option fmtsearch=(ana);
 
 * primary care records ;
 data pc;
@@ -15,7 +17,7 @@ data pc;
   where hosp_episode NE 1
     and ER NE 1
     and primCare = 1;
-run;* 43044039;
+run;
 
 * telehealth records ;
 proc format;
@@ -59,7 +61,7 @@ proc sql;
            max(teleElig) as teleElig
     from telecare
     group by icn_nbr;
-quit; *52866266 rows and 3 column;
+quit;
 
 * telehealth is: primary care, tele eligible and a telehealth service ;
 proc sql;
@@ -70,7 +72,7 @@ create table teleCare_FINAL as
     on a.icn_nbr = b.icn_nbr 
   where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
 
-quit; * 1170229 rows and 25 columns.;
+quit;
 
 * monthy telehealth encounters and costs, per client ;
 proc sql;
@@ -81,41 +83,7 @@ create table teleCare_monthly as
          count (distinct FRST_SVC_DT) as n_tele,
          sum(pd_amt) as pd_tele
   from teleCare_FINAL
-  group by mcaid_id, month
-  WHERE month g
+  group by mcaid_id, month;
 
-quit; *1015124 : 4 ; 
+quit;
 
-DATA teleCare1922_monthly; 
-SET  teleCare_monthly  (DROP = pd_tele); 
-format dt_qrtr month date9.; 
-* create quarter beginning date to get quarters ; 
-dt_qrtr = intnx('quarter', month ,0,'b');
-WHERE month ge '01JUL2019'd 
-AND   month le '30SEP2022'd;
-RUN ; * 6/1: The data set INT.TELECARE_1922_MONTHLY has 968223 observations and 5 variables; 
-
-%create_qrtr(data= int.tel_1922_monthly, set=teleCare1922_monthly,var = dt_qrtr, qrtr=time); *;
-
-* Q 5/30 KW --average it here - members might have different denominators for telehealth than ffs, right?; 
-PROC SQL;
-CREATE TABLE int.teleCare1922_qrtr as
-SELECT mcaid_id
-     , count(*)    AS n_months_per_q
-     , time
-     , avg(n_tele) as avg_tel_pmpq
-     , sum(n_tele) AS n_tel_q
-FROM int.tele_1922_monthly
-GROUP BY mcaid_id, time;
-QUIT; * 41465456 : 11; 
-
-PROC SQL ; 
-CREATE TABLE th1922_q_n_avg AS 
-SELECT mcaid_id
-     , time
-     , sum(n_tele) as n_q_tele 
-FROM int.tele_1922_monthly
-GROUP BY mcaid_id, time ; 
-QUIT ; *762244, 3 columns; 
-
-PROC SORT DATA =int.tele_qrtr_1922; by mcaid_id time ; RUN ; 

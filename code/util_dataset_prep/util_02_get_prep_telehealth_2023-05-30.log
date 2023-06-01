@@ -1,0 +1,842 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.46 seconds
+      cpu time            0.85 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: SASUSER.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.32 seconds
+      cpu time            0.20 seconds
+
+
+129        %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+130        LIBNAME ana "&ana";
+SYMBOLGEN:  Macro variable ANA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+131  **********************************************************************************************
+132  AUTHOR   : KTW
+133  PROJECT  : ISP Utilization Analysis
+134  PURPOSE  : configs
+135  VERSION  : 2023-03-16 [date last updated]
+136  FILE/S   : 1) ISP-CTLP_Model_specifications.docx
+137  NOTES    : See ../../_rchive_utilization for LOGS and all archived docs, ds, code, etc
+138  GIT      : github organization DFM, `isp_utilization`
+139
+140  LOG
+141  2023-03-16 Moved all archived/outdated files to Kim/_rchive_utilization due to new spec file
+141! from MG
+142  ***********************************************************************************************
+142! ;
+143
+144  * SOM DIR -------------------------------------------------------------------------------------
+144! ;
+145      %LET hcpf     = S:/FHPC/DATA/HCPF_Data_files_SECURE;
+146
+147  * PROJECT ROOT DIR ----------------------------------------------------------------------------
+147! ;
+148        %LET util = &hcpf/Kim/isp/isp_utilization;
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+149
+150      * DATA
+151        |--data           [libname 'data': stores final analytic dataset and other data folders]
+152           |--_raw`       [libname 'raw' : raw, read-only files to be prepped then stored in
+152! /interim]
+153           |--interim     [libname 'int' : intermediate ds used to make final analytic ds or eda]
+154           |--results     [libname 'out' : results tables, get exported to ../results
+155        ;
+156
+157        %LET data = &util/data;   LIBNAME data "&data";
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+158        %LET raw = &data/raw;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+159  /*        LIBNAME raw "&raw"; *comment out/ in as needed; */
+160        %LET int = &data/interim;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+161          LIBNAME int "&int";
+SYMBOLGEN:  Macro variable INT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/interim
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+162
+163        %LET out = &data/results_util;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+164          LIBNAME out "&out";
+SYMBOLGEN:  Macro variable OUT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/results_util
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util
+165
+166      * export folder for excel files output;
+167        %LET report = &util/reports;
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+168
+169        %LET raw = &data/_raw;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+170  /*        LIBNAME raw "&raw";*/
+171
+172  * EXT DATA SOURCES ---------------------------------------------------------------------------;
+173
+174      * Medicaid dats: keep attached for formats (until/if final fmts copied);
+175        %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+176        LIBNAME ana "&ana";
+SYMBOLGEN:  Macro variable ANA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+177
+178  * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------;
+179
+180   OPTIONS NOFMTERR
+181           MPRINT MLOGIC SYMBOLGEN
+182           FMTSEARCH =(ana, datasets, data, util, work);
+183
+184  %macro nodupkey(ds, out);
+185  PROC SORT DATA = &ds NODUPKEY OUT=&out; BY _ALL_ ; RUN;
+186  %mend;
+187
+188  %macro concat_id_time(ds=);
+189  DATA &ds;
+190  SET  &ds;
+191  id_time_helper = CATX('_', mcaid_id, time);
+192  RUN;
+193  %mend;
+194
+195   %macro check_ids_n12(ds=);
+196              proc sql;
+197              create table n_ids_&ds AS
+198              select mcaid_id
+199                   , count(mcaid_id) as n_ids
+200              FROM &ds
+201              GROUP BY mcaid_ID
+202              having n_ids>12;
+203              quit;
+204   %mend;
+205
+206  %macro sort4merge(ds1=,ds2=,by=);
+207  PROC SORT DATA = &ds1; by &by;
+208  PROC SORT DATA = &ds2; by &by;
+209  RUN;
+210  %mend;
+211
+212  %macro create_qrtr(data=,set=,var=,qrtr=);
+213  data &data;
+214  set  &set;
+215  if &var in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then &qrtr = 1;
+216  if &var in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then &qrtr = 2;
+217  if &var in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then &qrtr = 3;
+218  if &var in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then &qrtr = 4;
+219  if &var in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then &qrtr = 5;
+220  if &var in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then &qrtr = 6;
+221  if &var in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then &qrtr = 7;
+222  if &var in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then &qrtr = 8;
+223  if &var in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then &qrtr = 9;
+224  if &var in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then &qrtr = 10;
+225  if &var in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then &qrtr = 11;
+226  if &var in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then &qrtr = 12;
+227  if &var in ('01JUL2022'd , '01AUG2022'd , '01SEP2022'd ) then &qrtr = 13;
+228  run;
+229  %mend create_qrtr;
+230
+231
+232
+233  proc format;
+234   picture pctfmt (round) other="009.99%";
+NOTE: Format PCTFMT is already on the library WORK.FORMATS.
+NOTE: Format PCTFMT has been output.
+235  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+236
+237  proc template;
+238   edit Base.Freq.OneWayList;
+239   edit h1;
+240   text VARLABEL;
+241   end;
+242   edit frequency;
+243   header="Count";
+244   format=comma12.;
+245   end;
+246   edit cumfrequency;
+247   header="Cumulative Count";
+248   format=comma12.;
+249   end;
+250   edit percent;
+251   header="Pct";
+252   format=pctfmt.;
+253   end;
+254   edit cumpercent;
+255   format=pctfmt.;
+256   end;
+257   end;
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: SASUSER.TEMPLAT
+258  run;
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.01 seconds
+
+
+259  **********************************************************************************************
+260  AUTHOR   : KTW
+261  PROJECT  : ISP Utilization Analysis
+262  PURPOSE  : configs
+263  VERSION  : 2023-03-16 [date last updated]
+264  FILE/S   : 1) ISP-CTLP_Model_specifications.docx
+265  NOTES    : See ../../_rchive_utilization for LOGS and all archived docs, ds, code, etc
+266  GIT      : github organization DFM, `isp_utilization`
+267
+268  LOG
+269  2023-03-16 Moved all archived/outdated files to Kim/_rchive_utilization due to new spec file
+269! from MG
+270  ***********************************************************************************************
+270! ;
+271
+272  * SOM DIR -------------------------------------------------------------------------------------
+272! ;
+273      %LET hcpf     = S:/FHPC/DATA/HCPF_Data_files_SECURE;
+274
+275  * PROJECT ROOT DIR ----------------------------------------------------------------------------
+275! ;
+276        %LET util = &hcpf/Kim/isp/isp_utilization;
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+277
+278      * DATA
+279        |--data           [libname 'data': stores final analytic dataset and other data folders]
+280           |--_raw`       [libname 'raw' : raw, read-only files to be prepped then stored in
+280! /interim]
+281           |--interim     [libname 'int' : intermediate ds used to make final analytic ds or eda]
+282           |--results     [libname 'out' : results tables, get exported to ../results
+283        ;
+284
+285        %LET data = &util/data;   LIBNAME data "&data";
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+286        %LET raw = &data/raw;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+287  /*        LIBNAME raw "&raw"; *comment out/ in as needed; */
+288        %LET int = &data/interim;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+289          LIBNAME int "&int";
+SYMBOLGEN:  Macro variable INT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/interim
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+290
+291        %LET out = &data/results_util;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+292          LIBNAME out "&out";
+SYMBOLGEN:  Macro variable OUT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/results_util
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util
+293
+294      * export folder for excel files output;
+295        %LET report = &util/reports;
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+296
+297        %LET raw = &data/_raw;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+298  /*        LIBNAME raw "&raw";*/
+299
+300  * EXT DATA SOURCES ---------------------------------------------------------------------------;
+301
+302      * Medicaid dats: keep attached for formats (until/if final fmts copied);
+303        %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+304        LIBNAME ana "&ana";
+SYMBOLGEN:  Macro variable ANA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+305
+306  * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------;
+307
+308   OPTIONS NOFMTERR
+309           MPRINT MLOGIC SYMBOLGEN
+310           FMTSEARCH =(ana, datasets, data, util, work);
+311
+312  %macro nodupkey(ds, out);
+313  PROC SORT DATA = &ds NODUPKEY OUT=&out; BY _ALL_ ; RUN;
+314  %mend;
+315
+316  %macro concat_id_time(ds=);
+317  DATA &ds;
+318  SET  &ds;
+319  id_time_helper = CATX('_', mcaid_id, time);
+320  RUN;
+321  %mend;
+322
+323   %macro check_ids_n12(ds=);
+324              proc sql;
+325              create table n_ids_&ds AS
+326              select mcaid_id
+327                   , count(mcaid_id) as n_ids
+328              FROM &ds
+329              GROUP BY mcaid_ID
+330              having n_ids>12;
+331              quit;
+332   %mend;
+333
+334  %macro sort4merge(ds1=,ds2=,by=);
+335  PROC SORT DATA = &ds1; by &by;
+336  PROC SORT DATA = &ds2; by &by;
+337  RUN;
+338  %mend;
+339
+340  %macro create_qrtr(data=,set=,var=,qrtr=);
+341  data &data;
+342  set  &set;
+343  if &var in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then &qrtr = 1;
+344  if &var in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then &qrtr = 2;
+345  if &var in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then &qrtr = 3;
+346  if &var in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then &qrtr = 4;
+347  if &var in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then &qrtr = 5;
+348  if &var in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then &qrtr = 6;
+349  if &var in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then &qrtr = 7;
+350  if &var in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then &qrtr = 8;
+351  if &var in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then &qrtr = 9;
+352  if &var in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then &qrtr = 10;
+353  if &var in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then &qrtr = 11;
+354  if &var in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then &qrtr = 12;
+355  if &var in ('01JUL2022'd , '01AUG2022'd , '01SEP2022'd ) then &qrtr = 13;
+356  run;
+357  %mend create_qrtr;
+358
+359
+360
+361  proc format;
+362   picture pctfmt (round) other="009.99%";
+NOTE: Format PCTFMT is already on the library WORK.FORMATS.
+NOTE: Format PCTFMT has been output.
+363  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+364
+365  proc template;
+366   edit Base.Freq.OneWayList;
+367   edit h1;
+368   text VARLABEL;
+369   end;
+370   edit frequency;
+371   header="Count";
+372   format=comma12.;
+373   end;
+374   edit cumfrequency;
+375   header="Cumulative Count";
+376   format=comma12.;
+377   end;
+378   edit percent;
+379   header="Pct";
+380   format=pctfmt.;
+381   end;
+382   edit cumpercent;
+383   format=pctfmt.;
+384   end;
+385   end;
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: SASUSER.TEMPLAT
+386  run;
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+387
+388  * primary care records ;
+389  data pc;
+390    set ana.Qry_clm_dim_class;
+391    where hosp_episode NE 1
+392      and ER NE 1
+393      and primCare = 1;
+394  run;
+
+NOTE: There were 44674203 observations read from the data set ANA.QRY_CLM_DIM_CLASS.
+      WHERE (hosp_episode not = 1) and (ER not = 1) and (primCare=1);
+NOTE: The data set WORK.PC has 44674203 observations and 25 variables.
+NOTE: DATA statement used (Total process time):
+      real time           9:03.22
+      cpu time            25.53 seconds
+
+
+394!     * 43044039;
+395
+396  * telehealth records ;
+397  proc format;
+398   * telehealth eligible visits ;
+399   invalue teleElig
+400   '76801','76802','76805','76811','76812','76813','76814','76815','76816','76817','90791','90792
+400! ','90832','90833','90834','90836',
+401  '90837','90838','90839','90840','90846','90847','90849','90853','90863','92507','92508','92521'
+401! ,'92522','92523','92524','92526',
+402  '92606','92607','92608','92609','92610','92630','92633','96101','96102','96110','96111','96112'
+402! ,'96113','96116','96118','96119',
+403  '96121','96125','96130','96131','96132','96133','96136','96137','96138','96139','96146','97110'
+403! ,'97112','97129','97130','97140',
+404  '97150','97151','97153','97154','97155','97158','97161','97162','97163','97164','97165','97166'
+404! ,'97167','97168','97530','97533',
+405  '97535','97537','97542','97755','97760','97761','97763','97802','97803','97804','98966','98967'
+405! ,'98968','99201','99202','99203',
+406  '99204','99205','99211','99212','99213','99214','99215','99382','99383','99384','99392','99393'
+406! ,'99394','99401','99402','99403',
+407  '99404','99406','99407','99408','99409','99441','99442','99443','G0108','G0109','G8431','G8510'
+407! ,'G9006','H0001','H0002','H0004',
+408  'H0006','H0025','H0031','H0032','H0049','H1005','H2000','H2011','H2015','H2016','S9445','S9485'
+408! ,'T1017','V5011'
+409  =1
+410  other=0;
+NOTE: Informat TELEELIG has been output.
+411  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+412
+413  data telecare;
+414    set ana.Clm_lne_fact_v;
+415
+416    teleCare = (CLM_TYP_CD in ( 'B','M' ) and POS_CD = '02' ) or
+417               (
+418                 CLM_TYP_CD in ( 'C','O' ) and
+419                 (PROC_MOD_1_CD='GT' or PROC_MOD_2_CD='GT' or PROC_MOD_3_CD='GT' or
+419! PROC_MOD_4_CD='GT')
+420                );
+421
+422    *eligible for telehealth ;
+423    teleElig = input(proc_cd, teleElig.);
+424
+425     * keeping only rows that are ER or primary or urgent or tele care ;
+426    if teleCare or teleElig;
+427
+428  run;
+
+NOTE: There were 530855819 observations read from the data set ANA.CLM_LNE_FACT_V.
+NOTE: The data set WORK.TELECARE has 74218243 observations and 32 variables.
+NOTE: DATA statement used (Total process time):
+      real time           27:50.31
+      cpu time            1:58.28
+
+
+429
+430  * indicators of telehealth and tele-eligible care ;
+431  proc sql;
+432    create table margTele as
+433      select icn_nbr,
+434             max(teleCare) as telecare,
+435             max(teleElig) as teleElig
+436      from telecare
+437      group by icn_nbr;
+NOTE: Table WORK.MARGTELE created, with 55218370 rows and 3 columns.
+
+438  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           25.07 seconds
+      cpu time            31.92 seconds
+
+
+438!       *52866266 rows and 3 column;
+439
+440  * telehealth is: primary care, tele eligible and a telehealth service ;
+441  proc sql;
+442
+443  create table teleCare_FINAL as
+444    select a.*
+445    from pc as a inner join margTele as b
+446      on a.icn_nbr = b.icn_nbr
+447    where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
+NOTE: Table WORK.TELECARE_FINAL created, with 1241464 rows and 25 columns.
+
+448
+449  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           39.31 seconds
+      cpu time            35.73 seconds
+
+
+449!       * 1170229 rows and 25 columns.;
+450
+451  * monthy telehealth encounters and costs, per client ;
+452  proc sql;
+453
+454  create table teleCare_monthly as
+455    select mcaid_id,
+456           intnx('month',FRST_SVC_DT, 0, 'beginning') as month,
+457           count (distinct FRST_SVC_DT) as n_tele,
+458           sum(pd_amt) as pd_tele
+459    from teleCare_FINAL
+460    group by mcaid_id, month;
+NOTE: Table WORK.TELECARE_MONTHLY created, with 1078563 rows and 4 columns.
+
+461
+462  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.27 seconds
+      cpu time            2.68 seconds
+
+
+462!       *1015124 : 4 ;
+463
+464  * Get FY7 years ;
+465  DATA  int.teleCare_monthly_FY1621 ;
+466  SET   teleCare_monthly ;
+467  WHERE month ge '01Jul2016'd
+468  AND   month le '30Sep2022'd ;
+469  format month date9.;
+470  fy7=year(intnx('year.7', month, 0, 'BEGINNING')) ;
+471  RUN;
+
+NOTE: There were 974135 observations read from the data set WORK.TELECARE_MONTHLY.
+      WHERE (month>='01JUL2016'D and month<='30SEP2022'D);
+NOTE: The data set INT.TELECARE_MONTHLY_FY1621 has 974135 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.14 seconds
+      cpu time            0.34 seconds
+
+
+471!      *932892, 5;
+472
+473  PROC SORT DATA = int.teleCare_monthly ; BY mcaid_id ; RUN ;
+ERROR: File INT.TELECARE_MONTHLY.DATA does not exist.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+
+474  proc print data = int.teleCare_monthly ( obs = 15) ; run;
+ERROR: File INT.TELECARE_MONTHLY.DATA does not exist.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+475
+
+
+476  DATA tele_1921 ;
+477  SET  int.teleCare_monthly (DROP = pd_tele fy7);
+ERROR: File INT.TELECARE_MONTHLY.DATA does not exist.
+478  format dt_qrtr date9.; * create quarter beginning date to get quarters ;
+479  dt_qrtr = intnx('quarter', month ,0,'b');
+480  WHERE month ge '01JUL2019'd
+481  AND   month le '30SEP2022'd;
+482  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TELE_1921 may be incomplete.  When this step was stopped there were 0
+         observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+482!       * 903721 : 4;
+483
+484  %create_qrtr(data= tele_1921a, set=tele_1921,var = dt_qrtr, qrtr=time); *903721 : 5;
+MLOGIC(CREATE_QRTR):  Beginning execution.
+MLOGIC(CREATE_QRTR):  Parameter DATA has value tele_1921a
+MLOGIC(CREATE_QRTR):  Parameter SET has value tele_1921
+MLOGIC(CREATE_QRTR):  Parameter VAR has value dt_qrtr
+MLOGIC(CREATE_QRTR):  Parameter QRTR has value time
+SYMBOLGEN:  Macro variable DATA resolves to tele_1921a
+MPRINT(CREATE_QRTR):   data tele_1921a;
+SYMBOLGEN:  Macro variable SET resolves to tele_1921
+MPRINT(CREATE_QRTR):   set tele_1921;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then time = 1;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then time = 2;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then time = 3;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then time = 4;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then time = 5;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then time = 6;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then time = 7;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then time = 8;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then time = 9;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then time = 10;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then time = 11;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then time = 12;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2022'd , '01AUG2022'd , '01SEP2022'd ) then time = 13;
+MPRINT(CREATE_QRTR):   run;
+
+NOTE: There were 0 observations read from the data set WORK.TELE_1921.
+NOTE: The data set WORK.TELE_1921A has 0 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+MLOGIC(CREATE_QRTR):  Ending execution.
+
+485  DATA  int.teleCare_monthly_FY1622 ;
+486  SET   teleCare_monthly ;
+487  WHERE month ge '01Jul2016'd
+488  AND   month le '30Sep2022'd ;
+489  format month date9.;
+490  fy7=year(intnx('year.7', month, 0, 'BEGINNING')) ;
+491  RUN;
+
+NOTE: There were 974135 observations read from the data set WORK.TELECARE_MONTHLY.
+      WHERE (month>='01JUL2016'D and month<='30SEP2022'D);
+NOTE: The data set INT.TELECARE_MONTHLY_FY1622 has 974135 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.00 seconds
+      cpu time            0.35 seconds
+
+
+491!      *5/30: 974135 // previously was n=932892, 5;
+
+492  PROC SORT DATA =  int.teleCare_monthly_FY1622 ; BY mcaid_id ; RUN ;
+
+NOTE: There were 974135 observations read from the data set INT.TELECARE_MONTHLY_FY1622.
+NOTE: The data set INT.TELECARE_MONTHLY_FY1622 has 974135 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1.25 seconds
+      cpu time            0.25 seconds
+
+
+493  proc print data = int.teleCare_monthly_FY1622 ( obs = 15) ; run;
+
+NOTE: There were 15 observations read from the data set INT.TELECARE_MONTHLY_FY1622.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+494
+495  DATA tele_1922 ;
+496  SET   int.teleCare_monthly_FY1622 (DROP = pd_tele fy7);
+497  format dt_qrtr date9.; * create quarter beginning date to get quarters ;
+498  dt_qrtr = intnx('quarter', month ,0,'b');
+499  WHERE month ge '01JUL2019'd
+500  AND   month le '30SEP2022'd;
+501  RUN ;
+
+NOTE: There were 968223 observations read from the data set INT.TELECARE_MONTHLY_FY1622.
+      WHERE (month>='01JUL2019'D and month<='30SEP2022'D);
+NOTE: The data set WORK.TELE_1922 has 968223 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.55 seconds
+      cpu time            0.23 seconds
+
+
+501!       * 903721 : 4;
+
+502  proc freq data = int.teleCare_monthly_fy1622;
+503  tables fy7;
+504  run;
+
+NOTE: There were 974135 observations read from the data set INT.TELECARE_MONTHLY_FY1622.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.62 seconds
+      cpu time            0.06 seconds
+
+
+505  DATA tele_1922 ;
+506  SET   int.teleCare_monthly_FY1622 (DROP = pd_tele fy7);
+507  format dt_qrtr date9.; * create quarter beginning date to get quarters ;
+508  dt_qrtr = intnx('quarter', month ,0,'b');
+509  WHERE month ge '01JUL2019'd
+510  AND   month le '30SEP2022'd;
+511  RUN ;
+
+NOTE: There were 968223 observations read from the data set INT.TELECARE_MONTHLY_FY1622.
+      WHERE (month>='01JUL2019'D and month<='30SEP2022'D);
+NOTE: The data set WORK.TELE_1922 has 968223 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.56 seconds
+      cpu time            0.29 seconds
+
+
+511!       * 903721 : 4;
+512
+513  %create_qrtr(data= tele_1922a, set=tele_1922,var = dt_qrtr, qrtr=time); *903721 : 5;
+MLOGIC(CREATE_QRTR):  Beginning execution.
+MLOGIC(CREATE_QRTR):  Parameter DATA has value tele_1922a
+MLOGIC(CREATE_QRTR):  Parameter SET has value tele_1922
+MLOGIC(CREATE_QRTR):  Parameter VAR has value dt_qrtr
+MLOGIC(CREATE_QRTR):  Parameter QRTR has value time
+SYMBOLGEN:  Macro variable DATA resolves to tele_1922a
+MPRINT(CREATE_QRTR):   data tele_1922a;
+SYMBOLGEN:  Macro variable SET resolves to tele_1922
+MPRINT(CREATE_QRTR):   set tele_1922;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then time = 1;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then time = 2;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then time = 3;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then time = 4;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then time = 5;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then time = 6;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then time = 7;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then time = 8;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then time = 9;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then time = 10;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then time = 11;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then time = 12;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2022'd , '01AUG2022'd , '01SEP2022'd ) then time = 13;
+MPRINT(CREATE_QRTR):   run;
+
+NOTE: There were 968223 observations read from the data set WORK.TELE_1922.
+NOTE: The data set WORK.TELE_1922A has 968223 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.16 seconds
+      cpu time            0.15 seconds
+
+
+MLOGIC(CREATE_QRTR):  Ending execution.
+
+514  PROC SQL ;
+515  CREATE TABLE int.tele_qrtr_1922 AS
+516  SELECT mcaid_id
+517       , time
+518       , sum(n_tele) as n_q_tele
+519  FROM tele_1922a
+520  GROUP BY mcaid_id, time ;
+NOTE: Table INT.TELE_QRTR_1922 created, with 762244 rows and 3 columns.
+
+521  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.60 seconds
+      cpu time            0.34 seconds
+
+
+522  PROC SORT DATA =int.tele_qrtr_1922; by mcaid_id time ; RUN ;
+
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+

@@ -1,4 +1,11 @@
+05/23: bootstrap
 
+1. Copied Carter's entire folder:
+	FROM Carter/Examples/boot total cost
+	TO   Kim/boot_total_cost_cs
+
+2. Created mini dataset `data.mini_ds` (sampled via proportion/strata int var (ended up being 87%, 12%)
+	- util_01_create_dataset row 710 
 
 -----------------------------------------------------------------------------
 
