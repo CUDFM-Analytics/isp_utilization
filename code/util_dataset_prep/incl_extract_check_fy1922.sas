@@ -10,20 +10,30 @@ DEPENDS  : raw.final00
 EXPORTS  : work.budget
            work.rae
            int.pcmp_attr_qrtr
-           macro results (#3 above)
-
-*Get MAX or most recent PCMP (in case of ties) (there were duplicates where member had > 1 pcmp per quarter) ; 
-* 4/26; 
-* Get months per quarter: ;
+           macro results (#3 above);
+%macro demo(var=, ds=);
 PROC SQL; 
-CREATE TABLE int.n_id_months_per_q AS 
-SELECT mcaid_id
+CREATE TABLE &var AS
+SELECT mcaid_id 
      , dt_qrtr
+     , &var
      , time
-     , count(dt_qrtr) as n_months_per_q
-FROM raw.final00
-GROUP BY mcaid_id, dt_qrtr, time;
-QUIT; 
+     , CATX('_', mcaid_id, time) AS id_time_helper
+FROM (SELECT *
+           , max(month) AS max_month
+      FROM (SELECT *
+                 , count(&var) as n_&var
+            FROM &ds
+            GROUP BY mcaid_id 
+                   , dt_qrtr
+                   , &var) 
+      GROUP BY mcaid_id, dt_qrtr, n_&var)  
+GROUP BY mcaid_id, dt_qrtr
+HAVING max(n_&var)=n_&var
+AND    month=max_month;
+QUIT;  
+%mend;
+
 
 PROC SQL; 
 CREATE TABLE int.pcmp_attr_qrtr AS
@@ -31,12 +41,13 @@ SELECT mcaid_id
      , dt_qrtr
      , pcmp_loc_id
      , time
+     , CATX('_', mcaid_id, time) AS id_time_helper
      , pcmp_loc_id IN (SELECT pcmp_loc_id FROM int.isp_un_pcmp_dtstart) as int
 FROM (SELECT *
            , max(month) AS max_month_by_pcmp
       FROM (SELECT *
                  , count(pcmp_loc_id) as n_pcmp
-            FROM raw.final00
+            FROM &dv1922
             GROUP BY mcaid_id 
                    , dt_qrtr
                    , pcmp_loc_id) 
@@ -46,48 +57,5 @@ HAVING max(n_pcmp)=n_pcmp
 AND    month=max_month_by_pcmp;
 QUIT; * ; 
 
-* 4/26; 
-PROC SQL; 
-CREATE TABLE budget AS
-SELECT mcaid_id
-     , dt_qrtr
-     , budget_group
-     , time
-FROM (SELECT *
-           , max(month) AS max_mon_by_budget
-      FROM (SELECT *
-                 , count(budget_group) as n_budget_group 
-            FROM raw.final00
-            GROUP BY mcaid_id 
-                   , dt_qrtr
-                   , budget_group) 
-      GROUP BY mcaid_id, dt_qrtr, n_budget_group)  
-GROUP BY mcaid_id, dt_qrtr
-HAVING max(n_budget_group)=n_budget_group
-AND    month=max_mon_by_budget;
-QUIT; *; 
 
-* 4/26; 
-PROC SQL; 
-CREATE TABLE rae AS
-SELECT mcaid_id
-     , dt_qrtr
-     , rae_person_new
-     , time
-FROM (SELECT *
-           , max(month) AS max_mon_by_rae
-      FROM (SELECT *
-                 , count(rae_person_new) as n_rae_person_new 
-            FROM raw.final00
-            GROUP BY mcaid_id 
-                   , dt_qrtr
-                   , rae_person_new) 
-      GROUP BY mcaid_id, dt_qrtr, n_rae_person_new)  
-GROUP BY mcaid_id, dt_qrtr
-HAVING max(n_rae_person_new)=n_rae_person_new
-AND    month=max_mon_by_rae;
-QUIT; *; 
 
-            *macro to find instances where n_ids >12 (should be 0 // in 00_config); 
-            %check_ids_n13(ds=budget); *0;
-            %check_ids_n13(ds=rae);    *0;

@@ -41,7 +41,7 @@ pct_time_missing = 1-pct_time_mem;
 RUN; 
 
 DATA int.eda_FY1618;
-SET  int.fy1618;
+SET  int.QRYLONG_1618;
 array bh{*} bho_n_er_16pm--bho_n_other_18pm;
 do i = 1 to dim(bh);
     bh{i} = round(bh{i}, 0.001);
@@ -59,10 +59,5 @@ RUN;
   QUIT; 
 %mend;
 
-%n_obs_per_id(ds=&dat); *4/27 final run still got 1593591 ;
+%n_obs_per_id(ds=&dat); *06/02 1613033 WOOT ;
 
-
-
-******************************************************************************************************
-*** FIND ISSUES where pcmp wasn't on attr file; 
-******************************************************************************************************;

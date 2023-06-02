@@ -19,7 +19,12 @@ QUIT;
   QUIT; 
 %mend;
 
-%n_obs_per_id(ds=data.analysis_dataset); *4/27 final run still got 1593591 ;
+%n_obs_per_id(ds=raw.qrylong_1922_0); 
+proc freq data = n_records_per_id;
+tables n_id;
+run;
+%n_obs_per_id(ds=raw.final_03); 
+
 
 PROC FREQ 
      DATA = n_records_per_id;

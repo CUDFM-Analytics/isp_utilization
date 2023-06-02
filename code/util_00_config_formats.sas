@@ -1,4 +1,34 @@
 PROC FORMAT library = data;
+*** Add quarter variables, one with text for readability ; 
+value fyqrtr_cat
+1  = "Q1"
+2  = "Q2"
+3  = "Q3"
+4  = "Q4"
+5  = "Q1"
+6  = "Q2"
+7  = "Q3"
+8  = "Q4"
+9  = "Q1"
+10 = "Q2"
+11 = "Q3"
+12 = "Q4"
+13 = "Q1";
+
+invalue fyqrtr_num
+1  = 1
+2  = 2
+3  = 3
+4  = 4
+5  = 1
+6  = 2
+7  = 3
+8  = 4
+9  = 1
+10 = 2
+11 = 3
+12 = 4
+13 = 1;
 
 * Formats for values in datasets in ana library:; 
 VALUE budget_grp_new_       

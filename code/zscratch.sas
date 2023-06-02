@@ -14,9 +14,8 @@ PROC SORT DATA int.isp_un_pcmp_dtstart ; by time_start_isp; run;
 proc freq data = isp_un_pcmp_dtstart; tables month; run; 
 
 PROC CONTENTS DATA =  raw.util_all_memlist VARNUM; RUN; 
-PROC CONTENTS DATA = int.memlist_attr_qrtr_1921;
-PROC CONTENTS DATA = int.pcmp_types; 
-RUN;
+PROC CONTENTS DATA = raw.qrylong_03 varnum; run;
+
 
 PROC FREQ DATA = raw.memlist0; tables sex; run; 
 

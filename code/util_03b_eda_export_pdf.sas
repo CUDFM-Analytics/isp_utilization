@@ -1,6 +1,35 @@
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+libname ana clear;
+libname raw clear;
+
 %let dat = data.analysis; 
 %let all = data.analysis_allcols; 
+
+OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+%LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
+             %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))-6); *remove \Code\;
+
+%LET script  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
+               %length(%sysget(SAS_EXECFILEPATH))-4);
+
+%LET today = %SYSFUNC(today(), YYMMDD10.);
+
+%LET log   = &script._log_&today..log;
+%LET pdf   = &script._log_&today..pdf;
+
+PROC PRINTTO LOG = "&log" NEW; RUN;
+ODS PDF FILE     = "&pdf"
+                    STARTPAGE = no;
+
+Title %sysget(SAS_EXECFILENAME);
+
+proc odstext;
+p "Date:              &today";
+p "Project Root: &root";
+p "Script:            %sysget(SAS_EXECFILENAME)";
+p "Log File:         &log";
+p "Results File:  &pdf";
+RUN; 
 
 PROC SQL NOPRINT;
 SELECT count(*) into :nobs from &dat;
@@ -48,20 +77,18 @@ VALUE bh1618fy
 
 RUN; 
 
-ODS PDF FILE = "&report/eda_analysis_dataset_2023-05-18.pdf"
-STARTPAGE = no;
-
 ods proclabel 'Data Specs';
 * Print specs ; 
 PROC ODSTEXT;
 p "Update/s to data.analysis (final ds)";
+p "-- 06/02: Re-generated dataset and updated to include FY22 Q1";
 p "-- 5/15: Effect Coding time with season variables"; 
 p "-- 5/10: Included fyqrtr variable in final analysis dataset"; 
 p " ";
 
 p "Final Dataset Inclusion Rules"
   /style = systemtitle;
-p "Eligibility determination based on ID presence in qry_longitudinal where records for FYs 19-21 indicated:" 
+p "Eligibility determination based on ID presence in qry_longitudinal where records for FYs 19-22 indicated:" 
   /style = header;
 p "-----1) Age 0-64"; 
 p "-----2) rae_id not NA";
@@ -141,12 +168,12 @@ p "Percentiles and values for top-coded DVs (cost: pc, rx, total)"
   /style = systemtitle;
 p "Means taken where value gt 95th percentile"; RUN; 
 
-/*PROC TRANSPOSE DATA = int.mu_pctl_1921 OUT=int.mu_pctl_1921_long (rename=(_NAME_  = percentile*/
+/*PROC TRANSPOSE DATA = int.mu_pctl_1922 OUT=int.mu_pctl_1922_long (rename=(_NAME_  = percentile*/
 /*                                                                          _LABEL_ = label*/
 /*                                                                          COL1    = original_value));*/
 /*RUN; */
 ods proclabel 'Top Coded Vals'; RUN; 
-PROC PRINT DATA = int.mu_pctl_1921_long; RUN; 
+PROC PRINT DATA = int.mu_pctl_1922_long; RUN; 
 
 ods proclabel 'Univar for DVs, text'; RUN; 
 
@@ -233,7 +260,7 @@ ods proclabel 'adj FY 1618 MEANS'; RUN;
 %means_adj(FY=17);
 %means_adj(FY=18);
 
-ODS pdf close; 
+proc printto; run; ODS pdf close; 
 
 
 

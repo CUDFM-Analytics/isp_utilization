@@ -1,0 +1,58 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+728  ODS PDF FILE     = "&pdf"
+SYMBOLGEN:  Macro variable PDF resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization/code/util_avp_co
+            st_pc_2023-06-02.pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+729                      STARTPAGE = no;
+NOTE: Writing ODS PDF output to DISK destination 
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_cost_pc
+      _2023-06-02.pdf", printer "PDF".
+730  
+731  Title %sysget(SAS_EXECFILENAME);
+732  
+733  proc odstext;
+SYMBOLGEN:  Macro variable TODAY resolves to 2023-06-02
+734  p "Date:              &today";
+SYMBOLGEN:  Macro variable ROOT resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+735  p "Project Root: &root";
+736  p "Script:            %sysget(SAS_EXECFILENAME)";
+SYMBOLGEN:  Macro variable LOG resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization/code/util_avp_co
+            st_pc_2023-06-02.log
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+737  p "Log File:         &log";
+SYMBOLGEN:  Macro variable PDF resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization/code/util_avp_co
+            st_pc_2023-06-02.pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+738  p "Results File:  &pdf";
+739  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+740  
+741  %LET dat = data.analysis;
+742  %put &dat;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis
+data.analysis
+743  
+744  PROC PRINT DATA = data.analysis_meta; RUN;
+
+NOTE: There were 40 observations read from the data set DATA.ANALYSIS_META.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.01 seconds
+      

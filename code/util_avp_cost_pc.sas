@@ -8,15 +8,37 @@ REFS     : enter some output into util_isp_predicted_costs.xlsx
 ***********************************************************************************************;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 
+OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+%LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
+             %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))-6); *remove \Code\;
+
+%LET script  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
+               %length(%sysget(SAS_EXECFILEPATH))-4);
+
+%LET today = %SYSFUNC(today(), YYMMDD10.);
+
+%LET log   = &root./code/util_avp_cost_pc_&today..log;
+%LET pdf   = &root./code/util_avp_cost_pc_&today..pdf;
+
+PROC PRINTTO LOG = "&log" NEW; RUN;
+ODS PDF FILE     = "&pdf"
+                    STARTPAGE = no;
+
+Title %sysget(SAS_EXECFILENAME);
+
+proc odstext;
+p "Date:              &today";
+p "Project Root: &root";
+p "Script:            %sysget(SAS_EXECFILENAME)";
+p "Log File:         &log";
+p "Results File:  &pdf";
+RUN; 
+
 %LET dat = data.analysis; 
 %put &dat; 
 
 PROC PRINT DATA = data.analysis_meta; RUN;
 
-%LET log = S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_avp_cost_pc_.log;
-%LET pdf = S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_avp_cost_pc_.pdf;
-PROC PRINTTO LOG   ="&log"; RUN;
-ODS PDF FILE ="&pdf"; RUN;
 
 TITLE "Probability Model: PC Cost"; 
 PROC GEE DATA  = &dat DESC;
