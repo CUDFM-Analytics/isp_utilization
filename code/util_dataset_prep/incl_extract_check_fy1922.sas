@@ -6,7 +6,7 @@ PURPOSE  : INCLUDE file that:
             2) selects max value when n=2 per quarter or most recent when n=1 and k>1 per quarter
             3) Checks that there are no mcaid_id's with >12 records (macro %check_ids_n12)
 VERSION  : 2023-05-30
-DEPENDS  : RAW.FY1922a 
+DEPENDS  : raw.final00 
 EXPORTS  : work.budget
            work.rae
            int.pcmp_attr_qrtr
@@ -21,7 +21,7 @@ SELECT mcaid_id
      , dt_qrtr
      , time
      , count(dt_qrtr) as n_months_per_q
-FROM raw.FY1922a
+FROM raw.final00
 GROUP BY mcaid_id, dt_qrtr, time;
 QUIT; 
 
@@ -36,7 +36,7 @@ FROM (SELECT *
            , max(month) AS max_month_by_pcmp
       FROM (SELECT *
                  , count(pcmp_loc_id) as n_pcmp
-            FROM raw.fy1922a
+            FROM raw.final00
             GROUP BY mcaid_id 
                    , dt_qrtr
                    , pcmp_loc_id) 
@@ -44,7 +44,7 @@ FROM (SELECT *
 GROUP BY mcaid_id, dt_qrtr
 HAVING max(n_pcmp)=n_pcmp
 AND    month=max_month_by_pcmp;
-QUIT; * 4/24 14039876; 
+QUIT; * ; 
 
 * 4/26; 
 PROC SQL; 
@@ -57,7 +57,7 @@ FROM (SELECT *
            , max(month) AS max_mon_by_budget
       FROM (SELECT *
                  , count(budget_group) as n_budget_group 
-            FROM raw.FY1922a
+            FROM raw.final00
             GROUP BY mcaid_id 
                    , dt_qrtr
                    , budget_group) 
@@ -65,7 +65,7 @@ FROM (SELECT *
 GROUP BY mcaid_id, dt_qrtr
 HAVING max(n_budget_group)=n_budget_group
 AND    month=max_mon_by_budget;
-QUIT; *14039876; 
+QUIT; *; 
 
 * 4/26; 
 PROC SQL; 
@@ -78,7 +78,7 @@ FROM (SELECT *
            , max(month) AS max_mon_by_rae
       FROM (SELECT *
                  , count(rae_person_new) as n_rae_person_new 
-            FROM raw.FY1922a
+            FROM raw.final00
             GROUP BY mcaid_id 
                    , dt_qrtr
                    , rae_person_new) 
@@ -86,7 +86,7 @@ FROM (SELECT *
 GROUP BY mcaid_id, dt_qrtr
 HAVING max(n_rae_person_new)=n_rae_person_new
 AND    month=max_mon_by_rae;
-QUIT; *14039876; 
+QUIT; *; 
 
             *macro to find instances where n_ids >12 (should be 0 // in 00_config); 
             %check_ids_n13(ds=budget); *0;

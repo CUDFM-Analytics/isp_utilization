@@ -10,12 +10,12 @@ NOTES    : Updated 05/30 to include records through Sept 2022;
 ***********************************************************************************************;
 
 * primary care records ;
-data pc;
+data raw.pc;
   set ana.Qry_clm_dim_class;
   where hosp_episode NE 1
     and ER NE 1
     and primCare = 1;
-run;* 43044039;
+run;* 6/01 44674203;
 
 * telehealth records ;
 proc format;
@@ -34,7 +34,7 @@ proc format;
 other=0;
 run;
 
-data telecare;
+data raw.telecare;
   set ana.Clm_lne_fact_v;
 
   teleCare = (CLM_TYP_CD in ( 'B','M' ) and POS_CD = '02' ) or 
@@ -49,73 +49,61 @@ data telecare;
    * keeping only rows that are ER or primary or urgent or tele care ;
   if teleCare or teleElig;
 
-run;
+run; * 6/01 74218243 : 32; 
 
 * indicators of telehealth and tele-eligible care ;
 proc sql;
-  create table margTele as
+  create table raw.margTele as
     select icn_nbr,
            max(teleCare) as telecare,
            max(teleElig) as teleElig
-    from telecare
+    from raw.telecare
     group by icn_nbr;
-quit; *52866266 rows and 3 column;
+quit; *55218370 rows and 3 column;
 
 * telehealth is: primary care, tele eligible and a telehealth service ;
-proc sql;
 
-create table teleCare_FINAL as
-  select a.*
-  from pc as a inner join margTele as b
-    on a.icn_nbr = b.icn_nbr 
-  where a.primCare = 1 and b.teleCare = 1 and b.teleElig = 1;
-
-quit; * 1170229 rows and 25 columns.;
+PROC SQL; 
+CREATE TABLE raw.teleCare_FINAL as
+SELECT a.*
+FROM   raw.pc           AS a 
+INNER JOIN raw.margTele AS b    ON a.icn_nbr = b.icn_nbr 
+WHERE a.primCare = 1 
+AND   b.teleCare = 1 
+AND   b.teleElig = 1;
+QUIT; * 6/01 ;
 
 * monthy telehealth encounters and costs, per client ;
 proc sql;
+create table raw.teleCare_monthly as
+select mcaid_id
+     , intnx('month',FRST_SVC_DT, 0, 'beginning') as month format=date9.
+     , count (distinct FRST_SVC_DT) as n_tele
+/*   , sum(pd_amt) as pd_tele  */
+FROM raw.teleCare_FINAL
+GROUP BY mcaid_id, month;
+quit; *6/01 1078563 : 3 ; 
 
-create table teleCare_monthly as
-  select mcaid_id,
-         intnx('month',FRST_SVC_DT, 0, 'beginning') as month,
-         count (distinct FRST_SVC_DT) as n_tele,
-         sum(pd_amt) as pd_tele
-  from teleCare_FINAL
-  group by mcaid_id, month
-  WHERE month g
-
-quit; *1015124 : 4 ; 
-
-DATA teleCare1922_monthly; 
-SET  teleCare_monthly  (DROP = pd_tele); 
-format dt_qrtr month date9.; 
-* create quarter beginning date to get quarters ; 
+DATA int.tel_fact_1922_m; 
+SET  RAW.teleCare_monthly; 
+format    dt_qrtr month date9.; 
 dt_qrtr = intnx('quarter', month ,0,'b');
-WHERE month ge '01JUL2019'd 
-AND   month le '30SEP2022'd;
-RUN ; * 6/1: The data set INT.TELECARE_1922_MONTHLY has 968223 observations and 5 variables; 
+WHERE     month ge '01JUL2019'd 
+AND       month le '30SEP2022'd;
+RUN ; * 6/1 968223 observations and 5 variables; 
 
-%create_qrtr(data= int.tel_1922_monthly, set=teleCare1922_monthly,var = dt_qrtr, qrtr=time); *;
+%create_qrtr(data= int.tel_fact_1922_m, set=int.tel_fact_1922_m,var = dt_qrtr, qrtr=time); *;
 
 * Q 5/30 KW --average it here - members might have different denominators for telehealth than ffs, right?; 
 PROC SQL;
-CREATE TABLE int.teleCare1922_qrtr as
+CREATE TABLE int.tel_fact_1922_q as
 SELECT mcaid_id
      , count(*)    AS n_months_per_q
      , time
-     , avg(n_tele) as avg_tel_pmpq
+     , avg(n_tele) AS avg_tel_pmpq
      , sum(n_tele) AS n_tel_q
-FROM int.tele_1922_monthly
+FROM int.tel_fact_1922_m
 GROUP BY mcaid_id, time;
-QUIT; * 41465456 : 11; 
+QUIT; * 762244 : 5; 
 
-PROC SQL ; 
-CREATE TABLE th1922_q_n_avg AS 
-SELECT mcaid_id
-     , time
-     , sum(n_tele) as n_q_tele 
-FROM int.tele_1922_monthly
-GROUP BY mcaid_id, time ; 
-QUIT ; *762244, 3 columns; 
-
-PROC SORT DATA =int.tele_qrtr_1922; by mcaid_id time ; RUN ; 
+PROC SORT DATA =int.tel_fact_1922_q; by mcaid_id time ; RUN ; 
