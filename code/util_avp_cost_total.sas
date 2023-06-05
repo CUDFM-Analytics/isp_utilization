@@ -2,46 +2,61 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization
 PURPOSE  : Hurdle Model, Primary Care Costs
-VERSION  : 2023-05-18
+VERSION  : 2023-06-02
 OUTPUT   : pdf & log file
 REFS     : enter some output into util_isp_predicted_costs.xlsx
 ***********************************************************************************************;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 
 OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
-
 %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
              %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))-6); *remove \Code\;
 
-%LET script  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
-               %length(%sysget(SAS_EXECFILEPATH))-4);
+%LET script  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, %length(%sysget(SAS_EXECFILEPATH))-4);
+
+%LET file  = %qsubstr(%sysget(SAS_EXECFILENAME), 1, %length(%sysget(SAS_EXECFILENAME))-4);
 
 %LET today = %SYSFUNC(today(), YYMMDD10.);
 
-%LET log   = &script._log_&today..txt;
-%LET pdf   = &script._results_&today..pdf;
+* Send log output to code folder, pdf results to reports folder for MG to view;
+%LET log   = &root./code/&file._&today..log;
+%LET pdf   = &root./reports/&file._&today..pdf;
 
 PROC PRINTTO LOG = "&log" NEW; RUN;
-ODS PDF FILE     = "&pdf"
-                    STARTPAGE = no;
+ODS PDF FILE     = "&pdf" STARTPAGE = no;
 
-%LET dat = data.analysis; 
+Title &file;
 
 proc odstext;
 p "Date:              &today";
-p "Data:           &dat";
 p "Project Root: &root";
-p "Script:            %sysget(SAS_EXECFILENAME)";
+p "Script:            &file";
 p "Log File:         &log";
 p "Results File:  &pdf";
 RUN; 
 
-PROC PRINT DATA = data.analysis_meta; RUN;
+%LET dat  = data.analysis; 
+%LET pvar = ind_total_cost;
+%LET cvar = adj_pd_total_tc;
+%LET avp = adj_pd_total;
 
-PROC PRINTTO LOG ="&log"; RUN;
-ODS PDF FILE     ="&pdf"; RUN;
+%put Dataset: &dat; 
+%put ProbVar (pvar) = &pvar;
+%put CostVar (cvar) = &cvar;
+%put AVP (actual vs pred) &avp;
 
-TITLE "Probability Model: FFS Total Cost"; 
+%hurdle(pvar = ind_total_cost,
+        cvar = adj_pd_total_tc,
+        avp  = adj_pd_total); 
+
+%hurdle(pvar = ind_pc_cost,
+        cvar = adj_pd_pc_tc,
+        avp  = adj_pd_pc); 
+
+
+%macro hurdle(pvar=,cvar=,avp=);
+
+TITLE "Probability Model: &pvar."; 
 PROC GEE DATA  = &dat DESC;
 CLASS  mcaid_id   
        season1(ref='-1')    season2(ref='-1')     season3(ref='-1')      
@@ -54,26 +69,26 @@ CLASS  mcaid_id
        adj_pd_total_16cat(ref='-1')  
        adj_pd_total_17cat(ref='-1')   
        adj_pd_total_18cat(ref='-1')
-       ind_total_cost       (ref= '0') ;
-MODEL  ind_total_cost = time       season1    season2     season3
-                        int        int_imp 
-                        age        race        sex       
-                        budget_group           fqhc       rae_person_new 
-                        bh_er16    bh_er17     bh_er18
-                        bh_hosp16  bh_hosp17   bh_hosp18
-                        bh_oth16   bh_oth17    bh_oth18    
-                        adj_pd_total_16cat  
-                        adj_pd_total_17cat  
-                        adj_pd_total_18cat     
+       &pvar       (ref= '0') ;
+MODEL  &pvar = time       season1    season2     season3
+               int        int_imp 
+               age        race        sex       
+               budget_group           fqhc       rae_person_new 
+               bh_er16    bh_er17     bh_er18
+               bh_hosp16  bh_hosp17   bh_hosp18
+               bh_oth16   bh_oth17    bh_oth18    
+               adj_pd_total_16cat  
+               adj_pd_total_17cat  
+               adj_pd_total_18cat     
         / DIST=binomial LINK=logit ; 
 REPEATED SUBJECT = mcaid_id / type=exch ; 
 store p_MODEL;
 run;
 
 * positive cost model ;
-TITLE "Cost Model: total"; 
+TITLE "Cost Model: PC"; 
 PROC GEE DATA  = &dat desc;
-WHERE adj_pd_total_tc > 0;
+WHERE &cvar > 0;
 CLASS mcaid_id   
       season1(ref='-1')    season2(ref='-1')     season3(ref='-1')      
       int    (ref= '0')    int_imp(ref= '0')
@@ -86,16 +101,16 @@ CLASS mcaid_id
       adj_pd_total_17cat(ref='-1')   
       adj_pd_total_18cat(ref='-1');
 
-MODEL adj_pd_total_tc = time       season1    season2     season3
-                        int        int_imp 
-                        age        race        sex       
-                        budget_group           fqhc       rae_person_new 
-                        bh_er16    bh_er17     bh_er18
-                        bh_hosp16  bh_hosp17   bh_hosp18
-                        bh_oth16   bh_oth17    bh_oth18    
-                        adj_pd_total_16cat  
-                        adj_pd_total_17cat  
-                        adj_pd_total_18cat     / dist = gamma link = log ;
+MODEL &cvar = time       season1    season2     season3
+              int        int_imp 
+              age        race        sex       
+              budget_group           fqhc       rae_person_new 
+              bh_er16    bh_er17     bh_er18
+              bh_hosp16  bh_hosp17   bh_hosp18
+              bh_oth16   bh_oth17    bh_oth18    
+              adj_pd_total_16cat  
+              adj_pd_total_17cat  
+              adj_pd_total_18cat     / dist = gamma link = log ;
 REPEATED SUBJECT = mcaid_id / type = exch;
 store c_model;
 RUN;
@@ -126,29 +141,31 @@ proc plm restore=c_model;
 run;
 
 * person average cost is calculated ;
-data out.meanCost_total;
+data out.meanCost_&avp;
   set cp_intgroup;
   a_cost = p_prob*p_cost;* (1-p term = 0);
 run;
 
 * group average cost is calculated and contrasted ;
 proc sql;
-create table out.avp_cost_total as
+create table out.&avp as
   select mean(case when exposed=1 then a_cost else . end ) as cost_exposed,
          mean(case when exposed=0 then a_cost else . end ) as cost_unexposed,
   calculated cost_exposed - calculated cost_unexposed as cost_diff
-  from out.meanCost_total;
+  from out.meanCost_&avp;
 quit;
 
-TITLE "avp_cost_total"; 
-proc print data = out.avp_cost_total;
+TITLE "&avp"; 
+proc print data = out.&avp;
 run;
 
-proc means data = out.meancost_total;
+proc means data = out.meancost_&avp;
 by exposed;
 var p_prob p_cost a_cost; 
 RUN; 
+%mend;
 
-PROC PRINTTO; RUN; ODS PDF CLOSE; 
+PROC PRINTTO; RUN; 
+ODS PDF CLOSE; 
 
    

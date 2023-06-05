@@ -19,10 +19,12 @@ FOLDER: isp_utilization/reports
     Description    : Comparing Jake's frequencies with mine for the adj_cat_vars for FYs 16-18
     Last Ran On    : 2023-05-01
     Source         : code/util_compare_jt.sas
-    Relationship/s : None
+    Relationship/s : Outdated (06/02) move to archive later
 	
-|-- eda_analysis_dataset_2023-05-18.pdf ---------------------------------------------
+|-- eda_analysis_dataset_2023-MM-DD.pdf ---------------------------------------------
     Description    : EDA for the final analysis dataset
-    Last Ran On    : 2023-05-18
+    Last Ran On    : 2023-06-02
     Source         : code/util_03a_eda.sas, code/util_03b_eda_export_pdf.sas
-    Relationship/s : folders int/ and data/ 
+    Relationship/s : folders int/ and data// Prior version 05-18.pdf
+	
+	

@@ -2,7 +2,7 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization
 PURPOSE  : Hurdle Model, Primary Care Costs
-VERSION  : 2023-05-18
+VERSION  : 2023-06-02
 OUTPUT   : pdf & log file
 REFS     : enter some output into util_isp_predicted_costs.xlsx
 ***********************************************************************************************;
@@ -12,33 +12,44 @@ OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
 %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
              %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))-6); *remove \Code\;
 
-%LET script  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
-               %length(%sysget(SAS_EXECFILEPATH))-4);
+%LET script  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, %length(%sysget(SAS_EXECFILEPATH))-4);
+
+%LET file  = %qsubstr(%sysget(SAS_EXECFILENAME), 1, %length(%sysget(SAS_EXECFILENAME))-4);
 
 %LET today = %SYSFUNC(today(), YYMMDD10.);
 
-%LET log   = &root./code/util_avp_cost_pc_&today..log;
-%LET pdf   = &root./code/util_avp_cost_pc_&today..pdf;
+* Send log output to code folder, pdf results to reports folder for MG to view;
+%LET log   = &root./code/&file._&today..log;
+%LET pdf   = &root./reports/&file._&today..pdf;
+
+%put &root &script &file &today log=&log pdf=&pdf;
 
 PROC PRINTTO LOG = "&log" NEW; RUN;
-ODS PDF FILE     = "&pdf"
-                    STARTPAGE = no;
+ODS PDF FILE     = "&pdf" STARTPAGE = no;
 
-Title %sysget(SAS_EXECFILENAME);
+Title &file;
 
 proc odstext;
 p "Date:              &today";
 p "Project Root: &root";
-p "Script:            %sysget(SAS_EXECFILENAME)";
+p "Script:            &file";
 p "Log File:         &log";
 p "Results File:  &pdf";
 RUN; 
 
-%LET dat = data.analysis; 
-%put &dat; 
+%LET dat  = data.analysis; 
+%LET pvar = ind_total_cost;
+%LET cvar = adj_pd_total_tc;
+%LET avp  = adj_pd_total;
 
-PROC PRINT DATA = data.analysis_meta; RUN;
+%put Dataset: &dat; 
+%put ProbVar (pvar) = &pvar;
+%put CostVar (cvar) = &cvar;
+%put AVP (actual vs pred) &avp;
 
+%hurdle(pvar = ind_pc_cost,
+        cvar = adj_pd_pc_tc,
+        avp  = adj_pd_pc); 
 
 TITLE "Probability Model: PC Cost"; 
 PROC GEE DATA  = &dat DESC;
@@ -143,7 +154,7 @@ TITLE "avp_cost_pc";
 proc print data = out.avp_cost_pc;
 run;
 
-proc means data = meancost;
+proc means data = out.meancost;
 by exposed;
 var p_prob p_cost a_cost; 
 RUN; 
