@@ -2,9 +2,10 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization Analysis
 PURPOSE  : Gather, Process datasets from analytic subset dir, Create final analysis dataset and mini dataset
-VERSION  : 2023-06-02
+VERSION  : 2023-06-05
            - updated 5/30 due to issues in the hcpf file and to get Sept 2022 since it's available now (cs email re: hcpf)
            - updated 06-01/2 bc ana.long & ana.demo were missing months
+           - combine bh cat variables into 1 bh cat var
 DEPENDS  : -ana subset folder, config file, 
            -%include helper file in code/util_dataset_prep/incl_extract_check_fy19210.sas
            -other macro code referenced is stored in the util_00_config.sas file

@@ -44,29 +44,27 @@ proc contents data = &dat; run;
 TITLE "Probability Model: PC Cost"; 
 PROC GEE DATA  = &dat DESC;
 CLASS  mcaid_id   
-       season1(ref='-1')   season2(ref='-1')    season3(ref='-1')      
-       int    (ref='0')    int_imp(ref='0')
-       age    (ref='1')    race                 sex            
-       budget_group        fqhc(ref='0')        rae_person_new(ref='1')
-       bh_hosp16(ref='0')  bh_hosp17(ref='0')   bh_hosp18(ref='0')
-       bh_er16  (ref='0')  bh_er17  (ref='0')   bh_er18  (ref='0')
-       bh_oth16 (ref='0')  bh_oth17 (ref='0')   bh_oth18 (ref='0')
+       int    (ref= '0')    int_imp(ref= '0')
+       age    (ref= '1')    race                  sex            
+       budget_group         fqhc(ref= '0')        rae_person_new
+       bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')
+       bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')
+       bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')
        adj_pd_total_16cat(ref='-1')  
        adj_pd_total_17cat(ref='-1')   
        adj_pd_total_18cat(ref='-1')
-       ind_pc_cost(ref='0') 
-;
+       ind_pc_cost       (ref= '0') ;
 MODEL  ind_pc_cost = time       season1    season2     season3
                      int        int_imp 
                      age        race        sex       
                      budget_group           fqhc       rae_person_new 
-                     bh_hosp16  bh_hosp17   bh_hosp18
                      bh_er16    bh_er17     bh_er18
-                     bh_oth16   bh_oth17    bh_oth18                    
+                     bh_hosp16  bh_hosp17   bh_hosp18
+                     bh_oth16   bh_oth17    bh_oth18    
                      adj_pd_total_16cat  
                      adj_pd_total_17cat  
-                     adj_pd_total_18cat     / DIST=binomial LINK=logit 
-; 
+                     adj_pd_total_18cat     
+        / DIST=binomial LINK=logit ; 
 REPEATED SUBJECT = mcaid_id / type=exch ; 
 store p_MODEL;
 run;
