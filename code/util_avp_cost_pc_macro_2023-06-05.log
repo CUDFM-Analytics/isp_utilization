@@ -1,0 +1,49 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+858  ODS PDF FILE     = "&pdf" STARTPAGE = no;
+SYMBOLGEN:  Macro variable PDF resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization/reports/util_avp
+            _cost_pc_macro_2023-06-05.pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+NOTE: Writing ODS PDF output to DISK destination 
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\util_avp_cost
+      _pc_macro_2023-06-05.pdf", printer "PDF".
+SYMBOLGEN:  Macro variable FILE resolves to util_avp_cost_pc_macro
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+859  
+860  Title &file;
+861  
+862  proc odstext;
+SYMBOLGEN:  Macro variable TODAY resolves to 2023-06-05
+863  p "Date:              &today";
+SYMBOLGEN:  Macro variable ROOT resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+864  p "Project Root: &root";
+SYMBOLGEN:  Macro variable FILE resolves to util_avp_cost_pc_macro
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+865  p "Script:            &file";
+SYMBOLGEN:  Macro variable LOG resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization/code/util_avp_co
+            st_pc_macro_2023-06-05.log
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+866  p "Log File:         &log";
+SYMBOLGEN:  Macro variable PDF resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization/reports/util_avp
+            _cost_pc_macro_2023-06-05.pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+867  p "Results File:  &pdf";
+868  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+      
