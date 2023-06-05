@@ -38,9 +38,9 @@ p "Results File:  &pdf";
 RUN; 
 
 %LET dat  = data.analysis; 
-%LET pvar = ind_total_cost;
-%LET cvar = adj_pd_total_tc;
-%LET avp  = adj_pd_total;
+%LET pvar = ind_pc_cost;
+%LET cvar = adj_pd_pc_tc;
+%LET avp  = adj_pd_pc;
 
 %put Dataset: &dat; 
 %put ProbVar (pvar) = &pvar;
@@ -50,6 +50,10 @@ RUN;
 %hurdle(pvar = ind_pc_cost,
         cvar = adj_pd_pc_tc,
         avp  = adj_pd_pc); 
+
+
+
+
 
 TITLE "Probability Model: PC Cost"; 
 PROC GEE DATA  = &dat DESC;

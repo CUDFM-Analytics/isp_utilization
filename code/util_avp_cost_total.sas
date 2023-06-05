@@ -38,7 +38,7 @@ RUN;
 %LET dat  = data.analysis; 
 %LET pvar = ind_total_cost;
 %LET cvar = adj_pd_total_tc;
-%LET avp = adj_pd_total;
+%LET avp  = adj_pd_total;
 
 %put Dataset: &dat; 
 %put ProbVar (pvar) = &pvar;
@@ -53,6 +53,10 @@ RUN;
         cvar = adj_pd_pc_tc,
         avp  = adj_pd_pc); 
 
+%put Dataset: &dat; 
+%put ProbVar (pvar) = &pvar;
+%put CostVar (cvar) = &cvar;
+%put AVP (actual vs pred) &avp;
 
 %macro hurdle(pvar=,cvar=,avp=);
 
