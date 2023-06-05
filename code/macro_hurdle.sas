@@ -7,12 +7,11 @@ OUTPUT   : pdf & log file
 REFS     : enter some output into util_isp_predicted_costs.xlsx
 ***********************************************************************************************;
 
-%hurdle(dat = data.analysis,
-        pvar = &pvar_pc,
+%hurdle(pvar = &pvar_pc,
         cvar = &cvar_pc,
         avp  = &avp_pc); 
 
-%macro hurdle(dat=,pvar=,cvar=,avp=);
+%macro hurdle(pvar=,cvar=,avp=);
 
 TITLE "Probability Model: &pvar"; 
 PROC GEE DATA  = &dat DESC;
@@ -22,8 +21,8 @@ CLASS  mcaid_id
        age    (ref= '1')    race                  sex            
        budget_group         fqhc(ref= '0')        rae_person_new(ref='1')
        bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')
-       bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')
-       bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')
+       bh_er16  (ref= '0')  bh_er17  (ref= '0')   bh_er18  (ref= '0')
+       bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth18 (ref= '0')
        adj_pd_total_16cat(ref='-1')  
        adj_pd_total_17cat(ref='-1')   
        adj_pd_total_18cat(ref='-1')
@@ -43,7 +42,6 @@ REPEATED SUBJECT = mcaid_id / type=exch ;
 store p_MODEL;
 run;
 
-%mend;
 
 * positive cost model ;
 TITLE "Cost Model: PC"; 
@@ -124,4 +122,4 @@ by exposed;
 var p_prob p_cost a_cost; 
 RUN; 
 
-/*%mend;*/
+%mend;
