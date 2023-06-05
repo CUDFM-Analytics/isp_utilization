@@ -44,7 +44,7 @@ LOG
 
     * Medicaid dats: keep attached for formats (until/if final fmts copied); 
       %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
-      LIBNAME ana "&ana"; 
+     * LIBNAME ana "&ana"; 
 
 * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------; 
 

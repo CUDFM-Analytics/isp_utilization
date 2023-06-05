@@ -7,7 +7,12 @@ OUTPUT   : pdf & log file
 REFS     : enter some output into util_isp_predicted_costs.xlsx
 ***********************************************************************************************;
 
-%macro hurdle(pvar=,cvar=,avp=);
+%hurdle(dat = data.analysis,
+        pvar = &pvar_pc,
+        cvar = &cvar_pc,
+        avp  = &avp_pc); 
+
+%macro hurdle(dat=,pvar=,cvar=,avp=);
 
 TITLE "Probability Model: &pvar"; 
 PROC GEE DATA  = &dat DESC;
@@ -15,7 +20,7 @@ CLASS  mcaid_id
        season1(ref='-1')    season2(ref='-1')     season3(ref='-1')      
        int    (ref= '0')    int_imp(ref= '0')
        age    (ref= '1')    race                  sex            
-       budget_group         fqhc(ref= '0')        rae_person_new
+       budget_group         fqhc(ref= '0')        rae_person_new(ref='1')
        bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')
        bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')
        bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')
@@ -38,6 +43,8 @@ REPEATED SUBJECT = mcaid_id / type=exch ;
 store p_MODEL;
 run;
 
+%mend;
+
 * positive cost model ;
 TITLE "Cost Model: PC"; 
 PROC GEE DATA  = &dat desc;
@@ -46,7 +53,7 @@ CLASS mcaid_id
       season1(ref='-1')    season2(ref='-1')     season3(ref='-1')      
       int    (ref= '0')    int_imp(ref= '0')
       age    (ref= '1')    race                  sex            
-      budget_group         fqhc(ref= '0')        rae_person_new
+      budget_group         fqhc(ref= '0')        rae_person_new(ref='1')
       bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')
       bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')
       bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')
@@ -117,4 +124,4 @@ by exposed;
 var p_prob p_cost a_cost; 
 RUN; 
 
-%mend;
+/*%mend;*/
