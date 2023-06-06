@@ -1,14 +1,12 @@
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 libname int clear; 
 
-%LET dat = data.analysis_dataset; 
-
-DATA data.allcomb_wide; 
-SET  &dat (KEEP = int adj: ); 
-RUN; 
+%LET dat = data.analysis; 
+%LET today = %SYSFUNC(today(), YYMMDD10.);
 
 
-ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_cost_pc_allcomb_adj_v2.pdf" startpage=no;
+
+ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_cost_pc_allcomb_adj_&today..pdf" startpage=no;
 PROC FREQ DATA = data.allcomb_wide; 
 TABLE adj_pd_total_16cat*adj_pd_total_17cat*adj_pd_total_18cat*int / list; 
 RUN; 
@@ -48,55 +46,92 @@ run;
 ods output close; 
 ods pdf close; 
 
+* 
+DATA.analysis_numeric =====================================================================;
+DATA data.analysis_numeric;
+SET  data.analysis; 
+format sex race; 
+IF sex = 'F' then sex_numeric = 1;
+ELSE sex_numeric = 0;
+race_numeric = input(race, best7.);
+RUN; 
+*===========================================================================================;
 
 /*VISUALIZE COLLINEARITY DIAGNOSTICS sas*/
+OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+%LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
+             %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))-6); *remove \Code\;
+
+%LET script= %qsubstr(%sysget(SAS_EXECFILEPATH), 1, %length(%sysget(SAS_EXECFILEPATH))-4);
+
+%LET file  = %qsubstr(%sysget(SAS_EXECFILENAME), 1, %length(%sysget(SAS_EXECFILENAME))-4);
+
+%LET today = %SYSFUNC(today(), YYMMDD10.);
+%put &root ;
+%put &script;
+%put &file;
+
+* Send log output to code folder, pdf results to reports folder for MG to view;
+%LET log   = &script._&today..log;
+%LET pdf   = &root./reports/&file._&today..pdf;
+/*%put &log &pdf; */
+
+PROC PRINTTO LOG = "&log" NEW; RUN;
+ODS PDF FILE     = "&pdf" STARTPAGE = no;
+
+Title &file;
+
+proc odstext;
+p "Date:              &today";
+p "Project Root: &root";
+p "Script:            &file";
+p "Log File:         &log";
+p "Results File:  &pdf";
+RUN; 
+
 /*https://blogs.sas.com/content/iml/2020/02/17/visualize-collinearity-diagnostics.html*/
 
 * find collinearity; 
 * for reg have to convert char to numeric: vars race, sex, budget_grp_new; 
 
+/*PROC CORR Data =  data.dat_reg_pc_cost outp=pc_cost_corr;*/
+/*VAR int int_imp time age sex_numeric race_numeric*/
+/*                         budget_group*/
+/*                         rae_person_new  fqhc*/
+/*                         bh_2016 bh_2017 bh_2018*/
+/*                         adj_pd_total_16cat */
+/*                         adj_pd_total_17cat */
+/*                         adj_pd_total_18cat;*/
+/*RUN; */
+/**/
+/*DATA pc_cost_corr_ge70 (drop=i);*/
+/*set  pc_cost_corr (where=(_TYPE_ in ("CORR")));*/
+/*array col(*) int--adj_pd_total_18cat;*/
+/*do i=1 to dim(col);*/
+/*if (col{i}<0.6 AND col{i}>-.6) OR col{i}=1 then col{i}=.; */
+/*end; */
+/*RUN; */
+/**/
+/*%let keep_vars = _type_ _name_ int int_imp age budget_group; */
+/*DATA pc_cost_corr_print ;*/
+/*SET  pc_cost_corr_ge70 (keep = &keep_vars);*/
+/*RUN; */
+/**/
+/*PROC PRINT DATA = pc_cost_corr_print; */
+/*RUN; */
 
-ods pdf file = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\proc_reg_collin_2023-05-08.pdf";
+proc contents data = &dat varnum; run; 
 
-PROC CORR Data =  data.dat_reg_pc_cost outp=pc_cost_corr;
-VAR int int_imp time age sex_numeric race_numeric
-                         budget_group
-                         rae_person_new  fqhc
-                         bh_er16      bh_er17       bh_er18 
-                         bh_hosp16    bh_hosp17     bh_hosp18 
-                         bh_oth16     bh_oth17      bh_oth18
-                         adj_pd_total_16cat 
-                         adj_pd_total_17cat 
-                         adj_pd_total_18cat;
-RUN; 
-
-DATA pc_cost_corr_ge70 (drop=i);
-set  pc_cost_corr (where=(_TYPE_ in ("CORR")));
-array col(*) int--adj_pd_total_18cat;
-do i=1 to dim(col);
-if (col{i}<0.6 AND col{i}>-.6) OR col{i}=1 then col{i}=.; 
-end; 
-RUN; 
-
-%let keep_vars = _type_ _name_ int int_imp age budget_group; 
-DATA pc_cost_corr_print ;
-SET  pc_cost_corr_ge70 (keep = &keep_vars);
-RUN; 
-
-PROC PRINT DATA = pc_cost_corr_print; 
-RUN; 
-
-PROC REG DATA = data.dat_reg_pc_cost;
-MODEL ind_pc_cost = int int_imp time 
-                    age sex_numeric race_numeric
-                         budget_group
-                         rae_person_new  fqhc
-                         bh_er16      bh_er17       bh_er18 
-                         bh_hosp16    bh_hosp17     bh_hosp18 
-                         bh_oth16     bh_oth17      bh_oth18
-                         adj_pd_total_16cat 
-                         adj_pd_total_17cat 
-                         adj_pd_total_18cat / tol vif collin covb; 
+PROC REG DATA = data.analysis_numeric;
+MODEL ind_pc_cost = int         int_imp     time 
+                    season1     season2     season3
+                    age         sex_numeric race_numeric
+                    budget_group
+                    rae_person_new      fqhc
+                    bh_2016     bh_2017     bh_2018
+                    adj_pd_total_16cat 
+                    adj_pd_total_17cat 
+                    adj_pd_total_18cat / tol vif collin covb; 
 ods select ParameterEstimates CollinDiag; 
 ods output CollinDiag = Collin;
 RUN ;  Quit; 
@@ -129,10 +164,10 @@ end;
 keep Number VarName Val TextVal;
 run;
 
-Title "Collinearity Diagnostics Long";
-proc print data = collinlong ; 
-run ; 
-title; 
+/*Title "Collinearity Diagnostics Long";*/
+/*proc print data = collinlong ; */
+/*run ; */
+/*title; */
 
 /* create a discrete attribute map:
    https://blogs.sas.com/content/iml/2019/07/15/create-discrete-heat-map-sgplot.html
@@ -166,8 +201,12 @@ proc sgplot data=CollinLong dattrmap=Order noautolegend;
   xaxis display=(nolabel);
 run;
 
+proc printto; run; 
 ods pdf close; 
 
+* 
+LOGISTIC ==============================================================================
+===========================================================================================;
 proc logistic data = &dat;
 CLASS  mcaid_id   
        age (ref='1')

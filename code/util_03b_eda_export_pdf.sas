@@ -1,9 +1,10 @@
+*** SHORT VERSION stops at row 52
+Comment that line out and run whole thing for long version; 
+
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-libname ana clear;
-libname raw clear;
 
 %let dat = data.analysis; 
-%let all = data.analysis_allcols; 
+/*%let all = data.analysis_allcols; */
 
 OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
 %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
@@ -14,8 +15,8 @@ OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
 
 %LET today = %SYSFUNC(today(), YYMMDD10.);
 
-%LET log   = &script._log_&today..log;
-%LET pdf   = &script._log_&today..pdf;
+%LET log   = &script._&today..log;
+%LET pdf   = &script._&today..pdf;
 
 PROC PRINTTO LOG = "&log" NEW; RUN;
 ODS PDF FILE     = "&pdf"
@@ -23,22 +24,46 @@ ODS PDF FILE     = "&pdf"
 
 Title %sysget(SAS_EXECFILENAME);
 
+PROC SQL NOPRINT;
+SELECT count(*) into :nobs from &dat;
+QUIT; 
+
+PROC SQL NOPRINT; 
+SELECT COUNT (DISTINCT mcaid_id ) into :nmem
+FROM &dat ; 
+QUIT ; 
+
 proc odstext;
 p "Date:              &today";
 p "Project Root: &root";
 p "Script:            %sysget(SAS_EXECFILENAME)";
 p "Log File:         &log";
 p "Results File:  &pdf";
+p "Total Observations in Dataset: &nobs";
+p "Total unique medicaid IDs in Dataset: &nmem";
 RUN; 
 
-PROC SQL NOPRINT;
-SELECT count(*) into :nobs from &dat;
-QUIT; 
+PROC PRINT DATA = data.analysis_meta; RUN; 
 
-PROC SQL; 
-SELECT COUNT (DISTINCT mcaid_id ) into :nmem
-FROM &dat ; 
-QUIT ; 
+PROC FREQ 
+     DATA = data.analysis;
+     TABLES int int_imp time race sex budget_group age
+            fqhc rae: bh: adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+            ind: season: ;
+RUN; 
+
+ods pdf close; proc printto; run; 
+
+
+
+
+
+
+
+
+
+
+
 
 
 %macro univar_gt0(var, title);
@@ -81,6 +106,8 @@ ods proclabel 'Data Specs';
 * Print specs ; 
 PROC ODSTEXT;
 p "Update/s to data.analysis (final ds)";
+p "-- 06/05: Collapsed bh FY16-18 variables by FY (ie bh_2016 = 1 if bh_oth2016, bh_er16, or bh_hosp16 = 1);
+p "------ Removed bh_hospYY, bh_erYY, and bh_othYY from model, replaced by bh_YYYY (for 2016-2018)";
 p "-- 06/02: Re-generated dataset and updated to include FY22 Q1";
 p "-- 5/15: Effect Coding time with season variables"; 
 p "-- 5/10: Included fyqrtr variable in final analysis dataset"; 
@@ -123,12 +150,26 @@ p "Frequencies, Categorical Vars: Ungrouped" / style=systemtitle; RUN;
 
 PROC FREQ DATA = int.eda_n_ids; TABLES n_id; RUN; 
 
+PROC SQL; 
+CREATE TABLE sums_bh_1618 AS 
+SELECT sum(bh_2016) as n_bh_16
+     , sum(bh_2017) as n_bh_17
+     , sum(bh_2018) as n_bh_18
+FROM &dat; 
+Quit; 
+
+/*PROC PRINT DATA = &dat; */
+/*WHERE bh_hosp16 = 1*/
+/*AND   bh_2016 = 0; */
+/*RUN; *none; */
+
 * Categorical vars; 
 PROC FREQ 
 DATA   = &dat; 
-TABLES int: age race sex budget_group rae_person_new fqhc bh: ind:  
-       adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat fy: season:; 
+TABLES int int_imp time age race sex budget_group rae_person_new fqhc bh_2016 bh_2017 bh_2018 ind:  
+       adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat season: ; 
 RUN ; 
+
 
 *******************************************************************************
 * Time frequency : find missing time, pct time; 

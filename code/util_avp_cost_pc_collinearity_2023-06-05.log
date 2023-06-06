@@ -1,0 +1,211 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+768  ODS PDF FILE     = "&pdf" STARTPAGE = no;
+SYMBOLGEN:  Macro variable PDF resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization/reports/util_avp
+            _cost_pc_collinearity_2023-06-05.pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+NOTE: Writing ODS PDF output to DISK destination 
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\util_avp_cost
+      _pc_collinearity_2023-06-05.pdf", printer "PDF".
+SYMBOLGEN:  Macro variable FILE resolves to util_avp_cost_pc_collinearity
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+769  
+770  Title &file;
+771  
+772  proc odstext;
+SYMBOLGEN:  Macro variable TODAY resolves to 2023-06-05
+773  p "Date:              &today";
+SYMBOLGEN:  Macro variable ROOT resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+774  p "Project Root: &root";
+SYMBOLGEN:  Macro variable FILE resolves to util_avp_cost_pc_collinearity
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+775  p "Script:            &file";
+SYMBOLGEN:  Macro variable LOG resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_avp_co
+            st_pc_collinearity_2023-06-05.log
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+776  p "Log File:         &log";
+SYMBOLGEN:  Macro variable PDF resolves to 
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization/reports/util_avp
+            _cost_pc_collinearity_2023-06-05.pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have 
+            been unquoted for printing.
+777  p "Results File:  &pdf";
+778  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+      
+
+779  
+780  /*https://blogs.sas.com/content/iml/2020/02/17/visualize-collinearity-diagnostics.h
+780! tml*/
+781  
+782  * find collinearity;
+783  * for reg have to convert char to numeric: vars race, sex, budget_grp_new;
+784  
+785  /*PROC CORR Data =  data.dat_reg_pc_cost outp=pc_cost_corr;*/
+786  /*VAR int int_imp time age sex_numeric race_numeric*/
+787  /*                         budget_group*/
+788  /*                         rae_person_new  fqhc*/
+789  /*                         bh_2016 bh_2017 bh_2018*/
+790  /*                         adj_pd_total_16cat */
+791  /*                         adj_pd_total_17cat */
+792  /*                         adj_pd_total_18cat;*/
+793  /*RUN; */
+794  /**/
+795  /*DATA pc_cost_corr_ge70 (drop=i);*/
+796  /*set  pc_cost_corr (where=(_TYPE_ in ("CORR")));*/
+797  /*array col(*) int--adj_pd_total_18cat;*/
+798  /*do i=1 to dim(col);*/
+799  /*if (col{i}<0.6 AND col{i}>-.6) OR col{i}=1 then col{i}=.; */
+800  /*end; */
+801  /*RUN; */
+802  /**/
+803  /*%let keep_vars = _type_ _name_ int int_imp age budget_group; */
+804  /*DATA pc_cost_corr_print ;*/
+805  /*SET  pc_cost_corr_ge70 (keep = &keep_vars);*/
+806  /*RUN; */
+807  /**/
+808  /*PROC PRINT DATA = pc_cost_corr_print; */
+809  /*RUN; */
+810  
+811  proc contents data = &dat varnum; run;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.04 seconds
+      
+
+812  
+813  PROC REG DATA = data.analysis_numeric;
+814  MODEL ind_pc_cost = int         int_imp     time
+815                      season1     season2     season3
+816                      age         sex_numeric race_numeric
+817                      budget_group
+818                      rae_person_new      fqhc
+819                      bh_2016     bh_2017     bh_2018
+820                      adj_pd_total_16cat
+821                      adj_pd_total_17cat
+822                      adj_pd_total_18cat / tol vif collin covb;
+823  ods select ParameterEstimates CollinDiag;
+824  ods output CollinDiag = Collin;
+825  RUN ;
+
+WARNING: ODS graphics with more than 5000 points have been suppressed. Use the 
+         PLOTS(MAXPOINTS= ) option in the PROC REG statement to change or override the 
+         cutoff.
+825!        Quit;
+NOTE: The data set WORK.COLLIN has 19 observations and 24 variables.
+
+NOTE: PROCEDURE REG used (Total process time):
+      real time           1:03.95
+      cpu time            13.50 seconds
+      
+
+826  
+827  proc format;
+828  value CollinFmt
+829    0.0 -<  0.4  = "PropLow"
+830    0.4 -<  0.5  = "PropMed"
+831    0.5 -<  1.0  = "PropHigh"
+832    1.0 -<  20   = "CondLow"
+833     20 -<  30   = "CondMed"
+834     30 -< 100   = "CondHigh"
+835     other       = "CondExtreme";
+NOTE: Format COLLINFMT is already on the library WORK.FORMATS.
+NOTE: Format COLLINFMT has been output.
+836  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+837  
+838  data CollinLong;
+839  length VarName $32 TextVal $5;
+840  set collin(drop=Model Dependent Eigenvalue);
+841  array v[*] _numeric_;
+842  do j = 2 to dim(v);
+843     VarName = vname(v[j]);
+844     Val = v[j];
+845     if j=2 then TextVal = put(Val, 5.0);
+846     else do;
+847        if Val<0.4 then TextVal = ' ';
+848        else TextVal = put(100*Val, 2.0); *convert proportion to pct;
+849     end;
+850     output;
+851  end;
+852  keep Number VarName Val TextVal;
+853  run;
+
+NOTE: There were 19 observations read from the data set WORK.COLLIN.
+NOTE: The data set WORK.COLLINLONG has 380 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+854  
+855  /*Title "Collinearity Diagnostics Long";*/
+856  /*proc print data = collinlong ; */
+857  /*run ; */
+858  /*title; */
+859  
+860  /* create a discrete attribute map:
+861     https://blogs.sas.com/content/iml/2019/07/15/create-discrete-heat-map-sgplot.htm
+861! l
+862  */
+863  data Order;                            /* create discrete attribute map */
+864  length Value $15 FillColor $15;
+865  input raw FillColor;
+866  Value = put(raw, CollinFmt.);          /* use format to assign values */
+867  retain ID 'SortOrder'                  /* name of map */
+868       Show 'AttrMap';                   /* always show all groups in legend */
+869  datalines;
+
+NOTE: The data set WORK.ORDER has 7 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.00 seconds
+      
+
+877  ;
+878  
+879  /* Create a discrete heat map and overlay text for the condition numbers
+880     and the important (high) cells of the proportion of variance. */
+881  title "Collinearity Diagnostics";
+882  proc sgplot data=CollinLong dattrmap=Order noautolegend;
+883    format Val CollinFmt.;
+884    heatmapparm x=VarName y=Number colorgroup=Val / outline
+885                attrid=SortOrder nomissingcolor discretey;
+886    text x=VarName y=Number text=TextVal / strip textattrs=(size=14);
+887    refline "ConditionIndex" / axis=x lineattrs=(color=DarkGray)
+888            discreteoffset=0.5 discretethickness=0.08;
+889    xaxis display=(nolabel);
+890  run;
+
+NOTE: STATGRAPH 'SGPlot' has been saved to: WORK.___Graph___
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.75 seconds
+      cpu time            0.51 seconds
+      
+NOTE: There were 380 observations read from the data set WORK.COLLINLONG.
+NOTE: There were 7 observations read from the data set WORK.ORDER.
+
+891  
+892  proc printto; run;
+

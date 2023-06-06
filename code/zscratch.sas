@@ -2,9 +2,16 @@ PROC FREQ DATA = raw.pcmp_type2;
 tables pcmp_loc_type_cd fqhc; 
 run; 
 
-PROC PRINT DATA = raw.fy1618_0 (obs=25);
-WHERE mcaid_id IN ("A009604","A010792");
+DATA no_time_var;
+SET  &dat;
+WHERE time eq . ;
 RUN; 
+
+PROC PRINT DATA = &dat;
+where time eq .;
+RUN; 
+
+
 
 data short_a8;
 set  data.a8 (obs=2000); 

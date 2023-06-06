@@ -1,7 +1,7 @@
 **********************************************************************************************
 AUTHOR   : KTW
 PROJECT  : ISP Utilization 
-PURPOSE  : EDA export to pdf, final dataset
+PURPOSE  : Run file for exporting EDA tables on final analysis dataset, exporting results to pdf and saving log
 VERSION  : [2023-05-18] (added season frequency)
 DEPENDS  : ;
 
@@ -26,6 +26,35 @@ PROC PRINT DATA = data.analysis_meta NOOBS; RUN;
 %let dat = data.analysis; 
 %let all = data.analysis_allcols; 
 
+* 
+bh_2016-2018 var tests ====================================================================
+===========================================================================================;
+* Trying to find any errors in new bh values; 
+DATA eda.check_new_bh_vals;
+set  data.analysis (keep = mcaid_id time bh: ) ;
+bh_sum16 = sum(of bh_er16 bh_oth16 bh_hosp16);
+bh_sum17 = sum(of bh_er17 bh_oth17 bh_hosp17);
+bh_sum18 = sum(of bh_er18 bh_oth18 bh_hosp18);
+
+* If bh_sumYY >= 1 and bh_YYYY = 1 or if they both equal 0 then they're correct;
+IF (bh_sum16 ge 1 AND bh_2016 eq 1) OR (bh_sum16 eq 0 AND bh_2016 eq 0) then bh_check16 = 1;
+IF (bh_sum17 ge 1 AND bh_2017 eq 1) OR (bh_sum17 eq 0 AND bh_2017 eq 0) then bh_check17 = 1;
+IF (bh_sum18 ge 1 AND bh_2018 eq 1) OR (bh_sum18 eq 0 AND bh_2018 eq 0) then bh_check18 = 1;
+
+RUN; 
+
+PROC FREQ 
+     DATA = eda.check_new_bh_vals;
+     * Test 1
+     06/06: Passed;
+     TABLES bh_check: ; * ;
+     * Test 2: do all 0's OR 1's, ge 1's match (save output freqs)
+     06/06 Passed; 
+     TABLES bh_sum16*bh_2016 / out=eda.check_new_bh_results16;
+     TABLES bh_sum17*bh_2017 / out=eda.check_new_bh_results17;
+     TABLES bh_sum18*bh_2018 / out=eda.check_new_bh_results18;
+RUN; 
+TITLE; 
 
 * MACRO VARS created: &nobs (records in &dat), &nmem (unique member n) ; 
 

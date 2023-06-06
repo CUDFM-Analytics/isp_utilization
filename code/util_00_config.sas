@@ -31,8 +31,10 @@ LOG
       %LET int = &data/interim; 
         LIBNAME int "&int"; 
 
-      %LET out = &data/results_util; 
+      %LET out = &data/results_util_analysis; 
         LIBNAME out "&out"; 
+      %LET eda = &data/results_util_eda_tests;
+        LIBNAME eda "&eda";
 
     * export folder for excel files output; 
       %LET report = &util/reports; 

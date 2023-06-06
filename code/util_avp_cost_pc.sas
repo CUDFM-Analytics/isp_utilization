@@ -7,9 +7,6 @@ OUTPUT   : pdf & log file
 REFS     : enter some output into util_isp_predicted_costs.xlsx
 ***********************************************************************************************;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-libname ana clear; 
-libname raw clear;
-libname int clear;
 
 OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
 %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
@@ -39,32 +36,89 @@ p "Results File:  &pdf";
 RUN; 
 
 %LET dat  = data.analysis; 
+%LET pvar = ind_pc_cost;
+%LET cvar = adj_pd_pc_tc;
+
 proc contents data = &dat; run;
 
 TITLE "Probability Model: PC Cost"; 
 PROC GEE DATA  = &dat DESC;
 CLASS  mcaid_id   
        int    (ref= '0')    int_imp(ref= '0')
-       age    (ref= '1')    race                  sex            
-       budget_group         fqhc(ref= '0')        rae_person_new
-       bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')
-       bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')
-       bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')
-       adj_pd_total_16cat(ref='-1')  
-       adj_pd_total_17cat(ref='-1')   
-       adj_pd_total_18cat(ref='-1')
+/*       age    (ref= '1')    */
+       race                  sex            
+       budget_group         
+       fqhc(ref= '0')        rae_person_new
+       bh_2016(ref= '0')    bh_2017(ref= '0')     bh_2018(ref= '0')
+/*     bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')*/
+/*     bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')*/
+/*     bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')*/
+/*       adj_pd_total_16cat(ref='-1')  */
+/*       adj_pd_total_17cat(ref='-1')   */
+/*       adj_pd_total_18cat(ref='-1')*/
        ind_pc_cost       (ref= '0') ;
-MODEL  ind_pc_cost = time       season1    season2     season3
+MODEL  ind_pc_cost = time       season1     season2    season3
                      int        int_imp 
-                     age        race        sex       
-                     budget_group           fqhc       rae_person_new 
-                     bh_er16    bh_er17     bh_er18
-                     bh_hosp16  bh_hosp17   bh_hosp18
-                     bh_oth16   bh_oth17    bh_oth18    
-                     adj_pd_total_16cat  
-                     adj_pd_total_17cat  
-                     adj_pd_total_18cat     
+/*                     age        */
+                     race        sex       
+                     budget_group           
+                     fqhc       rae_person_new 
+                     bh_2016    bh_2017     bh_2018
+/*                   bh_er16    bh_er17     bh_er18*/
+/*                   bh_hosp16  bh_hosp17   bh_hosp18*/
+/*                   bh_oth16   bh_oth17    bh_oth18    */
+/*                     adj_pd_total_16cat  */
+/*                     adj_pd_total_17cat  */
+/*                     adj_pd_total_18cat     */
         / DIST=binomial LINK=logit ; 
+REPEATED SUBJECT = mcaid_id / type=exch ; 
+store p_MODEL;
+run;
+
+***** Trying w lists; 
+* Model 6 new bh variables; 
+%LET mod1_varlist = int int_imp time season1 season2 season3 
+                    age race sex budget_group fqhc rae_person_new 
+                    bh_2016 bh_2017 bh_2018 
+                    adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
+                    
+* Model 7 removed adj variables;
+%LET mod7_varlist = int int_imp time season1 season2 season3 age race sex budget_group fqhc rae_person_new bh_2016 bh_2017 bh_2018 ;
+
+* Model 8 removed age, adj_'s;
+%LET mod8_varlist = int int_imp time season1 season2 season3     race sex budget_group fqhc rae_person_new bh_2016 bh_2017 bh_2018 ;
+                    
+* Model 9 removed age, adj_'s;
+%LET mod9_varlist = int int_imp time season1 season2 season3     race sex budget_group fqhc rae_person_new bh_2016 bh_2017 bh_2018 ;
+%LET mod9_classlist = mcaid_id int(ref='0') int_imp(ref= '0')    race sex budget_group fqhc(ref= '0') rae_person_new
+       bh_2016(ref= '0')    bh_2017(ref= '0')     bh_2018(ref= '0')
+       ind_pc_cost(ref= '0') ;
+
+TITLE "Probability Model: PC Cost"; 
+PROC GEE DATA  = data.mini_ds DESC;
+CLASS  &mod9_classlist;
+MODEL  ind_pc_cost = &mod9_varlist  / DIST=binomial LINK=logit ; 
+REPEATED SUBJECT = mcaid_id / type=exch ; 
+/*store p_MODEL;*/
+run;
+
+TITLE "Probability Model: PC Cost"; 
+PROC GEE DATA  = &dat DESC;
+CLASS  mcaid_id   
+       int(ref= '0')        int_imp(ref= '0')
+/*       age    (ref= '1')    */
+       race                 sex            
+       budget_group         
+       fqhc(ref= '0')        rae_person_new
+       bh_2016(ref= '0')    bh_2017(ref= '0')     bh_2018(ref= '0')
+/*     bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')*/
+/*     bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')*/
+/*     bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')*/
+/*       adj_pd_total_16cat(ref='-1')  */
+/*       adj_pd_total_17cat(ref='-1')   */
+/*       adj_pd_total_18cat(ref='-1')*/
+       ind_pc_cost       (ref= '0') ;
+MODEL  ind_pc_cost = &mod9_varlist        / DIST=binomial LINK=logit ; 
 REPEATED SUBJECT = mcaid_id / type=exch ; 
 store p_MODEL;
 run;

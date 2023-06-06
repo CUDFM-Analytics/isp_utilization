@@ -2,10 +2,12 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization Analysis
 PURPOSE  : Gather, Process datasets from analytic subset dir, Create final analysis dataset and mini dataset
-VERSION  : 2023-06-05
+VERSION  : 2023-06-06
            - updated 5/30 due to issues in the hcpf file and to get Sept 2022 since it's available now (cs email re: hcpf)
            - updated 06-01/2 bc ana.long & ana.demo were missing months
-           - combine bh cat variables into 1 bh cat var
+           - updated 6/5 to combine bh cat variables into 1 bh cat var
+           - updated 6/6 to check on the BH's by adding a total var and seeing
+                if any of them are wrong as I'm still getting Hessian errors
 DEPENDS  : -ana subset folder, config file, 
            -%include helper file in code/util_dataset_prep/incl_extract_check_fy19210.sas
            -other macro code referenced is stored in the util_00_config.sas file
@@ -665,7 +667,7 @@ ANALYSIS_DATASET_ALLCOLS =======================================================
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas"; 
 
-DATA analysis_dataset_allcols; 
+DATA raw.final_08; 
 SET  raw.final_07 (DROP = adj_total_pm adj_pc_pm adj_rx_pm) ; 
 FORMAT budget_group budget_grp_new_.
        race         $race_rc_.
@@ -673,17 +675,17 @@ FORMAT budget_group budget_grp_new_.
 RUN; 
 
 *** Add quarter variables, one with text for readability ; 
-DATA data.analysis_allcols;
-SET  analysis_dataset_allcols (RENAME=(bho_n_hosp_16pm = BH_Hosp16
-                                       bho_n_hosp_17pm = BH_Hosp17
-                                       bho_n_hosp_18pm = BH_Hosp18
-                                       bho_n_er_16pm   = BH_ER16
-                                       bho_n_er_17pm   = BH_ER17
-                                       bho_n_er_18pm   = BH_ER18
-                                       bho_n_other_16pm= BH_Oth16
-                                       bho_n_other_17pm= BH_Oth17
-                                       bho_n_other_18pm= BH_Oth18
-                                    ));
+DATA raw.final_09 ;
+SET  raw.final_08 (RENAME=(bho_n_hosp_16pm = BH_Hosp16
+                           bho_n_hosp_17pm = BH_Hosp17
+                           bho_n_hosp_18pm = BH_Hosp18
+                           bho_n_er_16pm   = BH_ER16
+                           bho_n_er_17pm   = BH_ER17
+                           bho_n_er_18pm   = BH_ER18
+                           bho_n_other_16pm= BH_Oth16
+                           bho_n_other_17pm= BH_Oth17
+                           bho_n_other_18pm= BH_Oth18
+                           ));
 
 ARRAY bh(*) BH_Hosp16  BH_Hosp17  BH_Hosp18
             BH_ER16    BH_ER17    BH_ER18
@@ -702,22 +704,6 @@ FORMAT budget_group budget_grp_new_.
 fyqrtr_txt = put(time,   fyqrtr_cat.); 
 fyqrtr     = input(time, fyqrtr_num.);
 
-RUN; 
-
-PROC SORT DATA = data.analysis_allcols;
-BY mcaid_id time; 
-RUN; 
-
-* 
-DATA.ANALYSIS ==============================================================================
-with effect coding
-===========================================================================================;
-DATA data.analysis; 
-SET  data.analysis_allcols (DROP = pcmp_loc_id
-                                   n_months_per_q
-                                   fyqrtr_txt
-                                   FY);
-* Effect coding > Create seasonal effect indicator values; 
 IF      fyqrtr  = 1  THEN season1 = 1 ;
 ELSE IF fyqrtr  = 4  THEN season1 = -1;
 ELSE    season1 = 0; 
@@ -730,18 +716,87 @@ IF      fyqrtr  = 3  THEN season3 = 1 ;
 ELSE IF fyqrtr  = 4  THEN season3 = -1;
 ELSE    season3 = 0;  
 
-RUN;   * DATA.ANALYSIS has 15104152 observations and 40 variables.;
+RUN; 
 
+PROC SORT DATA = raw.final_09;
+BY mcaid_id time; 
+RUN; 
 
-*** Create mini_ds; 
-* Extract 500000 records for testing / running bootstrap programs 
+* 
+DATA.ANALYSIS ==============================================================================
+with effect coding
+===========================================================================================;
+DATA data.analysis_allcols (DROP = i); 
+SET  raw.final_09 (DROP = pcmp_loc_id
+                          n_months_per_q
+                          fyqrtr_txt
+                          FY);
 
-* Get about a 1:10 ratio just so you make sure you have all variables
-100000 with intervention, 900000 without; 
+bh_2016 = 0; bh_2017=0; bh_2018=0;
+
+ARRAY bh16(*) bh_hosp16 bh_er16 bh_oth16;
+    DO i=1 to dim(bh16);
+    IF bh16(i) = 1 then bh_2016 = 1;
+END; 
+
+ARRAY bh17(*) bh_hosp17 bh_er17 bh_oth17;
+    DO i=1 to dim(bh17);
+    IF bh17(i) = 1 then bh_2017 = 1;
+END; 
+
+ARRAY bh18(*) bh_hosp18 bh_er18 bh_oth18;
+    DO i=1 to dim(bh18);
+    IF bh18(i) = 1 then bh_2018 = 1;
+END; 
+
+RUN;
+
+DATA data.analysis;
+SET  data.analysis_allcols (DROP = bh_hosp:
+                                   bh_er: 
+                                   bh_oth:
+                                   fyqrtr
+                            );
+LABEL adj_pd_total_16cat = 'Categorical pd_total FFS FY2016'
+      adj_pd_total_17cat = 'Categorical pd_total FFS FY2017'
+      adj_pd_total_18cat = 'Categorical pd_total FFS FY2018'
+      n_pc_pm            = 'PC Visits PMPQ'
+      n_ed_pm            = 'ED Visits PMPQ'
+      n_ffs_bh_pm        = 'FFS BH Visits PMPQ'
+      ind_pc_visit       = 'FFS PC Visit Count Positive'
+      ind_ed_visit       = 'BH plus FFS ED Visit Count Positive'
+      ind_ffs_bh_visit   = 'FFS BH Visit Count Positive'
+      ind_tel_visit      = 'Telehealth Visit Count Positive'
+      ind_total_cost     = 'FFS Total Cost Positive'
+      ind_pc_cost        = 'PC Cost Positive'
+      ind_rx_cost        = 'Rx Cost Positive'
+      adj_pd_total_tc    = 'FFS total Cost PMPQ'
+      adj_pd_pc_tc       = 'PC Cost PMPQ'
+      adj_pd_rx_tc       = 'Rx Cost PMPQ'
+      season1            = 'Effect Coding FYQ1'
+      season2            = 'Effect Coding FYQ2'
+      season3            = 'Effect Coding FYQ3'
+      bh_2016            = 'FY16 Indicator of any bh_other bh_er bh_hosp'
+      bh_2017            = 'FY17 Indicator of any bh_other bh_er bh_hosp'
+      bh_2018            = 'FY18 Indicator of any bh_other bh_er bh_hosp';
+RUN; * down to 33 variables; 
+
+* 
+DATA.MINI_DS ==============================================================================
+VERSION 06/05 
+Reduced, testing dataset of 500k records from data.analysis with same int proportion
+Step 1: ds has to be sorted on grouping var
+Step 2: specify nrow, allocation, and strata
+Step 3: Check frequency to test
+
+06/05 Passed check
+===========================================================================================;
+* Step 1;
 proc sort data = data.analysis;
 by int ;
 run;
 
+* Step 2;
 PROC SURVEYSELECT 
 DATA = data.analysis
 n    = 500000
@@ -749,6 +804,7 @@ OUT  = data.mini_ds;
 STRATA int / alloc=prop;
 RUN;
 
+* Step 3; 
 PROC FREQ DATA = data.mini_ds;
 tables int; 
 run;

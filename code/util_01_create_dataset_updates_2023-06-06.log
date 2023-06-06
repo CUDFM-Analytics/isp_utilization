@@ -1,0 +1,744 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.80 seconds
+      cpu time            1.09 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_analysis
+NOTE: Libref EDA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_eda_tests
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: SASUSER.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.59 seconds
+      cpu time            0.32 seconds
+
+
+146  PROC CONTENTS DATA = data.analysis VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.23 seconds
+      cpu time            0.04 seconds
+
+
+147  *** SHORT VERSION stops at row 52
+148  Comment that line out and run whole thing for long version;
+149
+150  %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+SYMBOLGEN:  Macro variable OUT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/results_util_analysis
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_analysis
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+SYMBOLGEN:  Macro variable EDA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/results_util_eda_tests
+NOTE: Libref EDA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_eda_tests
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+NOTE: Format PCTFMT is already on the library WORK.FORMATS.
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: SASUSER.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+295
+296  %let dat = data.analysis;
+297  /*%let all = data.analysis_allcols; */
+298
+299  OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+300  %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1,
+301               %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))-
+301! 6); *remove \Code\;
+302
+303  %LET script  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1,
+304                 %length(%sysget(SAS_EXECFILEPATH))-4);
+305
+306  %LET today = %SYSFUNC(today(), YYMMDD10.);
+307
+308  %LET log   = &script._&today..log;
+SYMBOLGEN:  Macro variable SCRIPT resolves to
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_03b_ed
+            a_export_pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have
+            been unquoted for printing.
+SYMBOLGEN:  Macro variable TODAY resolves to 2023-06-06
+309  %LET pdf   = &script._&today..pdf;
+SYMBOLGEN:  Macro variable SCRIPT resolves to
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_03b_ed
+            a_export_pdf
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have
+            been unquoted for printing.
+SYMBOLGEN:  Macro variable TODAY resolves to 2023-06-06
+310
+311  PROC PRINTTO LOG = "&log" NEW; RUN;
+SYMBOLGEN:  Macro variable LOG resolves to
+            S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_03b_ed
+            a_export_pdf_2023-06-06.log
+SYMBOLGEN:  Some characters in the above value which were subject to macro quoting have
+            been unquoted for printing.
+
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+342  %INCLUDE
+342! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sa
+342! s";
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+SYMBOLGEN:  Macro variable OUT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/results_uti
+            l_analysis
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_anal
+      ysis
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+SYMBOLGEN:  Macro variable EDA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/results_uti
+            l_eda_tests
+NOTE: Libref EDA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_eda_
+      tests
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+NOTE: Format PCTFMT is already on the library WORK.FORMATS.
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: SASUSER.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+487
+488  %let dat = data.analysis;
+489  PROC PRINT DATA = &dat;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis
+490  where time eq .;
+491  RUN;
+
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           49.16 seconds
+      cpu time            1.12 seconds
+
+
+492  DATA no_time_var;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis
+493  SET  &dat;
+494  WHERE time eq . ;
+495  RUN;
+
+NOTE: There were 0 observations read from the data set DATA.ANALYSIS.
+      WHERE time=.;
+NOTE: The data set WORK.NO_TIME_VAR has 0 observations and 43 variables.
+NOTE: DATA statement used (Total process time):
+      real time           48.86 seconds
+      cpu time            1.31 seconds
+
+
+496  PROC SQL;
+497  CREATE TABLE data.analysis_meta AS
+498  SELECT name as variable
+499       , type
+500       , length
+501       , label
+502       , format
+503       , informat
+504  FROM sashelp.vcolumn
+505  WHERE LIBNAME = 'DATA'
+506  AND   MEMNAME = 'ANALYSIS';
+NOTE: Table DATA.ANALYSIS_META created, with 43 rows and 6 columns.
+
+507  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.39 seconds
+      cpu time            0.04 seconds
+
+
+508
+509  PROC PRINT DATA = data.analysis_meta NOOBS; RUN;
+
+NOTE: There were 43 observations read from the data set DATA.ANALYSIS_META.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+
+510  ***********************************************************************************
+510! ***********
+511  AUTHOR   : KTW
+512  PROJECT  : ISP Utilization Analysis
+513  PURPOSE  : configs
+514  VERSION  : 2023-03-16 [date last updated]
+515  FILE/S   : 1) ISP-CTLP_Model_specifications.docx
+516  NOTES    : See ../../_rchive_utilization for LOGS and all archived docs, ds, code,
+516! etc
+517  GIT      : github organization DFM, `isp_utilization
+518
+519  LOG
+520  2023-03-16 Moved all archived/outdated files to Kim/_rchive_utilization due to new
+520! spec file from MG
+521  2023-05-30 Updated macro for quarter to incude qrtr 13, Jul-Sept 2022;
+522  ***********************************************************************************
+522! ************;
+523
+524  * SOM DIR
+524! -----------------------------------------------------------------------------------
+524! --;
+525      %LET hcpf     = S:/FHPC/DATA/HCPF_Data_files_SECURE;
+526
+527  * PROJECT ROOT DIR
+527! ----------------------------------------------------------------------------;
+528        %LET util = &hcpf/Kim/isp/isp_utilization;
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+529
+530      * DATA
+531        |--data           [libname 'data': stores final analytic dataset and other
+531! data folders]
+532           |--_raw`       [libname 'raw' : raw, read-only files to be prepped then
+532! stored in /interim]
+533           |--interim     [libname 'int' : intermediate ds used to make final
+533! analytic ds or eda]
+534           |--results     [libname 'out' : results tables, get exported to ../results
+535        ;
+536
+537        %LET data = &util/data;   LIBNAME data "&data";
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+538        %LET raw = &data/_raw;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+539  /*        LIBNAME raw "&raw"; *comment out/ in as needed; */
+540        %LET int = &data/interim;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+541          LIBNAME int "&int";
+SYMBOLGEN:  Macro variable INT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/interim
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+542
+543        %LET out = &data/results_util_analysis;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+544          LIBNAME out "&out";
+SYMBOLGEN:  Macro variable OUT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/results_uti
+            l_analysis
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_anal
+      ysis
+545        %LET eda = &data/results_util_eda_tests;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+546          LIBNAME eda "&eda";
+SYMBOLGEN:  Macro variable EDA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/results_uti
+            l_eda_tests
+NOTE: Libref EDA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_eda_
+      tests
+547
+548      * export folder for excel files output;
+549        %LET report = &util/reports;
+SYMBOLGEN:  Macro variable UTIL resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization
+550
+551        %LET raw = &data/_raw;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+552  /*        LIBNAME raw "&raw";*/
+553
+554  * EXT DATA SOURCES
+554! ---------------------------------------------------------------------------;
+555
+556      * Medicaid dats: keep attached for formats (until/if final fmts copied);
+557        %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+558       * LIBNAME ana "&ana";
+559
+560  * PROJECT-WIDE GLOBAL OPTIONS
+560! ----------------------------------------------------------;
+561
+562   OPTIONS NOFMTERR
+563           MPRINT MLOGIC SYMBOLGEN
+564           FMTSEARCH =(ana, datasets, data, util, work);
+565
+566  %macro nodupkey(ds, out);
+567  PROC SORT DATA = &ds NODUPKEY OUT=&out; BY _ALL_ ; RUN;
+568  %mend;
+569
+570  %macro missing(ds=);
+571  proc format;
+572   value $missfmt ' '='Missing' other='Not Missing';
+573   value  missfmt  . ='Missing' other='Not Missing';
+574  run;
+575  proc freq data=&ds;
+576  format _CHAR_ $missfmt.; /* apply format for the duration of this PROC */
+577  tables _CHAR_ / missing missprint nocum nopercent;
+578  format _NUMERIC_ missfmt.;
+579  tables _NUMERIC_ / missing missprint nocum nopercent;
+580  run;
+581  %mend;
+582
+583  %macro concat_id_time(ds=);
+584  DATA &ds;
+585  SET  &ds;
+586  id_time_helper = CATX('_', mcaid_id, time);
+587  RUN;
+588  %mend;
+589
+590   %macro check_ids_n13(ds=);
+591              proc sql;
+592              create table n_ids_&ds AS
+593              select mcaid_id
+594                   , count(mcaid_id) as n_ids
+595              FROM &ds
+596              GROUP BY mcaid_ID
+597              having n_ids>13;
+598              quit;
+599   %mend;
+600
+601  %macro sort4merge(ds1=,ds2=,by=);
+602  PROC SORT DATA = &ds1; by &by;
+603  PROC SORT DATA = &ds2; by &by;
+604  RUN;
+605  %mend;
+606
+607  %macro create_qrtr(data=,set=,var=,qrtr=);
+608  data &data;
+609  set  &set;
+610  if &var in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then &qrtr = 1;
+611  if &var in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then &qrtr = 2;
+612  if &var in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then &qrtr = 3;
+613  if &var in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then &qrtr = 4;
+614  if &var in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then &qrtr = 5;
+615  if &var in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then &qrtr = 6;
+616  if &var in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then &qrtr = 7;
+617  if &var in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then &qrtr = 8;
+618  if &var in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then &qrtr = 9;
+619  if &var in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then &qrtr = 10;
+620  if &var in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then &qrtr = 11;
+621  if &var in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then &qrtr = 12;
+622  if &var in ('01JUL2022'd , '01AUG2022'd , '01SEP2022'd ) then &qrtr = 13;
+623  run;
+624  %mend create_qrtr;
+625
+626
+627
+628  proc format;
+629   picture pctfmt (round) other="009.99%";
+NOTE: Format PCTFMT is already on the library WORK.FORMATS.
+NOTE: Format PCTFMT has been output.
+630  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+631
+632  proc template;
+633   edit Base.Freq.OneWayList;
+634   edit h1;
+635   text VARLABEL;
+636   end;
+637   edit frequency;
+638   header="Count";
+639   format=comma12.;
+640   end;
+641   edit cumfrequency;
+642   header="Cumulative Count";
+643   format=comma12.;
+644   end;
+645   edit percent;
+646   header="Pct";
+647   format=pctfmt.;
+648   end;
+649   edit cumpercent;
+650   format=pctfmt.;
+651   end;
+652   end;
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: SASUSER.TEMPLAT
+653  run;
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.01 seconds
+
+
+654  %INCLUDE
+654! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_fo
+654! rmats.sas";
+NOTE: Format FYQRTR_CAT is already on the library DATA.FORMATS.
+NOTE: Format FYQRTR_CAT has been written to DATA.FORMATS.
+NOTE: Informat FYQRTR_NUM is already on the library DATA.FORMATS.
+NOTE: Informat FYQRTR_NUM has been output.
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+NOTE: Format $AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format $AGE_CAT_ has been written to DATA.FORMATS.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+723        %LET raw = &data/_raw;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+724          LIBNAME raw "&raw"; *comment out/ in as needed;
+SYMBOLGEN:  Macro variable RAW resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/_raw
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+725        %LET int = &data/interim;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+726          LIBNAME int "&int";
+SYMBOLGEN:  Macro variable INT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/interim
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+727
+728  %INCLUDE
+728! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_fo
+728! rmats.sas";
+NOTE: Format FYQRTR_CAT is already on the library DATA.FORMATS.
+NOTE: Format FYQRTR_CAT has been written to DATA.FORMATS.
+NOTE: Informat FYQRTR_NUM is already on the library DATA.FORMATS.
+NOTE: Informat FYQRTR_NUM has been output.
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+NOTE: Format $AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format $AGE_CAT_ has been written to DATA.FORMATS.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+797
+798  DATA raw.final_08;
+799  SET  raw.final_07 (DROP = adj_total_pm adj_pc_pm adj_rx_pm) ;
+800  FORMAT budget_group budget_grp_new_.
+801         race         $race_rc_.
+802         age          age_cat_. ;
+803  RUN;
+
+NOTE: There were 15104152 observations read from the data set RAW.FINAL_07.
+NOTE: The data set RAW.FINAL_08 has 15104152 observations and 39 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:46.62
+      cpu time            3.37 seconds
+
+
+804
+805  *** Add quarter variables, one with text for readability ;
+806  DATA raw.final_09;
+807  SET  raw.final_08 (RENAME=(bho_n_hosp_16pm = BH_Hosp16
+808                             bho_n_hosp_17pm = BH_Hosp17
+809                             bho_n_hosp_18pm = BH_Hosp18
+810                             bho_n_er_16pm   = BH_ER16
+811                             bho_n_er_17pm   = BH_ER17
+812                             bho_n_er_18pm   = BH_ER18
+813                             bho_n_other_16pm= BH_Oth16
+814                             bho_n_other_17pm= BH_Oth17
+815                             bho_n_other_18pm= BH_Oth18
+816                             ));
+817
+818  ARRAY bh(*) BH_Hosp16  BH_Hosp17  BH_Hosp18
+819              BH_ER16    BH_ER17    BH_ER18
+820              BH_Oth16   BH_Oth17   BH_Oth18;
+821
+822  DO i=1 to dim(bh);
+823      IF bh(i)>0 THEN bh(i)=1;
+824      ELSE bh(i)=bh(i);
+825      END;
+826  DROP i;
+827
+828  FORMAT budget_group budget_grp_new_.
+829         race         $race_rc_.
+830         age          age_cat_. ;
+831
+832  fyqrtr_txt = put(time,   fyqrtr_cat.);
+833  fyqrtr     = input(time, fyqrtr_num.);
+834
+835  IF      fyqrtr  = 1  THEN season1 = 1 ;
+836  ELSE IF fyqrtr  = 4  THEN season1 = -1;
+837  ELSE    season1 = 0;
+838
+839  IF      fyqrtr  = 2  THEN season2 = 1 ;
+840  ELSE IF fyqrtr  = 4  THEN season2 = -1;
+841  ELSE    season2 = 0;
+842
+843  IF      fyqrtr  = 3  THEN season3 = 1 ;
+844  ELSE IF fyqrtr  = 4  THEN season3 = -1;
+845  ELSE    season3 = 0;
+846
+847  RUN;
+
+NOTE: Numeric values have been converted to character values at the places given by:
+      (Line):(Column).
+      833:20
+NOTE: There were 15104152 observations read from the data set RAW.FINAL_08.
+NOTE: The data set RAW.FINAL_09 has 15104152 observations and 44 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:47.64
+      cpu time            9.25 seconds
+
+
+848
+849  PROC SORT DATA = raw.final_09;
+850  BY mcaid_id time;
+851  RUN;
+
+NOTE: There were 15104152 observations read from the data set RAW.FINAL_09.
+NOTE: The data set RAW.FINAL_09 has 15104152 observations and 44 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:56.77
+      cpu time            15.06 seconds
+
+
+852  DATA data.analysis_allcols (DROP = i);
+853  SET  raw.final_09 (DROP = pcmp_loc_id
+854                            n_months_per_q
+855                            fyqrtr_txt
+856                            FY);
+857
+858  bh_2016 = 0; bh_2017=0; bh_2018=0;
+859
+860  ARRAY bh16(*) bh_hosp16 bh_er16 bh_oth16;
+861      DO i=1 to dim(bh16);
+862      IF bh16(i) = 1 then bh_2016 = 1;
+863  END;
+864
+865  ARRAY bh17(*) bh_hosp17 bh_er17 bh_oth17;
+866      DO i=1 to dim(bh17);
+867      IF bh17(i) = 1 then bh_2017 = 1;
+868  END;
+869
+870  ARRAY bh18(*) bh_hosp18 bh_er18 bh_oth18;
+871      DO i=1 to dim(bh18);
+872      IF bh18(i) = 1 then bh_2018 = 1;
+873  END;
+874
+875  RUN;
+
+NOTE: There were 15104152 observations read from the data set RAW.FINAL_09.
+NOTE: The data set DATA.ANALYSIS_ALLCOLS has 15104152 observations and 43 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:07.02
+      cpu time            7.10 seconds
+
+
+876  PROC CONTENTS DATA = data.analysis_allcols VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+
+
+877  DATA data.analysis;
+878  SET  data.analysis_allcols (DROP = bh_hosp:
+879                                     bh_er:
+880                                     bh_oth:
+881                                     fyqrtr
+882                              );
+883  LABEL adj_pd_total_16cat = 'Categorical pd_total FFS FY2016'
+884        adj_pd_total_17cat = 'Categorical pd_total FFS FY2017'
+885        adj_pd_total_18cat = 'Categorical pd_total FFS FY2018'
+886        n_pc_pm            = 'PC Visits PMPQ'
+887        n_ed_pm            = 'ED Visits PMPQ'
+888        n_ffs_bh_pm        = 'FFS BH Visits PMPQ'
+889        ind_pc_visit       = 'FFS PC Visit Count Positive'
+890        ind_ed_visit       = 'BH plus FFS ED Visit Count Positive'
+891        ind_ffs_bh_visit   = 'FFS BH Visit Count Positive'
+892        ind_tel_visit      = 'Telehealth Visit Count Positive'
+893        ind_total_cost     = 'FFS Total Cost Positive'
+894        ind_pc_cost        = 'PC Cost Positive'
+895        ind_rx_cost        = 'Rx Cost Positive'
+896        adj_pd_total_tc    = 'FFS total Cost PMPQ'
+897        adj_pd_pc_tc       = 'PC Cost PMPQ'
+898        adj_pd_rx_tc       = 'Rx Cost PMPQ'
+899        season1            = 'Effect Coding FYQ1'
+900        season2            = 'Effect Coding FYQ2'
+901        season3            = 'Effect Coding FYQ3'
+902        bh_2016            = 'FY16 Indicator of any bh_other bh_er bh_hosp'
+903        bh_2017            = 'FY17 Indicator of any bh_other bh_er bh_hosp'
+904        bh_2018            = 'FY18 Indicator of any bh_other bh_er bh_hosp';
+905  RUN;
+
+NOTE: There were 15104152 observations read from the data set DATA.ANALYSIS_ALLCOLS.
+NOTE: The data set DATA.ANALYSIS has 15104152 observations and 33 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:34.36
+      cpu time            3.29 seconds
+
+
+906
+907  *
+908  DATA.MINI_DS
+908! ==============================================================================
+909  VERSION 06/05
+910  Reduced, testing dataset of 500k records from data.analysis with same int
+910! proportion
+911  Step 1: ds has to be sorted on grouping var
+912  Step 2: specify nrow, allocation, and strata
+913  Step 3: Check frequency to test
+914
+915  06/05 Passed check
+916  ===================================================================================
+916! ========;
+917  * Step 1;
+918  proc sort data = data.analysis;
+919  by int ;
+920  run;
+
+NOTE: There were 15104152 observations read from the data set DATA.ANALYSIS.
+NOTE: The data set DATA.ANALYSIS has 15104152 observations and 33 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:28.06
+      cpu time            11.21 seconds
+
+
+921
+922  * Step 2;
+923  PROC SURVEYSELECT
+924  DATA = data.analysis
+925  n    = 500000
+926  OUT  = data.mini_ds;
+927  STRATA int / alloc=prop;
+928  RUN;
+
+NOTE: The data set DATA.MINI_DS has 500000 observations and 39 variables.
+NOTE: PROCEDURE SURVEYSELECT used (Total process time):
+      real time           41.02 seconds
+      cpu time            4.42 seconds
+
+
+929
+930  * Step 3;
+931  PROC FREQ DATA = data.mini_ds;
+932  tables int;
+933  run;
+
+NOTE: There were 500000 observations read from the data set DATA.MINI_DS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.50 seconds
+      cpu time            0.01 seconds
+
+
