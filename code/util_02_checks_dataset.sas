@@ -1,5 +1,6 @@
-
-
+PROC FREQ DATA=raw.final_02; 
+table age; 
+RUN; * 398705 missing...;
 
 PROC SQL ; 
 SELECT count(mcaid_id) as n

@@ -111,7 +111,7 @@ if &var in ('01JUL2022'd , '01AUG2022'd , '01SEP2022'd ) then &qrtr = 13;
 run;
 %mend create_qrtr;
 
-
+ods path(prepend) work.templat(update);
 
 proc format;
  picture pctfmt (round) other="009.99%";
