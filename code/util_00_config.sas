@@ -48,7 +48,7 @@ LOG
 * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------; 
 
  OPTIONS NOFMTERR
-         MPRINT MLOGIC
+/*         MPRINT MLOGIC*/
          FMTSEARCH =(ana, datasets, data, util, work);
 
 %macro nodupkey(ds, out);

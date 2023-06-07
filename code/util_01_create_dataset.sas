@@ -40,27 +40,17 @@ run;
 ===========================================================================================;
 DATA   raw.qrylong_00;
 LENGTH mcaid_id $11; 
-SET    ana.qry_longitudinal ( DROP = FED_POV: 
-                                     DISBLD_IND 
-                                     aid_cd:
-                                     title19: 
-                                     SPLM_SCRTY_INCM_IND
-                                     SSI_: 
-                                     SS: 
-                                     dual
-                                     eligGrp
-                                     fost_aid_cd
-                              ) ;  
-
+SET    ana.qry_longitudinal (WHERE=(month ge '01Jul2016'd AND month le '30Sep2022'd 
+							 		AND BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
+                             		AND managedCare = 0
+							 		AND pcmp_loc_id ne ' ') 
+							 DROP = FED_POV: DISBLD_IND aid_cd: title19: SPLM_SCRTY_INCM_IND
+                                    SSI_: SS: dual eligGrp fost_aid_cd) ;  
 format dt_qrtr date9.; 
 dt_qrtr = intnx('quarter', month ,0,'b'); 
-
-WHERE  month ge '01Jul2016'd 
-AND    month le '30Sep2022'd 
-AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
-AND    managedCare = 0
-AND    pcmp_loc_id ne ' ';
-RUN;  *6/06 75691244;
+FY      = year(intnx('year.7', month, 0, 'BEGINNING'));
+PCMP2   = input(pcmp_loc_id, best12.); DROP pcmp_loc_id; RENAME pcmp2 = pcmp_loc_id; 
+RUN;  *6/07 75691244;
 
 * 
 INT.PCMP_DIM ==============================================================================
@@ -74,7 +64,6 @@ DATA pcmp_type_qrylong ;
 SET  raw.qrylong_00   (KEEP = pcmp_loc_id  pcmp_loc_type_cd pcmp_loc_type_cd 
                        WHERE= (pcmp_loc_id ne ' '));
 num_pcmp_type = input(pcmp_loc_type_cd, 7.);
-pcmp_loc2     = input(pcmp_loc_id, best12.); DROP pcmp_loc_id; RENAME pcmp_loc2=pcmp_loc_id;
 RUN ; 
 
 PROC SORT DATA = pcmp_type_qrylong NODUPKEY ; BY _ALL_ ; RUN ; *4/26 1446 obs;
@@ -86,10 +75,12 @@ RUN; *1449;
 
 * 
 [RAW.QRYLONG_01]======================================================================
-Joins member demographics and rae dim to:
+Joins ana.qry_demographics, raw.age_dim, and rae_dim
+Purpose:
 1. Get rae_person_new on enr_county (from qrylong)
 2. Demographic vars: dob(for calculating age/subsetting members 0-64), gender, race
 3. Subset sex M, F
+4. Get dob to calculate ages (subsetting var)
 ===========================================================================================;
 PROC SQL; 
 CREATE TABLE raw.qrylong_01 AS
@@ -133,6 +124,7 @@ Extract dob to get age as of the 2nd month in each quarter
 1. Used in subsetting dataset
 2. Used to create age_cat
 ===========================================================================================;
+* Get distinct mcaid_id and dob;
 PROC SQL;
 CREATE TABLE age_dim0 AS 
 SELECT distinct(mcaid_id) as mcaid_id
@@ -140,7 +132,7 @@ SELECT distinct(mcaid_id) as mcaid_id
 FROM raw.qrylong_01;
 QUIT; 
 
-* Get all 13 values; 
+* Find / List all 13 2nd month of quarter values; 
 PROC SQL NOPRINT;
 SELECT month INTO :qm2 separated by ' '
 FROM  raw.timeframe_dim
@@ -149,6 +141,9 @@ QUIT;
 
 %PUT &qm2;
 
+* I could not for the life of me find a way to do this from the macro values and had to get moving
+but I'm sure there's a better way to do this? 
+Need age at month 2 of each quarter;
 DATA age_dim1 (DROP=m2q:);
 SET  age_dim0;
 m2q1 = MDY(8,1,2019);
@@ -181,34 +176,39 @@ age_m2q12  = floor((intck('month', dob, m2q12)-(day(m2q12) < min(day(dob), day(i
 age_m2q13  = floor((intck('month', dob, m2q13)-(day(m2q13) < min(day(dob), day(intnx('month', m2q13, 1) -1)))) /12);
 RUN;
 
-DATA age_dim2;
+* Transpose to long format, subset age 0-64;
+DATA age_dim2 (WHERE=(age ge 0 AND age lt 65));
 SET  age_dim1;
 ARRAY aage(1:13) age_m2q1-age_m2q13;
-DO time_qm2 = 1 to 13;
-	age = aage(time_qm2);
+DO time = 1 to 13;
+	age = aage(time);
 	OUTPUT;
 END; 
-DROP age_m2q1-age_m2q13;
+DROP dob age_m2q1-age_m2q13;
 RUN; 
 
+PROC MEANS DATA=age_dim2;
+VAR age;
+RUN; 
+
+PROC SQL; 
+CREATE TABLE raw.age_dim_lt65 AS
+SELECT a.*
+	 , b.FY
+FROM age_dim2 				AS A
+LEFT JOIN raw.timeframe_dim AS B ON a.time=b.time;
+QUIT;
 
 * 
 [RAW.QRYLONG_02]======================================================================
-1. Calculate age, subset to 0-64
 2. Convert pcmp_loc_id to numeric
 3. Create FY variable
+nb this used to calculate age by end of FY, but if these two steps could go elsewhere that's fine
 ===========================================================================================;
-DATA raw.qrylong_02 (DROP = enr_cnty dob dt_end_19 dt_end_fy age_end_19 rename=(age_end_fy=age)); 
-SET  raw.qrylong_01 (KEEP=mcaid_id dob month;
+DATA raw.qrylong_02 (DROP = enr_cnty dob dt_end_19 dt_end_fy age_end_19); 
+SET  raw.qrylong_01;
 FORMAT dt_end_fy dt_end_19 date9.;
-FY          = year(intnx('year.7', month, 0, 'BEGINNING'));
-dt_end_fy   = mdy(6,30,(FY+1));
-dt_end_19   = mdy(6,30,2019);
-age_end_FY  = floor((intck('month', dob, dt_end_fy)-(day(dt_end_fy) < min(day(dob), day(intnx('month', dt_end_fy, 1) -1)))) /12);
-age_end_19  = floor((intck('month', dob, dt_end_19)-(day(dt_end_19) < min(day(dob), day(intnx('month', dt_end_19, 1) -1)))) /12);
-IF age_end_FY ge 65 then delete;
-IF age_end_19 ge 65 then delete;
-PCMP2 = input(pcmp_loc_id, best12.); DROP pcmp_loc_id; RENAME pcmp2 = pcmp_loc_id; 
+
 RUN; *6/02 72764997;
 
 * Create time variable from dt_qrtr; 
@@ -218,9 +218,11 @@ RUN; *6/02 72764997;
 [RAW.FINAL_00 & RAW.DEMO_1922]=======================================================================
 Subset to mcaid_id's that have an rae_assigned in FY's 19-22
 ===========================================================================================;
-DATA raw.final_00   (KEEP = mcaid_id month dt_qrtr FY time age)
-     raw.demo_1922  (KEEP = mcaid_id month dt_qrtr FY time sex race rae_person_new pcmp_loc_id budget_group);
-SET  raw.qrylong_02 (WHERE=(FY IN (2019, 2020, 2021, 2022) AND rae_person_new ne .));
+DATA raw.final_00   (WHERE=(FY IN (2019, 2020, 2021, 2022) AND rae_person_new ne .
+					 KEEP = mcaid_id month dt_qrtr FY time age))
+     raw.demo_1922  (WHERE=(FY IN (2019, 2020, 2021, 2022) AND rae_person_new ne .
+				     KEEP = mcaid_id month dt_qrtr FY time sex race rae_person_new pcmp_loc_id budget_group));
+SET  raw.qrylong_01;
 RUN; * both have 44102611; 
 
 * 
