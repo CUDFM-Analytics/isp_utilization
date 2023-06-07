@@ -23,7 +23,7 @@ SECTION3 : data.mini_ds (test set with only 500000 records) ;
 Import a .csv file I made with months, FY, FY quarters, and the linearized time var
 ===========================================================================================;
 PROC IMPORT FILE="&util./data/_raw/fy_q_dts_dim.csv"
-    OUT = raw.timeframe_dim
+    OUT = raw.time_dim
     DBMS=csv
     REPLACE;
 run; 
@@ -66,7 +66,7 @@ SET  raw.qrylong_00   (KEEP = pcmp_loc_id  pcmp_loc_type_cd pcmp_loc_type_cd
 num_pcmp_type = input(pcmp_loc_type_cd, 7.);
 RUN ; 
 
-PROC SORT DATA = pcmp_type_qrylong NODUPKEY ; BY _ALL_ ; RUN ; *4/26 1446 obs;
+PROC SORT DATA = pcmp_type_qrylong NODUPKEY ; BY _ALL_ ; RUN ; 
 
 DATA int.pcmp_dim;
 SET  pcmp_type_qrylong;
@@ -90,16 +90,20 @@ SELECT a.mcaid_id
      , a.enr_cnty
      , a.budget_group
      , a.dt_qrtr 
+	 , a.FY
      , b.dob
      , b.gender as sex
      , b.race
      , c.rae_id as rae_person_new
-FROM raw.qrylong_00         AS A 
-LEFT JOIN ana.qry_demographics  AS B ON a.mcaid_id=b.mcaid_id 
+	 , d.time
+	 , d.fy_qrtr
+FROM raw.qrylong_00             AS A 
+LEFT JOIN ana.qry_demographics  AS B ON a.mcaid_id = b.mcaid_id 
 LEFT JOIN int.rae_dim           AS C ON a.enr_cnty = c.hcpf_county_code_c
-WHERE  pcmp_loc_id ne ' '
+LEFT JOIN raw.time_dim			AS D on a.dt_qrtr  = d.month
+WHERE  pcmp_loc_id ne .
 AND    SEX IN ('F','M');
-QUIT;   *06-06 75690836 : 10 cols;
+QUIT;   *06-07 75690836 : 10 cols;
 
 PROC SQL; 
 SELECT count(distinct mcaid_id) as n_uniq_mcaid
@@ -115,7 +119,6 @@ SELECT count(distinct mcaid_id) as n_uniq_mcaid
 FROM raw.qrylong_01;
 QUIT; 
 
-%LET qry_01_nobs = 75690836;
 %LET qry_01_n_id = 2055853;
 
 * 
@@ -123,6 +126,7 @@ RAW.AGE_DIM ====================================================================
 Extract dob to get age as of the 2nd month in each quarter
 1. Used in subsetting dataset
 2. Used to create age_cat
+Will have to inner join these variables on qrylong eventually unless you subset it by this earlier
 ===========================================================================================;
 * Get distinct mcaid_id and dob;
 PROC SQL;
@@ -161,15 +165,15 @@ m2q12 = MDY(5,1,2022);
 m2q13 = MDY(8,1,2022);
 
 /*age  = floor((intck('month', dob, dt_end_fy)-(day(dt_end_fy) < min(day(dob), day(intnx('month', dt_end_fy, 1) -1)))) /12);*/
-age_m2q1  = floor((intck('month', dob, m2q1)-(day(m2q1) < min(day(dob), day(intnx('month', m2q1, 1) -1)))) /12);
-age_m2q2  = floor((intck('month', dob, m2q2)-(day(m2q2) < min(day(dob), day(intnx('month', m2q2, 1) -1)))) /12);
-age_m2q3  = floor((intck('month', dob, m2q3)-(day(m2q3) < min(day(dob), day(intnx('month', m2q3, 1) -1)))) /12);
-age_m2q4  = floor((intck('month', dob, m2q4)-(day(m2q4) < min(day(dob), day(intnx('month', m2q4, 1) -1)))) /12);
-age_m2q5  = floor((intck('month', dob, m2q5)-(day(m2q5) < min(day(dob), day(intnx('month', m2q5, 1) -1)))) /12);
-age_m2q6  = floor((intck('month', dob, m2q6)-(day(m2q6) < min(day(dob), day(intnx('month', m2q6, 1) -1)))) /12);
-age_m2q7  = floor((intck('month', dob, m2q7)-(day(m2q7) < min(day(dob), day(intnx('month', m2q7, 1) -1)))) /12);
-age_m2q8  = floor((intck('month', dob, m2q8)-(day(m2q8) < min(day(dob), day(intnx('month', m2q8, 1) -1)))) /12);
-age_m2q9  = floor((intck('month', dob, m2q9)-(day(m2q9) < min(day(dob), day(intnx('month', m2q9, 1) -1)))) /12);
+age_m2q1   = floor((intck('month', dob, m2q1)-(day(m2q1) < min(day(dob), day(intnx('month', m2q1, 1) -1)))) /12);
+age_m2q2   = floor((intck('month', dob, m2q2)-(day(m2q2) < min(day(dob), day(intnx('month', m2q2, 1) -1)))) /12);
+age_m2q3   = floor((intck('month', dob, m2q3)-(day(m2q3) < min(day(dob), day(intnx('month', m2q3, 1) -1)))) /12);
+age_m2q4   = floor((intck('month', dob, m2q4)-(day(m2q4) < min(day(dob), day(intnx('month', m2q4, 1) -1)))) /12);
+age_m2q5   = floor((intck('month', dob, m2q5)-(day(m2q5) < min(day(dob), day(intnx('month', m2q5, 1) -1)))) /12);
+age_m2q6   = floor((intck('month', dob, m2q6)-(day(m2q6) < min(day(dob), day(intnx('month', m2q6, 1) -1)))) /12);
+age_m2q7   = floor((intck('month', dob, m2q7)-(day(m2q7) < min(day(dob), day(intnx('month', m2q7, 1) -1)))) /12);
+age_m2q8   = floor((intck('month', dob, m2q8)-(day(m2q8) < min(day(dob), day(intnx('month', m2q8, 1) -1)))) /12);
+age_m2q9   = floor((intck('month', dob, m2q9)-(day(m2q9) < min(day(dob), day(intnx('month', m2q9, 1) -1)))) /12);
 age_m2q10  = floor((intck('month', dob, m2q10)-(day(m2q10) < min(day(dob), day(intnx('month', m2q10, 1) -1)))) /12);
 age_m2q11  = floor((intck('month', dob, m2q11)-(day(m2q11) < min(day(dob), day(intnx('month', m2q11, 1) -1)))) /12);
 age_m2q12  = floor((intck('month', dob, m2q12)-(day(m2q12) < min(day(dob), day(intnx('month', m2q12, 1) -1)))) /12);
@@ -187,12 +191,8 @@ END;
 DROP dob age_m2q1-age_m2q13;
 RUN; 
 
-PROC MEANS DATA=age_dim2;
-VAR age;
-RUN; 
-
 PROC SQL; 
-CREATE TABLE raw.age_dim_lt65 AS
+CREATE TABLE raw.age_dim AS
 SELECT a.*
 	 , b.FY
 FROM age_dim2 				AS A
@@ -200,37 +200,31 @@ LEFT JOIN raw.timeframe_dim AS B ON a.time=b.time;
 QUIT;
 
 * 
-[RAW.QRYLONG_02]======================================================================
-2. Convert pcmp_loc_id to numeric
-3. Create FY variable
-nb this used to calculate age by end of FY, but if these two steps could go elsewhere that's fine
+[RAW.QRYLONG_02] ==============================================================================
+Limit ds to members id's found in age_dim
 ===========================================================================================;
-DATA raw.qrylong_02 (DROP = enr_cnty dob dt_end_19 dt_end_fy age_end_19); 
-SET  raw.qrylong_01;
-FORMAT dt_end_fy dt_end_19 date9.;
-
-RUN; *6/02 72764997;
-
-* Create time variable from dt_qrtr; 
-%create_qrtr(data=raw.qrylong_02, set=raw.qrylong_02, var=dt_qrtr, qrtr=time);
+PROC SQL;
+CREATE TABLE raw.qrylong_02 AS 
+SELECT * FROM raw.qrylong_01
+WHERE mcaid_id IN (SELECT mcaid_id FROM raw.age_dim);
+QUIT; *73274762;
 
 * 
 [RAW.FINAL_00 & RAW.DEMO_1922]=======================================================================
 Subset to mcaid_id's that have an rae_assigned in FY's 19-22
 ===========================================================================================;
-DATA raw.final_00   (WHERE=(FY IN (2019, 2020, 2021, 2022) AND rae_person_new ne .
-					 KEEP = mcaid_id month dt_qrtr FY time age))
-     raw.demo_1922  (WHERE=(FY IN (2019, 2020, 2021, 2022) AND rae_person_new ne .
-				     KEEP = mcaid_id month dt_qrtr FY time sex race rae_person_new pcmp_loc_id budget_group));
-SET  raw.qrylong_01;
-RUN; * both have 44102611; 
+DATA raw.final_00   (KEEP = mcaid_id month dt_qrtr FY time)
+     raw.demo_1922  (KEEP = mcaid_id month dt_qrtr FY time sex race rae_person_new pcmp_loc_id budget_group);
+SET  raw.qrylong_02 (WHERE=(FY IN (2019, 2020, 2021, 2022) AND rae_person_new ne .));
+RUN; *06/07: both have 44600909
+06/05 both have 44102611; 
 
 * 
-[RAW.QRYLONG_03]=======================================================================
-Subset to mcaid_id's that have an rae_assigned in FY's 19-22
+[RAW.QRYLONG_02]=======================================================================
+Subset raw.qrylong_02 to mcaid_id's that have an rae_assigned in FY's 19-22 and are in age_dim table
 ===========================================================================================;
 PROC SQL;
-CREATE TABLE raw.qrylong_03 AS 
+CREATE TABLE raw.qrylong_02 AS 
 SELECT mcaid_id
      , month
      , dt_qrtr
