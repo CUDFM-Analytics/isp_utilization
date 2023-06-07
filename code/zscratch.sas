@@ -1,5 +1,8 @@
-PROC FREQ DATA = raw.pcmp_type2;
+PROC FREQ DATA = raw.qrylong_02;
 tables pcmp_loc_type_cd fqhc; 
+run; 
+
+PROC PRINT DATA = &dat (obs=100);
 run; 
 
 DATA no_time_var;
@@ -8,7 +11,7 @@ WHERE time eq . ;
 RUN; 
 
 PROC PRINT DATA = &dat;
-where time eq .;
+where mcaid_id = "G521194";
 RUN; 
 
 

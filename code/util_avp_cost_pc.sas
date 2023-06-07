@@ -39,68 +39,114 @@ RUN;
 %LET pvar = ind_pc_cost;
 %LET cvar = adj_pd_pc_tc;
 
-proc contents data = &dat; run;
+proc contents data = &dat varnum; run;
 
-TITLE "Probability Model: PC Cost"; 
-PROC GEE DATA  = &dat DESC;
-CLASS  mcaid_id   
-       int    (ref= '0')    int_imp(ref= '0')
-/*       age    (ref= '1')    */
-       race                  sex            
-       budget_group         
-       fqhc(ref= '0')        rae_person_new
-       bh_2016(ref= '0')    bh_2017(ref= '0')     bh_2018(ref= '0')
-/*     bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')*/
-/*     bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')*/
-/*     bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')*/
-/*       adj_pd_total_16cat(ref='-1')  */
-/*       adj_pd_total_17cat(ref='-1')   */
-/*       adj_pd_total_18cat(ref='-1')*/
-       ind_pc_cost       (ref= '0') ;
-MODEL  ind_pc_cost = time       season1     season2    season3
-                     int        int_imp 
-/*                     age        */
-                     race        sex       
-                     budget_group           
-                     fqhc       rae_person_new 
-                     bh_2016    bh_2017     bh_2018
-/*                   bh_er16    bh_er17     bh_er18*/
-/*                   bh_hosp16  bh_hosp17   bh_hosp18*/
-/*                   bh_oth16   bh_oth17    bh_oth18    */
-/*                     adj_pd_total_16cat  */
-/*                     adj_pd_total_17cat  */
-/*                     adj_pd_total_18cat     */
-        / DIST=binomial LINK=logit ; 
-REPEATED SUBJECT = mcaid_id / type=exch ; 
-store p_MODEL;
-run;
-
-***** Trying w lists; 
-* Model 6 new bh variables; 
-%LET mod1_varlist = int int_imp time season1 season2 season3 
+** VARLISTS for models ran; 
+* Model 1 w/new bh variables; 
+%LET mod1_varlist = int int_imp time 
+                    season1 season2 season3 
                     age race sex budget_group fqhc rae_person_new 
                     bh_2016 bh_2017 bh_2018 
                     adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
                     
 * Model 7 removed adj variables;
-%LET mod7_varlist = int int_imp time season1 season2 season3 age race sex budget_group fqhc rae_person_new bh_2016 bh_2017 bh_2018 ;
+%LET mod7_varlist = int int_imp time season1 season2 season3 
+                    age race sex budget_group fqhc rae_person_new 
+                    bh_2016 bh_2017 bh_2018 ;
 
-* Model 8 removed age, adj_'s;
-%LET mod8_varlist = int int_imp time season1 season2 season3     race sex budget_group fqhc rae_person_new bh_2016 bh_2017 bh_2018 ;
+* Model 8 removed age;
+%LET mod8_varlist = int int_imp time season1 season2 season3 
+                        race sex budget_group fqhc rae_person_new 
+                    bh_2016 bh_2017 bh_2018 ;
                     
-* Model 9 removed age, adj_'s;
-%LET mod9_varlist = int int_imp time season1 season2 season3     race sex budget_group fqhc rae_person_new bh_2016 bh_2017 bh_2018 ;
-%LET mod9_classlist = mcaid_id int(ref='0') int_imp(ref= '0')    race sex budget_group fqhc(ref= '0') rae_person_new
-       bh_2016(ref= '0')    bh_2017(ref= '0')     bh_2018(ref= '0')
-       ind_pc_cost(ref= '0') ;
+* Model 9: KEEP age, DROP bh_2016, bh_2017, adj_...16, adj_...17;
+%LET mod9_varlist = int     int_imp     time    season1     season2     season3 
+                    age     race sex    budget_group        fqhc        rae_person_new 
+                    bh_2018 adj_pd_total_18cat;
 
-TITLE "Probability Model: PC Cost"; 
-PROC GEE DATA  = data.mini_ds DESC;
-CLASS  &mod9_classlist;
-MODEL  ind_pc_cost = &mod9_varlist  / DIST=binomial LINK=logit ; 
+%LET mod9_classlist = mcaid_id      int(ref='0')    int_imp(ref= '0') 
+                      age(ref='1')  race            sex
+                      budget_group                  bh_2018(ref='0')
+                      fqhc(ref='0') rae_person_new(ref='1') 
+                      adj_pd_total_18cat(ref='-1') 
+                      ind_pc_cost(ref= '0') ;
+%LET classlist = &mod9_classlist; 
+%LET varlist   = &mod9_varlist; 
+
+%PUT Variable List Model 9: &varlist;
+%PUT Class List Model 9: &classlist; 
+%PUT Outcome Var = &pvar; 
+TITLE "Probability Model9: PC Cost"; 
+
+* 
+[Model 10] ==============================================================================
+Age as linear
+===========================================================================================;
+%LET mod10_varlist = int     int_imp     time    season1     season2     season3 
+                     age     race        sex     budget_group        fqhc        rae_person_new 
+                     bh_2018 adj_pd_total_18cat;
+
+* Removed age from classlist;
+%LET mod10_classlist = mcaid_id       int(ref='0')    int_imp(ref= '0') 
+                      race            sex
+                      budget_group                  bh_2018(ref='0')
+                      fqhc(ref='0')   rae_person_new(ref='1') 
+                      adj_pd_total_18cat(ref='-1') 
+                      ind_pc_cost(ref= '0') ;
+
+%LET classlist = &mod10_classlist; 
+%LET varlist   = &mod10_varlist; 
+
+%PUT Variable List Model 10: &varlist;
+%PUT Class List Model 10: &classlist; 
+%PUT Outcome Var = &pvar; 
+TITLE "Probability Model 10 PC Cost"; 
+
+* 
+[Model 11] ==============================================================================
+Age linear
+removed adj_'s all 
+===========================================================================================;
+%LET mod11_varlist = int     int_imp     time    season1     season2     season3 
+                     age     race        sex     budget_group        fqhc        rae_person_new 
+                     bh_2018;
+
+* Removed age from classlist;
+%LET mod11_classlist = mcaid_id   int(ref='0')  int_imp(ref= '0') 
+                       race          sex
+                       budget_group  bh_2018(ref='0')
+                       fqhc(ref='0') rae_person_new(ref='1') 
+                       ind_pc_cost(ref= '0') ;
+
+%LET classlist = &mod11_classlist; 
+%LET varlist   = &mod11_varlist; 
+
+%PUT Variable List Model 11: &varlist;
+%PUT Class List Model 11: &classlist; 
+%PUT Outcome Var = &pvar; 
+TITLE "Probability Model 11 PC Cost"; 
+
+
+
+PROC GEE DATA  = &dat;
+CLASS  &classlist;
+MODEL  ind_pc_cost = &varlist  / DIST=binomial LINK=logit ; 
 REPEATED SUBJECT = mcaid_id / type=exch ; 
 /*store p_MODEL;*/
 run;
+TITLE; 
+
+
+
+
+
+
+
+
+
+
+
+
 
 TITLE "Probability Model: PC Cost"; 
 PROC GEE DATA  = &dat DESC;

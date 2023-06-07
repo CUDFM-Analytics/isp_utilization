@@ -2,7 +2,7 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization Analysis
 PURPOSE  : configs 
-VERSION  : 2023-03-16 [date last updated]
+VERSION  : 2023-06-06
 FILE/S   : 1) ISP-CTLP_Model_specifications.docx
 NOTES    : See ../../_rchive_utilization for LOGS and all archived docs, ds, code, etc 
 GIT      : github organization DFM, `isp_utilization
@@ -40,18 +40,15 @@ LOG
       %LET report = &util/reports; 
 
       %LET raw = &data/_raw;
-/*        LIBNAME raw "&raw";*/
+        LIBNAME raw "&raw";
 
-* EXT DATA SOURCES ---------------------------------------------------------------------------; 
-
-    * Medicaid dats: keep attached for formats (until/if final fmts copied); 
       %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
-     * LIBNAME ana "&ana"; 
+      LIBNAME ana "&ana"; 
 
 * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------; 
 
  OPTIONS NOFMTERR
-         MPRINT MLOGIC SYMBOLGEN
+         MPRINT MLOGIC
          FMTSEARCH =(ana, datasets, data, util, work);
 
 %macro nodupkey(ds, out);

@@ -4,7 +4,7 @@ PROJECT  : ISP Utilization Analysis
 PURPOSE  : Gather, Process datasets from analytic subset dir, Create final analysis dataset and mini dataset
 VERSION  : 2023-06-06
            - updated 5/30 due to issues in the hcpf file and to get Sept 2022 since it's available now (cs email re: hcpf)
-           - updated 06-01/2 bc ana.long & ana.demo were missing months
+           - updated 06/01-02 bc ana.long & ana.demo were missing months
            - updated 6/5 to combine bh cat variables into 1 bh cat var
            - updated 6/6 to check on the BH's by adding a total var and seeing
                 if any of them are wrong as I'm still getting Hessian errors
@@ -19,7 +19,17 @@ SECTION3 : data.mini_ds (test set with only 500000 records) ;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 
 * 
-QRYLONG_00 ==============================================================================
+[RAW.time_dim] ==============================================================================
+Import a .csv file I made with months, FY, FY quarters, and the linearized time var
+===========================================================================================;
+PROC IMPORT FILE="&util./data/_raw/fy_q_dts_dim.csv"
+    OUT = raw.timeframe_dim
+    DBMS=csv
+    REPLACE;
+run; 
+
+* 
+[QRYLONG_00] ==============================================================================
 1. SUBSET qry_longitudinal to timeframe (months le/ge) AND:
    -- budget_groups
    -- sex not Unknown
@@ -50,7 +60,7 @@ AND    month le '30Sep2022'd
 AND    BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
 AND    managedCare = 0
 AND    pcmp_loc_id ne ' ';
-RUN;  *6/02 75691244;
+RUN;  *6/06 75691244;
 
 * 
 INT.PCMP_DIM ==============================================================================
@@ -61,9 +71,8 @@ DESCR: Extract unique pcmp_loc_ids and their dimensions, stored as a reference t
 3. Create binary covariate FQHC from pcmp_loc_type_cd values (rather than formats) 
 ===========================================================================================;
 DATA pcmp_type_qrylong ; 
-SET  raw.qrylong_00 (KEEP = pcmp_loc_id  pcmp_loc_type_cd pcmp_loc_type_cd 
-                         WHERE= (pcmp_loc_id ne ' ')
-                         ) ;
+SET  raw.qrylong_00   (KEEP = pcmp_loc_id  pcmp_loc_type_cd pcmp_loc_type_cd 
+                       WHERE= (pcmp_loc_id ne ' '));
 num_pcmp_type = input(pcmp_loc_type_cd, 7.);
 pcmp_loc2     = input(pcmp_loc_id, best12.); DROP pcmp_loc_id; RENAME pcmp_loc2=pcmp_loc_id;
 RUN ; 
@@ -94,13 +103,95 @@ SELECT a.mcaid_id
      , b.gender as sex
      , b.race
      , c.rae_id as rae_person_new
-FROM raw.qrylong_0         AS A 
+FROM raw.qrylong_00         AS A 
 LEFT JOIN ana.qry_demographics  AS B ON a.mcaid_id=b.mcaid_id 
 LEFT JOIN int.rae_dim           AS C ON a.enr_cnty = c.hcpf_county_code_c
 WHERE  pcmp_loc_id ne ' '
 AND    SEX IN ('F','M');
-QUIT;   *06-01 75690836 : 10 cols;
- 
+QUIT;   *06-06 75690836 : 10 cols;
+
+PROC SQL; 
+SELECT count(distinct mcaid_id) as n_uniq_mcaid
+	 , count(mcaid_id) as n_obs
+	 , count(distinct budget_group) as n_uniq_budgetgrp
+	 , min(dob) as min_dob format=date9.
+	 , max(dob) as max_dob format=date9.
+	 , count(distinct pcmp_loc_id) as n_uniq_pcmp
+	 , count(distinct race) as n_uniq_race
+	 , count(distinct rae_person_new) as n_uniq_rae
+	 , count(rae_person_new) as n_rae
+	 , count(distinct sex) as n_uniq_sex
+FROM raw.qrylong_01;
+QUIT; 
+
+%LET qry_01_nobs = 75690836;
+%LET qry_01_n_id = 2055853;
+
+* 
+RAW.AGE_DIM ==============================================================================
+Extract dob to get age as of the 2nd month in each quarter
+1. Used in subsetting dataset
+2. Used to create age_cat
+===========================================================================================;
+PROC SQL;
+CREATE TABLE age_dim0 AS 
+SELECT distinct(mcaid_id) as mcaid_id
+	 , dob
+FROM raw.qrylong_01;
+QUIT; 
+
+* Get all 13 values; 
+PROC SQL NOPRINT;
+SELECT month INTO :qm2 separated by ' '
+FROM  raw.timeframe_dim
+WHERE month_qrtr = 2;
+QUIT; 
+
+%PUT &qm2;
+
+DATA age_dim1 (DROP=m2q:);
+SET  age_dim0;
+m2q1 = MDY(8,1,2019);
+m2q2 = MDY(11,1,2019);
+m2q3 = MDY(2,1,2020);
+m2q4 = MDY(5,1,2020);
+m2q5 = MDY(8,1,2020);
+m2q6 = MDY(11,1,2020);
+m2q7 = MDY(2,1,2021);
+m2q8 = MDY(5,1,2021);
+m2q9 = MDY(8,1,2021);
+m2q10 = MDY(11,1,2021);
+m2q11 = MDY(2,1,2022);
+m2q12 = MDY(5,1,2022);
+m2q13 = MDY(8,1,2022);
+
+/*age  = floor((intck('month', dob, dt_end_fy)-(day(dt_end_fy) < min(day(dob), day(intnx('month', dt_end_fy, 1) -1)))) /12);*/
+age_m2q1  = floor((intck('month', dob, m2q1)-(day(m2q1) < min(day(dob), day(intnx('month', m2q1, 1) -1)))) /12);
+age_m2q2  = floor((intck('month', dob, m2q2)-(day(m2q2) < min(day(dob), day(intnx('month', m2q2, 1) -1)))) /12);
+age_m2q3  = floor((intck('month', dob, m2q3)-(day(m2q3) < min(day(dob), day(intnx('month', m2q3, 1) -1)))) /12);
+age_m2q4  = floor((intck('month', dob, m2q4)-(day(m2q4) < min(day(dob), day(intnx('month', m2q4, 1) -1)))) /12);
+age_m2q5  = floor((intck('month', dob, m2q5)-(day(m2q5) < min(day(dob), day(intnx('month', m2q5, 1) -1)))) /12);
+age_m2q6  = floor((intck('month', dob, m2q6)-(day(m2q6) < min(day(dob), day(intnx('month', m2q6, 1) -1)))) /12);
+age_m2q7  = floor((intck('month', dob, m2q7)-(day(m2q7) < min(day(dob), day(intnx('month', m2q7, 1) -1)))) /12);
+age_m2q8  = floor((intck('month', dob, m2q8)-(day(m2q8) < min(day(dob), day(intnx('month', m2q8, 1) -1)))) /12);
+age_m2q9  = floor((intck('month', dob, m2q9)-(day(m2q9) < min(day(dob), day(intnx('month', m2q9, 1) -1)))) /12);
+age_m2q10  = floor((intck('month', dob, m2q10)-(day(m2q10) < min(day(dob), day(intnx('month', m2q10, 1) -1)))) /12);
+age_m2q11  = floor((intck('month', dob, m2q11)-(day(m2q11) < min(day(dob), day(intnx('month', m2q11, 1) -1)))) /12);
+age_m2q12  = floor((intck('month', dob, m2q12)-(day(m2q12) < min(day(dob), day(intnx('month', m2q12, 1) -1)))) /12);
+age_m2q13  = floor((intck('month', dob, m2q13)-(day(m2q13) < min(day(dob), day(intnx('month', m2q13, 1) -1)))) /12);
+RUN;
+
+DATA age_dim2;
+SET  age_dim1;
+ARRAY aage(1:13) age_m2q1-age_m2q13;
+DO time_qm2 = 1 to 13;
+	age = aage(time_qm2);
+	OUTPUT;
+END; 
+DROP age_m2q1-age_m2q13;
+RUN; 
+
+
 * 
 [RAW.QRYLONG_02]======================================================================
 1. Calculate age, subset to 0-64
@@ -108,7 +199,7 @@ QUIT;   *06-01 75690836 : 10 cols;
 3. Create FY variable
 ===========================================================================================;
 DATA raw.qrylong_02 (DROP = enr_cnty dob dt_end_19 dt_end_fy age_end_19 rename=(age_end_fy=age)); 
-SET  raw.qrylong_01;
+SET  raw.qrylong_01 (KEEP=mcaid_id dob month;
 FORMAT dt_end_fy dt_end_19 date9.;
 FY          = year(intnx('year.7', month, 0, 'BEGINNING'));
 dt_end_fy   = mdy(6,30,(FY+1));

@@ -122,16 +122,26 @@ RUN;
 
 proc contents data = &dat varnum; run; 
 
+%let m1_regvars = int int_imp time 
+                season1     season2     season3
+                age         sex_numeric race_numeric
+                budget_group
+                rae_person_new      fqhc
+                bh_2016     bh_2017     bh_2018
+                adj_pd_total_16cat 
+                adj_pd_total_17cat 
+                adj_pd_total_18cat;
+
+%let m2_regvars = int int_imp time 
+                  season1     season2     season3
+                  age         sex_numeric race_numeric
+                  budget_group
+                  rae_person_new      fqhc
+                  bh_2018
+                  adj_pd_total_18cat;
+
 PROC REG DATA = data.analysis_numeric;
-MODEL ind_pc_cost = int         int_imp     time 
-                    season1     season2     season3
-                    age         sex_numeric race_numeric
-                    budget_group
-                    rae_person_new      fqhc
-                    bh_2016     bh_2017     bh_2018
-                    adj_pd_total_16cat 
-                    adj_pd_total_17cat 
-                    adj_pd_total_18cat / tol vif collin covb; 
+MODEL ind_pc_cost = &m2_regvars / tol vif collin covb; 
 ods select ParameterEstimates CollinDiag; 
 ods output CollinDiag = Collin;
 RUN ;  Quit; 
