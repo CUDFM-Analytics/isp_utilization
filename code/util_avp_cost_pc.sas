@@ -41,19 +41,13 @@ RUN;
 
 *
 [Probability Model] ==============================================================================
-M1: int, int_imp, time // Outcome: Successfully ran
-M2: + budget_group
+M1: int, int_imp, time  // Outcome: Successfully ran
+M2: +budget_group       // Outcome: Hessian error
+M3: -budget_group +race // Outcome:
 =========================================================================================;
-%LET class_vars = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') budget_group;
-%LET model_vars = int int_imp time budget_group;          
-
-%PUT Model Variables: &mod_vars;
-%PUT Class Variables: &class; 
-%PUT Outcome Var = &pvar; 
-
-TITLE "Probability Model: PC Cost";
-TITLE2 "With model vars: &model_vars";  
-
+%macro p_model(class_vars=,model_vars=);
+TITLE "Probability Model: DV PC Cost";
+TITLE2 "With model vars &model_vars";  
 PROC GEE DATA  = &dat;
 CLASS  &class_vars;
 MODEL  ind_pc_cost = &model_vars / DIST=binomial LINK=logit ; 
@@ -61,6 +55,15 @@ REPEATED SUBJECT = mcaid_id / type=exch ;
 /*store p_MODEL;*/
 run;
 TITLE; TITLE2;
+%mend;
+
+%LET class01 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0');
+%LET model01 = int int_imp time;          
+%p_model(class_vars=&class01, model_vars=&model01);
+
+%LET class02 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') budget_group;
+%LET model02 = int int_imp time budget_group;          
+%p_model(class_vars=&class02, model_vars=&model02);
 
 
 

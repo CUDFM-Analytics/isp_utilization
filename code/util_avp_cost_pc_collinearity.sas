@@ -54,6 +54,7 @@ format sex race;
 IF sex = 'F' then sex_numeric = 1;
 ELSE sex_numeric = 0;
 race_numeric = input(race, best7.);
+age_cat_num  = input(age_cat, best7.);
 RUN; 
 *===========================================================================================;
 
@@ -120,11 +121,10 @@ RUN;
 /*PROC PRINT DATA = pc_cost_corr_print; */
 /*RUN; */
 
-proc contents data = &dat varnum; run; 
-
-%let m1_regvars = int int_imp time 
+* model 1;
+%let regvars = int int_imp time 
                 season1     season2     season3
-                age         sex_numeric race_numeric
+                age_cat_num     sex_numeric race_numeric
                 budget_group
                 rae_person_new      fqhc
                 bh_2016     bh_2017     bh_2018
@@ -132,16 +132,8 @@ proc contents data = &dat varnum; run;
                 adj_pd_total_17cat 
                 adj_pd_total_18cat;
 
-%let m2_regvars = int int_imp time 
-                  season1     season2     season3
-                  age         sex_numeric race_numeric
-                  budget_group
-                  rae_person_new      fqhc
-                  bh_2018
-                  adj_pd_total_18cat;
-
 PROC REG DATA = data.analysis_numeric;
-MODEL ind_pc_cost = &m2_regvars / tol vif collin covb; 
+MODEL ind_pc_cost = &regvars / tol vif collin covb; 
 ods select ParameterEstimates CollinDiag; 
 ods output CollinDiag = Collin;
 RUN ;  Quit; 

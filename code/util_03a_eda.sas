@@ -26,6 +26,10 @@ PROC PRINT DATA = data.analysis_meta NOOBS; RUN;
 %let dat = data.analysis; 
 %let all = data.analysis_allcols; 
 
+PROC FREQ DATA = &dat;
+TABLE time*(int_imp int);
+RUN;
+
 * 
 bh_2016-2018 var tests ====================================================================
 ===========================================================================================;
