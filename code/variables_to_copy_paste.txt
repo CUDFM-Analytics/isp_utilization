@@ -1,0 +1,38 @@
+[CLASS VARIABLES] --------------------------------------
+Copy/paste as needed, listed in order of priority
+--------------------------------------------------------
+mcaid_id 
+int(ref='0') 
+int_imp(ref= '0') 
+budget_group   
+race 
+sex
+rae_person_new(ref='1') 
+age(ref='1') 
+age_cat(ref='1')      
+fqhc(ref='0') 
+bh_2018(ref='0')
+adj_pd_total_18cat(ref='-1') 
+ind_pc_cost(ref= '0')
+
+Additional-----------------------------
+bh_2016(ref='0')
+bh_2017(ref='0')
+adj_pd_total_16cat(ref='-1') 
+adj_pd_total_17cat(ref='-1') 
+
+[MODEL VARIABLES] --------------------------------------
+--------------------------------------------------------
+int
+int_imp
+time
+budget_group
+race 
+sex
+rae_person_new
+age
+age_cat 
+fqhc
+bh_2018
+adj_pd_total_18cat
+

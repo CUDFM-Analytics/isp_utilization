@@ -176,7 +176,6 @@ SELECT a.mcaid_id
 	 , a.dt_qrtr
 	 , a.month
 	 , a.pcmp_loc_id
-	 , a.enr_cnty
 	 , a.budget_group
 	 , a.sex
 	 , a.race
@@ -187,6 +186,7 @@ INNER JOIN raw.age_dim AS B ON (a.mcaid_id=b.mcaid_id AND a.time=b.time)
 WHERE rae_person_new ne . 
 AND FY IN (2019, 2020, 2021, 2022) ;
 QUIT; *44202204 & checked freq's on util_02_checks;
+* Unique mcaid_id's 06/07 = 1617613 // previous set unique mcaid_id's were 1613033 so captured about 4k more members;
 
 * 
 [RAW.QRYLONG_02] ==============================================================================
@@ -204,13 +204,13 @@ WHERE mcaid_id IN (SELECT mcaid_id FROM raw.final_00);
 QUIT; *06/07 68741452;
 
 * 
-[RAW.FINAL_00 & RAW.DEMO_1922]=======================================================================
+[RAW.FINAL_00] & [RAW.DEMO_1922] =========================================================
 Subset to mcaid_id's that have an rae_assigned in FY's 19-22
 ===========================================================================================;
-DATA raw.final_01  (KEEP = mcaid_id month dt_qrtr FY time)
+DATA raw.final_01  (KEEP = mcaid_id month dt_qrtr FY time age)
      raw.demo_1922 (KEEP = mcaid_id month dt_qrtr FY time sex race rae_person_new pcmp_loc_id budget_group);
 SET  raw.final_00 ;
-RUN; *06/07: both have 44585426
+RUN; *06/07: both have 44202400 (ish?)
 06/05 both have 44102611; 
 
 PROC SORT DATA=raw.final_01; BY MCAID_ID FY TIME; RUN; 
@@ -257,7 +257,7 @@ SELECT a.mcaid_id
      , a.FY
      , a.time
      , a.id_time_helper
-	 , i.age
+	 , a.age
      , b.budget_group
      , c.rae_person_new
      , d.pcmp_loc_id
@@ -270,7 +270,6 @@ SELECT a.mcaid_id
      , g.race
      , h.sex
 FROM raw.final_01                    AS A
-INNER JOIN raw.age_dim				 AS I   ON a.id_time_helper = I.id_time_helper
 LEFT JOIN budget_group               AS B   ON A.id_time_helper = B.id_time_helper
 LEFT JOIN rae_person_new             AS C   ON A.id_time_helper = C.id_time_helper
 LEFT JOIN int.pcmp_attr_qrtr         AS D   ON A.id_time_helper = D.id_time_helper
@@ -278,7 +277,7 @@ LEFT JOIN int.pcmp_dim               AS E   ON D.pcmp_loc_id    = E.pcmp_loc_id
 LEFT JOIN int.isp_un_pcmp_dtstart    AS F   ON D.pcmp_loc_id    = F.pcmp_loc_id    
 LEFT JOIN race                       AS G   ON A.id_time_helper = G.id_time_helper
 LEFT JOIN sex                        AS H   ON A.id_time_helper = H.id_time_helper;
-QUIT ;  *6/7 44600909; 
+QUIT ;  ; 
 
 * 
 RAW.Final_03 ==============================================================================
@@ -298,9 +297,7 @@ LABEL pcmp_loc_id     = "pcmp_loc_ID"
       fqhc            = "FQHC: 0 No, 1 Yes"
       int_imp         = "ISP Participation: Time-Varying"
       ;
-RUN; * ;
-
-%nodupkey(raw.final_03, raw.final_03); *6/02 15104152;
+RUN; *44202204 ;
 
 * 
 RAW.UTIL3 ==============================================================================
@@ -311,7 +308,7 @@ SET     ana.qry_monthlyutilization (WHERE=(month ge '01Jul2016'd AND month le '3
 FORMAT  dt_qrtr date9.;
 dt_qrtr =intnx('QTR', month, 0, 'BEGINNING'); 
 FY      =year(intnx('year.7', month, 0, 'BEGINNING'));
-run; *69554550;
+run; *;
 
 PROC SQL;
 CREATE TABLE raw.util1 as
@@ -383,7 +380,7 @@ FROM raw.qrylong_02            AS A
 LEFT JOIN raw.bh1              AS B    ON a.mcaid_id=B.mcaid_id AND a.month=B.month
 LEFT JOIN raw.util3            AS C    ON a.mcaid_id=C.mcaid_id AND a.month=C.month
 LEFT JOIN int.tel_fact_1922_m  AS D    ON a.mcaid_id=D.mcaid_id AND a.month=D.month;
-QUIT;  *06/07 nrow 68762424 //  68079369 rows and 18 columns.;
+QUIT;  *06/08 nrow 68741452 //  68079369 rows and 18 columns.;
 
 * 
 [RAW.QRYLONG_1618] ==============================================================================
@@ -394,7 +391,7 @@ QUIT;  *06/07 nrow 68762424 //  68079369 rows and 18 columns.;
 DATA raw.fy_1618_0; 
 SET  raw.qrylong_03;
 WHERE month lt '01Jul2019'd; 
-RUN; *23976758; 
+RUN; *6/8 24127948 // 23976758; 
 
 PROC SQL;
 CREATE TABLE raw.fy_1618_1 as
@@ -419,7 +416,7 @@ SELECT mcaid_id
 
 FROM raw.fy_1618_0
 GROUP BY mcaid_id;
-QUIT; * 6/01 1131492;
+QUIT; * 6/8 1138252 // 6/01 1131492;
 
 * change adj to if elig = 0, then adj var = -1 and set bh variables to 0 where .; 
 DATA raw.fy_1618_2;
@@ -447,7 +444,7 @@ DO i=1 to dim(bh);
     END;
 DROP i; 
 
-RUN; *1131492 : 16;
+RUN; *6/8 1138252 : 16;
 
 ** GET PERCENTILES FOR ALL & TOP CODE DV's FOR MEMBERS ONLY ; 
 * 1618; 
@@ -476,9 +473,9 @@ run;
 data int.pctl1618; merge pd16pctle pd17pctle pd18pctle ; run;
 
 PROC PRINT DATA = int.pctl1618; RUN; 
-* 06/07
+* 06/08
     p16_50 	p16_75  p16_90 	p16_95 		p17_50 	p17_75 	p17_90 	p17_95 		p18_50 	p18_75 	p18_90 	p18_95
-    266.394 512.837 1198.18 2094.02 	268.937 519.215 1242.00 2278.18 	280.262 560.325 1398.62 2667.85 
+    266.375 512.714 1197.79 2092.70 	268.926 519.093 1241.55 2276.84 	280.244 560.209 1397.99 2665.80
 
 * https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 proc sql noprint;
@@ -529,21 +526,26 @@ RUN;
 %insert_pctile(ds_in = adj0,              ds_out = adj1,             year = 17);
 %insert_pctile(ds_in = adj1,              ds_out = int.qrylong_1618, year = 18); *1138579;
 
-*  ;
+* 
+[RAW.FINAL_04] ==============================================================================
+Combine final_03 with the final 1618 outcomes
+===========================================================================================;
 PROC SQL;
 CREATE TABLE raw.final_04 AS 
 SELECT a.*
      , b.*
 FROM raw.final_03           AS A
 LEFT JOIN int.qrylong_1618  AS B ON a.mcaid_id=b.mcaid_id;
-QUIT; *Table RAW.FINAL_04 created, with 15280002 rows and 31 columns.;
+QUIT; *Table RAW.FINAL_04 created, with 44202204 rows and 31 columns.;
+
+%nodupkey(ds = raw.final_04, out=raw.final_04); *15124679, 31; 
 
 * 
 FYs 19-22 ==============================================================================
 ===========================================================================================;
 DATA raw.fy_1922_0;
 SET  raw.qrylong_03 (where=(month ge '01JUL2019'd)); 
-RUN; * 44102611; 
+RUN; *6/8 hff 44613504; 
 
 ** AVERAGE the quarter PM costs, then get 95th percentiles for FY's ; 
 PROC SQL;
@@ -563,7 +565,7 @@ FROM raw.fy_1922_0
 GROUP BY mcaid_id, time;
 QUIT; *6/7 44630012 // 6/2 44102611 rows and 11 columns.; 
 
-%nodupkey(ds=raw.fy_1922_1, out=raw.fy_1922_2); * 15288939
+%nodupkey(ds=raw.fy_1922_1, out=int.FY_1922); * 15288939
 IT's OK THAT ITs HIGHER bc didn't subset bh, tele to memlist!!!; 
 
 * JOIN TO FINAL as int.final_b;
@@ -572,8 +574,8 @@ CREATE TABLE raw.final_05 AS
 SELECT a.*
      , b.*
 FROM raw.final_04            AS A
-LEFT JOIN raw.fy_1922_2 AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time;
-QUIT;
+LEFT JOIN int.FY_1922		 AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time;
+QUIT; *6/8 15124679 and 39 cols; 
 
 * setting to 0 where . for variables not using elig category (adj 16-18 vars) 
     create indicator variables for DV's where >0 
@@ -635,18 +637,21 @@ RUN;
 
 data int.pctl1922; merge int.adj_total_pctl_a int.adj_pc_pctl_a int.adj_rx_pctl_a ; run;
 
-PROC PRINT DATA = int.pctl1922; RUN; 
+PROC PRINT DATA = int.pctl1922; RUN; * 6/8 closer to the 6/1 adj_total figs;
 /*adj_total_95p_19    adj_total_95p_20   adj_total_95p_21    adj_total_95p_22
 6/1 3971.63           3734.90             3649.42             3907.58 
 6/7 4004.88 		  3783.73 			 3717.50 			 3984.28 
+6/8 3976.10			  3734.96			 3646.20			 3919.28
 
   		adj_pc_95p_19       adj_pc_95p_20      adj_pc_95p_21       adj_pc_95p_22 
   		365.616             352.994            343.009             329.151 
 6/7		365.425 			352.932 		   341.358 			   324.069 
+6/8 	363.100 			349.070 		   338.999 			   325.904  
 
   		adj_rx_95p_19       adj_rx_95p_20      adj_rx_95p_21       adj_rx_95p_22 
   		1075.92             1147.51            1158.32             1227.72 
 6/7		1078.70 			1152.43 		   1162.93 			   1239.26 
+6/8 	1079.69 		    1153.22 		   1163.86 			   1239.60 
 */
 * https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 proc sql noprint;
@@ -791,25 +796,12 @@ PROC SORT DATA = raw.final_08;
 BY mcaid_id time; 
 RUN; 
 
-PROC FREQ 
-     DATA = raw.final_08;
-     TABLES age*age_cat ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-RUN; 
-
-PROC PRINT DATA= raw.final_08 (obs=25);
-WHERE age_cat eq ' ';
-RUN; * MANY missing age - WTF??';
-
-PROC PRINT DATA=raw.FINAL_09_V1;
-WHERE mcaid_id = "A005875";
-RUN; * Not present in old one; 
-
 * 
 DATA.ANALYSIS ==============================================================================
 with effect coding
 ===========================================================================================;
 DATA data.analysis_allcols (DROP = i); 
-SET  raw.final_09 (DROP = pcmp_loc_id
+SET  raw.final_08 (DROP = pcmp_loc_id
                           n_months_per_q
                           fyqrtr_txt
                           FY);
@@ -861,7 +853,7 @@ LABEL adj_pd_total_16cat = 'Categorical pd_total FFS FY2016'
       bh_2016            = 'FY16 Indicator of any bh_other bh_er bh_hosp'
       bh_2017            = 'FY17 Indicator of any bh_other bh_er bh_hosp'
       bh_2018            = 'FY18 Indicator of any bh_other bh_er bh_hosp';
-RUN; * down to 33 variables; 
+RUN; * 6/8 15124679 : 34; 
 
 * 
 DATA.MINI_DS ==============================================================================
@@ -890,5 +882,6 @@ RUN;
 PROC FREQ DATA = data.mini_ds;
 tables int; 
 run;
-
+* int=0 pct 87.48%
+  int=1 pct 12.52%; 
 

@@ -1,0 +1,339 @@
+1                                    The SAS System         08:52 Thursday, June 8, 2023
+
+1          %_eg_hidenotesandsource;
+5          %_eg_hidenotesandsource;
+33         
+34         DATA raw.fy_1618_0;
+35         SET  raw.qrylong_03;
+36         WHERE month lt '01Jul2019'd;
+37         RUN;
+
+NOTE: There were 24127948 observations read from the data set RAW.QRYLONG_03.
+      WHERE month<'01JUL2019'D;
+NOTE: The data set RAW.FY_1618_0 has 24127948 observations and 18 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:19.45
+      cpu time            5.82 seconds
+      
+
+37       !      *23976758;
+38         
+39         PROC SQL;
+40         CREATE TABLE raw.fy_1618_1 as
+41         SELECT mcaid_id
+42              , max(case when FY = 2016 then 1 else 0 end) as elig2016
+43              , max(case when FY = 2017 then 1 else 0 end) as elig2017
+44              , max(case when FY = 2018 then 1 else 0 end) as elig2018
+45         
+46              , avg(case when FY = 2016 then adj_pd_total else . end) as adj_pd_16pm
+47              , avg(case when FY = 2017 then adj_pd_total else . end) as adj_pd_17pm
+48              , avg(case when FY = 2018 then adj_pd_total else . end) as adj_pd_18pm
+49         
+50              , avg(case when FY = 2016 then bho_n_hosp  else . end) as
+50       ! bho_n_hosp_16pm
+51              , avg(case when FY = 2017 then bho_n_hosp  else . end) as
+51       ! bho_n_hosp_17pm
+52              , avg(case when FY = 2018 then bho_n_hosp  else . end) as
+52       ! bho_n_hosp_18pm
+53              , avg(case when FY = 2016 then bho_n_er    else . end) as bho_n_er_16pm
+54              , avg(case when FY = 2017 then bho_n_er    else . end) as bho_n_er_17pm
+55              , avg(case when FY = 2018 then bho_n_er    else . end) as bho_n_er_18pm
+56              , avg(case when FY = 2016 then bho_n_other else . end) as
+56       ! bho_n_other_16pm
+57              , avg(case when FY = 2017 then bho_n_other else . end) as
+57       ! bho_n_other_17pm
+58              , avg(case when FY = 2018 then bho_n_other else . end) as
+58       ! bho_n_other_18pm
+59         
+60         FROM raw.fy_1618_0
+61         GROUP BY mcaid_id;
+NOTE: Table RAW.FY_1618_1 created, with 1138252 rows and 16 columns.
+
+62         QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           42.14 seconds
+      cpu time            12.64 seconds
+      
+
+62       !       * 6/01 1131492;
+63         
+64         * change adj to if elig = 0, then adj var = -1 and set bh variables to 0
+2                                    The SAS System         08:52 Thursday, June 8, 2023
+
+64       ! where .;
+65         DATA raw.fy_1618_2;
+66         SET  raw.fy_1618_1;
+67         
+68         IF      elig2016 = 0 THEN adj_pd_16pm = -1;
+69         ELSE IF elig2016 = 1 AND  adj_pd_16pm = .   THEN adj_pd_16pm = 0;
+70         ELSE adj_pd_16pm = adj_pd_16pm;
+71         
+72         IF      elig2017 = 0 THEN adj_pd_17pm = -1;
+73         ELSE IF elig2017 = 1 AND  adj_pd_17pm = .   THEN adj_pd_17pm = 0;
+74         ELSE adj_pd_17pm = adj_pd_17pm;
+75         
+76         IF      elig2018 = 0 THEN adj_pd_18pm = -1;
+77         ELSE IF elig2018 = 1 AND  adj_pd_18pm = .   THEN adj_pd_18pm = 0;
+78         ELSE adj_pd_18pm = adj_pd_18pm;
+79         
+80         ARRAY bh(*) bho_n_hosp_16pm  bho_n_hosp_17pm  bho_n_hosp_18pm
+81                     bho_n_er_16pm    bho_n_er_17pm    bho_n_er_18pm
+82                     bho_n_other_16pm bho_n_other_17pm bho_n_other_18pm;
+83         
+84         DO i=1 to dim(bh);
+85             IF bh(i)=. THEN bh(i)=0;
+86             ELSE bh(i)=bh(i);
+87             END;
+88         DROP i;
+89         
+90         RUN;
+
+NOTE: There were 1138252 observations read from the data set RAW.FY_1618_1.
+NOTE: The data set RAW.FY_1618_2 has 1138252 observations and 16 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.65 seconds
+      cpu time            0.40 seconds
+      
+
+90       !      *1131492 : 16;
+91         
+92         ** GET PERCENTILES FOR ALL & TOP CODE DV's FOR MEMBERS ONLY ;
+93         * 1618;
+94         %macro pctl_1618(var,out,pctlpre);
+95         proc univariate noprint data=raw.fy_1618_2;
+96         where &var gt 0;
+97         var &var;
+98         output out=&out pctlpre=&pctlpre pctlpts= 50, 75, 90, 95;
+99         run;
+100        %mend;
+101        
+102        ** SEE UTIL_02_CHECKS for code to investigate the values and check
+102      ! percentiles;
+103        
+104        %pctl_1618(var     = adj_pd_16pm,
+105                   out     = pd16pctle,
+106                   pctlpre = p16_);
+
+NOTE: The data set WORK.PD16PCTLE has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           2.03 seconds
+      cpu time            0.65 seconds
+3                                    The SAS System         08:52 Thursday, June 8, 2023
+
+      
+
+107        
+108        %pctl_1618(var     = adj_pd_17pm,
+109                   out     = pd17pctle,
+110                   pctlpre = p17_);
+
+NOTE: The data set WORK.PD17PCTLE has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.71 seconds
+      cpu time            0.71 seconds
+      
+
+111        
+112        %pctl_1618(var     = adj_pd_18pm,
+113                   out     = pd18pctle,
+114                   pctlpre = p18_);
+
+NOTE: The data set WORK.PD18PCTLE has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1.16 seconds
+      cpu time            1.15 seconds
+      
+
+115        
+116        data int.pctl1618; merge pd16pctle pd17pctle pd18pctle ; run;
+
+NOTE: There were 1 observations read from the data set WORK.PD16PCTLE.
+NOTE: There were 1 observations read from the data set WORK.PD17PCTLE.
+NOTE: There were 1 observations read from the data set WORK.PD18PCTLE.
+NOTE: The data set INT.PCTL1618 has 1 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.00 seconds
+      
+
+117        
+118        PROC PRINT DATA = int.pctl1618; RUN;
+
+NOTE: There were 1 observations read from the data set INT.PCTL1618.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+119        * 06/07
+120            p16_50 	p16_75  p16_90 	p16_95 		p17_50 	p17_75 	p17_90 	p17_95 		p18_50
+120      ! 	p18_75 	p18_90 	p18_95
+121            266.394 512.837 1198.18 2094.02 	268.937 519.215 1242.00 2278.18 	280.262
+121      !  560.325 1398.62 2667.85
+122        
+123        *
+123      ! https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-sa
+123      ! ve-to-macro-variable;
+124        proc sql noprint;
+125          select
+126            name,
+127            cats(':',name)
+4                                    The SAS System         08:52 Thursday, June 8, 2023
+
+128          into
+129            :COL_NAMES separated by ',',
+130            :MVAR_NAMES separated by ','
+131          from sashelp.vcolumn
+132          where
+133            libname = "INT"
+134            and memname = "PCTL1618"
+135          ;
+136          select &COL_NAMES into &MVAR_NAMES
+137          from int.pctl1618;
+138        quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+139        
+140        %macro insert_pctile(ds_in,ds_out,year);
+141        DATA &ds_out;
+142        SET  &ds_in;
+143            * For values 0, -1, retain original value;
+144            IF      adj_pd_&year.pm le 0            THEN adj_pd_total_&year.cat =
+144      ! adj_pd_&year.pm;
+145        
+146            * Values > 0 but <= 50th p = category 1;
+147            ELSE IF adj_pd_&year.pm gt 0
+148                AND adj_pd_&year.pm le &&p&year._50 THEN adj_pd_total_&year.cat=1;
+149        
+150            * Values > 50thp but <= 75th p = category 2;
+151            ELSE IF adj_pd_&year.pm gt &&p&year._50
+152                AND adj_pd_&year.pm le &&p&year._75 THEN adj_pd_total_&year.cat=2;
+153        
+154            * Values > 75thp but <= 90th p = category 3;
+155            ELSE IF adj_pd_&year.pm gt &&p&year._75
+156                AND adj_pd_&year.pm le &&p&year._90 THEN adj_pd_total_&year.cat=3;
+157        
+158            * Values > 90thp but <= 95th p = category 4;
+159            ELSE IF adj_pd_&year.pm gt &&p&year._90
+160                AND adj_pd_&year.pm le &&p&year._95 THEN adj_pd_total_&year.cat=4;
+161        
+162            * Values > 95thp = category 5;
+163            ELSE IF adj_pd_&year.pm gt &&p&year._95 THEN adj_pd_total_&year.cat=5;
+164        RUN;
+165        %mend;
+166        
+167        * Made separate ds's for testing but merge if poss later, save final to int/;
+168        %insert_pctile(ds_in = raw.fy_1618_2,	  ds_out = adj0,             year = 16)
+168      ! ;
+
+NOTE: There were 1138252 observations read from the data set RAW.FY_1618_2.
+NOTE: The data set WORK.ADJ0 has 1138252 observations and 17 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.16 seconds
+      cpu time            0.17 seconds
+      
+
+169        %insert_pctile(ds_in = adj0,              ds_out = adj1,             year =
+169      ! 17);
+
+
+
+NOTE: There were 1138252 observations read from the data set WORK.ADJ0.
+NOTE: The data set WORK.ADJ1 has 1138252 observations and 18 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.16 seconds
+      cpu time            0.17 seconds
+      
+
+170        %insert_pctile(ds_in = adj1,              ds_out = int.qrylong_1618, year =
+170      ! 18); *1138579;
+
+NOTE: There were 1138252 observations read from the data set WORK.ADJ1.
+NOTE: The data set INT.QRYLONG_1618 has 1138252 observations and 19 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.64 seconds
+      cpu time            0.26 seconds
+	  
+	  
+1                                    The SAS System         08:52 Thursday, June 8, 2023
+
+1          %_eg_hidenotesandsource;
+5          %_eg_hidenotesandsource;
+33         
+34         DATA raw.fy_1922_0;
+35         SET  raw.qrylong_03 (where=(month ge '01JUL2019'd));
+36         RUN;
+
+NOTE: There were 44613504 observations read from the data set RAW.QRYLONG_03.
+      WHERE month>='01JUL2019'D;
+NOTE: The data set RAW.FY_1922_0 has 44613504 observations and 18 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:57.45
+      cpu time            9.15 seconds
+      
+
+36       !      * 44102611;
+37         
+38         ** AVERAGE the quarter PM costs, then get 95th percentiles for FY's ;
+39         PROC SQL;
+40         CREATE TABLE raw.fy_1922_1 as
+41         SELECT mcaid_id
+42              , count(*) as n_months_per_q
+43              , time
+44              , FY
+45              , avg(n_pc)                as n_pc_pm
+46              , avg(sum(n_er, bho_n_er)) as n_ed_pm
+47              , avg(n_ffs_bh)            as n_ffs_bh_pm
+48              , avg(n_tele)              as n_tel_pm
+49              , avg(adj_pd_total)        as adj_total_pm
+50              , avg(adj_pd_pc)           as adj_pc_pm
+51              , avg(adj_pd_rx)           as adj_rx_pm
+52         FROM raw.fy_1922_0
+53         GROUP BY mcaid_id, time;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Invalid (or missing) arguments to the SUM function have caused the function to 
+      return a missing value.
+NOTE: Table RAW.FY_1922_1 created, with 44613504 rows and 11 columns.
+
+54         QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2:09.21
+      cpu time            28.51 seconds
+      
+
+54       !       *6/7 44630012 // 6/2 44102611 rows and 11 columns.;
+55         
+56         %nodupkey(ds=raw.fy_1922_1, out=int.FY_1922); * 15288939
+
+NOTE: There were 44613504 observations read from the data set RAW.FY_1922_1.
+NOTE: 29330632 observations with duplicate key values were deleted.
+NOTE: The data set INT.FY_1922 has 15282872 observations and 11 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:02.72
+      cpu time            20.20 seconds
+      
+
+57         IT's OK THAT ITs HIGHER bc didn't subset bh, tele to memlist!!!;
+58         
+2                                    The SAS System         08:52 Thursday, June 8, 2023
+
+59         * JOIN TO FINAL as int.final_b;
+60         PROC SQL;
+61         CREATE TABLE raw.final_05 AS
+62         SELECT a.*
+63              , b.*
+64         FROM raw.final_04            AS A
+65         LEFT JOIN int.FY_1922		 AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time;
+WARNING: Variable mcaid_id already exists on file RAW.FINAL_05.
+WARNING: Variable time already exists on file RAW.FINAL_05.
+WARNING: Variable FY already exists on file RAW.FINAL_05.
+NOTE: Table RAW.FINAL_05 created, with 15124679 rows and 39 columns.
+
+66         QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:59.82
+      cpu time            23.01 seconds
+      
