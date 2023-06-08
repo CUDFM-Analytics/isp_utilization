@@ -1,6 +1,17 @@
-PROC FREQ DATA=raw.final_02; 
-table age; 
-RUN; * 398705 missing...;
+* 
+[RAW.FINAL_00] ==============================================================================
+Tests
+===========================================================================================;
+PROC CONTENTS DATA=RAW.FINAL_00 VARNUM;
+RUN;
+
+PROC FREQ DATA=raw.final_00; 
+table age TIME fy month sex race rae_person_new month; 
+RUN; 
+
+PROC SQL;
+SELECT count(distinct mcaid_id) FROM raw.final_00;
+RUN; 
 
 PROC SQL ; 
 SELECT count(mcaid_id) as n
@@ -39,6 +50,8 @@ BY fy;
 VAR adj:;
 WHERE mcaid_id in ("A000405");
 RUN; 
+
+
 
 /*  Row 380 ish in util_01_create dataset, checking percentiles for 1618*/
         **   checking percentiles ; 

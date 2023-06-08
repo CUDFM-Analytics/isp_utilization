@@ -105,6 +105,11 @@ WHERE  pcmp_loc_id ne .
 AND    SEX IN ('F','M');
 QUIT;   *06-07 75690836 : 10 cols;
 
+PROC FREQ Data=raw.qrylong_01;
+table time*FY;
+where fy in (2019, 2020, 2021, 2022);
+RUN;
+
 * 
 RAW.AGE_DIM ==============================================================================
 Extract dob to get age as of the 2nd month in each quarter
@@ -114,14 +119,14 @@ Will have to inner join these variables on qrylong eventually unless you subset 
 ===========================================================================================;
 * Get distinct mcaid_id and dob;
 PROC SQL;
-CREATE TABLE age_dim0 AS 
+CREATE TABLE raw.age_dim_00 AS 
 SELECT distinct(mcaid_id) as mcaid_id
 	 , dob
+	 , time
 FROM raw.qrylong_01
 WHERE FY in (2019, 2020, 2021, 2022)
-AND   rae_person_new ne .
-AND   rae_assign eq 1;
-QUIT; * 6/7 1675741 obs 2 col; 
+AND   rae_person_new ne .;
+QUIT; * 6/7 when I run with time, I get 15719759 obs 2 col (when I run without time, I get about 100k more...); 
 
 * Find / List all 13 2nd month of quarter values; 
 PROC SQL NOPRINT;
@@ -135,72 +140,29 @@ QUIT;
 * I could not for the life of me find a way to do this from the macro values and had to get moving
 but I'm sure there's a better way to do this? 
 Need age at month 2 of each quarter ;
-%LET m2q1 = 01Aug2019;
-%LET m2q2 = 01Nov2019;
-%LET m2q3 = 01Feb2020;
-%LET m2q4 = 01May2020;
-%LET m2q5 = 01Aug2020;
-%LET m2q6 = 01Nov2020;
-%LET m2q7 = 01Feb2021;
-%LET m2q8 = 01May2021;
-%LET m2q9 = 01Aug2021;
-%LET m2q10 = 01Nov2021;
-%LET m2q11 = 01Feb2022;
-%LET m2q12 = 01May2022;
+%LET m2q1 = 01Aug2019; %LET m2q2 = 01Nov2019;  %LET m2q3 = 01Feb2020; %LET m2q4 = 01May2020;
+%LET m2q5 = 01Aug2020; %LET m2q6 = 01Nov2020;  %LET m2q7 = 01Feb2021; %LET m2q8 = 01May2021;
+%LET m2q9 = 01Aug2021; %LET m2q10 = 01Nov2021; %LET m2q11 = 01Feb2022; %LET m2q12 = 01May2022;
 %LET m2q13 = 01Aug2022;
  
-DATA age_dim1 (DROP=m2q:);
-SET  age_dim0;
-m2q1 = MDY(8,1,2019);
-m2q2 = MDY(11,1,2019);
-m2q3 = MDY(2,1,2020);
-m2q4 = MDY(5,1,2020);
-m2q5 = MDY(8,1,2020);
-m2q6 = MDY(11,1,2020);
-m2q7 = MDY(2,1,2021);
-m2q8 = MDY(5,1,2021);
-m2q9 = MDY(8,1,2021);
-m2q10 = MDY(11,1,2021);
-m2q11 = MDY(2,1,2022);
-m2q12 = MDY(5,1,2022);
-m2q13 = MDY(8,1,2022);
-
-/*age  = floor((intck('month', dob, dt_end_fy)-(day(dt_end_fy) < min(day(dob), day(intnx('month', dt_end_fy, 1) -1)))) /12);*/
-age_m2q1   = floor((intck('month', dob, "&m2q1"d)-(day("&m2q1"d) < min(day(dob), day(intnx('month', "&m2q1"d, 1) -1)))) /12);
-age_m2q2   = floor((intck('month', dob, "&m2q2"d)-(day("&m2q2"d) < min(day(dob), day(intnx('month', "&m2q2"d, 1) -1)))) /12);
-age_m2q3   = floor((intck('month', dob, "&m2q3"d)-(day("&m2q3"d) < min(day(dob), day(intnx('month', "&m2q3"d, 1) -1)))) /12);
-age_m2q4   = floor((intck('month', dob, "&m2q4"d)-(day("&m2q4"d) < min(day(dob), day(intnx('month', "&m2q4"d, 1) -1)))) /12);
-age_m2q5   = floor((intck('month', dob, "&m2q5"d)-(day("&m2q5"d) < min(day(dob), day(intnx('month', "&m2q5"d, 1) -1)))) /12);
-age_m2q6   = floor((intck('month', dob, "&m2q6"d)-(day("&m2q6"d) < min(day(dob), day(intnx('month', "&m2q6"d, 1) -1)))) /12);
-age_m2q7   = floor((intck('month', dob, m2q7)-(day(m2q7) < min(day(dob), day(intnx('month', m2q7, 1) -1)))) /12);
-age_m2q8   = floor((intck('month', dob, m2q8)-(day(m2q8) < min(day(dob), day(intnx('month', m2q8, 1) -1)))) /12);
-age_m2q9   = floor((intck('month', dob, m2q9)-(day(m2q9) < min(day(dob), day(intnx('month', m2q9, 1) -1)))) /12);
-age_m2q10  = floor((intck('month', dob, m2q10)-(day(m2q10) < min(day(dob), day(intnx('month', m2q10, 1) -1)))) /12);
-age_m2q11  = floor((intck('month', dob, m2q11)-(day(m2q11) < min(day(dob), day(intnx('month', m2q11, 1) -1)))) /12);
-age_m2q12  = floor((intck('month', dob, m2q12)-(day(m2q12) < min(day(dob), day(intnx('month', m2q12, 1) -1)))) /12);
-age_m2q13  = floor((intck('month', dob, m2q13)-(day(m2q13) < min(day(dob), day(intnx('month', m2q13, 1) -1)))) /12);
-RUN; *06/07 1675741;
-
-* Transpose to long format, subset age 0-64;
-DATA age_dim2 (WHERE=(age ge 0 AND age lt 65));
-SET  age_dim1;
-ARRAY aage(1:13) age_m2q1-age_m2q13;
-DO time = 1 to 13;
-	age = aage(time);
-	OUTPUT;
-END; 
-DROP dob age_m2q1-age_m2q13;
-RUN; *20292320;
-
-PROC SQL; 
-CREATE TABLE raw.age_dim AS
-SELECT a.*
-	 , b.FY
-FROM age_dim2 				AS A
-LEFT JOIN raw.time_dim AS B ON a.time=b.time;
-QUIT; *6/7 60876960;
-
-%nodupkey(ds = raw.age_dim, out=raw.age_dim); *20292320; 
+DATA raw.age_dim;
+SET  raw.age_dim_00;
+IF time = 1 then do;  age = floor((intck('month', dob, "&m2q1"d)-(day("&m2q1"d)   < min(day(dob), day(intnx('month', "&m2q1"d, 1) -1))))  /12); END;
+IF time = 2 then do;  age = floor((intck('month', dob, "&m2q2"d)-(day("&m2q2"d)   < min(day(dob), day(intnx('month', "&m2q2"d, 1) -1))))  /12); END;
+IF time = 3 then do;  age = floor((intck('month', dob, "&m2q3"d)-(day("&m2q3"d)   < min(day(dob), day(intnx('month', "&m2q3"d, 1) -1))))  /12); END;
+IF time = 4 then do;  age = floor((intck('month', dob, "&m2q4"d)-(day("&m2q4"d)   < min(day(dob), day(intnx('month', "&m2q4"d, 1) -1))))  /12); END;
+IF time = 5 then do;  age = floor((intck('month', dob, "&m2q5"d)-(day("&m2q5"d)   < min(day(dob), day(intnx('month', "&m2q5"d, 1) -1))))  /12); END;
+IF time = 6 then do;  age = floor((intck('month', dob, "&m2q6"d)-(day("&m2q6"d)   < min(day(dob), day(intnx('month', "&m2q6"d, 1) -1))))  /12); END;
+IF time = 7 then do;  age = floor((intck('month', dob, "&m2q7"d)-(day("&m2q7"d)   < min(day(dob), day(intnx('month', "&m2q7"d, 1) -1))))  /12); END;
+IF time = 8 then do;  age = floor((intck('month', dob, "&m2q8"d)-(day("&m2q8"d)   < min(day(dob), day(intnx('month', "&m2q8"d, 1) -1))))  /12); END;
+IF time = 9 then do;  age = floor((intck('month', dob, "&m2q9"d)-(day("&m2q9"d)   < min(day(dob), day(intnx('month', "&m2q9"d, 1) -1))))  /12); END;
+IF time = 10 then do; age = floor((intck('month', dob, "&m2q10"d)-(day("&m2q10"d) < min(day(dob), day(intnx('month', "&m2q10"d, 1) -1)))) /12); END;
+IF time = 11 then do; age = floor((intck('month', dob, "&m2q11"d)-(day("&m2q11"d) < min(day(dob), day(intnx('month', "&m2q11"d, 1) -1)))) /12); END;
+IF time = 12 then do; age = floor((intck('month', dob, "&m2q12"d)-(day("&m2q12"d) < min(day(dob), day(intnx('month', "&m2q12"d, 1) -1)))) /12); END;
+IF time = 13 then do; age = floor((intck('month', dob, "&m2q13"d)-(day("&m2q13"d) < min(day(dob), day(intnx('month', "&m2q13"d, 1) -1)))) /12); END;
+IF age ge 65 then DELETE;
+IF age lt 0  then DELETE;
+RUN; *06/07 15124679;
 
 * 
 [RAW.FINAL_00] ==============================================================================
@@ -208,22 +170,23 @@ Start final list where age in range based on FY's 19-22 and rae_ not missing
 ===========================================================================================;
 PROC SQL;
 CREATE TABLE raw.final_00 AS 
-SELECT mcaid_id
-	 , time
-	 , FY
-	 , dt_qrtr
-	 , month
-	 , pcmp_loc_id
-	 , enr_cnty
-	 , budget_group
-	 , sex
-	 , race
-	 , rae_person_new
-FROM raw.qrylong_01
+SELECT a.mcaid_id
+	 , a.time
+	 , a.FY
+	 , a.dt_qrtr
+	 , a.month
+	 , a.pcmp_loc_id
+	 , a.enr_cnty
+	 , a.budget_group
+	 , a.sex
+	 , a.race
+	 , a.rae_person_new
+	 , b.age
+FROM raw.qrylong_01    AS A 
+INNER JOIN raw.age_dim AS B ON (a.mcaid_id=b.mcaid_id AND a.time=b.time)
 WHERE rae_person_new ne . 
-AND FY IN (2019, 2020, 2021, 2022) 
-AND mcaid_id IN (SELECT mcaid_id FROM raw.age_dim);
-QUIT; *44600909; 
+AND FY IN (2019, 2020, 2021, 2022) ;
+QUIT; *44202204 & checked freq's on util_02_checks;
 
 * 
 [RAW.QRYLONG_02] ==============================================================================
@@ -238,7 +201,7 @@ SELECT mcaid_id
 	 , month
 FROM raw.qrylong_01
 WHERE mcaid_id IN (SELECT mcaid_id FROM raw.final_00);
-QUIT; *06/07 68762434;
+QUIT; *06/07 68741452;
 
 * 
 [RAW.FINAL_00 & RAW.DEMO_1922]=======================================================================
@@ -247,7 +210,7 @@ Subset to mcaid_id's that have an rae_assigned in FY's 19-22
 DATA raw.final_01  (KEEP = mcaid_id month dt_qrtr FY time)
      raw.demo_1922 (KEEP = mcaid_id month dt_qrtr FY time sex race rae_person_new pcmp_loc_id budget_group);
 SET  raw.final_00 ;
-RUN; *06/07: both have 44600909
+RUN; *06/07: both have 44585426
 06/05 both have 44102611; 
 
 PROC SORT DATA=raw.final_01; BY MCAID_ID FY TIME; RUN; 
@@ -307,8 +270,8 @@ SELECT a.mcaid_id
      , g.race
      , h.sex
 FROM raw.final_01                    AS A
+INNER JOIN raw.age_dim				 AS I   ON a.id_time_helper = I.id_time_helper
 LEFT JOIN budget_group               AS B   ON A.id_time_helper = B.id_time_helper
-LEFT JOIN raw.age_dim				 AS I   ON a.id_time_helper = I.id_time_helper
 LEFT JOIN rae_person_new             AS C   ON A.id_time_helper = C.id_time_helper
 LEFT JOIN int.pcmp_attr_qrtr         AS D   ON A.id_time_helper = D.id_time_helper
 LEFT JOIN int.pcmp_dim               AS E   ON D.pcmp_loc_id    = E.pcmp_loc_id   
