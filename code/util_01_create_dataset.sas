@@ -41,10 +41,10 @@ run;
 DATA   raw.qrylong_00 (DROP=managedCare);
 LENGTH mcaid_id $11; 
 SET    ana.qry_longitudinal (WHERE=(month ge '01Jul2016'd AND month le '30Sep2022'd 
-							 		AND BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
-                             		AND managedCare = 0
-							 		AND pcmp_loc_id ne ' ') 
-							 DROP = FED_POV: DISBLD_IND aid_cd: title19: SPLM_SCRTY_INCM_IND
+                                    AND BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
+                                    AND managedCare = 0
+                                    AND pcmp_loc_id ne ' ') 
+                             DROP = FED_POV: DISBLD_IND aid_cd: title19: SPLM_SCRTY_INCM_IND
                                     SSI_: SS: dual eligGrp fost_aid_cd) ;  
 format dt_qrtr date9.; 
 dt_qrtr = intnx('quarter', month ,0,'b'); 
@@ -90,17 +90,17 @@ SELECT a.mcaid_id
      , a.enr_cnty
      , a.budget_group
      , a.dt_qrtr 
-	 , a.FY
+     , a.FY
      , b.dob
      , b.gender as sex
      , b.race
      , c.rae_id as rae_person_new
-	 , d.time
-	 , d.fy_qrtr
+     , d.time
+     , d.fy_qrtr
 FROM raw.qrylong_00             AS A 
 LEFT JOIN ana.qry_demographics  AS B ON a.mcaid_id = b.mcaid_id 
 LEFT JOIN int.rae_dim           AS C ON a.enr_cnty = c.hcpf_county_code_c
-LEFT JOIN raw.time_dim			AS D on a.dt_qrtr  = d.month
+LEFT JOIN raw.time_dim          AS D on a.dt_qrtr  = d.month
 WHERE  pcmp_loc_id ne .
 AND    SEX IN ('F','M');
 QUIT;   *06-07 75690836 : 10 cols;
@@ -121,8 +121,8 @@ Will have to inner join these variables on qrylong eventually unless you subset 
 PROC SQL;
 CREATE TABLE raw.age_dim_00 AS 
 SELECT distinct(mcaid_id) as mcaid_id
-	 , dob
-	 , time
+     , dob
+     , time
 FROM raw.qrylong_01
 WHERE FY in (2019, 2020, 2021, 2022)
 AND   rae_person_new ne .;
@@ -171,16 +171,16 @@ Start final list where age in range based on FY's 19-22 and rae_ not missing
 PROC SQL;
 CREATE TABLE raw.final_00 AS 
 SELECT a.mcaid_id
-	 , a.time
-	 , a.FY
-	 , a.dt_qrtr
-	 , a.month
-	 , a.pcmp_loc_id
-	 , a.budget_group
-	 , a.sex
-	 , a.race
-	 , a.rae_person_new
-	 , b.age
+     , a.time
+     , a.FY
+     , a.dt_qrtr
+     , a.month
+     , a.pcmp_loc_id
+     , a.budget_group
+     , a.sex
+     , a.race
+     , a.rae_person_new
+     , b.age
 FROM raw.qrylong_01    AS A 
 INNER JOIN raw.age_dim AS B ON (a.mcaid_id=b.mcaid_id AND a.time=b.time)
 WHERE rae_person_new ne . 
@@ -195,10 +195,10 @@ Limit ds to members id's found in age_dim
 PROC SQL;
 CREATE TABLE raw.qrylong_02 AS 
 SELECT mcaid_id
-	 , time
-	 , FY
-	 , dt_qrtr
-	 , month
+     , time
+     , FY
+     , dt_qrtr
+     , month
 FROM raw.qrylong_01
 WHERE mcaid_id IN (SELECT mcaid_id FROM raw.final_00);
 QUIT; *06/07 68741452;
@@ -257,7 +257,7 @@ SELECT a.mcaid_id
      , a.FY
      , a.time
      , a.id_time_helper
-	 , a.age
+     , a.age
      , b.budget_group
      , c.rae_person_new
      , d.pcmp_loc_id
@@ -474,8 +474,8 @@ data int.pctl1618; merge pd16pctle pd17pctle pd18pctle ; run;
 
 PROC PRINT DATA = int.pctl1618; RUN; 
 * 06/08
-    p16_50 	p16_75  p16_90 	p16_95 		p17_50 	p17_75 	p17_90 	p17_95 		p18_50 	p18_75 	p18_90 	p18_95
-    266.375 512.714 1197.79 2092.70 	268.926 519.093 1241.55 2276.84 	280.244 560.209 1397.99 2665.80
+    p16_50  p16_75  p16_90  p16_95      p17_50  p17_75  p17_90  p17_95      p18_50  p18_75  p18_90  p18_95
+    266.375 512.714 1197.79 2092.70     268.926 519.093 1241.55 2276.84     280.244 560.209 1397.99 2665.80
 
 * https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 proc sql noprint;
@@ -522,7 +522,7 @@ RUN;
 %mend;
 
 * Made separate ds's for testing but merge if poss later, save final to int/; 
-%insert_pctile(ds_in = raw.fy_1618_2,	  ds_out = adj0,             year = 16);
+%insert_pctile(ds_in = raw.fy_1618_2,     ds_out = adj0,             year = 16);
 %insert_pctile(ds_in = adj0,              ds_out = adj1,             year = 17);
 %insert_pctile(ds_in = adj1,              ds_out = int.qrylong_1618, year = 18); *1138579;
 
@@ -574,7 +574,7 @@ CREATE TABLE raw.final_05 AS
 SELECT a.*
      , b.*
 FROM raw.final_04            AS A
-LEFT JOIN int.FY_1922		 AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time;
+LEFT JOIN int.FY_1922        AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time;
 QUIT; *6/8 15124679 and 39 cols; 
 
 * setting to 0 where . for variables not using elig category (adj 16-18 vars) 
@@ -640,18 +640,18 @@ data int.pctl1922; merge int.adj_total_pctl_a int.adj_pc_pctl_a int.adj_rx_pctl_
 PROC PRINT DATA = int.pctl1922; RUN; * 6/8 closer to the 6/1 adj_total figs;
 /*adj_total_95p_19    adj_total_95p_20   adj_total_95p_21    adj_total_95p_22
 6/1 3971.63           3734.90             3649.42             3907.58 
-6/7 4004.88 		  3783.73 			 3717.50 			 3984.28 
-6/8 3976.10			  3734.96			 3646.20			 3919.28
+6/7 4004.88           3783.73            3717.50             3984.28 
+6/8 3976.10           3734.96            3646.20             3919.28
 
-  		adj_pc_95p_19       adj_pc_95p_20      adj_pc_95p_21       adj_pc_95p_22 
-  		365.616             352.994            343.009             329.151 
-6/7		365.425 			352.932 		   341.358 			   324.069 
-6/8 	363.100 			349.070 		   338.999 			   325.904  
+        adj_pc_95p_19       adj_pc_95p_20      adj_pc_95p_21       adj_pc_95p_22 
+        365.616             352.994            343.009             329.151 
+6/7     365.425             352.932            341.358             324.069 
+6/8     363.100             349.070            338.999             325.904  
 
-  		adj_rx_95p_19       adj_rx_95p_20      adj_rx_95p_21       adj_rx_95p_22 
-  		1075.92             1147.51            1158.32             1227.72 
-6/7		1078.70 			1152.43 		   1162.93 			   1239.26 
-6/8 	1079.69 		    1153.22 		   1163.86 			   1239.60 
+        adj_rx_95p_19       adj_rx_95p_20      adj_rx_95p_21       adj_rx_95p_22 
+        1075.92             1147.51            1158.32             1227.72 
+6/7     1078.70             1152.43            1162.93             1239.26 
+6/8     1079.69             1153.22            1163.86             1239.60 
 */
 * https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 proc sql noprint;
@@ -740,17 +740,10 @@ ANALYSIS_DATASET_ALLCOLS =======================================================
 ===========================================================================================;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config_formats.sas"; 
 
-DATA raw.final_08; 
-SET  raw.final_07 (DROP = adj_total_pm adj_pc_pm adj_rx_pm) ; 
-FORMAT budget_group budget_grp_new_.
-       race         $race_rc_.;
-age_cat = put(age, age_cat_.);
-RUN; 
-
 *** Add quarter variables, one with text for readability ; 
 DATA raw.final_08 ;
 SET  raw.final_07 (DROP = adj_total_pm adj_pc_pm adj_rx_pm
-				   RENAME=(bho_n_hosp_16pm = BH_Hosp16
+                   RENAME=(bho_n_hosp_16pm = BH_Hosp16
                            bho_n_hosp_17pm = BH_Hosp17
                            bho_n_hosp_18pm = BH_Hosp18
                            bho_n_er_16pm   = BH_ER16
@@ -771,10 +764,15 @@ DO i=1 to dim(bh);
     END;
 DROP i; 
 
-FORMAT budget_group budget_grp_new_.
-       race         $race_rc_.;
-
+FORMAT race $race_rc_.;
 age_cat = put(age, age_cat_.);
+
+budget_grp_new = put(budget_group, budget_grp_new_.);
+
+* Create a value without the format; 
+budget_grp_no_fmt = budget_group;
+format budget_grp_no_fmt; 
+
 fyqrtr_txt = put(time,   fyqrtr_cat.); 
 fyqrtr     = input(time, fyqrtr_num.);
 
@@ -823,7 +821,7 @@ ARRAY bh18(*) bh_hosp18 bh_er18 bh_oth18;
     IF bh18(i) = 1 then bh_2018 = 1;
 END; 
 
-RUN;
+RUN; *15124679;
 
 DATA data.analysis;
 SET  data.analysis_allcols (DROP = bh_hosp:
@@ -863,7 +861,7 @@ Step 1: ds has to be sorted on grouping var
 Step 2: specify nrow, allocation, and strata
 Step 3: Check frequency to test
 
-06/05 Passed check
+06/09 Passed check
 ===========================================================================================;
 * Step 1;
 proc sort data = data.analysis;

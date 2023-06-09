@@ -1,4 +1,34 @@
 * 
+[Checking 'budget_group'] ================================================================
+Using raw.final_07 since that's the one that was pre-format
+===========================================================================================;
+PROC FREQ 
+     DATA = raw.final_07;
+     TABLES budget_group / ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'Frequency budget group, pre-formatting';
+RUN; 
+TITLE; 
+
+PROC FREQ 
+     DATA = raw.final_08;
+     TABLES budget_group / ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'Frequency budget group, post-formatting';
+RUN; 
+TITLE; 
+
+PROC CONTENTS DATA = data.analysis;
+RUN; 
+
+PROC FREQ 
+     DATA = data.analysis;
+     TABLES budget_group budget_grp_new budget_grp_no_fmt
+            budget_grp_no_fmt*budget_group
+            budget_grp_no_fmt*budget_grp_new ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+     TITLE  'Frequency budget group, various views';
+RUN; 
+TITLE; 
+
+* 
 [RAW.FINAL_00] ==============================================================================
 Tests
 ===========================================================================================;

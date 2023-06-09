@@ -40,14 +40,11 @@ RUN;
 %LET cvar = adj_pd_pc_tc;
 
 *
-[Probability Model] ==============================================================================
-M1: int, int_imp, time  // Outcome: Successfully ran
-M2: +budget_group       // Outcome: Hessian error
-M3: -budget_group +race // Outcome:
+[MACRO] ==============================================================================
 =========================================================================================;
-%macro p_model(class_vars=,model_vars=);
-TITLE "Probability Model: DV PC Cost";
-TITLE2 "With model vars &model_vars";  
+%macro p_model(class_vars=,model_vars=, model_number=);
+TITLE "Probability Model: DV PC Cost &model_number." ;
+TITLE2 "With model vars &model_vars" ;  
 PROC GEE DATA  = &dat;
 CLASS  &class_vars;
 MODEL  ind_pc_cost = &model_vars / DIST=binomial LINK=logit ; 
@@ -57,6 +54,12 @@ run;
 TITLE; TITLE2;
 %mend;
 
+* 
+[Models] ==============================================================================
+1. Success
+2. Failure
+===========================================================================================;
+
 %LET class01 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0');
 %LET model01 = int int_imp time;          
 %p_model(class_vars=&class01, model_vars=&model01);
@@ -64,10 +67,32 @@ TITLE; TITLE2;
 %LET class02 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') budget_group;
 %LET model02 = int int_imp time budget_group;          
 %p_model(class_vars=&class02, model_vars=&model02);
+* HESSIAN ERROR;
 
+%LET class03 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') race;
+%LET model03 = int int_imp time race;          
+%p_model(class_vars=&class03, model_vars=&model03); * RAN;
 
+%LET class04 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') race sex;
+%LET model04 = int int_imp time race sex;          
+%p_model(class_vars=&class04, model_vars=&model04); * RAN;
 
+%LET model_number = 05;
+%LET class05 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') race sex rae_person_new;
+%LET model05 = int int_imp time race rae_person_new;          
+%p_model(class_vars=&class05, model_vars=&model05);
 
+* Adding age, linear; 
+%LET model_number = 06;
+%LET class06 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') race sex rae_person_new;
+%LET model06 = int int_imp time race age;          
+%p_model(class_vars=&class06, model_vars=&model06);
+
+* Adding fqhc; 
+%LET model_number = 07;
+%LET class07 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') race fqhc(ref='0');
+%LET model07 = int int_imp time race age fqhc;          
+%p_model(class_vars=&class07, model_vars=&model07);
 
 
 
