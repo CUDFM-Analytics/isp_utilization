@@ -1,5 +1,3 @@
-*** SHORT VERSION stops at row 52
-Comment that line out and run whole thing for long version; 
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 

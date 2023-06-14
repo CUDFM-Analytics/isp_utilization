@@ -823,11 +823,14 @@ END;
 
 RUN; *15124679;
 
-DATA data.analysis;
+* Mark said not to use format just to make sure / removed budget_grp_new here, 
+then in next data step use the budget_group_no_fmt to create numeric values and apply format to that one for frqs only;
+DATA data.analysis0;
 SET  data.analysis_allcols (DROP = bh_hosp:
                                    bh_er: 
                                    bh_oth:
                                    fyqrtr
+                                   budget_grp_new
                             );
 LABEL adj_pd_total_16cat = 'Categorical pd_total FFS FY2016'
       adj_pd_total_17cat = 'Categorical pd_total FFS FY2017'
@@ -853,6 +856,62 @@ LABEL adj_pd_total_16cat = 'Categorical pd_total FFS FY2016'
       bh_2018            = 'FY18 Indicator of any bh_other bh_er bh_hosp';
 RUN; * 6/8 15124679 : 34; 
 
+* Rename budget_grp_new with _old so you can create new budget_grp_new with if /then statements; 
+DATA data.analysis1;
+SET  data.analysis0 (RENAME=(budget_group      = budget_grp_fmt_ana
+                             budget_grp_no_fmt = budget_grp_num));
+
+* assign new numeric values to 3, 5-12 / else 0 (Other);
+IF         budget_grp_num = 3 THEN budget_grp_num_r = 1;
+ELSE IF    budget_grp_num = 5 THEN budget_grp_num_r = 2;
+ELSE IF 6<=budget_grp_num<=10 THEN budget_grp_num_r = 3;
+ELSE IF    budget_grp_num =11 THEN budget_grp_num_r = 4;
+ELSE IF    budget_grp_num =12 THEN budget_grp_num_r = 5;
+ELSE                               budget_grp_num_r = 0;  
+
+budget_grp_new = put(budget_grp_num_r, budget_grp_new_.);
+
+LABEL budget_grp_num_r = "Budget Group Num, Recoded"
+      budget_grp_new   = "Budget Group Num, Recoded plus Format"
+      budget_grp_num   = "Budget Group Num"
+      age_cat          = "Age Categorical"
+      n_tel_pm         = "Telehealth Visits PMPQ";
+RUN;  
+
+* Reordered so I could see related cols together; 
+DATA data.analysis;
+RETAIN mcaid_id time int int_imp season1 season2 season3 
+       ind_total_cost     adj_pd_total_tc
+       ind_pc_cost        adj_pd_pc_tc
+       ind_rx_cost        adj_pd_rx_tc
+       ind_pc_visit       n_pc_pm   
+       ind_ed_visit       n_ed_pm
+       ind_ffs_bh_visit   n_ffs_bh_pm
+       ind_tel_visit      n_tel_pm
+       bh:
+       adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat 
+       fqhc 
+       budget_grp_fmt_ana   budget_grp_num  budget_grp_num_r budget_grp_new
+       age age_cat
+       rae_person_new race sex  ;
+SET data.analysis1;
+RUN;
+
+* create data.analysis_meta ; 
+PROC SQL; 
+CREATE TABLE data.analysis_meta AS 
+SELECT name as variable
+     , type
+     , length
+     , label
+     , format
+     , informat
+FROM sashelp.vcolumn
+WHERE LIBNAME = 'DATA' 
+AND   MEMNAME = 'ANALYSIS';
+quit;
+
+proc print data = data.analysis_meta; run;
 * 
 DATA.MINI_DS ==============================================================================
 VERSION 06/05 

@@ -31,13 +31,24 @@ invalue fyqrtr_num
 13 = 1;
 
 * Formats for values in datasets in ana library:; 
-VALUE budget_grp_new_       
-    5          = "MAGI TO 68% FPL"
-    3          = "MAGI 69 - 133% FPL"
-    6,7,8,9,10 = "Disabled"  
-    11         = "Foster Care"  
-    12         = "MAGI Eligible Children"
-    Other      = "Other"; 
+/*VALUE budget_grp_new_    */
+/* 0   low-<3 = "Other"*/
+/* 1   3      = "MAGI 69 - 133% FPL"*/
+/* 0   4      = "Other"*/
+/* 2   5      = "MAGI TO 68% FPL"*/
+/* 3   6-10   = "Disabled"  */
+/* 4   11     = "Foster Care"  */
+/* 5   12     = "MAGI Eligible Children"*/
+/* 0   13-27  = "Other"; */
+
+* New format for the if/then/else variable in util_01 rows 866-871;
+VALUE budget_grp_new_
+0 = "Other"
+1 = "MAGI 69 - 133% FPL"
+2 = "MAGI TO 68% FPL"
+3 = "Disabled"
+4 = "Foster Care" 
+5 = "MAGI Eligible Children";
 
 VALUE $race_rc_  
     .         = "Other" 

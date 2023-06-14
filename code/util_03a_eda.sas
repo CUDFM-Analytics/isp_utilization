@@ -7,21 +7,6 @@ DEPENDS  : ;
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
 ***********************************************************************************************;
-* data.analysis_meta has meta for analysis ds; 
-PROC SQL; 
-CREATE TABLE data.analysis_meta AS 
-SELECT name as variable
-     , type
-     , length
-     , label
-     , format
-     , informat
-FROM sashelp.vcolumn
-WHERE LIBNAME = 'DATA' 
-AND   MEMNAME = 'ANALYSIS';
-quit;
-
-PROC PRINT DATA = data.analysis_meta NOOBS; RUN; 
 
 %let dat = data.analysis; 
 %let all = data.analysis_allcols; 

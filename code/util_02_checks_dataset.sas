@@ -19,14 +19,39 @@ TITLE;
 PROC CONTENTS DATA = data.analysis;
 RUN; 
 
+%LET today = %SYSFUNC(today(), YYMMDD10.);
+ODS PDF File = "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports/checks_budgetgrp_&today..pdf" startpage=no;
+
 PROC FREQ 
      DATA = data.analysis;
-     TABLES budget_group budget_grp_new budget_grp_no_fmt
-            budget_grp_no_fmt*budget_group
-            budget_grp_no_fmt*budget_grp_new ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
-     TITLE  'Frequency budget group, various views';
+TITLE 'Original formats: varname [budget_group]';
+TABLES budget_group  ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
 RUN; 
 TITLE; 
+
+PROC FREQ 
+     DATA = data.analysis;
+TITLE 'Recoded format per spec file: varname [budget_grp_new]';
+TABLES budget_grp_new  ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+RUN; 
+TITLE; 
+
+PROC FREQ 
+     DATA = data.analysis;
+TITLE 'Budget Group Values Without Formats: numeric values, varname [budget_grp_no_fmt]';
+TABLES budget_grp_no_fmt  ;* PLOTS = freqplot(type=dotplot scale=percent) out=out_ds;
+RUN; 
+TITLE; 
+
+PROC FREQ 
+     DATA = data.analysis;
+TITLE 'Crosstabs, Various';
+TABLES budget_grp_no_fmt*budget_group
+       budget_grp_no_fmt*budget_grp_new  ;
+RUN; 
+TITLE; 
+
+ods pdf close;
 
 * 
 [RAW.FINAL_00] ==============================================================================
