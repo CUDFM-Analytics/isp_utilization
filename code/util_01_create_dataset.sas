@@ -823,6 +823,7 @@ END;
 
 RUN; *15124679;
 
+proc contents data = data.analysis varnum; run; 
 * Mark said not to use format just to make sure / removed budget_grp_new here, 
 then in next data step use the budget_group_no_fmt to create numeric values and apply format to that one for frqs only;
 DATA data.analysis0;
@@ -857,7 +858,8 @@ LABEL adj_pd_total_16cat = 'Categorical pd_total FFS FY2016'
 RUN; * 6/8 15124679 : 34; 
 
 * Rename budget_grp_new with _old so you can create new budget_grp_new with if /then statements
-* Update 07-20 - added age_cat_num and re-ran all downstream; 
+* Update 06-19 - added age_cat_num and re-ran all downstream
+* Update 06-20 - added the adj_pd_orig and rescaling original variables to be 0 to 6; 
 DATA data.analysis1;
 SET  data.analysis0 (RENAME=(budget_group      = budget_grp_fmt_ana
                              budget_grp_no_fmt = budget_grp_num));
@@ -873,11 +875,26 @@ ELSE                               budget_grp_num_r = 0;
 budget_grp_new = put(budget_grp_num_r, budget_grp_new_.);
 age_cat_num = input(age_cat, best12.);
 
+adj_pd_total_16cat_orig = adj_pd_total_16cat;
+adj_pd_total_17cat_orig = adj_pd_total_17cat;
+adj_pd_total_18cat_orig = adj_pd_total_18cat;
+
+adj_pd_total_16cat = adj_pd_total_16cat + 1; 
+adj_pd_total_17cat = adj_pd_total_17cat + 1; 
+adj_pd_total_18cat = adj_pd_total_18cat + 1; 
+
 LABEL budget_grp_num_r = "Budget Group Num, Recoded"
       budget_grp_new   = "Budget Group Num, Recoded plus Format"
       budget_grp_num   = "Budget Group Num"
       age_cat          = "Age Categorical"
-      n_tel_pm         = "Telehealth Visits PMPQ";
+      n_tel_pm         = "Telehealth Visits PMPQ"
+      age_cat_num      = "Age Categorical Numeric Values"
+      adj_pd_total_16cat_orig = "Og Scale neg value, do not use just kept to check"
+      adj_pd_total_17cat_orig = "Og Scale neg value, do not use just kept to check"
+      adj_pd_total_18cat_orig = "Og Scale neg value, do not use just kept to check"
+      adj_pd_total_16cat = "Categorical adj ffs total 2016, Scale 0 to 6"
+      adj_pd_total_17cat = "Categorical adj ffs total 2017, Scale 0 to 6"
+      adj_pd_total_18cat = "Categorical adj ffs total 2018, Scale 0 to 6";
 RUN;  
 
 * Reordered so I could see related cols together; 
@@ -890,11 +907,15 @@ RETAIN mcaid_id time int int_imp season1 season2 season3
        ind_ed_visit       n_ed_pm
        ind_ffs_bh_visit   n_ffs_bh_pm
        ind_tel_visit      n_tel_pm
-       bh:
-       adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat 
+       bh_2016  bh_hosp16   bh_er16   bh_oth16
+       bh_2017  bh_hosp17   bh_er17   bh_oth17
+       bh_2018  bh_hosp18   bh_er18   bh_oth18
+       adj_pd_total_16cat_orig  adj_pd_total_16cat
+       adj_pd_total_17cat_orig  adj_pd_total_17cat
+       adj_pd_total_18cat_orig  adj_pd_total_18cat
        fqhc 
        budget_grp_fmt_ana   budget_grp_num  budget_grp_num_r budget_grp_new
-       age age_cat
+       age      age_cat     age_cat_num
        rae_person_new race sex  ;
 SET data.analysis1;
 RUN;
@@ -943,4 +964,3 @@ tables int;
 run;
 * int=0 pct 87.48%
   int=1 pct 12.52%; 
-
