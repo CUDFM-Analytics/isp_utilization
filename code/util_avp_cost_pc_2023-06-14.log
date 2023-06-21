@@ -1,0 +1,1487 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.25 seconds
+      cpu time            0.78 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_analysis
+NOTE: Libref EDA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_eda_tests
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.54 seconds
+      cpu time            0.20 seconds
+
+
+143  PROC FORMAT FMTLIB LIB=Ana.Formats;
+143!                                     SELECT Budget_group;
+143!                                                          RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+NOTE: Non-portable document will be produced. The current settings of FORMCHAR use nonstandard
+      line-drawing characters and the resulting output file will not render correctly unless all
+      readers of the document have the SAS Monospace font installed. To make your document
+      portable, issue the following command:
+      OPTIONS FORMCHAR="|----|+|---+=|-/\<>*";
+
+
+144  PROC FORMAT library = data;
+145  *** Add quarter variables, one with text for readability ;
+146  value fyqrtr_cat
+147  1  = "Q1"
+148  2  = "Q2"
+149  3  = "Q3"
+150  4  = "Q4"
+151  5  = "Q1"
+152  6  = "Q2"
+153  7  = "Q3"
+154  8  = "Q4"
+155  9  = "Q1"
+156  10 = "Q2"
+157  11 = "Q3"
+158  12 = "Q4"
+159  13 = "Q1";
+NOTE: Format FYQRTR_CAT is already on the library DATA.FORMATS.
+NOTE: Format FYQRTR_CAT has been written to DATA.FORMATS.
+160
+161  invalue fyqrtr_num
+162  1  = 1
+163  2  = 2
+164  3  = 3
+165  4  = 4
+166  5  = 1
+167  6  = 2
+168  7  = 3
+169  8  = 4
+170  9  = 1
+171  10 = 2
+172  11 = 3
+173  12 = 4
+174  13 = 1;
+NOTE: Informat FYQRTR_NUM is already on the library DATA.FORMATS.
+NOTE: Informat FYQRTR_NUM has been output.
+175
+176  * Formats for values in datasets in ana library:;
+177  VALUE budget_grp_new_
+178      low-<3 = "Other"
+179      3      = "MAGI 69 - 133% FPL"
+180      4      = "Other"
+181      5      = "MAGI TO 68% FPL"
+182      6-10   = "Disabled"
+183      11     = "Foster Care"
+184      12     = "MAGI Eligible Children"
+185      13-27  = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+186
+187  VALUE $race_rc_
+188      .         = "Other"
+189      1         = "Hispanic/Latino"
+190      2         = "non-Hispanic White/Caucasian"
+191      3         = "non-Hispanic Black/African American"
+192      4,5,6,7,8 = "non-Hispanic Other"
+193      9         = "non-Hispanic Other People of Color"
+194      Other     = "Unknown Race/Ethnicity";
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+195
+196  * Formats for values created originally in the util files;
+197
+198  VALUE age_cat_
+199      0 - 5 = 1
+200      6 -10 = 2
+201      11-15 = 3
+202      16-20 = 4
+203      21-44 = 5
+204      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+205
+206  VALUE $age_cat_
+207      1 = "ages 0-5"
+208      2 = "ages 6-10"
+209      3 = "ages 11-15"
+210      4 = "ages 16-20"
+211      5 = "ages 21-44"
+212      6 = "ages 45-64";
+NOTE: Format $AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format $AGE_CAT_ has been written to DATA.FORMATS.
+213  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.04 seconds
+
+
+214  PROC FORMAT library = data;
+215  *** Add quarter variables, one with text for readability ;
+216  value fyqrtr_cat
+217  1  = "Q1"
+218  2  = "Q2"
+219  3  = "Q3"
+220  4  = "Q4"
+221  5  = "Q1"
+222  6  = "Q2"
+223  7  = "Q3"
+224  8  = "Q4"
+225  9  = "Q1"
+226  10 = "Q2"
+227  11 = "Q3"
+228  12 = "Q4"
+229  13 = "Q1";
+NOTE: Format FYQRTR_CAT is already on the library DATA.FORMATS.
+NOTE: Format FYQRTR_CAT has been written to DATA.FORMATS.
+230
+231  invalue fyqrtr_num
+232  1  = 1
+233  2  = 2
+234  3  = 3
+235  4  = 4
+236  5  = 1
+237  6  = 2
+238  7  = 3
+239  8  = 4
+240  9  = 1
+241  10 = 2
+242  11 = 3
+243  12 = 4
+244  13 = 1;
+NOTE: Informat FYQRTR_NUM is already on the library DATA.FORMATS.
+NOTE: Informat FYQRTR_NUM has been output.
+245
+246  * Formats for values in datasets in ana library:;
+247  VALUE budget_grp_new_
+248      low-<3 = "Other"
+249      3      = "MAGI 69 - 133% FPL"
+250      4      = "Other"
+251      5      = "MAGI TO 68% FPL"
+252      6-10   = "Disabled"
+253      11     = "Foster Care"
+254      12     = "MAGI Eligible Children"
+255      13-27  = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+256
+257  VALUE $race_rc_
+258      .         = "Other"
+259      1         = "Hispanic/Latino"
+260      2         = "non-Hispanic White/Caucasian"
+261      3         = "non-Hispanic Black/African American"
+262      4,5,6,7,8 = "non-Hispanic Other"
+263      9         = "non-Hispanic Other People of Color"
+264      Other     = "Unknown Race/Ethnicity";
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+265
+266  * Formats for values created originally in the util files;
+267
+268  VALUE age_cat_
+269      0 - 5 = 1
+270      6 -10 = 2
+271      11-15 = 3
+272      16-20 = 4
+273      21-44 = 5
+274      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+275
+276  VALUE $age_cat_
+277      1 = "ages 0-5"
+278      2 = "ages 6-10"
+279      3 = "ages 11-15"
+280      4 = "ages 16-20"
+281      5 = "ages 21-44"
+282      6 = "ages 45-64";
+NOTE: Format $AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format $AGE_CAT_ has been written to DATA.FORMATS.
+283  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+284  PROC FORMAT library = data;
+285  *** Add quarter variables, one with text for readability ;
+286  value fyqrtr_cat
+287  1  = "Q1"
+288  2  = "Q2"
+289  3  = "Q3"
+290  4  = "Q4"
+291  5  = "Q1"
+292  6  = "Q2"
+293  7  = "Q3"
+294  8  = "Q4"
+295  9  = "Q1"
+296  10 = "Q2"
+297  11 = "Q3"
+298  12 = "Q4"
+299  13 = "Q1";
+NOTE: Format FYQRTR_CAT is already on the library DATA.FORMATS.
+NOTE: Format FYQRTR_CAT has been written to DATA.FORMATS.
+300
+301  invalue fyqrtr_num
+302  1  = 1
+303  2  = 2
+304  3  = 3
+305  4  = 4
+306  5  = 1
+307  6  = 2
+308  7  = 3
+309  8  = 4
+310  9  = 1
+311  10 = 2
+312  11 = 3
+313  12 = 4
+314  13 = 1;
+NOTE: Informat FYQRTR_NUM is already on the library DATA.FORMATS.
+NOTE: Informat FYQRTR_NUM has been output.
+315
+316  * Formats for values in datasets in ana library:;
+317  VALUE budget_grp_new_
+318      low-<3 = "Other"
+319      3      = "MAGI 69 - 133% FPL"
+320      4      = "Other"
+321      5      = "MAGI TO 68% FPL"
+322      6-10   = "Disabled"
+323      11     = "Foster Care"
+324      12     = "MAGI Eligible Children"
+325      13-27  = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+326
+327  VALUE $race_rc_
+328      .         = "Other"
+329      1         = "Hispanic/Latino"
+330      2         = "non-Hispanic White/Caucasian"
+331      3         = "non-Hispanic Black/African American"
+332      4,5,6,7,8 = "non-Hispanic Other"
+333      9         = "non-Hispanic Other People of Color"
+334      Other     = "Unknown Race/Ethnicity";
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+335
+336  * Formats for values created originally in the util files;
+337
+338  VALUE age_cat_
+339      0 - 5 = 1
+340      6 -10 = 2
+341      11-15 = 3
+342      16-20 = 4
+343      21-44 = 5
+344      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+345
+346  VALUE $age_cat_
+347      1 = "ages 0-5"
+348      2 = "ages 6-10"
+349      3 = "ages 11-15"
+350      4 = "ages 16-20"
+351      5 = "ages 21-44"
+352      6 = "ages 45-64";
+NOTE: Format $AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format $AGE_CAT_ has been written to DATA.FORMATS.
+353  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+354
+355  *** Add quarter variables, one with text for readability ;
+356  DATA raw.final_08 ;
+357  SET  raw.final_07 (DROP = adj_total_pm adj_pc_pm adj_rx_pm
+358                     RENAME=(bho_n_hosp_16pm = BH_Hosp16
+359                             bho_n_hosp_17pm = BH_Hosp17
+360                             bho_n_hosp_18pm = BH_Hosp18
+361                             bho_n_er_16pm   = BH_ER16
+362                             bho_n_er_17pm   = BH_ER17
+363                             bho_n_er_18pm   = BH_ER18
+364                             bho_n_other_16pm= BH_Oth16
+365                             bho_n_other_17pm= BH_Oth17
+366                             bho_n_other_18pm= BH_Oth18
+367                             ));
+368
+369  ARRAY bh(*) BH_Hosp16  BH_Hosp17  BH_Hosp18
+370              BH_ER16    BH_ER17    BH_ER18
+371              BH_Oth16   BH_Oth17   BH_Oth18;
+372
+373  DO i=1 to dim(bh);
+374      IF bh(i)>0 THEN bh(i)=1;
+375      ELSE bh(i)=bh(i);
+376      END;
+377  DROP i;
+378
+379  FORMAT race $race_rc_.;
+380  age_cat = put(age, age_cat_.);
+381
+382  budget_grp_new = put(budget_group, budget_grp_new_.);
+383
+384  * Create a value without the format;
+385  budget_grp_no_fmt = budget_group;
+386  format budget_grp_no_fmt;
+387
+388  fyqrtr_txt = put(time,   fyqrtr_cat.);
+389  fyqrtr     = input(time, fyqrtr_num.);
+390
+391  IF      fyqrtr  = 1  THEN season1 = 1 ;
+392  ELSE IF fyqrtr  = 4  THEN season1 = -1;
+393  ELSE    season1 = 0;
+394
+395  IF      fyqrtr  = 2  THEN season2 = 1 ;
+396  ELSE IF fyqrtr  = 4  THEN season2 = -1;
+397  ELSE    season2 = 0;
+398
+399  IF      fyqrtr  = 3  THEN season3 = 1 ;
+400  ELSE IF fyqrtr  = 4  THEN season3 = -1;
+401  ELSE    season3 = 0;
+402
+403  RUN;
+
+NOTE: Numeric values have been converted to character values at the places given by:
+      (Line):(Column).
+      389:20
+NOTE: There were 15124679 observations read from the data set RAW.FINAL_07.
+NOTE: The data set RAW.FINAL_08 has 15124679 observations and 47 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:52.39
+      cpu time            11.57 seconds
+
+
+404
+405  PROC SORT DATA = raw.final_08;
+406  BY mcaid_id time;
+407  RUN;
+
+NOTE: There were 15124679 observations read from the data set RAW.FINAL_08.
+NOTE: The data set RAW.FINAL_08 has 15124679 observations and 47 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           2:04.21
+      cpu time            16.82 seconds
+
+
+408
+409  *
+410  DATA.ANALYSIS ==============================================================================
+411  with effect coding
+412  ===========================================================================================;
+413  DATA data.analysis_allcols (DROP = i);
+414  SET  raw.final_08 (DROP = pcmp_loc_id
+415                            n_months_per_q
+416                            fyqrtr_txt
+417                            FY);
+418
+419  bh_2016 = 0; bh_2017=0; bh_2018=0;
+420
+421  ARRAY bh16(*) bh_hosp16 bh_er16 bh_oth16;
+422      DO i=1 to dim(bh16);
+423      IF bh16(i) = 1 then bh_2016 = 1;
+424  END;
+425
+426  ARRAY bh17(*) bh_hosp17 bh_er17 bh_oth17;
+427      DO i=1 to dim(bh17);
+428      IF bh17(i) = 1 then bh_2017 = 1;
+429  END;
+430
+431  ARRAY bh18(*) bh_hosp18 bh_er18 bh_oth18;
+432      DO i=1 to dim(bh18);
+433      IF bh18(i) = 1 then bh_2018 = 1;
+434  END;
+435
+436  RUN;
+
+NOTE: There were 15124679 observations read from the data set RAW.FINAL_08.
+NOTE: The data set DATA.ANALYSIS_ALLCOLS has 15124679 observations and 46 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:56.19
+      cpu time            7.93 seconds
+
+
+436!      *15124679;
+437
+438  DATA data.analysis;
+439  SET  data.analysis_allcols (DROP = bh_hosp:
+440                                     bh_er:
+441                                     bh_oth:
+442                                     fyqrtr
+443                              );
+444  LABEL adj_pd_total_16cat = 'Categorical pd_total FFS FY2016'
+445        adj_pd_total_17cat = 'Categorical pd_total FFS FY2017'
+446        adj_pd_total_18cat = 'Categorical pd_total FFS FY2018'
+447        n_pc_pm            = 'PC Visits PMPQ'
+448        n_ed_pm            = 'ED Visits PMPQ'
+449        n_ffs_bh_pm        = 'FFS BH Visits PMPQ'
+450        ind_pc_visit       = 'FFS PC Visit Count Positive'
+451        ind_ed_visit       = 'BH plus FFS ED Visit Count Positive'
+452        ind_ffs_bh_visit   = 'FFS BH Visit Count Positive'
+453        ind_tel_visit      = 'Telehealth Visit Count Positive'
+454        ind_total_cost     = 'FFS Total Cost Positive'
+455        ind_pc_cost        = 'PC Cost Positive'
+456        ind_rx_cost        = 'Rx Cost Positive'
+457        adj_pd_total_tc    = 'FFS total Cost PMPQ'
+458        adj_pd_pc_tc       = 'PC Cost PMPQ'
+459        adj_pd_rx_tc       = 'Rx Cost PMPQ'
+460        season1            = 'Effect Coding FYQ1'
+461        season2            = 'Effect Coding FYQ2'
+462        season3            = 'Effect Coding FYQ3'
+463        bh_2016            = 'FY16 Indicator of any bh_other bh_er bh_hosp'
+464        bh_2017            = 'FY17 Indicator of any bh_other bh_er bh_hosp'
+465        bh_2018            = 'FY18 Indicator of any bh_other bh_er bh_hosp';
+466  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS_ALLCOLS.
+NOTE: The data set DATA.ANALYSIS has 15124679 observations and 36 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:43.25
+      cpu time            5.46 seconds
+
+
+466!      * 6/8 15124679 : 34;
+467
+468  *
+469  DATA.MINI_DS ==============================================================================
+470  VERSION 06/05
+471  Reduced, testing dataset of 500k records from data.analysis with same int proportion
+472  Step 1: ds has to be sorted on grouping var
+473  Step 2: specify nrow, allocation, and strata
+474  Step 3: Check frequency to test
+475
+476  06/09 Passed check
+477  ===========================================================================================;
+478  * Step 1;
+479  proc sort data = data.analysis;
+480  by int ;
+481  run;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS.
+NOTE: The data set DATA.ANALYSIS has 15124679 observations and 36 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:39.22
+      cpu time            14.57 seconds
+
+
+482
+483  * Step 2;
+484  PROC SURVEYSELECT
+485  DATA = data.analysis
+486  n    = 500000
+487  OUT  = data.mini_ds;
+488  STRATA int / alloc=prop;
+489  RUN;
+
+NOTE: The data set DATA.MINI_DS has 500000 observations and 42 variables.
+NOTE: PROCEDURE SURVEYSELECT used (Total process time):
+      real time           45.79 seconds
+      cpu time            4.57 seconds
+
+
+490
+491  * Step 3;
+492  PROC FREQ DATA = data.mini_ds;
+493  tables int;
+494  run;
+
+NOTE: There were 500000 observations read from the data set DATA.MINI_DS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.68 seconds
+      cpu time            0.03 seconds
+
+
+495  * int=0 pct 87.48%
+496    int=1 pct 12.52%;
+
+497  proc freq data = data.analysis;
+498  tables budget_: ; run;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           41.10 seconds
+      cpu time            1.45 seconds
+
+
+499
+500  DATA data.analysis0;
+501  SET  data.analysis_allcols (DROP = bh_hosp:
+502                                     bh_er:
+503                                     bh_oth:
+504                                     fyqrtr
+505                              );
+506  LABEL adj_pd_total_16cat = 'Categorical pd_total FFS FY2016'
+507        adj_pd_total_17cat = 'Categorical pd_total FFS FY2017'
+508        adj_pd_total_18cat = 'Categorical pd_total FFS FY2018'
+509        n_pc_pm            = 'PC Visits PMPQ'
+510        n_ed_pm            = 'ED Visits PMPQ'
+511        n_ffs_bh_pm        = 'FFS BH Visits PMPQ'
+512        ind_pc_visit       = 'FFS PC Visit Count Positive'
+513        ind_ed_visit       = 'BH plus FFS ED Visit Count Positive'
+514        ind_ffs_bh_visit   = 'FFS BH Visit Count Positive'
+515        ind_tel_visit      = 'Telehealth Visit Count Positive'
+516        ind_total_cost     = 'FFS Total Cost Positive'
+517        ind_pc_cost        = 'PC Cost Positive'
+518        ind_rx_cost        = 'Rx Cost Positive'
+519        adj_pd_total_tc    = 'FFS total Cost PMPQ'
+520        adj_pd_pc_tc       = 'PC Cost PMPQ'
+521        adj_pd_rx_tc       = 'Rx Cost PMPQ'
+522        season1            = 'Effect Coding FYQ1'
+523        season2            = 'Effect Coding FYQ2'
+524        season3            = 'Effect Coding FYQ3'
+525        bh_2016            = 'FY16 Indicator of any bh_other bh_er bh_hosp'
+526        bh_2017            = 'FY17 Indicator of any bh_other bh_er bh_hosp'
+527        bh_2018            = 'FY18 Indicator of any bh_other bh_er bh_hosp';
+528  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS_ALLCOLS.
+NOTE: The data set DATA.ANALYSIS0 has 15124679 observations and 36 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:46.85
+      cpu time            5.45 seconds
+
+
+528!      * 6/8 15124679 : 34;
+
+529  PROC CONTENTS DATA =  data.analysis0 VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.00 seconds
+
+
+530  libname library 'Ana';
+NOTE: Library LIBRARY does not exist.
+531  proc format library=library fmtlib;
+532     select budget_group;
+533     title 'Ana library format: Budget Group';
+534  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+ERROR: Catalog LIBRARY.FORMATS does not exist.
+NOTE: The SAS System stopped processing this step because of errors.
+
+535  proc format library=Ana fmtlib;
+536     select budget_group;
+537     title 'Ana library format: Budget Group';
+538  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+539  DATA data.analysis0;
+540  SET  data.analysis_allcols (DROP = bh_hosp:
+541                                     bh_er:
+542                                     bh_oth:
+543                                     fyqrtr
+544                                     budget_grp_new
+545                              );
+546  LABEL adj_pd_total_16cat = 'Categorical pd_total FFS FY2016'
+547        adj_pd_total_17cat = 'Categorical pd_total FFS FY2017'
+548        adj_pd_total_18cat = 'Categorical pd_total FFS FY2018'
+549        n_pc_pm            = 'PC Visits PMPQ'
+550        n_ed_pm            = 'ED Visits PMPQ'
+551        n_ffs_bh_pm        = 'FFS BH Visits PMPQ'
+552        ind_pc_visit       = 'FFS PC Visit Count Positive'
+553        ind_ed_visit       = 'BH plus FFS ED Visit Count Positive'
+554        ind_ffs_bh_visit   = 'FFS BH Visit Count Positive'
+555        ind_tel_visit      = 'Telehealth Visit Count Positive'
+556        ind_total_cost     = 'FFS Total Cost Positive'
+557        ind_pc_cost        = 'PC Cost Positive'
+558        ind_rx_cost        = 'Rx Cost Positive'
+559        adj_pd_total_tc    = 'FFS total Cost PMPQ'
+560        adj_pd_pc_tc       = 'PC Cost PMPQ'
+561        adj_pd_rx_tc       = 'Rx Cost PMPQ'
+562        season1            = 'Effect Coding FYQ1'
+563        season2            = 'Effect Coding FYQ2'
+564        season3            = 'Effect Coding FYQ3'
+565        bh_2016            = 'FY16 Indicator of any bh_other bh_er bh_hosp'
+566        bh_2017            = 'FY17 Indicator of any bh_other bh_er bh_hosp'
+567        bh_2018            = 'FY18 Indicator of any bh_other bh_er bh_hosp';
+568  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS_ALLCOLS.
+NOTE: The data set DATA.ANALYSIS0 has 15124679 observations and 35 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:41.87
+      cpu time            3.87 seconds
+
+
+568!      * 6/8 15124679 : 34;
+
+569  PROC FORMAT library = data;
+570  *** Add quarter variables, one with text for readability ;
+571  value fyqrtr_cat
+572  1  = "Q1"
+573  2  = "Q2"
+574  3  = "Q3"
+575  4  = "Q4"
+576  5  = "Q1"
+577  6  = "Q2"
+578  7  = "Q3"
+579  8  = "Q4"
+580  9  = "Q1"
+581  10 = "Q2"
+582  11 = "Q3"
+583  12 = "Q4"
+584  13 = "Q1";
+NOTE: Format FYQRTR_CAT is already on the library DATA.FORMATS.
+NOTE: Format FYQRTR_CAT has been written to DATA.FORMATS.
+585
+586  invalue fyqrtr_num
+587  1  = 1
+588  2  = 2
+589  3  = 3
+590  4  = 4
+591  5  = 1
+592  6  = 2
+593  7  = 3
+594  8  = 4
+595  9  = 1
+596  10 = 2
+597  11 = 3
+598  12 = 4
+599  13 = 1;
+NOTE: Informat FYQRTR_NUM is already on the library DATA.FORMATS.
+NOTE: Informat FYQRTR_NUM has been output.
+600
+601  * Formats for values in datasets in ana library:;
+602  /*VALUE budget_grp_new_    */
+603  /* 0   low-<3 = "Other"*/
+604  /* 1   3      = "MAGI 69 - 133% FPL"*/
+605  /* 0   4      = "Other"*/
+606  /* 2   5      = "MAGI TO 68% FPL"*/
+607  /* 3   6-10   = "Disabled"  */
+608  /* 4   11     = "Foster Care"  */
+609  /* 5   12     = "MAGI Eligible Children"*/
+610  /* 0   13-27  = "Other"; */
+611
+612  * New format for the if/then/else variable in util_01 rows 866-871;
+613  VALUE budget_grp_new_
+614  0 = "Other"
+615  1 = "MAGI 69 - 133% FPL"
+616  2 = "MAGI TO 68% FPL"
+617  3 = "Disabled"
+618  4 = "Foster Care"
+619  5 = "MAGI Eligible Children";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+620
+621  VALUE $race_rc_
+622      .         = "Other"
+623      1         = "Hispanic/Latino"
+624      2         = "non-Hispanic White/Caucasian"
+625      3         = "non-Hispanic Black/African American"
+626      4,5,6,7,8 = "non-Hispanic Other"
+627      9         = "non-Hispanic Other People of Color"
+628      Other     = "Unknown Race/Ethnicity";
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+629
+630  * Formats for values created originally in the util files;
+631
+632  VALUE age_cat_
+633      0 - 5 = 1
+634      6 -10 = 2
+635      11-15 = 3
+636      16-20 = 4
+637      21-44 = 5
+638      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+639
+640  VALUE $age_cat_
+641      1 = "ages 0-5"
+642      2 = "ages 6-10"
+643      3 = "ages 11-15"
+644      4 = "ages 16-20"
+645      5 = "ages 21-44"
+646      6 = "ages 45-64";
+NOTE: Format $AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format $AGE_CAT_ has been written to DATA.FORMATS.
+647  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+648  PROC FORMAT FMTLIB LIB=Data.Formats;
+648!                                      SELECT Budget_grp_new_;
+648!                                                              RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+649  PROC FORMAT FMTLIB LIB=Data.Formats;
+649!                                      SELECT Budget_group;
+649!                                                           RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+650  PROC CONTENTS DATA =  data.analysis0 VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.04 seconds
+
+
+651  DATA data.analysis;
+652  SET  data.analysis0 (RENAME=(budget_group      = budget_grp_fmt_ana
+653                               budget_grp_no_fmt = budget_grp_num)
+654                       );
+655  * assign new numeric values to 3, 5-12 / else 0 (Other);
+656  IF      budget_group_num =    3 THEN budget_group_num_r = 1;
+657  ELSE IF budget_group_num =    5 THEN budget_group_num_r = 2;
+658  ELSE IF 6<=budget_group_num<=10 THEN budget_group_num_r = 3;
+659  ELSE IF budget_group_num =   11 THEN budget_group_num_r = 4;
+660  ELSE IF budget_group_num =   12 THEN budget_group_num_r = 5;
+661  ELSE                                 budget_group_num_r = 0;
+662
+663  budget_grp_new = put(budget_group_num_r, budget_grp_new_.);
+664  RUN;
+
+NOTE: Variable budget_group_num is uninitialized.
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS0.
+NOTE: The data set DATA.ANALYSIS has 15124679 observations and 38 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:34.43
+      cpu time            6.53 seconds
+
+
+665  DATA data.analysis1;
+666  SET  data.analysis0 (RENAME=(budget_group      = budget_grp_fmt_ana
+667                               budget_grp_no_fmt = budget_grp_num)
+668                       );
+669  * assign new numeric values to 3, 5-12 / else 0 (Other);
+670  IF      budget_group_num =    3 THEN budget_group_num_r = 1;
+671  ELSE IF budget_group_num =    5 THEN budget_group_num_r = 2;
+672  ELSE IF 6<=budget_group_num<=10 THEN budget_group_num_r = 3;
+673  ELSE IF budget_group_num =   11 THEN budget_group_num_r = 4;
+674  ELSE IF budget_group_num =   12 THEN budget_group_num_r = 5;
+675  ELSE                                 budget_group_num_r = 0;
+676
+677  budget_grp_new = put(budget_group_num_r, budget_grp_new_.);
+678  RUN;
+
+NOTE: Variable budget_group_num is uninitialized.
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS0.
+NOTE: The data set DATA.ANALYSIS1 has 15124679 observations and 38 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:32.47
+      cpu time            5.92 seconds
+
+
+679  PROC CONTENTS DATA =  data.analysis1 VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.00 seconds
+
+
+680  proc freq data = data.analysis1;
+681  tables budget_: ; run;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS1.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           43.92 seconds
+      cpu time            1.92 seconds
+
+
+682  DATA data.analysis1;
+683  SET  data.analysis0 (RENAME=(budget_group      = budget_grp_fmt_ana
+684                               budget_grp_no_fmt = budget_grp_num)
+685                       );
+686  * assign new numeric values to 3, 5-12 / else 0 (Other);
+687  IF      budget_grp_num =    3 THEN budget_grp_num_r = 1;
+688  ELSE IF budget_grp_num =    5 THEN budget_grp_num_r = 2;
+689  ELSE IF 6<=budget_grp_num<=10 THEN budget_grp_num_r = 3;
+690  ELSE IF budget_grp_num =   11 THEN budget_grp_num_r = 4;
+691  ELSE IF budget_grp_num =   12 THEN budget_grp_num_r = 5;
+692  ELSE                               budget_grp_num_r = 0;
+693
+694  budget_grp_new = put(budget_grp_num_r, budget_grp_new_.);
+695  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS0.
+NOTE: The data set DATA.ANALYSIS1 has 15124679 observations and 37 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:32.04
+      cpu time            5.92 seconds
+
+
+696  proc freq data = data.analysis1;
+697  tables budget_: ; run;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS1.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           41.78 seconds
+      cpu time            1.84 seconds
+
+
+698  PROC CONTENTS DATA =  data.analysis1 VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+699  DATA data.analysis / VIEW = data.analysis;
+700  RETAIN mcaid_id time int int_imp season:
+701         ind_total_cost     adj_pd_total_tc
+702         ind_pc_cost        adj_pd_pc_tc
+703         ind_rx_cost        adj_pd_rx_tc
+704         ind_pc_visit       n_pc_pm
+705         ind_ed_visit       n_ed_pm
+706         ind_ffs_bh_visit   n_ffs_bh_pm
+707         ind_tel_visit      n_tel_pm
+708         bh:
+709         adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+710         fqhc budget: rae: race sex age: ;
+711  SET data.analysis1;
+712  RUN;
+
+ERROR: Unable to create DATA.ANALYSIS.VIEW because DATA.ANALYSIS.DATA already exists.
+ERROR: Unable to save DATA STEP view DATA.ANALYSIS.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.00 seconds
+
+
+713  DATA data.analysis;
+714  RETAIN mcaid_id time int int_imp season:
+715         ind_total_cost     adj_pd_total_tc
+716         ind_pc_cost        adj_pd_pc_tc
+717         ind_rx_cost        adj_pd_rx_tc
+718         ind_pc_visit       n_pc_pm
+719         ind_ed_visit       n_ed_pm
+720         ind_ffs_bh_visit   n_ffs_bh_pm
+721         ind_tel_visit      n_tel_pm
+722         bh:
+723         adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+724         fqhc budget: rae: race sex age: ;
+725  SET data.analysis1;
+726  RUN;
+
+ERROR: User asked for termination
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 4083048 observations read from the data set DATA.ANALYSIS1.
+WARNING: The data set DATA.ANALYSIS may be incomplete.  When this step was stopped there were
+         4083048 observations and 37 variables.
+WARNING: Data set DATA.ANALYSIS was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           30.40 seconds
+      cpu time            2.03 seconds
+
+
+727  DATA data.analysis;
+728  RETAIN mcaid_id time int int_imp season:
+729         ind_total_cost     adj_pd_total_tc
+730         ind_pc_cost        adj_pd_pc_tc
+731         ind_rx_cost        adj_pd_rx_tc
+732         ind_pc_visit       n_pc_pm
+733         ind_ed_visit       n_ed_pm
+734         ind_ffs_bh_visit   n_ffs_bh_pm
+735         ind_tel_visit      n_tel_pm
+736         bh:
+737         adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+738         fqhc budget: rae: race sex age: ;
+739  SET data.analysis1;
+740  LABEL budget_grp_num_r = "Budget Group Num, Recoded"
+741        budget_grp_new   = "Budget Group Num, Recoded plus Format"
+742        budget_grp_num   = "Budget Group Num"
+743        age_cat          = "Age Categorical"
+744        n_tel_pm         = "Telehealth Visits PMPQ";
+745  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS1.
+NOTE: The data set DATA.ANALYSIS has 15124679 observations and 37 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:33.56
+      cpu time            5.32 seconds
+
+
+746  DATA data.analysis1;
+747  SET  data.analysis0 (RENAME=(budget_group      = budget_grp_fmt_ana
+748                               budget_grp_no_fmt = budget_grp_num));
+749
+750  * assign new numeric values to 3, 5-12 / else 0 (Other);
+751  IF         budget_grp_num = 3 THEN budget_grp_num_r = 1;
+752  ELSE IF    budget_grp_num = 5 THEN budget_grp_num_r = 2;
+753  ELSE IF 6<=budget_grp_num<=10 THEN budget_grp_num_r = 3;
+754  ELSE IF    budget_grp_num =11 THEN budget_grp_num_r = 4;
+755  ELSE IF    budget_grp_num =12 THEN budget_grp_num_r = 5;
+756  ELSE                               budget_grp_num_r = 0;
+757
+758  budget_grp_new = put(budget_grp_num_r, budget_grp_new_.);
+759
+760  LABEL budget_grp_num_r = "Budget Group Num, Recoded"
+761        budget_grp_new   = "Budget Group Num, Recoded plus Format"
+762        budget_grp_num   = "Budget Group Num"
+763        age_cat          = "Age Categorical"
+764        n_tel_pm         = "Telehealth Visits PMPQ";
+765  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS0.
+NOTE: The data set DATA.ANALYSIS1 has 15124679 observations and 37 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:32.41
+      cpu time            5.71 seconds
+
+
+766  DATA data.analysis;
+767  RETAIN mcaid_id time int int_imp season:
+768         ind_total_cost     adj_pd_total_tc
+769         ind_pc_cost        adj_pd_pc_tc
+770         ind_rx_cost        adj_pd_rx_tc
+771         ind_pc_visit       n_pc_pm
+772         ind_ed_visit       n_ed_pm
+773         ind_ffs_bh_visit   n_ffs_bh_pm
+774         ind_tel_visit      n_tel_pm
+775         bh:
+776         adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+777         fqhc budget: rae: race sex age: ;
+778  SET data.analysis1;
+779  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS1.
+NOTE: The data set DATA.ANALYSIS has 15124679 observations and 37 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:34.17
+      cpu time            5.70 seconds
+
+
+780  PROC SQL;
+781  CREATE TABLE data.analysis_meta AS
+782  SELECT name as variable
+783       , type
+784       , length
+785       , label
+786       , format
+787       , informat
+788  FROM sashelp.vcolumn
+789  WHERE LIBNAME = 'DATA'
+790  AND   MEMNAME = 'ANALYSIS';
+NOTE: Table DATA.ANALYSIS_META created, with 37 rows and 6 columns.
+
+791  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.01 seconds
+
+
+792  PROC CONTENTS DATA =  data.analysis VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+793  DATA data.analysis;
+794  RETAIN mcaid_id time int int_imp season1 season2 season3
+795         ind_total_cost     adj_pd_total_tc
+796         ind_pc_cost        adj_pd_pc_tc
+797         ind_rx_cost        adj_pd_rx_tc
+798         ind_pc_visit       n_pc_pm
+799         ind_ed_visit       n_ed_pm
+800         ind_ffs_bh_visit   n_ffs_bh_pm
+801         ind_tel_visit      n_tel_pm
+802         bh:
+803         adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+804         fqhc
+805         budget_grp_fmt_ana   budget_grp_num  budget_grp_num_r budget_grp_new
+806         age age_cat
+807         rae_person_new race sex  ;
+808  SET data.analysis1;
+809  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS1.
+NOTE: The data set DATA.ANALYSIS has 15124679 observations and 37 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:33.60
+      cpu time            5.12 seconds
+
+
+810  PROC SQL;
+811  CREATE TABLE data.analysis_meta AS
+812  SELECT name as variable
+813       , type
+814       , length
+815       , label
+816       , format
+817       , informat
+818  FROM sashelp.vcolumn
+819  WHERE LIBNAME = 'DATA'
+820  AND   MEMNAME = 'ANALYSIS';
+NOTE: Table DATA.ANALYSIS_META created, with 37 rows and 6 columns.
+
+821  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.24 seconds
+      cpu time            0.03 seconds
+
+
+822  proc print data = data.analysis_meta; run;
+
+NOTE: There were 37 observations read from the data set DATA.ANALYSIS_META.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+
+823  proc freq data = data.analysis1;
+824  tables budget_: ; run;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS1.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           45.73 seconds
+      cpu time            1.64 seconds
+
+
+825
+826  %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_analysis
+NOTE: Libref EDA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_eda_tests
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT is already on the library WORK.FORMATS.
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+968
+969   %let dat = data.analysis;
+970   /*%let all = data.analysis_allcols; */
+971
+972   OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+973   %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1,
+974                %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))
+974 ! -6); *remove \Code\;
+975
+976   %LET script  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1,
+977                  %length(%sysget(SAS_EXECFILEPATH))-4);
+978
+979   %LET today = %SYSFUNC(today(), YYMMDD10.);
+980
+981   %LET log   = &script._&today..log;
+982   %LET pdf   = &script._&today..pdf;
+983
+984   PROC PRINTTO LOG = "&log" NEW; RUN;
+
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+1000!                    ods pdf close;
+NOTE: ODS PDF printed 2 pages to
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_03b_freq_bud
+      get_grps_2023-06-14.pdf.
+1001
+1002  %INCLUDE
+1002! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.s
+1002! as";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_anal
+      ysis
+NOTE: Libref EDA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\results_util_eda_
+      tests
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name:
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT is already on the library WORK.FORMATS.
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+1144
+1145  %let dat = data.analysis;
+1146  /*%let all = data.analysis_allcols; */
+1147
+1148  OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+1149  %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1,
+1150               %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))
+1150! -6); *remove \Code\;
+1151
+1152  %LET script  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1,
+1153                 %length(%sysget(SAS_EXECFILEPATH))-4);
+1154
+1155  %LET today = %SYSFUNC(today(), YYMMDD10.);
+1156
+1157  %LET log   = &script._&today..log;
+1158  %LET pdf   = &report./budget_grp_freqs&today..pdf;
+1159
+1160  PROC PRINTTO LOG = "&log" NEW; RUN;
+
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+1176!                    ods pdf close;
+NOTE: ODS PDF printed 2 pages to
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\budget_grp_fre
+      qs2023-06-14.pdf.
+1177  * Step 1;
+1178  proc sort data = data.analysis;
+1179  by int ;
+1180  run;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS.
+NOTE: The data set DATA.ANALYSIS has 15124679 observations and 37 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:44.86
+      cpu time            16.76 seconds
+
+
+1181
+1182  * Step 2;
+1183  PROC SURVEYSELECT
+1184  DATA = data.analysis
+1185  n    = 500000
+1186  OUT  = data.mini_ds;
+1187  STRATA int / alloc=prop;
+1188  RUN;
+
+NOTE: The data set DATA.MINI_DS has 500000 observations and 43 variables.
+NOTE: PROCEDURE SURVEYSELECT used (Total process time):
+      real time           52.27 seconds
+      cpu time            5.18 seconds
+
+
+1189
+1190  * Step 3;
+1191  PROC FREQ DATA = data.mini_ds;
+1192  tables int;
+1193  run;
+
+NOTE: There were 500000 observations read from the data set DATA.MINI_DS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.76 seconds
+      cpu time            0.03 seconds
+
+
+1194  * int=0 pct 87.48%
+1195    int=1 pct 12.52%;
+
+1196  %LET dat  = data.analysis;
+1197  %LET pvar = ind_pc_cost;
+1198  %LET cvar = adj_pd_pc_tc;
+1199  %macro p_model(class_vars=,model_vars=, model_number=);
+1200  TITLE "Probability Model: DV PC Cost &model_number." ;
+1201  TITLE2 "With model vars &model_vars" ;
+1202  PROC GEE DATA  = &dat;
+1203  CLASS  &class_vars;
+1204  MODEL  ind_pc_cost = &model_vars / DIST=binomial LINK=logit ;
+1205  REPEATED SUBJECT = mcaid_id / type=exch ;
+1206  /*store p_MODEL;*/
+1207  run;
+1208  TITLE; TITLE2;
+1209  %mend;
+
+1210  %LET class01 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0');
+1211  %LET model01 = int int_imp time;
+1212  %p_model(class_vars=&class01, model_vars=&model01);
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           2:47.83
+      cpu time            2:08.54
+
+
+
+1213  PROC PRINT DATA = data.analysis_meta; RUN;
+NOTE: Writing HTML Body file: sashtml1.htm
+
+NOTE: There were 37 observations read from the data set DATA.ANALYSIS_META.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.42 seconds
+      cpu time            0.29 seconds
+
+
+1214  %LET class02 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1214! budget_grp_new;
+1215  %LET model02 = int int_imp time budget_grp_new;
+1216  %p_model(class_vars=&class02, model_vars=&model02);
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+ERROR: The generalized Hessian matrix is not positive definite. Iteration will be
+       terminated.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           2:50.05
+      cpu time            2:10.18
+
+1217  * HESSIAN ERROR;
+
+
+1218  %LET class02a = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1218! budget_grp_num_r;
+1219  %LET model02a = int int_imp time budget_grp_num_r;
+1220  %p_model(class_vars=&class02a, model_vars=&model02a);
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           3:15.72
+      cpu time            2:35.82
+
+
+1221  * HESSIAN ERROR;
+
+1222  %LET class02a = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1222! budget_grp_num_r(ref= '0');
+1223  %LET model02a = int int_imp time budget_grp_num_r;
+1224  %p_model(class_vars=&class02a, model_vars=&model02a);
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+ERROR: The generalized Hessian matrix is not positive definite. Iteration will be
+       terminated.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           2:51.34
+      cpu time            2:10.48
+
+
+
+1225  %LET class02a = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1225! budget_grp_num_r;
+1226  %LET model02a = int int_imp time budget_grp_num_r;
+1227  %p_model(class_vars=&class02a, model_vars=&model02a);
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           3:16.25
+      cpu time            2:36.28
+
+
+
+1228  %LET class02 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1228! budget_grp_new(ref='Disabled');
+1229  %LET model02 = int int_imp time budget_grp_new;
+1230  %p_model(class_vars=&class02, model_vars=&model02);
+
+ERROR: No valid observations due to invalid or missing values in the response,
+       explanatory, offset, frequency, or weight variable.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           48.71 seconds
+      cpu time            6.78 seconds
+
+1231  * HESSIAN ERROR;
+
+
+1232  %LET class02 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1232! budget_grp_new("MAGI Eligible Children");
+1233  %LET model02 = int int_imp time budget_grp_new;
+1234  %p_model(class_vars=&class02, model_vars=&model02);
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: Line generated by the macro variable "CLASS_VARS".
+1       mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1   ! budget_grp_new("MAGI Eligible Children")
+                     ------------------------
+                     22
+                     200
+ERROR 22-322: Syntax error, expecting one of the following: ), CODING, DESC,
+              DESCENDING, ORDER, PARAM, REF, REFERENCE.
+ERROR 200-322: The symbol is not recognized and will be ignored.
+1235  * HESSIAN ERROR;
+
+
+1236  %LET class02 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1236! budget_grp_new(ref="MAGI Eligible Children");
+1237  %LET model02 = int int_imp time budget_grp_new;
+1238  %p_model(class_vars=&class02, model_vars=&model02);
+
+ERROR: No valid observations due to invalid or missing values in the response,
+       explanatory, offset, frequency, or weight variable.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           46.62 seconds
+      cpu time            6.53 seconds
+
+1239  * HESSIAN ERROR;
+
+
+1240
+1241  %LET class03 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1241! budget_grp_num_r race;
+1242  %LET model03 = int int_imp time budget_grp_num_r race;
+1243  %p_model(class_vars=&class03, model_vars=&model03); * RAN;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           3:53.37
+      cpu time            3:12.29
+
+
+1244
+1245  %LET class04 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1245! budget_grp_num_r race sex;
+1246  %LET model04 = int int_imp time budget_grp_num_r race sex;
+1247  %p_model(class_vars=&class04, model_vars=&model04); * RAN;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           3:28.66
+      cpu time            3:28.51
+
+
+1248
+1249  %LET model_number = 05;
+1250  %LET class05 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1250! budget_grp_num_r race sex rae_person_new;
+1251  %LET model05 = int int_imp time race rae_person_new budget_grp_num_r;
+1252  %p_model(class_vars=&class05, model_vars=&model05);
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           3:43.74
+      cpu time            3:43.59
+
+
+1253
+1254  * Adding age, linear;
+1255  %LET model_number = 06;
+1256  %LET class06 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0')
+1256! budget_grp_num_r race sex rae_person_new;
+1257  %LET model06 = int int_imp  budget_grp_num_r time race age;
+1258  %p_model(class_vars=&class06, model_vars=&model06);
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           3:31.64
+      cpu time            3:31.56
+
+
+

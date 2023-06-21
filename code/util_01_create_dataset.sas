@@ -856,7 +856,8 @@ LABEL adj_pd_total_16cat = 'Categorical pd_total FFS FY2016'
       bh_2018            = 'FY18 Indicator of any bh_other bh_er bh_hosp';
 RUN; * 6/8 15124679 : 34; 
 
-* Rename budget_grp_new with _old so you can create new budget_grp_new with if /then statements; 
+* Rename budget_grp_new with _old so you can create new budget_grp_new with if /then statements
+* Update 07-20 - added age_cat_num and re-ran all downstream; 
 DATA data.analysis1;
 SET  data.analysis0 (RENAME=(budget_group      = budget_grp_fmt_ana
                              budget_grp_no_fmt = budget_grp_num));
@@ -870,6 +871,7 @@ ELSE IF    budget_grp_num =12 THEN budget_grp_num_r = 5;
 ELSE                               budget_grp_num_r = 0;  
 
 budget_grp_new = put(budget_grp_num_r, budget_grp_new_.);
+age_cat_num = input(age_cat, best12.);
 
 LABEL budget_grp_num_r = "Budget Group Num, Recoded"
       budget_grp_new   = "Budget Group Num, Recoded plus Format"

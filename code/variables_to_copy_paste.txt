@@ -7,10 +7,12 @@ int_imp(ref= '0')
 budget_group   
 race 
 sex
-rae_person_new(ref='1') 
+rae_person_new 
+* try age_cat first (give priority)
+age_cat(ref='1') 
 age(ref='1') 
-age_cat(ref='1')      
 fqhc(ref='0') 
+* Try original bh variables  
 bh_2018(ref='0')
 adj_pd_total_18cat(ref='-1') 
 ind_pc_cost(ref= '0')

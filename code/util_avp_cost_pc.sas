@@ -5,8 +5,12 @@ PURPOSE  : Hurdle Model, Primary Care Costs
 VERSION  : 2023-06-08
 OUTPUT   : pdf & log file
 NOTES    : See 'variables_to_copy_paste.txt' for full lists of vars
+Per Mark : Use mode for ref class vars budget_group, race
+
 ***********************************************************************************************;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+libname ana clear;
+libname raw clear;
 
 OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
 %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
@@ -28,16 +32,18 @@ ODS PDF FILE     = "&pdf" STARTPAGE = no;
 Title &file;
 
 proc odstext;
-p "Date:              &today";
-p "Project Root: &root";
-p "Script:            &file";
-p "Log File:         &log";
-p "Results File:  &pdf";
+p "Date: &today";
+p "Root: &root";
+p "Script: &file";
+p "Log File: &log";
+p "Results File: &pdf";
 RUN; 
 
 %LET dat  = data.analysis; 
 %LET pvar = ind_pc_cost;
 %LET cvar = adj_pd_pc_tc;
+
+PROC PRINT DATA = data.analysis_meta; RUN; 
 
 *
 [MACRO] ==============================================================================
@@ -58,48 +64,58 @@ TITLE; TITLE2;
 [Models] ==============================================================================
 1. Success
 2. Failure
+Variable Priorities (can remove once finalized)
+1. mcaid_id 
+2. int(ref='0') 
+3. int_imp(ref= '0') 
+4. budget_group   (mode already default: numeric 5, format MAGI Eligible Children )
+5. race 
+6. sex
+7. rae_person_new (use mode as reference: =3
+* try age_cat first (give priority)
+age_cat(ref='1') 
+age(ref='1') 
+fqhc(ref='0') 
+* Try original bh variables  
+bh_2018(ref='0')
+adj_pd_total_18cat(ref='-1') 
+ind_pc_cost(ref= '0')
 ===========================================================================================;
 
-%LET class01 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0');
-%LET model01 = int int_imp time;          
-%p_model(class_vars=&class01, model_vars=&model01);
+            %LET class01 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0');
+            %LET model01 = int int_imp time;          
+            %p_model(class_vars=&class01, model_vars=&model01);
+            
+            * The below DID NOT WORK! Why??;
+            %LET class02 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') budget_grp_new(ref="MAGI Eligible Children");
+            %LET model02 = int int_imp time budget_grp_new;          
+            %p_model(class_vars=&class02, model_vars=&model02);
+            * HESSIAN ERROR = tried without ref, with ref=Disabled, etc... no go...;
 
-%LET class02 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') budget_group;
-%LET model02 = int int_imp time budget_group;          
-%p_model(class_vars=&class02, model_vars=&model02);
-* HESSIAN ERROR;
-
-%LET class03 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') race;
-%LET model03 = int int_imp time race;          
-%p_model(class_vars=&class03, model_vars=&model03); * RAN;
-
-%LET class04 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') race sex;
-%LET model04 = int int_imp time race sex;          
-%p_model(class_vars=&class04, model_vars=&model04); * RAN;
-
-%LET model_number = 05;
-%LET class05 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') race sex rae_person_new;
-%LET model05 = int int_imp time race rae_person_new;          
-%p_model(class_vars=&class05, model_vars=&model05);
-
-* Adding age, linear; 
-%LET model_number = 06;
-%LET class06 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') race sex rae_person_new;
-%LET model06 = int int_imp time race age;          
-%p_model(class_vars=&class06, model_vars=&model06);
-
-* Adding fqhc; 
-%LET model_number = 07;
-%LET class07 = mcaid_id int(ref='0') int_imp(ref= '0') ind_pc_cost(ref= '0') race fqhc(ref='0');
-%LET model07 = int int_imp time race age fqhc;          
-%p_model(class_vars=&class07, model_vars=&model07);
+proc freq data = &dat;
+tables int int_imp ind_pc_cost budget_grp_num_r race sex rae_person_new age_cat_num; 
+RUN; 
 
 
-
-
-
-
-
+%LET class = mcaid_id int(ref='0') int_imp(ref='0') ind_pc_cost(ref='0') budget_grp_num_r 
+             race sex rae_person_new age_cat_num fqhc(ref ='0')
+             bh_oth16(ref='0')      bh_oth17(ref='0')       bh_oth18(ref='0')
+             bh_er16(ref='0')       bh_er17(ref='0')        bh_er18(ref='0')
+             bh_hosp16(ref='0')     bh_hosp17(ref='0')      bh_hosp18(ref='0')
+             adj_pd_total_18cat;
+%LET model = int int_imp time budget_grp_num_r race sex rae_person_new age_cat_num fqhc
+             bh_oth16               bh_oth17                bh_oth18
+             bh_er16                bh_er17                 bh_er18
+             bh_hosp16              bh_hosp17               bh_hosp18
+             adj_pd_total_18cat;          
+%p_model(class_vars=&class, model_vars=&model);
+* 1. budget_grp_num_r uses ref=5 but if I specify that as a reference, I get Hessian error?? Why??;
+* 2. age_cat_num: SUCCESS //
+  3. fqhc(ref='0')
+  4. bh_all originals: SUCCESS
+  5. tried with adj's, and with ref: (ref='-1') HESSIAN
+  6. tried without refs, HESSIAN
+  7. Tried with only adj_..._18cat - wouldn't run;
 
 
 TITLE "Probability Model: PC Cost"; 
