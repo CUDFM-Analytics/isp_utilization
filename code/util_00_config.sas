@@ -27,23 +27,23 @@ LOG
 
       %LET data = &util/data;   LIBNAME data "&data"; 
       %LET raw = &data/_raw;     
-        LIBNAME raw "&raw"; *comment out/ in as needed; 
+/*        LIBNAME raw "&raw"; *comment out/ in as needed; */
       %LET int = &data/interim; 
         LIBNAME int "&int"; 
 
       %LET out = &data/results_util_analysis; 
         LIBNAME out "&out"; 
       %LET eda = &data/results_util_eda_tests;
-        LIBNAME eda "&eda";
+/*        LIBNAME eda "&eda";*/
 
     * export folder for excel files output; 
       %LET report = &util/reports; 
 
       %LET raw = &data/_raw;
-        LIBNAME raw "&raw";
+/*        LIBNAME raw "&raw";*/
 
       %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
-      LIBNAME ana "&ana"; 
+/*      LIBNAME ana "&ana"; */
 
 * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------; 
 

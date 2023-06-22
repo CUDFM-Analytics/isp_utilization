@@ -1,35 +1,24 @@
 **********************************************************************************************
 AUTHOR   : KTW
 PROJECT  : ISP Utilization
-PURPOSE  : Hurdle Model, Total Pd Cost
-VERSION  : 2023-06-21
+PURPOSE  : Macro, COST dv's
+VERSION  : 2023-06-22
 OUTPUT   : pdf & log file
-NOTES    : See 'variables_to_copy_paste.txt' for full lists of vars
-Per Mark : Use mode for ref class vars budget_group, race
-
+RELATIONSHIPS : 
+Per Mark : Use mode for ref class vars budget_group & race if possible
+            - default for budget_grp_num_r is the mode
+            - race = I didn't want to tempt fate so just let it choose since it ran w/ default (ok w Mark)
 ***********************************************************************************************;
-%INCLUDE "S:/FHTotal/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-libname ana clear;
-libname raw clear;
 
-OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
-%LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
-             %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))-6); *remove \Code\;
-
-%LET script= %qsubstr(%sysget(SAS_EXECFILEPATH), 1, %length(%sysget(SAS_EXECFILEPATH))-4);
-
-%LET file  = %qsubstr(%sysget(SAS_EXECFILENAME), 1, %length(%sysget(SAS_EXECFILENAME))-4);
-
-%LET today = %SYSFUNC(today(), YYMMDD10.);
-
+%macro hurdle1(dat=,pvar=,cvar=,dv=);
 * Send log output to code folder, pdf results to reports folder for MG to view;
-%LET log   = &root./code/&file._&today..log;
-%LET pdf   = &root./reports/&file._&today..pdf;
+%LET log   = &util./code/&dv._&today..log;
+%LET pdf   = &report./&dv._&today..pdf;
 
 PROC PRINTTO LOG = "&log" NEW; RUN;
 ODS PDF FILE     = "&pdf" STARTPAGE = no;
 
-Title &file;
+Title &dv.;
 
 proc odstext;
 p "Date: &today";
@@ -39,11 +28,7 @@ p "Log File: &log";
 p "Results File: &pdf";
 RUN; 
 
-%LET dat  = data.analysis; 
-%LET pvar = ind_total_cost;
-%LET cvar = adj_pd_total_tc;
-
-TITLE "Probability Model: Total Cost"; 
+TITLE "Probability Model: " &dv.; 
 PROC GEE DATA  = &dat DESC;
 CLASS  mcaid_id int(ref="0") int_imp(ref="0") budget_grp_num_r 
              race sex rae_person_new age_cat_num fqhc(ref ="0")
@@ -53,8 +38,8 @@ CLASS  mcaid_id int(ref="0") int_imp(ref="0") budget_grp_num_r
              adj_pd_total_16cat(ref="0")
              adj_pd_total_17cat(ref="0")
              adj_pd_total_18cat(ref="0")
-       ind_total_cost(ref= "0") ;
-MODEL  ind_total_cost = int int_imp time budget_grp_num_r race sex rae_person_new age_cat_num fqhc
+       &pvar(ref= "0") ;
+MODEL  &pvar = int int_imp time budget_grp_num_r race sex rae_person_new age_cat_num fqhc
              bh_oth16               bh_oth17                bh_oth18
              bh_er16                bh_er17                 bh_er18
              bh_hosp16              bh_hosp17               bh_hosp18
@@ -66,9 +51,9 @@ store p_MODEL;
 run;
 
 * positive cost model ;
-TITLE "Cost Model: Total"; 
+TITLE "Cost Model: " &dv; 
 PROC GEE DATA  = &dat desc;
-WHERE adj_pd_total_tc > 0;
+WHERE &cvar > 0;
 CLASS mcaid_id 
       int(ref="0") int_imp(ref="0") budget_grp_num_r 
       race sex rae_person_new age_cat_num fqhc(ref ="0")
@@ -78,7 +63,7 @@ CLASS mcaid_id
       adj_pd_total_16cat(ref="0")
       adj_pd_total_17cat(ref="0")
       adj_pd_total_18cat(ref="0");
-MODEL adj_pd_total_tc = time       season1    season2     season3
+MODEL &cvar = time       season1    season2     season3
                      int        int_imp 
                      age_cat_num        race    sex       
                      budget_grp_num_r   fqhc    rae_person_new 
@@ -118,29 +103,32 @@ proc plm restore=c_model;
 run;
 
 * person average cost is calculated ;
-data out.cost_total_meanCost;
+data out.&dv._meanCost;
   set cp_intgroup;
   a_cost = p_prob*p_cost;* (1-p term = 0);
 run;
 
 * group average cost is calculated and contrasted ;
 proc sql;
-create table out.avp_cost_total as
+create table out.&dv._avp as
   select mean(case when exposed=1 then a_cost else . end ) as cost_exposed,
          mean(case when exposed=0 then a_cost else . end ) as cost_unexposed,
   calculated cost_exposed - calculated cost_unexposed as cost_diff
-  from out.cost_total_meanCost;
+  from out.&dv._meanCost;
 quit;
 
-TITLE "avp_cost_total"; 
-proc print data = out.avp_cost_total;
+TITLE "&dv._avp"; 
+proc print data = out.&dv._avp;
 run;
 
-proc means data = out.cost_total_meancost;
+proc means data = out.&dv._meancost;
 by exposed;
 var p_prob p_cost a_cost; 
 RUN; 
 
 PROC PRINTTO; RUN; 
 ODS PDF CLOSE; 
+%mend;
+
+
 

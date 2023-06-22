@@ -1,35 +1,30 @@
 **********************************************************************************************
 AUTHOR   : KTW
 PROJECT  : ISP Utilization
-PURPOSE  : Hurdle Model, Primary Care Costs
-VERSION  : 2023-06-08
+PURPOSE  : Macro, COST dv's
+VERSION  : 2023-06-22
 OUTPUT   : pdf & log file
-NOTES    : See 'variables_to_copy_paste.txt' for full lists of vars
-Per Mark : Use mode for ref class vars budget_group, race
-
+RELATIONSHIPS : 
+Per Mark : Use mode for ref class vars budget_group & race if possible
+            - default for budget_grp_num_r is the mode
+            - race = I didn't want to tempt fate so just let it choose since it ran w/ default (ok w Mark)
 ***********************************************************************************************;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
-libname ana clear;
-libname raw clear;
-
-OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
-%LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
-             %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))-6); *remove \Code\;
-
-%LET script= %qsubstr(%sysget(SAS_EXECFILEPATH), 1, %length(%sysget(SAS_EXECFILEPATH))-4);
-
-%LET file  = %qsubstr(%sysget(SAS_EXECFILENAME), 1, %length(%sysget(SAS_EXECFILENAME))-4);
 
 %LET today = %SYSFUNC(today(), YYMMDD10.);
 
+%hurdle1(dat=data.analysis,  pvar = ind_pc_cost,   cvar = adj_pd_pc_tc,   dv= cost_pc);
+
+
+%macro hurdle1(dat=,pvar=,cvar=,dv=);
 * Send log output to code folder, pdf results to reports folder for MG to view;
-%LET log   = &root./code/&file._&today..log;
-%LET pdf   = &root./reports/&file._&today..pdf;
+%LET log   = &util./code/&dv._&today..log;
+%LET pdf   = &report./&dv._&today..pdf;
 
 PROC PRINTTO LOG = "&log" NEW; RUN;
 ODS PDF FILE     = "&pdf" STARTPAGE = no;
 
-Title &file;
+Title &dv.;
 
 proc odstext;
 p "Date: &today";
@@ -39,36 +34,9 @@ p "Log File: &log";
 p "Results File: &pdf";
 RUN; 
 
-%LET dat  = data.analysis; 
-%LET pvar = ind_pc_cost;
-%LET cvar = adj_pd_pc_tc;
-
-PROC PRINT DATA = data.analysis_meta; RUN; 
-
-*
-[MACRO] ==============================================================================
-=========================================================================================;
-%macro p_model(class_vars=,model_vars=, model_number=);
-TITLE "Probability Model: DV PC Cost &model_number." ;
-TITLE2 "With model vars &model_vars" ;  
-PROC GEE DATA  = &dat;
-CLASS  &class_vars;
-MODEL  ind_pc_cost = &model_vars / DIST=binomial LINK=logit ; 
-REPEATED SUBJECT = mcaid_id / type=exch ; 
-/*store p_MODEL;*/
-run;
-TITLE; TITLE2;
-%mend;
-
-* 
-[Models] ==============================================================================
-1. Success
-2. Failure
-
-
-TITLE "Probability Model: PC Cost"; 
+TITLE "Probability Model: " &dv.; 
 PROC GEE DATA  = &dat DESC;
-CLASS  mcaid_id int(ref="0") int_imp(ref="0") ind_pc_cost(ref="0") budget_grp_num_r 
+CLASS  mcaid_id int(ref="0") int_imp(ref="0") budget_grp_num_r 
              race sex rae_person_new age_cat_num fqhc(ref ="0")
              bh_oth16(ref="0")      bh_oth17(ref="0")       bh_oth18(ref="0")
              bh_er16(ref="0")       bh_er17(ref="0")        bh_er18(ref="0")
@@ -76,8 +44,8 @@ CLASS  mcaid_id int(ref="0") int_imp(ref="0") ind_pc_cost(ref="0") budget_grp_nu
              adj_pd_total_16cat(ref="0")
              adj_pd_total_17cat(ref="0")
              adj_pd_total_18cat(ref="0")
-       ind_pc_cost       (ref= "0") ;
-MODEL  ind_pc_cost = int int_imp time budget_grp_num_r race sex rae_person_new age_cat_num fqhc
+       &pvar(ref= "0") ;
+MODEL  &pvar = int int_imp time budget_grp_num_r race sex rae_person_new age_cat_num fqhc
              bh_oth16               bh_oth17                bh_oth18
              bh_er16                bh_er17                 bh_er18
              bh_hosp16              bh_hosp17               bh_hosp18
@@ -85,30 +53,26 @@ MODEL  ind_pc_cost = int int_imp time budget_grp_num_r race sex rae_person_new a
              adj_pd_total_17cat 
              adj_pd_total_18cat            / DIST=binomial LINK=logit ; 
 REPEATED SUBJECT = mcaid_id / type=exch ; 
-/*store p_MODEL;*/
+store p_MODEL;
 run;
-* Says no valid obs when I specify age_cat_num var reference=1.../ without reference, works fine; 
 
 * positive cost model ;
-TITLE "Cost Model: PC"; 
+TITLE "Cost Model: " &dv; 
 PROC GEE DATA  = &dat desc;
-WHERE adj_pd_pc_tc > 0;
-CLASS mcaid_id   
-      season1(ref='-1')    season2(ref='-1')     season3(ref='-1')      
-      int    (ref= '0')    int_imp(ref= '0')
-      age    (ref= '1')    race                  sex            
-      budget_group         fqhc(ref= '0')        rae_person_new(ref='1')
-      bh_hosp16(ref= '0')  bh_hosp17(ref= '0')   bh_hosp18(ref= '0')
-      bh_er16  (ref= '0')  bh_er16  (ref= '0')   bh_er16  (ref= '0')
-      bh_oth16 (ref= '0')  bh_oth17 (ref= '0')   bh_oth17 (ref= '0')
-      adj_pd_total_16cat(ref='0')  
-      adj_pd_total_17cat(ref='0')   
-      adj_pd_total_18cat(ref='0');
-
-MODEL adj_pd_pc_tc = time       season1    season2     season3
+WHERE &cvar > 0;
+CLASS mcaid_id 
+      int(ref="0") int_imp(ref="0") budget_grp_num_r 
+      race sex rae_person_new age_cat_num fqhc(ref ="0")
+      bh_oth16(ref="0")      bh_oth17(ref="0")       bh_oth18(ref="0")
+      bh_er16(ref="0")       bh_er17(ref="0")        bh_er18(ref="0")
+      bh_hosp16(ref="0")     bh_hosp17(ref="0")      bh_hosp18(ref="0")
+      adj_pd_total_16cat(ref="0")
+      adj_pd_total_17cat(ref="0")
+      adj_pd_total_18cat(ref="0");
+MODEL &cvar = time       season1    season2     season3
                      int        int_imp 
-                     age        race        sex       
-                     budget_group           fqhc       rae_person_new 
+                     age_cat_num        race    sex       
+                     budget_grp_num_r   fqhc    rae_person_new 
                      bh_er16    bh_er17     bh_er18
                      bh_hosp16  bh_hosp17   bh_hosp18
                      bh_oth16   bh_oth17    bh_oth18    
@@ -145,30 +109,30 @@ proc plm restore=c_model;
 run;
 
 * person average cost is calculated ;
-data out.meanCost;
+data out.&dv._meanCost;
   set cp_intgroup;
   a_cost = p_prob*p_cost;* (1-p term = 0);
 run;
 
 * group average cost is calculated and contrasted ;
 proc sql;
-create table out.avp_cost_pc as
+create table out.&dv._avp as
   select mean(case when exposed=1 then a_cost else . end ) as cost_exposed,
          mean(case when exposed=0 then a_cost else . end ) as cost_unexposed,
   calculated cost_exposed - calculated cost_unexposed as cost_diff
-  from meanCost;
+  from out.&dv._meanCost;
 quit;
 
-TITLE "avp_cost_pc"; 
-proc print data = out.avp_cost_pc;
+TITLE "&dv._avp"; 
+proc print data = out.&dv._avp;
 run;
 
-proc means data = out.meancost;
+proc means data = out.&dv._meancost;
 by exposed;
 var p_prob p_cost a_cost; 
 RUN; 
 
 PROC PRINTTO; RUN; 
 ODS PDF CLOSE; 
+%mend;
 
-   

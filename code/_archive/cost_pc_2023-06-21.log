@@ -1,0 +1,244 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+168  ODS PDF FILE     = "&pdf" STARTPAGE = no;
+NOTE: Writing ODS PDF output to DISK destination 
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\cost_pc_2023-06-21.pdf", 
+      printer "PDF".
+WARNING: Apparent symbolic reference FILE not resolved.
+169  
+170  Title &file;
+171  
+172  proc odstext;
+173  p "Date: &today";
+174  p "Root: &root";
+WARNING: Apparent symbolic reference ROOT not resolved.
+175  p "Script: &file";
+WARNING: Apparent symbolic reference FILE not resolved.
+176  p "Log File: &log";
+177  p "Results File: &pdf";
+178  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+      
+
+179  
+180  
+181  
+182  TITLE "Probability Model: " &label;
+183  PROC GEE DATA  = &dat DESC;
+184  CLASS  mcaid_id int(ref="0") int_imp(ref="0") budget_grp_num_r
+185               race sex rae_person_new age_cat_num fqhc(ref ="0")
+186               bh_oth16(ref="0")      bh_oth17(ref="0")       bh_oth18(ref="0")
+187               bh_er16(ref="0")       bh_er17(ref="0")        bh_er18(ref="0")
+188               bh_hosp16(ref="0")     bh_hosp17(ref="0")      bh_hosp18(ref="0")
+189               adj_pd_total_16cat(ref="0")
+190               adj_pd_total_17cat(ref="0")
+191               adj_pd_total_18cat(ref="0")
+192         &pvar(ref= "0") ;
+193  MODEL  &pvar = int int_imp time budget_grp_num_r race sex rae_person_new age_cat_num fqhc
+194               bh_oth16               bh_oth17                bh_oth18
+195               bh_er16                bh_er17                 bh_er18
+196               bh_hosp16              bh_hosp17               bh_hosp18
+197               adj_pd_total_16cat
+198               adj_pd_total_17cat
+199               adj_pd_total_18cat            / DIST=binomial LINK=logit ;
+200  REPEATED SUBJECT = mcaid_id / type=exch ;
+201  store p_MODEL;
+202  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_pc_cost='1'.
+NOTE: The GEE procedure generated the model item store WORK.P_MODEL.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           11:11.07
+      cpu time            10:14.68
+      
+
+203  
+204  * positive cost model ;
+205  TITLE "Cost Model: " &label;
+206  PROC GEE DATA  = &dat desc;
+207  WHERE &cvar > 0;
+208  CLASS mcaid_id
+209        int(ref="0") int_imp(ref="0") budget_grp_num_r
+210        race sex rae_person_new age_cat_num fqhc(ref ="0")
+211        bh_oth16(ref="0")      bh_oth17(ref="0")       bh_oth18(ref="0")
+212        bh_er16(ref="0")       bh_er17(ref="0")        bh_er18(ref="0")
+213        bh_hosp16(ref="0")     bh_hosp17(ref="0")      bh_hosp18(ref="0")
+214        adj_pd_total_16cat(ref="0")
+215        adj_pd_total_17cat(ref="0")
+216        adj_pd_total_18cat(ref="0");
+217  MODEL &cvar = time       season1    season2     season3
+218                       int        int_imp
+219                       age_cat_num        race    sex
+220                       budget_grp_num_r   fqhc    rae_person_new
+221                       bh_er16    bh_er17     bh_er18
+222                       bh_hosp16  bh_hosp17   bh_hosp18
+223                       bh_oth16   bh_oth17    bh_oth18
+224                       adj_pd_total_16cat
+225                       adj_pd_total_17cat
+226                       adj_pd_total_18cat     / dist = gamma link = log ;
+227  REPEATED SUBJECT = mcaid_id / type = exch;
+228  store c_model;
+229  RUN;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: The GEE procedure generated the model item store WORK.C_MODEL.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           5:50.57
+      cpu time            5:50.50
+      
+
+230  TITLE;
+231  
+232  * interest group ;
+233  * the group of interest (emancipated youth) is set twice,
+234    the top in the stack will be recoded as not emancipated (unexposed)
+235    the bottom group keeps the emancipated status;
+236  
+237  data intgroup;
+238    set &dat &dat (in = b);
+239    where int = 1;
+240    if ^b then int = 0;
+241    exposed = b;
+242  run;
+
+NOTE: There were 1893477 observations read from the data set DATA.ANALYSIS.
+      WHERE int=1;
+NOTE: There were 1893477 observations read from the data set DATA.ANALYSIS.
+      WHERE int=1;
+NOTE: The data set WORK.INTGROUP has 3786954 observations and 51 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.04 seconds
+      cpu time            4.01 seconds
+      
+
+243  
+244  * the predictions for util and cost will be made for each person twice, once exposed and once
+244! unexposed;
+245  
+246  * prob of util ;
+247  proc plm restore=p_model;
+248     score data=intgroup out=p_intgroup predicted=p_prob / ilink;
+249  run;
+
+NOTE: The data set WORK.P_INTGROUP has 3786954 observations and 52 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           8.31 seconds
+      cpu time            8.28 seconds
+      
+
+250  
+251  * prob of cost ;
+252  proc plm restore=c_model;
+253     score data=p_intgroup out=cp_intgroup predicted=p_cost / ilink;
+254  run;
+
+NOTE: The data set WORK.CP_INTGROUP has 3786954 observations and 53 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           8.14 seconds
+      cpu time            8.12 seconds
+      
+
+WARNING: Apparent symbolic reference DV_MEANCOST not resolved.
+255  
+256  * person average cost is calculated ;
+257  data out.&dv_meanCost;
+          ----
+          22
+          201
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string, /, ;, _DATA_, 
+              _LAST_, _NULL_.  
+
+ERROR 201-322: The option is not recognized and will be ignored.
+
+258    set cp_intgroup;
+259    a_cost = p_prob*p_cost;* (1-p term = 0);
+260  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.DV_MEANCOST may be incomplete.  When this step was stopped there were 0 
+         observations and 54 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+261  
+262  * group average cost is calculated and contrasted ;
+263  proc sql;
+264  create table out.avp_&dv as
+265    select mean(case when exposed=1 then a_cost else . end ) as cost_exposed,
+266           mean(case when exposed=0 then a_cost else . end ) as cost_unexposed,
+267    calculated cost_exposed - calculated cost_unexposed as cost_diff
+268    from out.&dv_meanCost;
+                -
+                22
+                200
+WARNING: Apparent symbolic reference DV_MEANCOST not resolved.
+ERROR 22-322: Expecting a name.  
+
+ERROR 200-322: The symbol is not recognized and will be ignored.
+
+269  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+270  
+271  TITLE "avp_&dv";
+
+
+272  proc print data = out.avp_&dv;
+273  run;
+
+NOTE: There were 1 observations read from the data set OUT.AVP_COST_PC.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.00 seconds
+      
+
+274  
+275  proc means data = out.&dv_meancost;
+WARNING: Apparent symbolic reference DV_MEANCOST not resolved.
+275  proc means data = out.&dv_meancost;
+                           -
+                           22
+ERROR 22-322: Syntax error, expecting one of the following: ;, (, ALPHA, CHARTYPE, CLASSDATA, CLM, 
+              COMPLETETYPES, CSS, CV, DATA, DESCEND, DESCENDING, DESCENDTYPES, EXCLNPWGT, 
+              EXCLNPWGTS, EXCLUSIVE, FW, IDMIN, INCAS, KURTOSIS, LCLM, MAX, MAXDEC, MEAN, MEDIAN, 
+              MIN, MISSING, MODE, N, NDEC, NMISS, NOLABELS, NONOBS, NOPRINT, NOTHREADS, NOTRAP, 
+              NWAY, ORDER, P1, P10, P20, P25, P30, P40, P5, P50, P60, P70, P75, P80, P90, P95, P99, 
+              PCTLDEF, PRINT, PRINTALL, PRINTALLTYPES, PRINTIDS, PRINTIDVARS, PROBT, Q1, Q3, 
+              QMARKERS, QMETHOD, QNTLDEF, QRANGE, RANGE, SKEWNESS, STACKODS, STACKODSOUTPUT, 
+              STDDEV, STDERR, SUM, SUMSIZE, SUMWGT, T, THREADS, UCLM, USS, VAR, VARDEF.  
+
+275  proc means data = out.&dv_meancost;
+                           -
+                           200
+ERROR 200-322: The symbol is not recognized and will be ignored.
+
+WARNING: Apparent symbolic reference DV_MEANCOST not resolved.
+ERROR: Invalid data set name out..
+276  by exposed;
+277  var p_prob p_cost a_cost;
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+278  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+279  
+
+
+280  PROC PRINTTO; RUN;
+
