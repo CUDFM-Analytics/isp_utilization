@@ -1,0 +1,12 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Writing ODS PDF output to DISK destination 
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\visits_pc_2023-06-26.pdf"
+      , printer "PDF".
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      

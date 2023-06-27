@@ -897,16 +897,32 @@ LABEL budget_grp_num_r = "Budget Group Num, Recoded"
       adj_pd_total_18cat = "Categorical adj ffs total 2018, Scale 0 to 6";
 RUN;  
 
+* [6/22/2023]
+Integer values for count values so I can use negbin // mult all by 6
+n_ed_pm     n_ffs_bh_pm     n_pc_pm     n_tel_pm;
+ 
+DATA data.analysis2;
+SET  data.analysis1; 
+n_ed_pm_r     = round(n_ed_pm*6,     1);
+n_ffs_bh_pm_r = round(n_ffs_bh_pm*6, 1);
+n_pc_pm_r     = round(n_pc_pm*6,     1);
+n_tel_pm_r    = round(n_tel_pm*6,    1);
+LABEL n_ed_pm_r     = "Mult og val x6 to get integer for negbin"
+      n_ffs_bh_pm_r = "Mult og val x6 to get integer for negbin"
+      n_pc_pm_r     = "Mult og val x6 to get integer for negbin"
+      n_tel_pm_r    = "Mult og val x6 to get integer for negbin";
+RUN; 
+
 * Reordered so I could see related cols together; 
 DATA data.analysis;
 RETAIN mcaid_id time int int_imp season1 season2 season3 
        ind_total_cost     adj_pd_total_tc
        ind_pc_cost        adj_pd_pc_tc
        ind_rx_cost        adj_pd_rx_tc
-       ind_pc_visit       n_pc_pm   
-       ind_ed_visit       n_ed_pm
-       ind_ffs_bh_visit   n_ffs_bh_pm
-       ind_tel_visit      n_tel_pm
+       ind_pc_visit       n_pc_pm   n_pc_pm_r
+       ind_ed_visit       n_ed_pm   n_ed_pm_r
+       ind_ffs_bh_visit   n_ffs_bh_pm   n_ffs_bh_pm_r
+       ind_tel_visit      n_tel_pm      n_tel_pm_r
        bh_2016  bh_hosp16   bh_er16   bh_oth16
        bh_2017  bh_hosp17   bh_er17   bh_oth17
        bh_2018  bh_hosp18   bh_er18   bh_oth18
@@ -917,7 +933,7 @@ RETAIN mcaid_id time int int_imp season1 season2 season3
        budget_grp_fmt_ana   budget_grp_num  budget_grp_num_r budget_grp_new
        age      age_cat     age_cat_num
        rae_person_new race sex  ;
-SET data.analysis1;
+SET data.analysis2;
 RUN;
 
 * create data.analysis_meta ; 

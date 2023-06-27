@@ -45,6 +45,8 @@ ods proclabel 'Data Specs';
 * Print specs ; 
 PROC ODSTEXT;
 p "Update/s to data.analysis (final ds)";
+p "-- 06/24: Created rescaled integer visit DVs mult by 6 ";
+p "-- 06/19: Changed formats to hard coded values for budget vars, age";
 p "-- 06/08: Changed age determination date from EOFY to Quarter Month=2";
 p "-- 06/05: Collapsed bh FY16-18 variables by FY (ie bh_2016 = 1 if bh_oth2016, bh_er16, or bh_hosp16 = 1)";
 p "------ Removed bh_hospYY, bh_erYY, and bh_othYY from model, replaced by bh_YYYY (for 2016-2018)";
@@ -126,19 +128,19 @@ RUN;
 TITLE; 
 %mend; 
 
-proc odstext;
-p "New BH Variables (bh_2016, bh_2017, bh_2018)" / style=systemtitle; 
-p "Includes all records (not grouped by mcaid_id)"; RUN;  
+/*proc odstext;*/
+/*p "New BH Variables (bh_2016, bh_2017, bh_2018)" / style=systemtitle; */
+/*p "Includes all records (not grouped by mcaid_id)"; RUN;  */
+/**/
+/*PROC SQL; */
+/*CREATE TABLE sums_bh_1618 AS */
+/*SELECT sum(bh_2016) as n_bh_16*/
+/*     , sum(bh_2017) as n_bh_17*/
+/*     , sum(bh_2018) as n_bh_18*/
+/*FROM &dat; */
+/*Quit; */
 
-PROC SQL; 
-CREATE TABLE sums_bh_1618 AS 
-SELECT sum(bh_2016) as n_bh_16
-     , sum(bh_2017) as n_bh_17
-     , sum(bh_2018) as n_bh_18
-FROM &dat; 
-Quit; 
-
-PROC PRINT DATA = sums_bh_1618; RUN; 
+/*PROC PRINT DATA = sums_bh_1618; RUN; */
 
 /**/
 /*********************************************************************************/
