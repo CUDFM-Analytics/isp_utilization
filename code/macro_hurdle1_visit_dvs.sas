@@ -98,7 +98,7 @@ proc plm restore=n_model;
 run;
 
 * person average visits is calculated ;
-data meanVisits;
+data out.&dv._meanVisits;
   set np_intgroup;
   a_visit = p_prob*p_visit;* (1-p term = 0);
 run;
@@ -109,7 +109,7 @@ create table out.&dv._avp as
   select mean(case when exposed=1 then a_visit else . end ) as n_visits_exposed,
          mean(case when exposed=0 then a_visit else . end ) as n_visits_unexposed,
   calculated n_visits_exposed - calculated n_visits_unexposed as n_visit_diff
-  from meanVisits;
+  from out.&dv._meanVisits;
 quit;
 
 TITLE "&dv._avp"; 
