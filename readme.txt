@@ -1,3 +1,6 @@
+_archive_rm: archive, to be removed when project is over if not needed  
+_archive_store: final, complete documents to be archived for storage/keeping (they WERE used)
+
 05/23: bootstrap
 
 1. Copied Carter's entire folder:

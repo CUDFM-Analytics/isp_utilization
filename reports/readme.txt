@@ -1,15 +1,10 @@
 PARENT DIR: isp_utilization/reports
 
-DIRECTORIES
+SEE 
+  - code/ for logs rendered for each report  
+  - Outdated reports are moved to _archive_rm for removal once project is completed (save until then for comparisons, historical refs)  
 
-|== @rchive ========================================================================
-    Description    : old documents to reference or just don't want to delete
-	
-	|-- adj_cat_var_freq_compare_jt_kw.xlsx ---------------------------------------------
-        Description    : Comparing Jake's frequencies with mine for the adj_cat_vars for FYs 16-18
-        Last Ran On    : 2023-05-01
-        Source         : code/util_compare_jt.sas
-        Relationship/s : Outdated (06/02) move to archive later
+DIRECTORIES
 
 |== attr_20220800 ==================================================================
     Description    : attr results, August 2022
@@ -58,4 +53,18 @@ FILES
 	Log			   : code/cost_total_2023-06-22.log
 	Communication  : Emailed MG 6/22 ready to view 
 	
-
+|-- visits_..._2023-06-27.pdf ---------------------------------------------
+    Description    : DV=Visits
+    Last Ran On    : 2023-06-27 (all)
+    SOURCE         : code/util_avp_visit_dvs.sas
+    Dependencies   : code/util_00_config
+				   : code/macro_hurdle1_visit_dvs.sas
+	Log			   : code/visits_..._2023-06-22.log
+	Communication  : Emailed MG, MD 6/27 ready to view  
+	
+|-- visits_..._2023-06-22_ANON.pdf ---------------------------------------------
+    Description    : DV=Visits report anonymized (removed mcaid_id sections)
+    Last Ran On    : 2023-06-27 (all)
+    SOURCE         : NA
+    Dependencies   : Manually edited from visits..._2023-06-27.pdf files
+	Communication  : Emailed MG, MD 6/27 ready to view  

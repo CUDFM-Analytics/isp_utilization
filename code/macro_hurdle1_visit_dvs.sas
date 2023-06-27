@@ -118,7 +118,7 @@ run;
 
 proc means data = out.&dv._meanVisits;
 by exposed;
-var p_prob p_visits a_visit; 
+var p_prob p_visit a_visit; 
 RUN; 
 
 PROC PRINTTO; RUN; 
