@@ -1,0 +1,288 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.22 seconds
+      cpu time            0.82 seconds
+
+1    proc options option=memsize value; run;
+
+    SAS (r) Proprietary Software Release 9.4  TS1M7
+
+Option Value Information For SAS Option MEMSIZE
+    Value: 12884901888
+    Scope: SAS Session
+    How option value set: SAS Session Startup Command Line
+
+NOTE: PROCEDURE OPTIONS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+2    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Library OUT does not exist.
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+
+70   libname ana clear ;
+NOTE: Libref ANA has been deassigned.
+
+71   PROC SORT DATA = int.elig1618_memlist2 ; BY FY ; RUN ;
+
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+
+72   PROC PRINT DATA = int.elig1618_memlist2 ; where mcaid_id in  ("G657131" "N039812"); run ;
+NOTE: Writing HTML Body file: sashtml.htm
+
+NOTE: There were 4 observations read from the data set INT.ELIG1618_MEMLIST2.
+      WHERE mcaid_id in ('G657131', 'N039812');
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           1.13 seconds
+      cpu time            0.32 seconds
+
+
+73   PROC TRANSPOSE DATA=int.elig1618_memlist2 prefix=ind_elig OUT=int.elig1618_memlist;
+74        BY   mcaid_id ;
+75        ID   FY ;
+76        VAR  ind ;
+77   RUN ;
+
+ERROR: Data set INT.ELIG1618_MEMLIST2 is not sorted in ascending sequence. The current BY group has
+       MCAID_ID = Y999993 and the next BY group has MCAID_ID = A000405.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 673929 observations read from the data set INT.ELIG1618_MEMLIST2.
+WARNING: The data set INT.ELIG1618_MEMLIST may be incomplete.  When this step was stopped there
+         were 0 observations and 0 variables.
+WARNING: Data set INT.ELIG1618_MEMLIST was not replaced because this step was stopped.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.72 seconds
+      cpu time            0.59 seconds
+
+77 !       *1197230 : 3 ;
+
+
+78   PROC SORT DATA = int.elig1618_memlist2 ; BY mcaid_id ; RUN ;
+
+NOTE: There were 2534025 observations read from the data set INT.ELIG1618_MEMLIST2.
+NOTE: The data set INT.ELIG1618_MEMLIST2 has 2534025 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           2.10 seconds
+      cpu time            0.25 seconds
+
+
+
+79   PROC TRANSPOSE DATA=int.elig1618_memlist2 prefix=ind_elig OUT=int.elig1618_memlist;
+80        BY   mcaid_id ;
+81        ID   FY ;
+82        VAR  ind ;
+83   RUN ;
+
+NOTE: There were 2534025 observations read from the data set INT.ELIG1618_MEMLIST2.
+NOTE: The data set INT.ELIG1618_MEMLIST has 1197228 observations and 5 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           5.12 seconds
+      cpu time            4.31 seconds
+
+
+83 !       *1197230 : 3 ;
+
+84   PROC PRINT DATA = int.elig1618_memlist ; where mcaid_id in  ("G657131" "N039812"); run ;
+
+NOTE: There were 2 observations read from the data set INT.ELIG1618_MEMLIST.
+      WHERE mcaid_id in ('G657131', 'N039812');
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.58 seconds
+      cpu time            0.04 seconds
+
+
+
+85   proc datasets library=int nolist;
+86   delete int.elig1618_memlist1;
+            ---------------------
+            22
+            201
+ERROR 22-322: Expecting a name.
+ERROR 201-322: The option is not recognized and will be ignored.
+87   RUN ;
+NOTE: Enter RUN; to continue or QUIT; to end the procedure.
+
+NOTE: Statements not processed because of errors noted above.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           30.08 seconds
+      cpu time            0.45 seconds
+
+
+
+88   proc delete data=int.elig1618_memlist1;
+89   RUN ;
+
+NOTE: Deleting INT.ELIG1618_MEMLIST1 (memtype=DATA).
+NOTE: PROCEDURE DELETE used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.00 seconds
+
+
+90   PROC TRANSPOSE DATA=int.elig1618_memlist2 prefix=ind_elig OUT=int.elig1618_memlist(DROP=_NAME_)
+90 ! ;
+91        BY   mcaid_id ;
+92        ID   FY ;
+93        VAR  ind ;
+94   RUN ;
+
+NOTE: There were 2534025 observations read from the data set INT.ELIG1618_MEMLIST2.
+NOTE: The data set INT.ELIG1618_MEMLIST has 1197228 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           5.45 seconds
+      cpu time            4.48 seconds
+
+
+94 !       *1197230 : 3 ;
+
+95   PROC TRANSPOSE DATA=int.elig1618_memlist2 prefix=ind_elig OUT=int.elig1618_memlist3
+95 ! (DROP=_NAME_);
+96        BY   mcaid_id ;
+97        ID   FY ;
+98        VAR  ind ;
+99   RUN ;
+
+NOTE: There were 2534025 observations read from the data set INT.ELIG1618_MEMLIST2.
+NOTE: The data set INT.ELIG1618_MEMLIST3 has 1197228 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           6.51 seconds
+      cpu time            4.20 seconds
+
+
+99 !       *1197228 : 4 ;
+
+100  DATA int.elig1618_memlist;
+101  SET  int.elig1618_memlist3 ;
+102  ind_elig16 = coalesce(ind_elig2016,0);
+103  ind_elig17 = coalesce(ind_elig2017,0);
+104  ind_elig18 = coalesce(ind_elig2018,0);
+105  RUN ;
+
+NOTE: There were 1197228 observations read from the data set INT.ELIG1618_MEMLIST3.
+NOTE: The data set INT.ELIG1618_MEMLIST has 1197228 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.70 seconds
+      cpu time            0.10 seconds
+
+
+106  proc print data = int.elig1618_memlist;
+107              where mcaid_id in ("G657131" "N039812");
+108              RUN ;
+
+NOTE: There were 2 observations read from the data set INT.ELIG1618_MEMLIST.
+      WHERE mcaid_id in ('G657131', 'N039812');
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.74 seconds
+      cpu time            0.01 seconds
+
+
+109  proc print data = int.elig1618_memlist;
+110              where mcaid_id in ("G657131" "N039812");
+111              RUN ;
+
+NOTE: There were 2 observations read from the data set INT.ELIG1618_MEMLIST.
+      WHERE mcaid_id in ('G657131', 'N039812');
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.78 seconds
+      cpu time            0.03 seconds
+
+
+112  PROC SQL ;
+113  CREATE TABLE adj_cat AS
+114  SELECT COALESCE (a.mcaid_id, b.mcaid_id) as mcaid_id
+115       , a.ind_elig16
+116       , a.ind_elig17
+117       , a.ind_elig18
+118       , b.*
+119  FROM int.elig1618_memlist  as a
+120  FULL JOIN int.util_1618_cat as b
+121  on a.mcaid_id = b.mcaid_id ;
+WARNING: Variable MCAID_ID already exists on file WORK.ADJ_CAT.
+NOTE: Table WORK.ADJ_CAT created, with 1227237 rows and 10 columns.
+
+122  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.40 seconds
+      cpu time            0.86 seconds
+
+
+122!        *2564034 ;
+
+123  proc print data = adj_cat;
+124              where mcaid_id in ("G657131" "N039812");
+125              RUN ;
+
+NOTE: There were 2 observations read from the data set WORK.ADJ_CAT.
+      WHERE mcaid_id in ('G657131', 'N039812');
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+
+
+126
+127  PROC SQL ;
+128  CREATE TABLE int.adj_pd_total_YYcat_final_v2 AS
+129  SELECT mcaid_id
+130       , case when ind_elig16 = 0 then '-1'
+131              when (ind_elig16 = 1 AND _2016 = .) then '0'
+132              else adj_pd_total_16cat_A
+133              end as adj_pd_total_16cat
+134       , case when ind_elig17 = 0 then '-1'
+135              when (ind_elig17 = 1 and _2017 = .) then '0'
+136              else adj_pd_total_17cat_A
+137              end as adj_pd_total_17cat
+138       , case when ind_elig18 = 0 then '-1'
+139              when (ind_elig18 = 1 AND _2018 = .) then '0'
+140              else adj_pd_total_18cat_A
+141              end as adj_pd_total_18cat
+142       , adj_pd_total_16cat_A
+143       , adj_pd_total_17cat_A
+144       , adj_pd_total_18cat_A
+145       , ind_elig16
+146       , ind_elig17
+147       , ind_elig18
+148       , _2016
+149       , _2017
+150       , _2018
+151  FROM adj_cat ;
+NOTE: Table INT.ADJ_PD_TOTAL_YYCAT_FINAL_V2 created, with 1227237 rows and 13 columns.
+
+152  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1.36 seconds
+      cpu time            0.18 seconds
+
+

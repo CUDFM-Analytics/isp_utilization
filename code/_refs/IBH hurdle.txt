@@ -1,0 +1,54 @@
+
+**outcome=utilization bho;
+
+/*libname strtot "X:\Jake\other\IBH\cost and utilization\store statement output"; run;*/
+
+
+data reduce4 ; set newfinal2 (keep=clnt_id qrt_cnt psych_visit_offer age_cat7 gender rethnic_new RAE_person_new Budget_grp_new 
+                      adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat 
+                      bho_n_hosp_16bin bho_n_hosp_17bin bho_n_hosp_18bin bho_n_er_16bin bho_n_er_17bin bho_n_er_18bin 
+                      bho_n_other_16tri bho_n_other_17tri bho_n_other_18tri FQHC_qrt); 
+run;
+data psychzero ; set reduce4 ; psych_visit_offer=0; run; 
+
+
+
+*actual data;
+proc plm RESTORE=strtot.nbhoOth_binhurd noprint;
+   score data=reduce4 out=total_bin predicted / ilink  ;
+run;
+proc plm RESTORE=strtot.nbhoOth_gtZ_hurd noprint;
+   score data=reduce4 out=total_costhurd predicted / ilink ;  /*need ilink because in this case we used a gammm distribution with log link*/
+run;
+data total_conv; 
+merge total_bin (keep=clnt_id qrt_cnt predicted rename=(predicted=predbin)) total_costhurd (keep=clnt_id qrt_cnt predicted rename=(predicted=predcosth)) reduce4 (keep=clnt_id qrt_cnt psych_visit_offer); 
+/*I have to merge 'psych_visit_offer' from original data so that I can get estimates for each step of process for Mark for all the Proc Means below*/
+by clnt_id qrt_cnt; 
+run;
+data total_conv2; set total_conv; actual_pred=predbin*predcosth; label predbin=' ' predcosth=' '; run;
+/*proc means data=total_conv2 mean maxdec=2; where psych_visit_offer=1; var predbin predcosth actual_pred; run;*/
+
+
+*psych_visit_offer = 0;
+proc plm RESTORE=strtot.nbhoOth_binhurd noprint;
+   score data=psychzero out=psyZtot_bin predicted / ilink  ;
+run;
+proc plm RESTORE=strtot.nbhoOth_gtZ_hurd noprint;
+   score data=psychzero out=psyZtot_costhurd predicted / ilink ;  
+run;
+data psyZtot_conv; 
+merge psyZtot_bin (keep=clnt_id qrt_cnt predicted rename=(predicted=predbin)) psyZtot_costhurd (keep=clnt_id qrt_cnt predicted rename=(predicted=predcosth)) reduce4 (keep=clnt_id qrt_cnt psych_visit_offer); 
+by clnt_id qrt_cnt; 
+run;
+data psyZtot_conv2; set psyZtot_conv; psychZ_pred=predbin*predcosth; label predbin=' ' predcosth=' '; run;
+/*proc means data=psyZtot_conv2 mean maxdec=2; where psych_visit_offer=1; var predbin predcosth psychZ_pred; run;*/
+
+
+data predtot1; 
+ merge /*reduce4 (keep=clnt_id qrt_cnt psych_visit_offer)*/ total_conv2 (keep=clnt_id qrt_cnt actual_pred psych_visit_offer) psyZtot_conv2 (keep=clnt_id qrt_cnt psychZ_pred);
+ by clnt_id qrt_cnt; 
+run; 
+data predtot2; set predtot1; where psych_visit_offer=1;
+ pred_diff=actual_pred-psychZ_pred;
+run;
+proc means data=predtot2 mean maxdec=2; var actual_pred psychZ_pred pred_diff; run;

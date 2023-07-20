@@ -1,0 +1,1235 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.95 seconds
+      cpu time            0.73 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+
+68
+69   PROC FREQ DATA = int.adj_pd_total_yycat;
+70   TABLES adj_pd_total_16cat*_2016
+71          adj_pd_total_17cat*_2017
+72          adj_pd_total_18cat*_2018;
+73   RUN;
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           4.89 seconds
+      cpu time            1.32 seconds
+
+
+74   PROC FREQ DATA = int.adj_pd_total_yycat;
+75   TABLES _2016*adj_pd_total_16cat
+76          _2017*adj_pd_total_17cat
+77          _2018*adj_pd_total_18cat;
+78   RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           2.37 seconds
+      cpu time            1.15 seconds
+
+
+79
+80   PROC PRINT DATA = int.adj_pd_total_yycat (obs=50);
+81   WHERE adj_pd_total_16cat = -1 & _2016 = 0;
+ERROR: WHERE clause operator requires compatible variables.
+82   RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+83   PROC PRINT DATA = int.adj_pd_total_yycat (obs=50);
+84   WHERE adj_pd_total_16cat = '-1' & _2016 = 0;
+85   RUN;
+
+NOTE: There were 21 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+      WHERE (adj_pd_total_16cat='-1') and (_2016=0);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           1.42 seconds
+      cpu time            0.04 seconds
+
+
+86   PROC PRINT DATA = int.adj_pd_total_yycat (obs=50);
+87   WHERE adj_pd_total_16cat = '-1' & _2016 >0;
+88   RUN;
+
+NOTE: There were 50 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+      WHERE (adj_pd_total_16cat='-1') and (_2016>0);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.03 seconds
+
+
+89         %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
+SYMBOLGEN:  Macro variable HCPF resolves to S:/FHPC/DATA/HCPF_Data_files_SECURE
+90         LIBNAME ana "&ana";
+SYMBOLGEN:  Macro variable ANA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/HCPF_SqlServer/AnalyticSubset
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+91
+92
+93   PROC PRINT DATA = ana.qry_longitudinal (obs=1000);
+94   where mcaid_id in ("A049816", "A371525", "A653864", "A789247")
+95   AND   month ge "01JAN2016"d
+96   AND   month le "31DEC2016"d;
+97   RUN;
+
+NOTE: No observations were selected from data set ANA.QRY_LONGITUDINAL.
+NOTE: There were 0 observations read from the data set ANA.QRY_LONGITUDINAL.
+      WHERE mcaid_id in ('A049816', 'A371525', 'A653864', 'A789247') and (month>='01JAN2016'D and
+      month<='31DEC2016'D);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           3:50.54
+      cpu time            8.20 seconds
+
+
+98
+99   PROC PRINT DATA = ana.qry_monthlyutilization (obs=1000);
+100  where mcaid_id in ("A049816", "A371525", "A653864", "A789247")
+101  AND   month ge "01JAN2016"d
+102  AND   month le "31DEC2016"d;
+103  RUN;
+
+NOTE: There were 38 observations read from the data set ANA.QRY_MONTHLYUTILIZATION.
+      WHERE mcaid_id in ('A049816', 'A371525', 'A653864', 'A789247') and (month>='01JAN2016'D and
+      month<='31DEC2016'D);
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           1.09 seconds
+      cpu time            0.09 seconds
+
+
+104
+105  ods pdf file = "&report./adj_vars.pdf";
+SYMBOLGEN:  Macro variable REPORT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports
+NOTE: Writing ODS PDF output to DISK destination
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\adj_vars.pdf",
+      printer "PDF".
+106
+107  Title "Monthly Utilization Costs by formatted Variable adj_*";
+108  TITLE2 "Values where adj_* var=-1 but cost (_YYYY) indicates member was in
+108! qry_monthlyutilization but NOT found in qry_longitudinal";
+109  PROC FREQ DATA = int.adj_pd_total_yycat;
+110  TABLES _2016*adj_pd_total_16cat
+111         _2017*adj_pd_total_17cat
+112         _2018*adj_pd_total_18cat;
+113  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           6.22 seconds
+      cpu time            1.39 seconds
+
+
+114
+115  ODS pdf close;
+NOTE: ODS PDF printed 24 pages to
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\adj_vars.pdf.
+116  PROC UNIVARIATE DATA = int.adj_pd_total_yycat;
+117  BY  adj_pd_total_16cat;
+118  VAR _2016;
+119  RUN;
+
+ERROR: Data set INT.ADJ_PD_TOTAL_YYCAT is not sorted in ascending sequence. The current BY group
+       has adj_pd_total_16cat = 3 and the next BY group has adj_pd_total_16cat = -1.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+
+
+120  PROC MEANS DATA = int.adj_pd_total_yycat min max;
+121  VAR _2016*adj_pd_total_16cat
+              -
+              22
+              76
+ERROR 22-322: Syntax error, expecting one of the following: a name, ;, -, /, :, _ALL_, _CHARACTER_,
+              _CHAR_, _NUMERIC_.
+ERROR 76-322: Syntax error, statement will be ignored.
+122         _2017*adj_pd_total_17cat
+123         _2018*adj_pd_total_18cat;
+124  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.31 seconds
+      cpu time            0.00 seconds
+
+
+125  PROC MEANS DATA = int.adj_pd_total_yycat min max;
+126  VAR _2016;
+127  BY adj_pd_total_16cat;
+128  RUN;
+
+ERROR: Data set INT.ADJ_PD_TOTAL_YYCAT is not sorted in ascending sequence. The current BY group
+has adj_pd_total_16cat = 3 and the next BY group has adj_pd_total_16cat = -1.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 3 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+129  PROC SORT DATA = int.adj_pd_total_yycat; by adj_pd_total_16cat; run;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: The data set INT.ADJ_PD_TOTAL_YYCAT has 2066292 observations and 13 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           3.83 seconds
+      cpu time            0.65 seconds
+
+
+
+130  PROC UNIVARIATE DATA = int.adj_pd_total_yycat;
+131  BY  adj_pd_total_16cat;
+132  VAR _2016;
+133  RUN;
+
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1.75 seconds
+      cpu time            0.48 seconds
+
+
+134  PROC MEANS DATA = int.adj_pd_total_yycat MEAN MIN MAX;
+135  BY  adj_pd_total_16cat ;
+136  VAR _2016;
+137  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           1.76 seconds
+      cpu time            0.17 seconds
+
+
+138  PROC MEANS DATA = int.adj_pd_total_yycat MEAN MIN MAX;
+139  CLASS  adj_pd_total_16cat ;
+140  VAR _2016;
+141  OUTPUT OUT=adj_ranges_2016 mean(value)=;
+ERROR: Variable VALUE not found.
+142  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.ADJ_RANGES_2016 may be incomplete.  When this step was stopped there
+         were 0 observations and 0 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+143  PROC MEANS DATA = int.adj_pd_total_yycat MEAN MIN MAX;
+144  CLASS  adj_pd_total_16cat ;
+145  VAR _2016;
+146  OUTPUT OUT=adj_ranges_2016 mean(_2016)=;
+147  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: The data set WORK.ADJ_RANGES_2016 has 7 observations and 4 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           1.41 seconds
+      cpu time            0.28 seconds
+
+
+148
+149  ods pdf file = "&report./adj_vars.pdf";
+SYMBOLGEN:  Macro variable REPORT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports
+NOTE: Writing ODS PDF output to DISK destination
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\adj_vars.pdf",
+      printer "PDF".
+150  Title "Monthly Utilization Costs by formatted Variable adj_*";
+151  TITLE2 "Values where adj_* var=-1 but cost (_YYYY) indicates member was in
+151! qry_monthlyutilization but NOT found in qry_longitudinal";
+152  PROC SORT DATA = int.adj_pd_total_yycat; by adj_pd_total_16cat; run;
+
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+153
+154  ods text ="(-1): Not Eligible";
+155  ods text ="( 0): Eligible, PMPM $0";
+156  ods text ="( 1): Eligible, PMPM > 0 and <=50 percentile";
+157  ods text ="( 2): Eligible, PMPM >75 and <=90 percentile";
+158  ods text ="( 3): Eligible, PMPM >90 and <=95 percentile";
+159  ods text ="( 4): Eligible, PMPM >95 percentile";
+160
+161  PROC MEANS DATA = int.adj_pd_total_yycat MEAN MIN MAX;
+162  CLASS  adj_pd_total_16cat ;
+163  VAR _2016;
+164  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           1.42 seconds
+      cpu time            0.17 seconds
+
+
+165
+166  PROC MEANS DATA = int.adj_pd_total_yycat MEAN MIN MAX;
+167  CLASS  adj_pd_total_17cat ;
+168  VAR _2017;
+169  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.21 seconds
+
+
+170
+171  PROC MEANS DATA = int.adj_pd_total_yycat MEAN MIN MAX;
+172  CLASS  adj_pd_total_18cat ;
+173  VAR _2018;
+174  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.26 seconds
+
+
+175
+176  Title "Monthly Utilization Costs by formatted Variable adj_*";
+177  TITLE2 "Values where adj_* var=-1 but cost (_YYYY) indicates member was in
+177! qry_monthlyutilization but NOT found in qry_longitudinal";
+178  PROC FREQ DATA = int.adj_pd_total_yycat;
+179  TABLES _2016*adj_pd_total_16cat
+180         _2017*adj_pd_total_17cat
+181         _2018*adj_pd_total_18cat;
+182  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.51 seconds
+      cpu time            1.46 seconds
+
+
+183
+184  ODS pdf close;
+NOTE: ODS PDF printed 27 pages to
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\adj_vars.pdf.
+185
+186  ods pdf file = "&report./adj_vars.pdf";
+SYMBOLGEN:  Macro variable REPORT resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/reports
+NOTE: Writing ODS PDF output to DISK destination
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\adj_vars.pdf",
+      printer "PDF".
+187  Title "Monthly Utilization Costs by formatted Variable adj_*";
+188  TITLE2 "Values where adj_* var=-1 but cost (_YYYY) indicates member was in
+188! qry_monthlyutilization but NOT found in qry_longitudinal";
+189  PROC SORT DATA = int.adj_pd_total_yycat; by adj_pd_total_16cat; run;
+
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+190
+191  ods text ="(-1): Not Eligible";
+192  ods text ="( 0): Eligible, PMPM $0";
+193  ods text ="( 1): Eligible, PMPM > 0 and <=50 percentile";
+194  ods text ="( 2): Eligible, PMPM >50 and <=75 percentile";
+195  ods text ="( 3): Eligible, PMPM >75 and <=90 percentile";
+196  ods text ="( 4): Eligible, PMPM >90 and <=95 percentile";
+197  ods text ="( 5): Eligible, PMPM >95 percentile";
+198
+199  PROC MEANS DATA = int.adj_pd_total_yycat MEAN MIN MAX;
+200  CLASS  adj_pd_total_16cat ;
+201  VAR _2016;
+202  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           1.41 seconds
+      cpu time            0.14 seconds
+
+
+203
+204  PROC MEANS DATA = int.adj_pd_total_yycat MEAN MIN MAX;
+205  CLASS  adj_pd_total_17cat ;
+206  VAR _2017;
+207  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.21 seconds
+
+
+208
+209  PROC MEANS DATA = int.adj_pd_total_yycat MEAN MIN MAX;
+210  CLASS  adj_pd_total_18cat ;
+211  VAR _2018;
+212  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.21 seconds
+
+
+213
+214  Title "Monthly Utilization Costs by formatted Variable adj_*";
+215  TITLE2 "Values where adj_* var=-1 but cost (_YYYY) indicates member was in
+215! qry_monthlyutilization but NOT found in qry_longitudinal";
+216  PROC FREQ DATA = int.adj_pd_total_yycat;
+217  TABLES _2016*adj_pd_total_16cat
+218         _2017*adj_pd_total_17cat
+219         _2018*adj_pd_total_18cat;
+220  RUN;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.18 seconds
+      cpu time            1.14 seconds
+
+
+221
+222  ODS pdf close;
+NOTE: ODS PDF printed 27 pages to
+      S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\adj_vars.pdf.
+223  PROC SQL ;
+224  CREATE TABLE util AS
+225  SELECT *
+226  FROM   ana.qry_monthlyutilization
+227  WHERE  month ge '01Jul2016'd
+228  AND    month le '30Jun2022'd
+229  AND    mcaid_id IN  (SELECT mcaid_id FROM int.memlist);
+NOTE: Table WORK.UTIL created, with 54988581 rows and 5 columns.
+
+230  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:55.91
+      cpu time            21.50 seconds
+
+
+230!       * 663676624;
+231
+232  * COST: rx, pc, total
+233  * UTIL: PC, ED (no total) > summed months in case there was > 1 month? ;
+234  proc sql;
+235  create table int.util_1621 as
+236  select mcaid_id
+237       , month
+238       , sum(case when clmClass = 2 then pd_amt else 0 end) as pd_ffs_rx
+239       , sum(case when clmClass = 4 then pd_amt else 0 end) as pd_ffs_pc
+240       , sum(pd_amt)                                        as pd_ffs_total
+241       , sum(case when clmClass = 4 then count  else 0 end) as n_ffs_pc
+242       , sum(case when clmClass = 3 then count  else 0 end) as n_ffs_er
+243  from util
+244  group by MCAID_ID, month ;
+NOTE: Table INT.UTIL_1621 created, with 27083681 rows and 7 columns.
+
+245  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           27.59 seconds
+      cpu time            12.18 seconds
+
+
+245!       *Table int.UTIL_1621 created, with 27092342 rows and 7 columns. ;
+246
+247  * Create FY variable, get beginning of quarter from month variables to match to adj ;
+248  DATA util1621a     ;
+249  SET  int.util_1621 ;
+250  FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ;
+251  format dt_qrtr date9.; * create quarter beginning date to get quarters ;
+252  dt_qrtr = intnx('quarter', month ,0,'b');
+253  RUN;
+
+NOTE: There were 27083681 observations read from the data set INT.UTIL_1621.
+NOTE: The data set WORK.UTIL1621A has 27083681 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           24.70 seconds
+      cpu time            10.64 seconds
+
+
+253!      *27092342 rows and 7 columns. ;
+254
+255  * Sum by quarters ;
+256  proc sql;
+257  create table util1621b as
+258  select mcaid_id
+259       , FY
+260       , dt_qrtr
+261       , sum(pd_ffs_rx) as pd_rx_q
+262       , sum(pd_ffs_pc) as pd_pc_q
+263       , sum(pd_ffs_total) as pd_tot_q
+264       , sum(n_ffs_pc) as n_pc_q
+265       , sum(n_ffs_er) as n_er_q
+266  from util1621a
+267  group by MCAID_ID, dt_qrtr;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.UTIL1621B created, with 27083681 rows and 8 columns.
+
+268  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           9.47 seconds
+      cpu time            13.90 seconds
+
+
+268!       *Table int.UTIL_1621 created, with 27092342 rows and 7 columns. ;
+
+269  PROC SORT DATA = util1621b NODUPKEY ; BY _ALL_ ; RUN ;
+
+NOTE: There were 27083681 observations read from the data set WORK.UTIL1621B.
+NOTE: 13145381 observations with duplicate key values were deleted.
+NOTE: The data set WORK.UTIL1621B has 13938300 observations and 8 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           4.39 seconds
+      cpu time            9.93 seconds
+
+
+269!                                                        * 13941142 ;
+
+270  PROC SQL ;
+271  CREATE TABLE util1621_adj AS
+272  SELECT a.*
+273       , b.index_2021_1
+274  FROM util1621b as a
+275  LEFT JOIN int.adj as b
+276  ON a.dt_qrtr = b.date ;
+NOTE: Table WORK.UTIL1621_ADJ created, with 13938300 rows and 9 columns.
+
+277  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           4.67 seconds
+      cpu time            7.15 seconds
+
+
+277!        *13941142 ;
+
+278  * calculate adjusted costs;
+279  DATA int.util1621_adj (DROP=pd_rx_q pd_pc_q pd_tot_q index_2021_1);
+280  SET  util1621_adj ;
+281  pd_rx_q_adj = index_2021_1 * pd_rx_q;
+282  pd_pc_q_adj = index_2021_1 * pd_pc_q;
+283  pd_tot_q_adj = index_2021_1 * pd_tot_q;
+284  RUN;
+
+NOTE: There were 13938300 observations read from the data set WORK.UTIL1621_ADJ.
+NOTE: The data set INT.UTIL1621_ADJ has 13938300 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           13.97 seconds
+      cpu time            2.09 seconds
+
+
+284!      *13941142 ;
+285
+286  * SPLIT INTO 1618 for cat and 19-21 for outcomes ;
+287  DATA util_1921 util_1618 (keep = mcaid_id FY dt_qrtr pd_tot_q_adj );
+288  SET  int.util1621_adj ;
+289  IF   FY in ('2019','2020','2021') THEN OUTPUT util_1921;
+290  ELSE OUTPUT util_1618;
+291  RUN;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      289:6
+NOTE: There were 13938300 observations read from the data set INT.UTIL1621_ADJ.
+NOTE: The data set WORK.UTIL_1921 has 7681163 observations and 8 variables.
+NOTE: The data set WORK.UTIL_1618 has 6257137 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           10.39 seconds
+      cpu time            1.78 seconds
+
+
+292  proc sql;
+293  create table int.util_1618_long as
+294  select mcaid_id
+295       , FY
+296       , sum(pd_tot_q_adj) as pd_tot_fy_adj
+297  from util_1618
+298  group by MCAID_ID, FY;
+NOTE: Table INT.UTIL_1618_LONG created, with 2396249 rows and 3 columns.
+
+299  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.10 seconds
+      cpu time            2.32 seconds
+
+
+300  PROC SQL ;
+301  CREATE TABLE util AS
+302  SELECT *
+303  FROM   ana.qry_monthlyutilization
+304  WHERE  month ge '01Jul2016'd
+305  AND    month le '30Jun2022'd;
+NOTE: Table WORK.UTIL created, with 66382081 rows and 5 columns.
+
+306  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           58.20 seconds
+      cpu time            9.17 seconds
+
+
+306!       * 663676624;
+
+307  proc sql;
+308  create table int.util_1621 as
+309  select mcaid_id
+310       , month
+311       , sum(case when clmClass = 2 then pd_amt else 0 end) as pd_ffs_rx
+312       , sum(case when clmClass = 4 then pd_amt else 0 end) as pd_ffs_pc
+313       , sum(pd_amt)                                        as pd_ffs_total
+314       , sum(case when clmClass = 4 then count  else 0 end) as n_ffs_pc
+315       , sum(case when clmClass = 3 then count  else 0 end) as n_ffs_er
+316  from util
+317  group by MCAID_ID, month ;
+NOTE: Table INT.UTIL_1621 created, with 32835706 rows and 7 columns.
+
+318  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           31.72 seconds
+      cpu time            16.12 seconds
+
+
+318!       *Table int.UTIL_1621 created, with 27092342 rows and 7 columns. ;
+319
+320  * Create FY variable, get beginning of quarter from month variables to match to adj ;
+321  DATA util1621a     ;
+322  SET  int.util_1621 ;
+323  FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ;
+324  format dt_qrtr date9.; * create quarter beginning date to get quarters ;
+325  dt_qrtr = intnx('quarter', month ,0,'b');
+326  RUN;
+
+NOTE: There were 32835706 observations read from the data set INT.UTIL_1621.
+NOTE: The data set WORK.UTIL1621A has 32835706 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           29.90 seconds
+      cpu time            12.70 seconds
+
+
+326!      *27092342 rows and 7 columns. ;
+327
+328  * Sum by quarters ;
+329  proc sql;
+330  create table util1621b as
+331  select mcaid_id
+332       , FY
+333       , dt_qrtr
+334       , sum(pd_ffs_rx) as pd_rx_q
+335       , sum(pd_ffs_pc) as pd_pc_q
+336       , sum(pd_ffs_total) as pd_tot_q
+337       , sum(n_ffs_pc) as n_pc_q
+338       , sum(n_ffs_er) as n_er_q
+339  from util1621a
+340  group by MCAID_ID, dt_qrtr;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.UTIL1621B created, with 32835706 rows and 8 columns.
+
+341  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           11.51 seconds
+      cpu time            16.93 seconds
+
+
+341!       *Table int.UTIL_1621 created, with 27092342 rows and 7 columns. ;
+
+342  PROC SORT DATA = util1621b NODUPKEY ; BY _ALL_ ; RUN ;
+
+NOTE: There were 32835706 observations read from the data set WORK.UTIL1621B.
+NOTE: 16143697 observations with duplicate key values were deleted.
+NOTE: The data set WORK.UTIL1621B has 16692009 observations and 8 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           5.26 seconds
+      cpu time            11.73 seconds
+
+
+342!                                                        * 13941142 ;
+
+343  PROC SQL ;
+344  CREATE TABLE util1621_adj AS
+345  SELECT a.*
+346       , b.index_2021_1
+347  FROM util1621b as a
+348  LEFT JOIN int.adj as b
+349  ON a.dt_qrtr = b.date ;
+NOTE: Table WORK.UTIL1621_ADJ created, with 16692009 rows and 9 columns.
+
+350  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           5.33 seconds
+      cpu time            8.68 seconds
+
+
+350!        *13941142 ;
+
+351  DATA int.util1621_adj (DROP=pd_rx_q pd_pc_q pd_tot_q index_2021_1);
+352  SET  util1621_adj ;
+353  pd_rx_q_adj  = index_2021_1 * pd_rx_q;
+354  pd_pc_q_adj  = index_2021_1 * pd_pc_q;
+355  pd_tot_q_adj = index_2021_1 * pd_tot_q;
+356  RUN;
+
+NOTE: There were 16692009 observations read from the data set WORK.UTIL1621_ADJ.
+NOTE: The data set INT.UTIL1621_ADJ has 16692009 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           16.53 seconds
+      cpu time            2.15 seconds
+
+
+356!      *13941142 ;
+
+357  * SPLIT INTO 1618 for cat and 19-21 for outcomes ;
+358  DATA util_1921 util_1618 (keep = mcaid_id FY dt_qrtr pd_tot_q_adj );
+359  SET  int.util1621_adj ;
+360  IF   FY in ('2019','2020','2021') THEN OUTPUT util_1921;
+361  ELSE OUTPUT util_1618;
+362  RUN;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      360:6
+NOTE: There were 16692009 observations read from the data set INT.UTIL1621_ADJ.
+NOTE: The data set WORK.UTIL_1921 has 8430032 observations and 8 variables.
+NOTE: The data set WORK.UTIL_1618 has 8261977 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           12.58 seconds
+      cpu time            2.11 seconds
+
+
+363  proc sql;
+364  create table int.util_1618_long as
+365  select mcaid_id
+366       , FY
+367       , sum(pd_tot_q_adj) as pd_tot_fy_adj
+368  from util_1618
+369  group by MCAID_ID, FY;
+NOTE: Table INT.UTIL_1618_LONG created, with 3252795 rows and 3 columns.
+
+370  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.65 seconds
+      cpu time            2.76 seconds
+
+
+370!       *2396891 : 3 - reduced to approx 1/5th ;
+
+371  PROC RANK DATA = int.util_1618_long
+372       GROUPS    = 100
+373       OUT       = util1618r;
+374       VAR       pd_tot_fy_adj ;
+375       BY        FY ;
+376       RANKS     adj_pd_rank ;
+377  RUN ;
+
+ERROR: Data set INT.UTIL_1618_LONG is not sorted in ascending sequence. The current BY group has FY
+       = 2018 and the next BY group has FY = 2016.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 4 observations read from the data set INT.UTIL_1618_LONG.
+WARNING: The data set WORK.UTIL1618R may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+NOTE: PROCEDURE RANK used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+378  PROC SORT DATA = int.util_1618_long; by FY; RUN;
+
+NOTE: There were 3252795 observations read from the data set INT.UTIL_1618_LONG.
+NOTE: The data set INT.UTIL_1618_LONG has 3252795 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           2.55 seconds
+      cpu time            0.82 seconds
+
+
+
+379
+380  *https://support.sas.com/kb/22/759.html shows to use rank and groups=100;
+381  PROC RANK DATA = int.util_1618_long
+382       GROUPS    = 100
+383       OUT       = util1618r;
+384       VAR       pd_tot_fy_adj ;
+385       BY        FY ;
+386       RANKS     adj_pd_rank ;
+387  RUN ;
+
+NOTE: There were 3252795 observations read from the data set INT.UTIL_1618_LONG.
+NOTE: The data set WORK.UTIL1618R has 3252795 observations and 4 variables.
+NOTE: PROCEDURE RANK used (Total process time):
+      real time           1.68 seconds
+      cpu time            0.70 seconds
+
+
+388  PROC SORT DATA = util1618r ; by mcaid_id ; RUN ;
+
+NOTE: There were 3252795 observations read from the data set WORK.UTIL1618R.
+NOTE: The data set WORK.UTIL1618R has 3252795 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.26 seconds
+      cpu time            0.65 seconds
+
+
+389  PROC TRANSPOSE DATA = util1618r
+390       OUT = util1618r2 (DROP= _NAME_ _LABEL_);
+391  by mcaid_id ;
+392  ID FY ;
+393  VAR adj_pd_rank;
+394  RUN;
+
+NOTE: There were 3252795 observations read from the data set WORK.UTIL1618R.
+NOTE: The data set WORK.UTIL1618R2 has 1552079 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           3.94 seconds
+      cpu time            3.96 seconds
+
+
+394!       * 105841 : 4 ;
+
+395  PROC FORMAT library = data;
+396
+397  * Formats for values in datasets in ana library:;
+398  VALUE budget_grp_new_
+399      5          = "MAGI TO 68% FPL"
+400      3          = "MAGI 69 - 133% FPL"
+401      6,7,8,9,10 = "Disabled"
+402      11         = "Foster Care"
+403      12         = "MAGI Eligible Children"
+404      Other      = "Other";
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+405
+406  VALUE $race_rc_
+407      .         = "Other"
+408      1         = "Hispanic/Latino"
+409      2         = "non-Hispanic White/Caucasian"
+410      3         = "non-Hispanic Black/African American"
+411      4,5,6,7,8 = "non-Hispanic Other"
+412      9         = "non-Hispanic Other People of Color"
+413      Other     = "Unknown Race/Ethnicity";
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+414
+415  * Formats for values created originally in the util files;
+416  VALUE adj_pd_total_YRcat_
+417      0 = 0
+418      1 - 50  = 1
+419      51 - 75 = 2
+420      76 - 90 = 3
+421      91 - 95 = 4
+422      96 - 99 = 5
+423      Other = .;
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ is already on the library DATA.FORMATS.
+NOTE: Format ADJ_PD_TOTAL_YRCAT_ has been written to DATA.FORMATS.
+424
+425  VALUE age_cat_
+426      0 - 5 = 1
+427      6 -10 = 2
+428      11-15 = 3
+429      16-20 = 4
+430      21-44 = 5
+431      45-64 = 6 ;
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+432
+433  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+434  DATA int.util_1618_cat  ;
+435  SET  util1618r2     ;
+436  adj_pd_total_16cat_A = put(_2016, adj_pd_total_YRcat_.);
+437  adj_pd_total_17cat_A = put(_2017, adj_pd_total_YRcat_.);
+438  adj_pd_total_18cat_A = put(_2018, adj_pd_total_YRcat_.);
+439  RUN ;
+
+NOTE: There were 1552079 observations read from the data set WORK.UTIL1618R2.
+NOTE: The data set INT.UTIL_1618_CAT has 1552079 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.32 seconds
+      cpu time            0.45 seconds
+
+
+439!       *1051841 ;
+
+440
+441  PROC FREQ DATA = int.util_1618_cat;
+442  tables adj_pd_total_16cat_A*_2016
+443         adj_pd_total_17cat_A*_2017
+444         adj_pd_total_18cat_A*_2018;
+445  RUN;
+
+NOTE: There were 1552079 observations read from the data set INT.UTIL_1618_CAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.40 seconds
+      cpu time            1.04 seconds
+
+
+446
+447  PROC FREQ DATA = int.util_1618_cat;
+448  tables _2016*adj_pd_total_16cat_A
+449         _2017*adj_pd_total_17cat_A
+450         _2018*adj_pd_total_18cat_A;
+451  RUN;
+
+NOTE: There were 1552079 observations read from the data set INT.UTIL_1618_CAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.46 seconds
+      cpu time            1.14 seconds
+
+
+452
+453  PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX;
+454  CLASS  adj_pd_total_16cat_A ;
+455  VAR _2016;
+456  RUN;
+
+NOTE: There were 1552079 observations read from the data set INT.UTIL_1618_CAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.66 seconds
+      cpu time            0.03 seconds
+
+
+457
+458  PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX;
+459  CLASS  adj_pd_total_17cat_A ;
+460  VAR _2017;
+461  RUN;
+
+NOTE: There were 1552079 observations read from the data set INT.UTIL_1618_CAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.20 seconds
+
+
+462
+463  PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX;
+464  CLASS  adj_pd_total_18cat_A ;
+465  VAR _2018;
+466  RUN;
+
+NOTE: There were 1552079 observations read from the data set INT.UTIL_1618_CAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.17 seconds
+
+
+467
+468  PROC SQL ;
+469  CREATE TABLE adj_cat AS
+470  SELECT COALESCE (a.mcaid_id, b.mcaid_id) as mcaid_id
+471       , a.*
+472       , b.*
+473  FROM int.elig1618c as a
+474  FULL JOIN int.util_1618_cat as b
+475  on a.mcaid_id = b.mcaid_id ;
+WARNING: Variable MCAID_ID already exists on file WORK.ADJ_CAT.
+WARNING: Variable MCAID_ID already exists on file WORK.ADJ_CAT.
+NOTE: Table WORK.ADJ_CAT created, with 2066673 rows and 10 columns.
+
+476  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           4.35 seconds
+      cpu time            1.43 seconds
+
+
+476!        * 2066292 ;
+
+477
+478  DATA adj_cat2;
+479  SET  adj_cat ;
+480  ind_elig16 = coalesce(ind_elig2016,0);
+481  ind_elig17 = coalesce(ind_elig2017,0);
+482  ind_elig18 = coalesce(ind_elig2018,0);
+483  RUN ;
+
+NOTE: There were 2066673 observations read from the data set WORK.ADJ_CAT.
+NOTE: The data set WORK.ADJ_CAT2 has 2066673 observations and 13 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.20 seconds
+      cpu time            0.20 seconds
+
+
+483!       *2066292 ;
+
+484
+485  PROC SQL ;
+486  CREATE TABLE int.adj_pd_total_YYcat2 AS
+487  SELECT mcaid_id
+488       , case when ind_elig16 = 0 then '-1'
+489              when (ind_elig16 = 1 AND _2016 = .) then '0'
+490              else adj_pd_total_16cat_A
+491              end as adj_pd_total_16cat
+492       , case when ind_elig17 = 0 then '-1'
+493              when (ind_elig17 = 1 and _2017 = .) then '0'
+494              else adj_pd_total_17cat_A
+495              end as adj_pd_total_17cat
+496       , case when ind_elig18 = 0 then '-1'
+497              when (ind_elig18 = 1 AND _2018 = .) then '0'
+498              else adj_pd_total_18cat_A
+499              end as adj_pd_total_18cat
+500       , adj_pd_total_16cat_A
+501       , adj_pd_total_17cat_A
+502       , adj_pd_total_18cat_A
+503       , ind_elig16
+504       , ind_elig17
+505       , ind_elig18
+506       , _2016
+507       , _2017
+508       , _2018
+509  FROM adj_cat2 ;
+NOTE: Table INT.ADJ_PD_TOTAL_YYCAT2 created, with 2066673 rows and 13 columns.
+
+510  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.42 seconds
+      cpu time            0.49 seconds
+
+
+510!        *2066292;
+
+511
+512  PROC FREQ DATA = int.adj_pd_total_YYcat;
+513  tables adj: ;
+514  RUN ;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           3.60 seconds
+      cpu time            0.29 seconds
+
+
+515
+516  PROC FREQ DATA = int.util_1618_cat;
+517  tables adj_pd_total_16cat_A
+518         adj_pd_total_17cat_A
+519         adj_pd_total_18cat_A
+520         _2016*adj_pd_total_16cat_A
+521         _2017*adj_pd_total_17cat_A
+522         _2018*adj_pd_total_18cat_A;
+523  RUN;
+
+NOTE: There were 1552079 observations read from the data set INT.UTIL_1618_CAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.43 seconds
+      cpu time            1.21 seconds
+
+
+524
+525  PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX;
+526  CLASS  adj_pd_total_16cat_A ;
+527  VAR _2016;
+528  RUN;
+
+NOTE: There were 1552079 observations read from the data set INT.UTIL_1618_CAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.64 seconds
+      cpu time            0.14 seconds
+
+
+529
+530  PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX;
+531  CLASS  adj_pd_total_17cat_A ;
+532  VAR _2017;
+533  RUN;
+
+NOTE: There were 1552079 observations read from the data set INT.UTIL_1618_CAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.18 seconds
+
+
+534
+535  PROC MEANS DATA = int.util_1618_cat MEAN MIN MAX;
+536  CLASS  adj_pd_total_18cat_A ;
+537  VAR _2018;
+538  RUN;
+
+NOTE: There were 1552079 observations read from the data set INT.UTIL_1618_CAT.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.14 seconds
+
+
+539
+540  PROC FREQ DATA = adj_cat;
+541  tables adj: ;
+542  RUN;
+
+NOTE: There were 2066673 observations read from the data set WORK.ADJ_CAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.25 seconds
+      cpu time            0.20 seconds
+
+
+543
+544  DATA adj_cat2;
+545  SET  adj_cat ;
+546  ind_elig16 = coalesce(ind_elig2016,0);
+547  ind_elig17 = coalesce(ind_elig2017,0);
+548  ind_elig18 = coalesce(ind_elig2018,0);
+549  RUN ;
+
+NOTE: There were 2066673 observations read from the data set WORK.ADJ_CAT.
+NOTE: The data set WORK.ADJ_CAT2 has 2066673 observations and 13 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.21 seconds
+
+
+549!       *2066673 ;
+
+550  PROC FREQ DATA = adj_cat2;
+551  tables adj: ;
+552  RUN;
+
+NOTE: There were 2066673 observations read from the data set WORK.ADJ_CAT2.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.26 seconds
+      cpu time            0.22 seconds
+
+
+553  PROC FREQ DATA = int.adj_pd_total_YYcat;
+554  tables adj: ;
+555  RUN ;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.65 seconds
+      cpu time            0.39 seconds
+
+
+556  PROC PRINT DATA = adj_cat2 (obs =30);
+557  run;
+
+NOTE: There were 30 observations read from the data set WORK.ADJ_CAT2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+
+
+558
+559  PROC SQL ;
+560  CREATE TABLE int.adj_pd_total_YYcat2 AS
+561  SELECT mcaid_id
+562       , case when (_2016 = . AND ind_elig16 = 0) then '-1'
+563              when (_2016 = . AND ind_elig16 = 1) then '0'
+564              else adj_pd_total_16cat_A
+565              end as adj_pd_total_16cat
+566       , case when (_2017 = . AND ind_elig17 = 0) then '-1'
+567              when (_2017 = . AND ind_elig17 = 1) then '0'
+568              else adj_pd_total_17cat_A
+569              end as adj_pd_total_17cat
+570       , case when (_2018 = . AND ind_elig18 = 0) then '-1'
+571              when (_2018 = . AND ind_elig18 = 1) then '0'
+572              else adj_pd_total_18cat_A
+573              end as adj_pd_total_18cat
+574       , adj_pd_total_16cat_A
+575       , adj_pd_total_17cat_A
+576       , adj_pd_total_18cat_A
+577       , ind_elig16
+578       , ind_elig17
+579       , ind_elig18
+580       , _2016
+581       , _2017
+582       , _2018
+583  FROM adj_cat2 ;
+NOTE: Table INT.ADJ_PD_TOTAL_YYCAT2 created, with 2066673 rows and 13 columns.
+
+584  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.43 seconds
+      cpu time            0.56 seconds
+
+
+584!        *2066673;
+
+585  PROC FREQ DATA = int.adj_pd_total_YYcat;
+586  tables adj: ;
+587  RUN ;
+
+NOTE: There were 2066292 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.63 seconds
+      cpu time            0.31 seconds
+
+
+588
+589  PROC FREQ DATA = int.adj_pd_total_YYcat2;
+590  tables adj: ;
+591  RUN ;
+
+NOTE: There were 2066673 observations read from the data set INT.ADJ_PD_TOTAL_YYCAT2.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           2.15 seconds
+      cpu time            0.29 seconds
+
+
+592
+593  PROC SQL ;
+594  CREATE TABLE int.adj_pd_total_YYcat AS
+595  SELECT mcaid_id
+596       , case when (_2016 = . AND ind_elig16 = 0) then '-1'
+597              when (_2016 = . AND ind_elig16 = 1) then '0'
+598              else adj_pd_total_16cat_A
+599              end as adj_pd_total_16cat
+600       , case when (_2017 = . AND ind_elig17 = 0) then '-1'
+601              when (_2017 = . AND ind_elig17 = 1) then '0'
+602              else adj_pd_total_17cat_A
+603              end as adj_pd_total_17cat
+604       , case when (_2018 = . AND ind_elig18 = 0) then '-1'
+605              when (_2018 = . AND ind_elig18 = 1) then '0'
+606              else adj_pd_total_18cat_A
+607              end as adj_pd_total_18cat
+608       , adj_pd_total_16cat_A
+609       , adj_pd_total_17cat_A
+610       , adj_pd_total_18cat_A
+611       , ind_elig16
+612       , ind_elig17
+613       , ind_elig18
+614       , _2016
+615       , _2017
+616       , _2018
+617  FROM adj_cat2 ;
+NOTE: Table INT.ADJ_PD_TOTAL_YYCAT created, with 2066673 rows and 13 columns.
+
+618  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2.45 seconds
+      cpu time            0.50 seconds
+
+
+618!        *2066673;
+
+619  libname ana clear;
+NOTE: Libref ANA has been deassigned.
+

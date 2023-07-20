@@ -1,0 +1,120 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.82 seconds
+      cpu time            0.67 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+68   libname int clear;
+NOTE: Libref INT has been deassigned.
+69   /*proc options option=memsize value;*/
+70   /*run;*/
+71
+72   %LET dat = data.analysis_dataset ;
+73   TITLE "probability model";
+74   PROC GEE DATA  = &dat DESC;
+NOTE: Writing HTML Body file: sashtml.htm
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+75        CLASS  mcaid_id
+76               age         sex     race
+77               rae_person_new
+78               budget_grp_new          fqhc
+79   /*            bh_er2016   bh_er2017   bh_er2018 */
+80   /*            bh_hosp2016 bh_hosp2017 bh_hosp2018 */
+81   /*            bh_oth2016  bh_oth2017  bh_oth2018*/
+82   /*            adj_pd_total_16cat */
+83   /*            adj_pd_total_17cat  */
+84   /*            adj_pd_total_18cat*/
+85               time
+86               int
+87               int_imp
+88               ind_cost_pc ;
+89        model ind_cost_pc = age            sex             race
+90                            rae_person_new budget_grp_new  fqhc
+91   /*                         bh_er2016      bh_er2017       bh_er2018 */
+92   /*                         bh_hosp2016    bh_hosp2017     bh_hosp2018 */
+93   /*                         bh_oth2016     bh_oth2017      bh_oth2018*/
+94   /*                         adj_pd_total_16cat */
+95   /*                         adj_pd_total_17cat */
+96   /*                         adj_pd_total_18cat*/
+97                            time
+98                            int_imp
+99                            int / dist = binomial link = logit ;
+100    repeated subject = mcaid_id / type = exch;
+101    store p_model;
+102  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_cost_pc='1'.
+NOTE: The GEE procedure generated the model item store WORK.P_MODEL.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           8:32.72
+      cpu time            7:52.73
+
+
+103  TITLE "probability model";
+104  PROC GEE DATA  = &dat DESC;
+SYMBOLGEN:  Macro variable DAT resolves to data.analysis_dataset
+105       CLASS  mcaid_id
+106              age         sex     race
+107              rae_person_new
+108              budget_grp_new          fqhc
+109  /*            bh_er2016   bh_er2017   bh_er2018 */
+110  /*            bh_hosp2016 bh_hosp2017 bh_hosp2018 */
+111  /*            bh_oth2016  bh_oth2017  bh_oth2018*/
+112              adj_pd_total_16cat
+113              adj_pd_total_17cat
+114              adj_pd_total_18cat
+115              time
+116              int
+117              int_imp
+118              ind_cost_pc ;
+119       model ind_cost_pc = age            sex             race
+120                           rae_person_new budget_grp_new  fqhc
+121  /*                         bh_er2016      bh_er2017       bh_er2018 */
+122  /*                         bh_hosp2016    bh_hosp2017     bh_hosp2018 */
+123  /*                         bh_oth2016     bh_oth2017      bh_oth2018*/
+124                           adj_pd_total_16cat
+125                           adj_pd_total_17cat
+126                           adj_pd_total_18cat
+127                           time
+128                           int_imp
+129                           int / dist = binomial link = logit ;
+130    repeated subject = mcaid_id / type = exch;
+131    store p_model;
+132  run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GEE is modeling the probability that ind_cost_pc='1'.
+ERROR: The generalized Hessian matrix is not positive definite. Iteration will be terminated.
+NOTE: The GEE procedure deleted the model item store WORK.P_MODEL because of incomplete information
+      for a subsequent analysis.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE GEE used (Total process time):
+      real time           6:53.83
+      cpu time            5:42.42
+
+

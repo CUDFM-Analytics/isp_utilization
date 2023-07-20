@@ -33,7 +33,9 @@ LOG
 
       %LET out = &data/results_util_analysis; 
         LIBNAME out "&out"; 
-      %LET eda = &data/results_util_eda_tests;
+      %LET store = &out/hurdle_stored_prods; *store product output from hurdle models; 
+      LIBNAME store "&store";
+/*      %LET eda = &data/results_util_eda_tests;*/
 /*        LIBNAME eda "&eda";*/
 
     * export folder for excel files output; 
@@ -48,25 +50,13 @@ LOG
 * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------; 
 
  OPTIONS NOFMTERR
-/*         MPRINT MLOGIC*/
+         MPRINT MLOGIC
          FMTSEARCH =(ana, datasets, data, util, work);
 
 %macro nodupkey(ds, out);
 PROC SORT DATA = &ds NODUPKEY OUT=&out; BY _ALL_ ; RUN; 
 %mend;
 
-%macro missing(ds=);
-proc format;
- value $missfmt ' '='Missing' other='Not Missing';
- value  missfmt  . ='Missing' other='Not Missing';
-run;
-proc freq data=&ds; 
-format _CHAR_ $missfmt.; /* apply format for the duration of this PROC */
-tables _CHAR_ / missing missprint nocum nopercent;
-format _NUMERIC_ missfmt.;
-tables _NUMERIC_ / missing missprint nocum nopercent;
-run;
-%mend; 
 
 %macro concat_id_time(ds=);
 DATA &ds;

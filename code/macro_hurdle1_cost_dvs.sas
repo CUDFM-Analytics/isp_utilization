@@ -12,8 +12,8 @@ Per Mark : Use mode for ref class vars budget_group & race if possible
 
 %macro hurdle1(dat=,pvar=,cvar=,dv=);
 * Send log output to code folder, pdf results to reports folder for MG to view;
-%LET log   = &util./code/&dv._&today..log;
-%LET pdf   = &report./&dv._&today..pdf;
+%LET log   = &util./code/&dv._gee_&today..log;
+%LET pdf   = &report./&dv._gee_&today..pdf;
 
 PROC PRINTTO LOG = "&log" NEW; RUN;
 ODS PDF FILE     = "&pdf" STARTPAGE = no;
@@ -28,7 +28,7 @@ p "Log File: &log";
 p "Results File: &pdf";
 RUN; 
 
-TITLE "Probability Model: " &dv.; 
+TITLE "Probability Model"; 
 PROC GEE DATA  = &dat DESC;
 CLASS  mcaid_id int(ref="0") int_imp(ref="0") budget_grp_num_r 
              race sex rae_person_new age_cat_num fqhc(ref ="0")
@@ -51,7 +51,7 @@ store p_MODEL;
 run;
 
 * positive cost model ;
-TITLE "Cost Model: " &dv; 
+TITLE "Cost Model"; 
 PROC GEE DATA  = &dat desc;
 WHERE &cvar > 0;
 CLASS mcaid_id 

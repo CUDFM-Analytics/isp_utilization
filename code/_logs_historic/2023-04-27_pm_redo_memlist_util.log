@@ -1,0 +1,1841 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.98 seconds
+      cpu time            0.74 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+
+96   DATA bho_0;
+97   SET  ana.qry_bho_monthlyutil_working;
+ERROR: File ANA.QRY_BHO_MONTHLYUTIL_WORKING.DATA does not exist.
+98   month2 = month;
+99   FORMAT month2 date9.;
+100  DROP   month;
+101  RENAME month2 = month;
+102  WHERE  month ge '01Jul2016'd
+103  AND    month le '01Jul2022'd;
+104  FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
+105  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.BHO_0 may be incomplete.  When this step was stopped there were 0
+         observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+
+105!      *4208734 observations and 6 variables;
+106
+107  PROC SQL ;
+108  CREATE TABLE memlist_bh_1621 AS
+109  SELECT *
+110  FROM   bho_0
+111  WHERE  mcaid_id IN (SELECT mcaid_id FROM int.memlist_final) ;
+ERROR: The following columns were not found in the contributing tables: mcaid_id.
+112  QUIT ;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+112!        *3617805 just to get fewer records, subset to memlist ;
+113
+114  * get FY1618 and FY1921 - 1618 will be binary, simpler outcomes ;
+
+
+115  DATA bh_1921 bh_1618  ;
+116  SET  memlist_bh_1621  ;
+ERROR: File WORK.MEMLIST_BH_1621.DATA does not exist.
+117  IF   month ge '01JUL2019'd THEN OUTPUT int.bh_1921;
+                                            -----------
+                                            455
+ERROR 455-185: Data set was not specified on the DATA statement.
+
+118  ELSE OUTPUT bh_1618;
+119  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.BH_1921 may be incomplete.  When this step was stopped there were 0
+         observations and 1 variables.
+WARNING: The data set WORK.BH_1618 may be incomplete.  When this step was stopped there were 0
+         observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.03 seconds
+
+
+120  * The data set INT.BH_1921 has 2065126 observations and 7 variables.
+121    The data set WORK.BH_1618 has 1552679 observations and 7 variables;
+122
+123  data BH_1921 ;
+124  set  bh_1921 ;
+125  FY   = year(intnx('year.7', month, 0, 'BEGINNING')); * create FY variable ;
+126  format dt_qrtr date9.; * create quarter beginning date to get quarters ;
+127  dt_qrtr = intnx('quarter', month ,0,'b');
+128  RUN ;
+
+NOTE: There were 0 observations read from the data set WORK.BH_1921.
+NOTE: The data set WORK.BH_1921 has 0 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+129
+130  %create_qrtr(data=bh_1921a, set=bh_1921,var = dt_qrtr, qrtr=time);
+MLOGIC(CREATE_QRTR):  Beginning execution.
+MLOGIC(CREATE_QRTR):  Parameter DATA has value bh_1921a
+MLOGIC(CREATE_QRTR):  Parameter SET has value bh_1921
+MLOGIC(CREATE_QRTR):  Parameter VAR has value dt_qrtr
+MLOGIC(CREATE_QRTR):  Parameter QRTR has value time
+SYMBOLGEN:  Macro variable DATA resolves to bh_1921a
+MPRINT(CREATE_QRTR):   data bh_1921a;
+SYMBOLGEN:  Macro variable SET resolves to bh_1921
+MPRINT(CREATE_QRTR):   set bh_1921;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then time = 1;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then time = 2;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then time = 3;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then time = 4;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then time = 5;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then time = 6;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then time = 7;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then time = 8;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then time = 9;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then time = 10;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then time = 11;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then time = 12;
+MPRINT(CREATE_QRTR):   run;
+
+NOTE: There were 0 observations read from the data set WORK.BH_1921.
+NOTE: The data set WORK.BH_1921A has 0 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+MLOGIC(CREATE_QRTR):  Ending execution.
+131
+132  PROC SQL ;
+133  CREATE TABLE int.bh_1921 AS
+134  SELECT mcaid_id
+135       , sum(bho_n_hosp) as sum_q_bh_hosp
+136       , sum(bho_n_er)   as sum_q_bh_er
+137       , sum(bho_n_other) as sum_q_bh_other
+138       , time
+139  FROM bh_1921a
+140  GROUP BY mcaid_id, time ;
+ERROR: The SUM summary function requires a numeric argument.
+ERROR: The SUM summary function requires a numeric argument.
+ERROR: The SUM summary function requires a numeric argument.
+ERROR: The following columns were not found in the contributing tables: bho_n_er, bho_n_hosp,
+       bho_n_other, mcaid_id.
+141  QUIT ;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+142
+143  * ----  BH_XX16, BH_XX17, BH_XX18  ------------------------------------------------- ;
+
+
+144  PROC SQL;
+145  CREATE TABLE bh_cat AS
+146  SELECT mcaid_id
+147       , FY
+148       , sum(bho_n_er   ) as bh_er
+149       , sum(bho_n_hosp ) as bh_hosp
+150       , sum(bho_n_other) as bh_oth
+151  FROM bh_1618
+152  GROUP BY mcaid_id, FY;
+ERROR: The SUM summary function requires a numeric argument.
+ERROR: The SUM summary function requires a numeric argument.
+ERROR: The SUM summary function requires a numeric argument.
+ERROR: The following columns were not found in the contributing tables: bho_n_er, bho_n_hosp,
+       bho_n_other, FY, mcaid_id.
+153  QUIT ;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+153!        *3/14 [ 386384 : 5 ] ;
+154
+
+
+155  PROC TRANSPOSE DATA = bh_cat OUT = bh_cat_t ;
+ERROR: File WORK.BH_CAT.DATA does not exist.
+156  by mcaid_id FY;
+157  VAR bh_er bh_hosp bh_oth;
+158  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.BH_CAT_T may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+159
+
+
+160  DATA int.bh_1618_long (DROP = Col1);
+161  SET  bh_cat_t (RENAME=(_NAME_=bh_util));
+ERROR: Variable _NAME_ is not on file WORK.BH_CAT_T.
+ERROR: Invalid DROP, KEEP, or RENAME option on file WORK.BH_CAT_T.
+162  BH = col1 > 0;
+163  label bh_util = "BH Visit Type" ;
+164  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set INT.BH_1618_LONG may be incomplete.  When this step was stopped there were 0
+         observations and 2 variables.
+WARNING: Data set INT.BH_1618_LONG was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.01 seconds
+
+
+
+164!        *1159152 : 4 ;
+165
+166          * Frequency ;
+167          ODS GRAPHICS ON ;
+168          PROC FREQ
+169               DATA = int.bh_1618_long;
+170               TABLES bh_util*bh*FY / nopercent PLOTS = freqplot;
+171          RUN;
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: There were 1159152 observations read from the data set INT.BH_1618_LONG.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           2.62 seconds
+      cpu time            0.67 seconds
+
+
+172          ODS GRAPHICS OFF ;
+173
+174  * transpose again to get wide: 1/3 would be 493,163 if everyone had 3 values;
+175  PROC TRANSPOSE DATA = int.bh_1618_long OUT = bh_1618_final (DROP = _NAME_);
+176  by mcaid_id;
+177  VAR bh ;
+178  ID bh_util FY ;
+179  RUN ;
+
+ERROR: Data set INT.BH_1618_LONG is not sorted in ascending sequence. The current BY group has
+       mcaid_id = Y999995 and the next BY group has mcaid_id = A003466.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 336748 observations read from the data set INT.BH_1618_LONG.
+WARNING: The data set WORK.BH_1618_FINAL may be incomplete.  When this step was stopped there were
+         0 observations and 0 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.35 seconds
+      cpu time            0.35 seconds
+
+179!       *250297 obs 11 var;
+180
+181  * change missing to 0's ;
+
+
+182  PROC STDIZE DATA = bh_1618_final
+183       OUT         = int.bh_1618
+184       REPONLY
+185       MISSING     = 0;
+186  RUN ;
+
+NOTE: No VAR statement is given. All numerical variables not named elsewhere make up the first set
+      of variables.
+ERROR: No variables in the DATA= input data set.
+ERROR: No variables to analyze.
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set INT.BH_1618 may be incomplete.  When this step was stopped there were 0
+         observations and 0 variables.
+WARNING: Data set INT.BH_1618 was not replaced because this step was stopped.
+NOTE: PROCEDURE STDIZE used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.01 seconds
+
+186!       *250297 obs 10 var;
+
+
+187  DATA bho_0;
+188  SET  ana.qry_bho_monthlyutilization;
+189  month2 = month;
+190  FORMAT month2 date9.;
+191  DROP   month;
+192  RENAME month2 = month;
+193  WHERE  month ge '01Jul2016'd
+194  AND    month le '01Jul2022'd;
+195  FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
+196  run;
+
+NOTE: There were 4208734 observations read from the data set ANA.QRY_BHO_MONTHLYUTILIZATION.
+      WHERE (month>='01JUL2016'D and month<='01JUL2022'D);
+NOTE: The data set WORK.BHO_0 has 4208734 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           6.95 seconds
+      cpu time            1.43 seconds
+
+
+196!      *4208734 observations and 6 variables;
+197
+198  PROC SQL ;
+199  CREATE TABLE memlist_bh_1621 AS
+200  SELECT *
+201  FROM   bho_0
+202  WHERE  mcaid_id IN (SELECT mcaid_id FROM int.memlist_final) ;
+NOTE: Table WORK.MEMLIST_BH_1621 created, with 3615139 rows and 6 columns.
+
+203  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           40.41 seconds
+      cpu time            2.87 seconds
+
+
+203!        *3617805 just to get fewer records, subset to memlist ;
+
+204  PROC CONTENTS DATA = int.util_1622_1; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.00 seconds
+
+
+205  PROC SQL;
+206  CREATE TABLE int.util_1622_1 AS
+207  SELECT MCAID_ID
+208        , month,
+209        , sum(case when clmClass=1     then count else 0 end) as n_hosp
+           -
+           22
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string,
+              a numeric constant, a datetime constant, a missing value, *, BTRIM, INPUT, PUT,
+              SUBSTRING, USER.
+
+210        , sum(case when clmClass=4     then count else 0 end) as n_pc
+211        , sum(case when clmClass=3     then count else 0 end) as n_er
+212        , sum(case when clmClass=2     then count else 0 end) as n_rx
+213        , sum(case when clmClass=5     then count else 0 end) as n_ffs_bh
+214        , sum(case when clmClass=6     then count else 0 end) as n_ancillary
+215        , sum(case when clmClass=7     then count else 0 end) as n_hh_therapy
+216        , sum(case when clmClass=8     then count else 0 end) as n_dx
+217        , sum(case when clmClass=9     then count else 0 end) as n_transport
+218        , sum(case when clmClass=10    then count else 0 end) as n_eeserv
+219        , sum(case when clmClass=10000 then count else 0 end) as n_other
+220
+221        , sum(adj_pd_amount) as adj_pd_total,
+222        , sum(case when clmClass=1     then adj_pd_amount else 0 end) as adj_pd_hosp
+           -
+           22
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string,
+              a numeric constant, a datetime constant, a missing value, *, BTRIM, INPUT, PUT,
+              SUBSTRING, USER.
+
+223        , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pd_pc
+224        , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_pd_er
+225        , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_pd_rx
+226        , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_pd_ffs_bh
+227        , sum(case when clmClass=6     then adj_pd_amount else 0 end) as adj_pd_ancillary
+228        , sum(case when clmClass=7     then adj_pd_amount else 0 end) as adj_pd_hh_therapy
+229        , sum(case when clmClass=8     then adj_pd_amount else 0 end) as adj_pd_dx
+230        , sum(case when clmClass=9     then adj_pd_amount else 0 end) as adj_pd_transport
+231        , sum(case when clmClass=10    then adj_pd_amount else 0 end) as adj_pd_eeserv
+232        , sum(case when clmClass=10000 then adj_pd_amount else 0 end) as adj_pd_other
+233  FROM int.util_1622_0
+234  GROUP BY MCAID_ID,month;
+235  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+235!       *32835706, 25;
+
+
+236
+237  PROC SQL;
+238  CREATE TABLE int.util_1622_1 AS
+239  SELECT MCAID_ID
+240        , month
+241        , sum(case when clmClass=1     then count else 0 end) as n_hosp
+242        , sum(case when clmClass=4     then count else 0 end) as n_pc
+243        , sum(case when clmClass=3     then count else 0 end) as n_er
+244        , sum(case when clmClass=2     then count else 0 end) as n_rx
+245        , sum(case when clmClass=5     then count else 0 end) as n_ffs_bh
+246        , sum(case when clmClass=6     then count else 0 end) as n_ancillary
+247        , sum(case when clmClass=7     then count else 0 end) as n_hh_therapy
+248        , sum(case when clmClass=8     then count else 0 end) as n_dx
+249        , sum(case when clmClass=9     then count else 0 end) as n_transport
+250        , sum(case when clmClass=10    then count else 0 end) as n_eeserv
+251        , sum(case when clmClass=10000 then count else 0 end) as n_other
+252
+253        , sum(adj_pd_amount) as adj_pd_total
+254        , sum(case when clmClass=1     then adj_pd_amount else 0 end) as adj_pd_hosp
+255        , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pd_pc
+256        , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_pd_er
+257        , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_pd_rx
+258        , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_pd_ffs_bh
+259        , sum(case when clmClass=6     then adj_pd_amount else 0 end) as adj_pd_ancillary
+260        , sum(case when clmClass=7     then adj_pd_amount else 0 end) as adj_pd_hh_therapy
+261        , sum(case when clmClass=8     then adj_pd_amount else 0 end) as adj_pd_dx
+262        , sum(case when clmClass=9     then adj_pd_amount else 0 end) as adj_pd_transport
+263        , sum(case when clmClass=10    then adj_pd_amount else 0 end) as adj_pd_eeserv
+264        , sum(case when clmClass=10000 then adj_pd_amount else 0 end) as adj_pd_other
+265  FROM int.util_1622_0
+266  GROUP BY MCAID_ID,month;
+NOTE: Table INT.UTIL_1622_1 created, with 32835706 rows and 25 columns.
+
+267  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2:02.25
+      cpu time            32.89 seconds
+
+
+267!       *32835706, 25;
+
+268  PROC CONTENTS DATA = int.util_1622_1 VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+269  DATA bho_0;
+270  SET  ana.qry_bho_monthlyutilization;
+271  month2 = month;
+272  FORMAT month2 date9.;
+273  DROP   month;
+274  RENAME month2 = month;
+275  WHERE  month ge '01Jul2016'd
+276  AND    month le '01Jul2022'd;
+277  FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
+278  run;
+
+NOTE: There were 4208734 observations read from the data set ANA.QRY_BHO_MONTHLYUTILIZATION.
+      WHERE (month>='01JUL2016'D and month<='01JUL2022'D);
+NOTE: The data set WORK.BHO_0 has 4208734 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           5.62 seconds
+      cpu time            1.48 seconds
+
+
+278!      *4208734 observations and 6 variables;
+
+279  PROC CONTENTS DATA = bho_0; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+280  DATA bho_0;
+281  SET  ana.qry_bho_monthlyutilization;
+282  format dt_qrtr date9.; * create quarter beginning date to get quarters ;
+283  dt_qrtr = intnx('quarter', month ,0,'b');
+284  month2 = month;
+285  FORMAT month2 date9.;
+286  DROP   month;
+287  RENAME month2 = month;
+288  WHERE  month ge '01Jul2016'd
+289  AND    month le '01Jul2022'd;
+290  FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
+291  run;
+
+NOTE: There were 4208734 observations read from the data set ANA.QRY_BHO_MONTHLYUTILIZATION.
+      WHERE (month>='01JUL2016'D and month<='01JUL2022'D);
+NOTE: The data set WORK.BHO_0 has 4208734 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.73 seconds
+      cpu time            2.12 seconds
+
+
+291!      *4208734 observations and 6 variables;
+
+292  PROC CONTENTS DATA = bho_0; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+293  DATA bh0;
+294  SET  ana.qry_bho_monthlyutilization;
+295  format dt_qrtr date9.; * create quarter beginning date to get quarters ;
+296  dt_qrtr = intnx('quarter', month ,0,'b');
+297  month2 = month;
+298  FORMAT month2 date9.;
+299  DROP   month;
+300  RENAME month2 = month;
+301  WHERE  month ge '01Jul2016'd
+302  AND    month le '01Jul2022'd;
+303  FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
+304  run;
+
+NOTE: There were 4208734 observations read from the data set ANA.QRY_BHO_MONTHLYUTILIZATION.
+      WHERE (month>='01JUL2016'D and month<='01JUL2022'D);
+NOTE: The data set WORK.BH0 has 4208734 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.72 seconds
+      cpu time            1.96 seconds
+
+
+304!      *4208734 observations and 7 variables;
+
+305  %create_qrtr(data=bh1, set=bh0, var = dt_qrtr, qrtr=time);
+MLOGIC(CREATE_QRTR):  Beginning execution.
+MLOGIC(CREATE_QRTR):  Parameter DATA has value bh1
+MLOGIC(CREATE_QRTR):  Parameter SET has value bh0
+MLOGIC(CREATE_QRTR):  Parameter VAR has value dt_qrtr
+MLOGIC(CREATE_QRTR):  Parameter QRTR has value time
+SYMBOLGEN:  Macro variable DATA resolves to bh1
+MPRINT(CREATE_QRTR):   data bh1;
+SYMBOLGEN:  Macro variable SET resolves to bh0
+MPRINT(CREATE_QRTR):   set bh0;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2019'd , '01AUG2019'd , '01SEP2019'd ) then time = 1;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2019'd , '01NOV2019'd , '01DEC2019'd ) then time = 2;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2020'd , '01FEB2020'd , '01MAR2020'd ) then time = 3;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2020'd , '01MAY2020'd , '01JUN2020'd ) then time = 4;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2020'd , '01AUG2020'd , '01SEP2020'd ) then time = 5;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2020'd , '01NOV2020'd , '01DEC2020'd ) then time = 6;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2021'd , '01FEB2021'd , '01MAR2021'd ) then time = 7;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2021'd , '01MAY2021'd , '01JUN2021'd ) then time = 8;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JUL2021'd , '01AUG2021'd , '01SEP2021'd ) then time = 9;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then time = 10;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then time = 11;
+SYMBOLGEN:  Macro variable VAR resolves to dt_qrtr
+SYMBOLGEN:  Macro variable QRTR resolves to time
+MPRINT(CREATE_QRTR):   if dt_qrtr in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then time = 12;
+MPRINT(CREATE_QRTR):   run;
+
+NOTE: There were 4208734 observations read from the data set WORK.BH0.
+NOTE: The data set WORK.BH1 has 4208734 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.69 seconds
+      cpu time            0.70 seconds
+
+
+MLOGIC(CREATE_QRTR):  Ending execution.
+
+306  PROC CONTENTS DATA = int.util_1622_1; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+307  PROC SQL;
+308  CREATE TABLE vars1618_0 AS
+309  SELECT a.mcaid_id
+310       , coalesce (b.month, c.month) as month
+311       , b.adj_pd_total
+312       , c.*
+313  FROM int.memlist_final AS A
+314  WHERE FY in (2016, 2017, 2018)
+315  LEFT JOIN bh1               AS B    ON a.mcaid_id=b.mcaid_id
+     ----
+     22
+     76
+ERROR 22-322: Syntax error, expecting one of the following: ;, !, &, AND, EXCEPT, GROUP, HAVING,
+              INTERSECT, OR, ORDER, OUTER, UNION, |.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+316  LEFT JOIN int.util_1622_1   AS C    ON a.mcaid_id=b.mcaid_id
+317  GROUP BY mcaid_id, month;
+318  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+319  PROC SQL;
+320  CREATE TABLE vars1618_0 AS
+321  SELECT a.mcaid_id
+322       , coalesce (b.month, c.month) as month
+323       , b.adj_pd_total
+324       , c.*
+325
+326  WHERE FY in (2016, 2017, 2018)
+     -----
+     22
+     76
+ERROR 22-322: Syntax error, expecting one of the following: a quoted string, !, !!, &, *, **, +,
+              ',', -, /, <, <=, <>, =, >, >=, ?, AND, AS, BETWEEN, CONTAINS, EQ, EQT, FORMAT, FROM,
+              GE, GET, GT, GTT, IN, INFORMAT, INTO, IS, LABEL, LE, LEN, LENGTH, LET, LIKE, LT, LTT,
+              NE, NET, NOT, NOTIN, OR, TRANSCODE, ^, ^=, |, ||, ~, ~=.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+327  FROM int.memlist_final AS A
+328  LEFT JOIN bh1               AS B    ON a.mcaid_id=b.mcaid_id
+329  LEFT JOIN int.util_1622_1   AS C    ON a.mcaid_id=b.mcaid_id
+330  GROUP BY mcaid_id, month;
+331  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+332  * JOIN BH and util on memlist final where FY 2016-18;
+333  PROC SQL;
+334  CREATE TABLE vars1618_0 AS
+335  SELECT a.*
+336       , coalesce (b.month, c.month) as month
+337       , b.adj_pd_total
+338       , c.*
+339  WHERE FY in (2016, 2017, 2018)
+     -----
+     22
+     76
+ERROR 22-322: Syntax error, expecting one of the following: a quoted string, !, !!, &, *, **, +,
+              ',', -, /, <, <=, <>, =, >, >=, ?, AND, AS, BETWEEN, CONTAINS, EQ, EQT, FORMAT, FROM,
+              GE, GET, GT, GTT, IN, INFORMAT, INTO, IS, LABEL, LE, LEN, LENGTH, LET, LIKE, LT, LTT,
+              NE, NET, NOT, NOTIN, OR, TRANSCODE, ^, ^=, |, ||, ~, ~=.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+340  FROM int.qrylong1622        AS A
+341  LEFT JOIN bh1               AS B    ON a.mcaid_id=b.mcaid_id
+342  LEFT JOIN int.util_1622_1   AS C    ON a.mcaid_id=b.mcaid_id
+343  GROUP BY mcaid_id, month;
+344  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+345  PROC SQL;
+346  CREATE TABLE vars1618_0 AS
+347  SELECT a.*
+348       , coalesce (b.month, c.month) as month
+349       , b.adj_pd_total
+350       , c.*
+351  WHERE FY eq (2016, 2017, 2018)
+     -----
+     22
+     76
+ERROR 22-322: Syntax error, expecting one of the following: a quoted string, !, !!, &, *, **, +,
+              ',', -, /, <, <=, <>, =, >, >=, ?, AND, AS, BETWEEN, CONTAINS, EQ, EQT, FORMAT, FROM,
+              GE, GET, GT, GTT, IN, INFORMAT, INTO, IS, LABEL, LE, LEN, LENGTH, LET, LIKE, LT, LTT,
+              NE, NET, NOT, NOTIN, OR, TRANSCODE, ^, ^=, |, ||, ~, ~=.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+352  FROM int.qrylong1622        AS A
+353  LEFT JOIN bh1               AS B    ON a.mcaid_id=b.mcaid_id
+354  LEFT JOIN int.util_1622_1   AS C    ON a.mcaid_id=b.mcaid_id
+355  GROUP BY mcaid_id, month;
+356  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+357  PROC SQL;
+358  CREATE TABLE vars1618_0 AS
+359  SELECT a.*
+360       , coalesce (b.month, c.month) as month
+361       , b.adj_pd_total
+362       , c.*
+363  WHERE FY le 2018
+     -----
+     22
+     76
+ERROR 22-322: Syntax error, expecting one of the following: a quoted string, !, !!, &, *, **, +,
+              ',', -, /, <, <=, <>, =, >, >=, ?, AND, AS, BETWEEN, CONTAINS, EQ, EQT, FORMAT, FROM,
+              GE, GET, GT, GTT, IN, INFORMAT, INTO, IS, LABEL, LE, LEN, LENGTH, LET, LIKE, LT, LTT,
+              NE, NET, NOT, NOTIN, OR, TRANSCODE, ^, ^=, |, ||, ~, ~=.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+364  FROM int.qrylong1622        AS A
+365  LEFT JOIN bh1               AS B    ON a.mcaid_id=b.mcaid_id
+366  LEFT JOIN int.util_1622_1   AS C    ON a.mcaid_id=b.mcaid_id
+367  GROUP BY mcaid_id, month;
+368  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+369  data util_0;
+370  set  ana.qry_monthlyutilization (WHERE=(month ge '01Jul2016'd AND month le '30Jun2022'd));
+371  quarter_beg=intnx('QTR', month, 0, 'BEGINNING');
+372  format quarter_beg date9.;
+373  FY     =year(intnx('year.7', month, 0, 'BEGINNING'));
+374  run;
+
+NOTE: The DATA step has been abnormally terminated.
+NOTE: There were 13235723 observations read from the data set ANA.QRY_MONTHLYUTILIZATION.
+      WHERE (month>='01JUL2016'D and month<='30JUN2022'D);
+WARNING: The data set WORK.UTIL_0 may be incomplete.  When this step was stopped there were
+         13235723 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           21.34 seconds
+      cpu time            6.28 seconds
+
+
+375
+376  DATA    util_0;
+377  SET     ana.qry_monthlyutilization (WHERE=(month ge '01Jul2016'd AND month le '30Jun2022'd));
+378  FORMAT  quarter_beg date9.;
+379  dt_qrtr =intnx('QTR', month, 0, 'BEGINNING');
+380  FY      =year(intnx('year.7', month, 0, 'BEGINNING'));
+381  run;
+
+NOTE: Variable quarter_beg is uninitialized.
+NOTE: The DATA step has been abnormally terminated.
+NOTE: There were 10788492 observations read from the data set ANA.QRY_MONTHLYUTILIZATION.
+      WHERE (month>='01JUL2016'D and month<='30JUN2022'D);
+WARNING: The data set WORK.UTIL_0 may be incomplete.  When this step was stopped there were
+         10788492 observations and 8 variables.
+WARNING: Data set WORK.UTIL_0 was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           15.86 seconds
+      cpu time            5.07 seconds
+
+
+382
+383  DATA    util_0;
+384  SET     ana.qry_monthlyutilization (WHERE=(month ge '01Jul2016'd AND month le '30Jun2022'd));
+385  FORMAT  dt_qrtr date9.;
+386  dt_qrtr =intnx('QTR', month, 0, 'BEGINNING');
+387  FY      =year(intnx('year.7', month, 0, 'BEGINNING'));
+388  run;
+
+NOTE: There were 66382081 observations read from the data set ANA.QRY_MONTHLYUTILIZATION.
+      WHERE (month>='01JUL2016'D and month<='30JUN2022'D);
+NOTE: The data set WORK.UTIL_0 has 66382081 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:17.00
+      cpu time            31.04 seconds
+
+
+389  PROC SQL;
+390  CREATE TABLE int.util_1622_0 as
+391  SELECT a.*, (a.pd_amt/b.index_2021_1) as adj_pd_amount  /*divBY has no missing values*/
+392  FROM util_0 AS a
+393  LEFT JOIN int.adj AS b ON a.quarter_beg=b.date;
+ERROR: Column quarter_beg could not be found in the table/view identified with the correlation name
+       A.
+ERROR: Column quarter_beg could not be found in the table/view identified with the correlation name
+       A.
+ERROR: Expression using equals (=) has components that are of different data types.
+394  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.00 seconds
+
+394!       *66382081 : 7 cols;
+
+
+395  PROC SQL;
+396  CREATE TABLE int.util_1622_0 as
+397  SELECT a.*, (a.pd_amt/b.index_2021_1) as adj_pd_amount  /*divBY has no missing values*/
+398  FROM util_0 AS a
+399  LEFT JOIN int.adj AS b ON a.dt_qrtr=b.date;
+NOTE: There were 66382081 observations read from the data set WORK.UTIL_0.
+NOTE: There were 25 observations read from the data set INT.ADJ.
+WARNING: The data set INT.UTIL_1622_0 may be incomplete.  When this step was stopped there were
+         4630797 observations and 8 variables.
+WARNING: Data set INT.UTIL_1622_0 was not replaced because this step was stopped.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           17.12 seconds
+      cpu time            22.29 seconds
+
+
+400  quit; *66382081 : 7 cols;
+
+401  PROC SQL;
+402  CREATE TABLE int.util1622_0 as
+403  SELECT a.*, (a.pd_amt/b.index_2021_1) as adj_pd_amount  /*divBY has no missing values*/
+404  FROM util_0 AS a
+405  LEFT JOIN int.adj AS b ON a.dt_qrtr=b.date;
+NOTE: Table INT.UTIL1622_0 created, with 66382081 rows and 8 columns.
+
+406  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:16.65
+      cpu time            32.67 seconds
+
+
+406!       *66382081 : 7 cols;
+
+407  proc sort data=int.util_1622_0; by MCAID_ID month; run;
+
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+
+408  PROC SQL;
+409  CREATE TABLE int.util_1622_1 AS
+410  SELECT MCAID_ID
+411        , month
+412        , sum(case when clmClass=1     then count else 0 end) as n_hosp
+413        , sum(case when clmClass=4     then count else 0 end) as n_pc
+414        , sum(case when clmClass=3     then count else 0 end) as n_er
+415        , sum(case when clmClass=2     then count else 0 end) as n_rx
+416        , sum(case when clmClass=5     then count else 0 end) as n_ffs_bh
+417        , sum(case when clmClass=6     then count else 0 end) as n_ancillary
+418        , sum(case when clmClass=7     then count else 0 end) as n_hh_therapy
+419        , sum(case when clmClass=8     then count else 0 end) as n_dx
+420        , sum(case when clmClass=9     then count else 0 end) as n_transport
+421        , sum(case when clmClass=10    then count else 0 end) as n_eeserv
+422        , sum(case when clmClass=10000 then count else 0 end) as n_other
+423
+424        , sum(adj_pd_amount) as adj_pd_total
+425        , sum(case when clmClass=1     then adj_pd_amount else 0 end) as adj_pd_hosp
+426        , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pd_pc
+427        , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_pd_er
+428        , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_pd_rx
+429        , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_pd_ffs_bh
+430        , sum(case when clmClass=6     then adj_pd_amount else 0 end) as adj_pd_ancillary
+431        , sum(case when clmClass=7     then adj_pd_amount else 0 end) as adj_pd_hh_therapy
+432        , sum(case when clmClass=8     then adj_pd_amount else 0 end) as adj_pd_dx
+433        , sum(case when clmClass=9     then adj_pd_amount else 0 end) as adj_pd_transport
+434        , sum(case when clmClass=10    then adj_pd_amount else 0 end) as adj_pd_eeserv
+435        , sum(case when clmClass=10000 then adj_pd_amount else 0 end) as adj_pd_other
+436  FROM int.util_1622_0
+437  GROUP BY MCAID_ID,month;
+NOTE: Table INT.UTIL_1622_1 created, with 32835706 rows and 25 columns.
+
+438  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2:02.51
+      cpu time            31.70 seconds
+
+
+438!       *32835706, 25;
+
+439  PROC CONTENTS DATA = int.util_1622_1 VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+440
+441  PROC SQL;
+442  CREATE TABLE int.util_1622_1 AS
+443  SELECT MCAID_ID
+444        , FY
+445        , month
+446        , sum(case when clmClass=1     then count else 0 end) as n_hosp
+447        , sum(case when clmClass=4     then count else 0 end) as n_pc
+448        , sum(case when clmClass=3     then count else 0 end) as n_er
+449        , sum(case when clmClass=2     then count else 0 end) as n_rx
+450        , sum(case when clmClass=5     then count else 0 end) as n_ffs_bh
+451        , sum(case when clmClass=6     then count else 0 end) as n_ancillary
+452        , sum(case when clmClass=7     then count else 0 end) as n_hh_therapy
+453        , sum(case when clmClass=8     then count else 0 end) as n_dx
+454        , sum(case when clmClass=9     then count else 0 end) as n_transport
+455        , sum(case when clmClass=10    then count else 0 end) as n_eeserv
+456        , sum(case when clmClass=10000 then count else 0 end) as n_other
+457
+458        , sum(adj_pd_amount) as adj_pd_total
+459        , sum(case when clmClass=1     then adj_pd_amount else 0 end) as adj_pd_hosp
+460        , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pd_pc
+461        , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_pd_er
+462        , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_pd_rx
+463        , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_pd_ffs_bh
+464        , sum(case when clmClass=6     then adj_pd_amount else 0 end) as adj_pd_ancillary
+465        , sum(case when clmClass=7     then adj_pd_amount else 0 end) as adj_pd_hh_therapy
+466        , sum(case when clmClass=8     then adj_pd_amount else 0 end) as adj_pd_dx
+467        , sum(case when clmClass=9     then adj_pd_amount else 0 end) as adj_pd_transport
+468        , sum(case when clmClass=10    then adj_pd_amount else 0 end) as adj_pd_eeserv
+469        , sum(case when clmClass=10000 then adj_pd_amount else 0 end) as adj_pd_other
+470  FROM int.util_1622_0
+471  GROUP BY MCAID_ID,month;
+ERROR: The following columns were not found in the contributing tables: FY.
+472  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+472!       *32835706, 25;
+
+
+473  PROC SQL;
+474  CREATE TABLE util_1 as
+475  SELECT a.*, (a.pd_amt/b.index_2021_1) as adj_pd_amount  /*divBY has no missing values*/
+476  FROM util_0 AS a
+477  LEFT JOIN int.adj AS b ON a.dt_qrtr=b.date;
+NOTE: Table WORK.UTIL_1 created, with 66382081 rows and 8 columns.
+
+478  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           19.35 seconds
+      cpu time            31.20 seconds
+
+
+478!       *66382081 : 7 cols;
+
+479  PROC CONTENTS DATA = util_1; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+480  PROC SQL;
+481  CREATE TABLE util_2 AS
+482  SELECT MCAID_ID
+483        , FY
+484        , month
+485        , sum(case when clmClass=1     then count else 0 end) as n_hosp
+486        , sum(case when clmClass=4     then count else 0 end) as n_pc
+487        , sum(case when clmClass=3     then count else 0 end) as n_er
+488        , sum(case when clmClass=2     then count else 0 end) as n_rx
+489        , sum(case when clmClass=5     then count else 0 end) as n_ffs_bh
+490        , sum(case when clmClass=6     then count else 0 end) as n_ancillary
+491        , sum(case when clmClass=7     then count else 0 end) as n_hh_therapy
+492        , sum(case when clmClass=8     then count else 0 end) as n_dx
+493        , sum(case when clmClass=9     then count else 0 end) as n_transport
+494        , sum(case when clmClass=10    then count else 0 end) as n_eeserv
+495        , sum(case when clmClass=10000 then count else 0 end) as n_other
+496
+497        , sum(adj_pd_amount) as adj_pd_total
+498        , sum(case when clmClass=1     then adj_pd_amount else 0 end) as adj_pd_hosp
+499        , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pd_pc
+500        , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_pd_er
+501        , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_pd_rx
+502        , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_pd_ffs_bh
+503        , sum(case when clmClass=6     then adj_pd_amount else 0 end) as adj_pd_ancillary
+504        , sum(case when clmClass=7     then adj_pd_amount else 0 end) as adj_pd_hh_therapy
+505        , sum(case when clmClass=8     then adj_pd_amount else 0 end) as adj_pd_dx
+506        , sum(case when clmClass=9     then adj_pd_amount else 0 end) as adj_pd_transport
+507        , sum(case when clmClass=10    then adj_pd_amount else 0 end) as adj_pd_eeserv
+508        , sum(case when clmClass=10000 then adj_pd_amount else 0 end) as adj_pd_other
+509  FROM int.util_1622_0
+510  GROUP BY MCAID_ID,month;
+ERROR: File INT.UTIL_1622_0.DATA does not exist.
+511  quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+511!       *32835706, 25;
+
+
+512
+513  PROC SQL;
+514  CREATE TABLE util_2 AS
+515  SELECT MCAID_ID
+516        , FY
+517        , month
+518        , sum(case when clmClass=1     then count else 0 end) as n_hosp
+519        , sum(case when clmClass=4     then count else 0 end) as n_pc
+520        , sum(case when clmClass=3     then count else 0 end) as n_er
+521        , sum(case when clmClass=2     then count else 0 end) as n_rx
+522        , sum(case when clmClass=5     then count else 0 end) as n_ffs_bh
+523        , sum(case when clmClass=6     then count else 0 end) as n_ancillary
+524        , sum(case when clmClass=7     then count else 0 end) as n_hh_therapy
+525        , sum(case when clmClass=8     then count else 0 end) as n_dx
+526        , sum(case when clmClass=9     then count else 0 end) as n_transport
+527        , sum(case when clmClass=10    then count else 0 end) as n_eeserv
+528        , sum(case when clmClass=10000 then count else 0 end) as n_other
+529
+530        , sum(adj_pd_amount) as adj_pd_total
+531        , sum(case when clmClass=1     then adj_pd_amount else 0 end) as adj_pd_hosp
+532        , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pd_pc
+533        , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_pd_er
+534        , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_pd_rx
+535        , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_pd_ffs_bh
+536        , sum(case when clmClass=6     then adj_pd_amount else 0 end) as adj_pd_ancillary
+537        , sum(case when clmClass=7     then adj_pd_amount else 0 end) as adj_pd_hh_therapy
+538        , sum(case when clmClass=8     then adj_pd_amount else 0 end) as adj_pd_dx
+539        , sum(case when clmClass=9     then adj_pd_amount else 0 end) as adj_pd_transport
+540        , sum(case when clmClass=10    then adj_pd_amount else 0 end) as adj_pd_eeserv
+541        , sum(case when clmClass=10000 then adj_pd_amount else 0 end) as adj_pd_other
+542  FROM  util_1
+543  GROUP BY MCAID_ID,month;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.UTIL_2 created, with 66382081 rows and 26 columns.
+
+544  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:00.32
+      cpu time            1:21.54
+
+
+544!       *32835706, 25;
+
+545  %nodupkey(ds=util_2, out=util_3);
+MLOGIC(NODUPKEY):  Beginning execution.
+MLOGIC(NODUPKEY):  Parameter DS has value util_2
+MLOGIC(NODUPKEY):  Parameter OUT has value util_3
+SYMBOLGEN:  Macro variable DS resolves to util_2
+SYMBOLGEN:  Macro variable OUT resolves to util_3
+MPRINT(NODUPKEY):   PROC SORT DATA = util_2 NODUPKEY OUT=util_3;
+MPRINT(NODUPKEY):   BY _ALL_ ;
+MPRINT(NODUPKEY):   RUN;
+
+NOTE: There were 66382081 observations read from the data set WORK.UTIL_2.
+NOTE: 33546375 observations with duplicate key values were deleted.
+NOTE: The data set WORK.UTIL_3 has 32835706 observations and 26 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           25.98 seconds
+      cpu time            57.21 seconds
+
+
+MLOGIC(NODUPKEY):  Ending execution.
+
+546  PROC CONTENTS DATA = util_3 VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+547  PROC SQL;
+548  CREATE TABLE util_bh_memlist AS
+549  SELECT a.*
+550       , b.*
+551       , c.
+552  FROM int.memlist_final AS A
+          ---
+          1
+             -
+             22
+             76
+WARNING 1-322: Assuming the symbol IN was misspelled as int.
+
+ERROR 22-322: Syntax error, expecting one of the following: (, SELECT.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+553  LEFT JOIN util_3 AS B ON a.mcaid_id=b.mcaid_id AND a.FY=b.FY
+554  LEFT JOIN bh1    AS C ON a.mcaid_id=c.mcaid_id AND a.FY=c.FY;
+555  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+556  PROC SQL;
+557  CREATE TABLE util_all_memlist AS
+558  SELECT a.*
+559       , b.*
+560       , c.month
+561       , c.n_hosp
+562       , c.n_pc
+563       , c.n_er
+564       , c.n_rx
+565       , c.adj_pd_total
+566       , c.adj_pd_hosp
+567       , c.adj_pd_pc
+568       , c.adj_pd_er
+569       , c.adj_pd_rx
+570       , c.adj_pd_ffs_bh
+571       , d.n_q_tele
+572  FROM int.memlist_final  AS A
+573  LEFT JOIN util_3        AS B    ON a.mcaid_id=b.mcaid_id AND a.FY=b.FY
+574  LEFT JOIN bh1           AS C    ON a.mcaid_id=c.mcaid_id AND a.FY=c.FY
+575  LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time=d.time;
+ERROR: Column n_hosp could not be found in the table/view identified with the correlation name C.
+ERROR: Column n_pc could not be found in the table/view identified with the correlation name C.
+ERROR: Column n_er could not be found in the table/view identified with the correlation name C.
+ERROR: Column n_rx could not be found in the table/view identified with the correlation name C.
+ERROR: Column adj_pd_total could not be found in the table/view identified with the correlation
+       name C.
+ERROR: Column adj_pd_hosp could not be found in the table/view identified with the correlation name
+       C.
+ERROR: Column adj_pd_pc could not be found in the table/view identified with the correlation name C.
+ERROR: Column adj_pd_er could not be found in the table/view identified with the correlation name C.
+ERROR: Column adj_pd_rx could not be found in the table/view identified with the correlation name C.
+ERROR: Column adj_pd_ffs_bh could not be found in the table/view identified with the correlation
+       name C.
+576  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.00 seconds
+
+
+577  * JOIN BH and util on memlist final where FY 2016-18;
+578  PROC SQL;
+579  CREATE TABLE util_all_memlist AS
+580  SELECT a.*
+581       , b.*
+582       , c.month
+583       , c.n_hosp
+584       , c.n_pc
+585       , c.n_er
+586       , c.n_rx
+587       , c.adj_pd_total
+588       , c.adj_pd_hosp
+589       , c.adj_pd_pc
+590       , c.adj_pd_er
+591       , c.adj_pd_rx
+592       , c.adj_pd_ffs_bh
+593       , d.n_q_tele
+594  FROM int.memlist_final  AS A
+595  LEFT JOIN bh1           AS B    ON a.mcaid_id=c.mcaid_id AND a.FY=b.FY
+596  LEFT JOIN util_3        AS C    ON a.mcaid_id=b.mcaid_id AND a.FY=c.FY
+597  LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time=d.time;
+ERROR: Correlated reference to column MCAID_ID is not contained within a subquery.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           4.27 seconds
+      cpu time            0.18 seconds
+
+
+598  PROC SQL;
+599  CREATE TABLE util_all_memlist AS
+600  SELECT a.*
+601       , b.*
+602       , c.month
+603       , c.n_hosp
+604       , c.n_pc
+605       , c.n_er
+606       , c.n_rx
+607       , c.adj_pd_total
+608       , c.adj_pd_hosp
+609       , c.adj_pd_pc
+610       , c.adj_pd_er
+611       , c.adj_pd_rx
+612       , c.adj_pd_ffs_bh
+613       , d.n_q_tele
+614  FROM int.memlist_final  AS A
+615  LEFT JOIN bh1           AS B    ON a.mcaid_id=c.mcaid_id AND a.FY=b.FY
+616  LEFT JOIN util_3        AS C    ON a.mcaid_id=b.mcaid_id AND a.FY=c.FY
+617  LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time=d.time;
+ERROR: Correlated reference to column MCAID_ID is not contained within a subquery.
+618  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+619  PROC SQL;
+620  CREATE TABLE util_all_memlist AS
+621  SELECT a.*
+622       , b.*
+623       , c.month
+624       , c.n_hosp
+625       , c.n_pc
+626       , c.n_er
+627       , c.n_rx
+628       , c.adj_pd_total
+629       , c.adj_pd_hosp
+630       , c.adj_pd_pc
+631       , c.adj_pd_er
+632       , c.adj_pd_rx
+633       , c.adj_pd_ffs_bh
+634       , d.n_q_tele
+635  FROM int.memlist_final  AS A
+636  LEFT JOIN bh1           AS B    ON a.mcaid_id=c.mcaid_id AND a.FY=b.FY
+637  LEFT JOIN util_3        AS C    ON a.mcaid_id=b.mcaid_id AND a.FY=c.FY
+638  LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time=d.time;
+ERROR: Correlated reference to column MCAID_ID is not contained within a subquery.
+639  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.00 seconds
+
+
+640  PROC SQL;
+641  CREATE TABLE util_all_memlist AS
+642  SELECT a.*
+643       , b.*
+644       , c.month
+645       , c.n_hosp
+646       , c.n_pc
+647       , c.n_er
+648       , c.n_rx
+649       , c.adj_pd_total
+650       , c.adj_pd_hosp
+651       , c.adj_pd_pc
+652       , c.adj_pd_er
+653       , c.adj_pd_rx
+654       , c.adj_pd_ffs_bh
+655       , d.n_q_tele
+656  FROM int.memlist_final  AS A
+657  LEFT JOIN bh1           AS B    ON a.mcaid_id=c.mcaid_id AND a.FY=b.FY
+658  LEFT JOIN util_3        AS C    ON a.mcaid_id=b.mcaid_id AND a.FY=c.FY
+659  LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time=d.time
+660  GROUP BY mcaid_id;
+ERROR: Ambiguous reference, column mcaid_id is in more than one table.
+WARNING: A GROUP BY clause has been transformed into an ORDER BY clause because neither the SELECT
+         clause nor the optional HAVING clause of the associated table-expression referenced a
+         summary function.
+661  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+662  PROC CONTENTS DATA = int.memlist_final;
+663  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+664  PROC CONTENTS DATA = int.memlist_final VARNUM;
+665  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+666  PROC SQL;
+667  CREATE TABLE util_all_memlist AS
+668  SELECT a.mcaid_id
+669       , a.FY
+670       , a.age
+671       , a.race
+672       , a.sex
+673       , a.time
+674       , a.pcmp_loc_id
+675       , a.n_months_per_q
+676       , a.budget_group
+677       , a.enr_cnty
+678       , a.rae_person_new
+679       , a.int,
+680       , a.int_imp,
+          -
+          22
+681       , a.fqhc
+          -
+          22
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string,
+              a numeric constant, a datetime constant, a missing value, *, BTRIM, INPUT, PUT,
+              SUBSTRING, USER.
+
+682       , b.*
+683       , c.month
+684       , c.n_hosp
+685       , c.n_pc
+686       , c.n_er
+687       , c.n_rx
+688       , c.adj_pd_total
+689       , c.adj_pd_hosp
+690       , c.adj_pd_pc
+691       , c.adj_pd_er
+692       , c.adj_pd_rx
+693       , c.adj_pd_ffs_bh
+694       , d.n_q_tele
+695  FROM int.memlist_final  AS A
+696  LEFT JOIN bh1           AS B    ON a.mcaid_id=c.mcaid_id AND a.FY=b.FY
+697  LEFT JOIN util_3        AS C    ON a.mcaid_id=b.mcaid_id AND a.FY=c.FY
+698  LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time=d.time;
+699  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+700  PROC SQL;
+701  CREATE TABLE util_all_memlist AS
+702  SELECT a.mcaid_id
+703       , a.FY
+704       , a.age
+705       , a.race
+706       , a.sex
+707       , a.time
+708       , a.pcmp_loc_id
+709       , a.n_months_per_q
+710       , a.budget_group
+711       , a.enr_cnty
+712       , a.rae_person_new
+713       , a.int,
+714       , a.int_imp
+          -
+          22
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string,
+              a numeric constant, a datetime constant, a missing value, *, BTRIM, INPUT, PUT,
+              SUBSTRING, USER.
+
+715       , a.fqhc
+716       , b.*
+717       , c.month
+718       , c.n_hosp
+719       , c.n_pc
+720       , c.n_er
+721       , c.n_rx
+722       , c.adj_pd_total
+723       , c.adj_pd_hosp
+724       , c.adj_pd_pc
+725       , c.adj_pd_er
+726       , c.adj_pd_rx
+727       , c.adj_pd_ffs_bh
+728       , d.n_q_tele
+729  FROM int.memlist_final  AS A
+730  LEFT JOIN bh1           AS B    ON a.mcaid_id=c.mcaid_id AND a.FY=b.FY
+731  LEFT JOIN util_3        AS C    ON a.mcaid_id=b.mcaid_id AND a.FY=c.FY
+732  LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time=d.time;
+733  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+734  PROC SQL;
+735  CREATE TABLE util_all_memlist AS
+736  SELECT a.mcaid_id
+737       , a.FY
+738       , a.age
+739       , a.race
+740       , a.sex
+741       , a.time
+742       , a.pcmp_loc_id
+743       , a.n_months_per_q
+744       , a.budget_group
+745       , a.enr_cnty
+746       , a.rae_person_new
+747       , a.int
+748       , a.int_imp
+749       , a.fqhc
+750       , b.*
+751       , c.month
+752       , c.n_hosp
+753       , c.n_pc
+754       , c.n_er
+755       , c.n_rx
+756       , c.adj_pd_total
+757       , c.adj_pd_hosp
+758       , c.adj_pd_pc
+759       , c.adj_pd_er
+760       , c.adj_pd_rx
+761       , c.adj_pd_ffs_bh
+762       , d.n_q_tele
+763  FROM int.memlist_final  AS A
+764  LEFT JOIN bh1           AS B    ON a.mcaid_id=c.mcaid_id AND a.FY=b.FY
+765  LEFT JOIN util_3        AS C    ON a.mcaid_id=b.mcaid_id AND a.FY=c.FY
+766  LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time=d.time;
+ERROR: Correlated reference to column MCAID_ID is not contained within a subquery.
+767  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.33 seconds
+      cpu time            0.03 seconds
+
+
+768  PROC SQL;
+769  CREATE TABLE util_all_memlist AS
+770  SELECT a.*
+771       , b.*
+772       , c.*
+773       , d.*
+774  FROM int.memlist_final  AS A
+775  LEFT JOIN bh1           AS B    ON a.mcaid_id=c.mcaid_id AND a.FY=b.FY
+776  LEFT JOIN util_3        AS C    ON a.mcaid_id=b.mcaid_id AND a.FY=c.FY
+777  LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time=d.time;
+ERROR: Correlated reference to column MCAID_ID is not contained within a subquery.
+778  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.00 seconds
+
+
+779  PROC SQL;
+780  CREATE TABLE util_all_memlist AS
+781  SELECT a.mcaid_id
+782       , a.FY
+783       , a.age
+784       , a.race
+785       , a.sex
+786       , a.time
+787       , a.pcmp_loc_id
+788       , a.n_months_per_q
+789       , a.budget_group
+790       , a.enr_cnty
+791       , a.rae_person_new
+792       , a.int
+793       , a.int_imp
+794       , a.fqhc
+795       , b.*
+796       , c.month
+797       , c.n_hosp
+798       , c.n_pc
+799       , c.n_er
+800       , c.n_rx
+801       , c.adj_pd_total
+802       , c.adj_pd_hosp
+803       , c.adj_pd_pc
+804       , c.adj_pd_er
+805       , c.adj_pd_rx
+806       , c.adj_pd_ffs_bh
+807       , d.n_q_tele
+808  FROM int.memlist_final  AS A
+809  LEFT JOIN bh1           AS B    ON a.mcaid_id=b.mcaid_id AND a.FY=b.FY
+810  LEFT JOIN util_3        AS C    ON a.mcaid_id=c.mcaid_id AND a.FY=c.FY
+811  LEFT JOIN int.tele_1921 AS D    ON a.mcaid_id=d.mcaid_id AND a.time=d.time;
+WARNING: Variable mcaid_id already exists on file WORK.UTIL_ALL_MEMLIST.
+WARNING: Variable FY already exists on file WORK.UTIL_ALL_MEMLIST.
+WARNING: Variable time already exists on file WORK.UTIL_ALL_MEMLIST.
+WARNING: Variable month already exists on file WORK.UTIL_ALL_MEMLIST.
+NOTE: Table WORK.UTIL_ALL_MEMLIST created, with 108561882 rows and 30 columns.
+
+812  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:53.90
+      cpu time            1:43.46
+
+
+813  %nodupkey(ds=util_all_memlist, out=util_all_memlist2);
+MLOGIC(NODUPKEY):  Beginning execution.
+MLOGIC(NODUPKEY):  Parameter DS has value util_all_memlist
+MLOGIC(NODUPKEY):  Parameter OUT has value util_all_memlist2
+SYMBOLGEN:  Macro variable DS resolves to util_all_memlist
+SYMBOLGEN:  Macro variable OUT resolves to util_all_memlist2
+MPRINT(NODUPKEY):   PROC SORT DATA = util_all_memlist NODUPKEY OUT=util_all_memlist2;
+MPRINT(NODUPKEY):   BY _ALL_ ;
+MPRINT(NODUPKEY):   RUN;
+
+NOTE: There were 108561882 observations read from the data set WORK.UTIL_ALL_MEMLIST.
+NOTE: 2631482 observations with duplicate key values were deleted.
+NOTE: The data set WORK.UTIL_ALL_MEMLIST2 has 105930400 observations and 30 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:04.00
+      cpu time            2:13.81
+
+
+MLOGIC(NODUPKEY):  Ending execution.
+
+814  %LET raw = &data/_raw;
+SYMBOLGEN:  Macro variable DATA resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data
+815  LIBNAME raw "&raw";
+SYMBOLGEN:  Macro variable RAW resolves to
+            S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/_raw
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+816  DATA raw.memlist1;
+817  SET  raw.memlist0 (drop=enr_cnty rae_person_new budget_group
+817! rename=(pcmp_loc_id=pcmp_og_qrylong));
+818  RUN;
+
+NOTE: There were 40958510 observations read from the data set RAW.MEMLIST0.
+NOTE: The data set RAW.MEMLIST1 has 40958510 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:11.77
+      cpu time            3.87 seconds
+
+
+818!      *4/27 40958510 : 11;
+819
+820  PROC SORT DATA = raw.memlist1 NODUPKEY OUT = raw.memlist2;
+821  BY _ALL_;
+822  RUN;
+
+ERROR: Sorted run creation failure.
+ERROR: Failure encountered while creating initial set of sorted runs.
+ERROR: Failure encountered during external sort.
+ERROR: User asked for termination.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 29237413 observations read from the data set RAW.MEMLIST1.
+WARNING: The data set RAW.MEMLIST2 may be incomplete.  When this step was stopped there were 0
+         observations and 9 variables.
+WARNING: Data set RAW.MEMLIST2 was not replaced because this step was stopped.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           24.24 seconds
+      cpu time            7.82 seconds
+
+822!      *4/27 14273091 : 7;
+823
+824  %concat_id_time(ds=raw.memlist2);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value raw.memlist2
+SYMBOLGEN:  Macro variable DS resolves to raw.memlist2
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+
+825  DATA raw.memlist1;
+826  SET  raw.memlist0 (drop=enr_cnty rae_person_new budget_group);
+827  RUN;
+
+NOTE: There were 40958510 observations read from the data set RAW.MEMLIST0.
+NOTE: The data set RAW.MEMLIST1 has 40958510 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:07.78
+      cpu time            4.90 seconds
+
+
+827!      *4/27 40958510 : 11;
+828
+829  PROC SORT DATA = raw.memlist1 NODUPKEY OUT = raw.memlist2;
+830  BY _ALL_;
+831  RUN;
+
+NOTE: There were 40958510 observations read from the data set RAW.MEMLIST1.
+NOTE: 0 observations with duplicate key values were deleted.
+NOTE: The data set RAW.MEMLIST2 has 40958510 observations and 9 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:08.13
+      cpu time            21.23 seconds
+
+
+831!      *4/27 14273091 : 7;
+832
+833  %concat_id_time(ds=raw.memlist2);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value raw.memlist2
+SYMBOLGEN:  Macro variable DS resolves to raw.memlist2
+MPRINT(CONCAT_ID_TIME):   DATA raw.memlist2;
+SYMBOLGEN:  Macro variable DS resolves to raw.memlist2
+MPRINT(CONCAT_ID_TIME):   SET raw.memlist2;
+MPRINT(CONCAT_ID_TIME):   id_time_helper = CATX('_', mcaid_id, time);
+MPRINT(CONCAT_ID_TIME):   RUN;
+
+NOTE: There were 40958510 observations read from the data set RAW.MEMLIST2.
+NOTE: The data set RAW.MEMLIST2 has 40958510 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:37.13
+      cpu time            17.82 seconds
+
+
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+
+834  PROC CONTENTS DATA = raw.memlist2 VARNUM;
+835  RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+836  PROC SQL ;
+837  CREATE TABLE memlist_final AS
+838  SELECT a.mcaid_id
+839       , a.dt_qrtr
+840       , a.month
+841       , a.FY
+842       , a.age
+843       , a.race
+844       , a.sex
+845       , a.time
+846       , a.id_time_helper
+847       , b.pcmp_loc_id
+848       , b.n_months_per_q
+849       , b.ind_isp AS int
+850       , c.budget_group
+851       , d.enr_cnty
+852       , e.rae_person_new
+853       , f.fqhc
+854       , g.time2 as time_start_isp
+855       , case WHEN g.time2 ne .
+856              AND  a.time >= g.time2
+857              THEN 1 ELSE 0 end AS int_imp
+858
+859  FROM raw.memlist2                    AS A
+860  LEFT JOIN int.memlist_attr_qrtr_1921 AS B   ON A.id_time_helper = B.id_time_helper
+861  LEFT JOIN budget                     AS C   ON A.id_time_helper = C.id_time_helper
+862  LEFT JOIN county                     AS D   ON A.id_time_helper = D.id_time_helper
+863  LEFT JOIN rae                        AS E   ON A.id_time_helper = E.id_time_helper
+864  LEFT JOIN raw.pcmp_type              AS F   ON B.pcmp_loc_id    = F.pcmp_loc_id
+865  LEFT JOIN int.isp_un_pcmp_dtstart    AS G   ON b.pcmp_loc_id    = G.pcmp_loc_id    ;
+ERROR: File WORK.BUDGET.DATA does not exist.
+ERROR: File WORK.COUNTY.DATA does not exist.
+ERROR: File WORK.RAE.DATA does not exist.
+866  QUIT ;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.06 seconds
+
+866!        *4/27 14273091 WHY??   4/23 14039876!!! WOOT!! (twice, and second time with the joins)
+866! //  4097481 : 12 ;
+
+
+867  * 4/26;
+868  PROC SQL;
+869  CREATE TABLE county AS
+870  SELECT mcaid_id
+871       , dt_qrtr
+872       , enr_cnty
+873       , time
+874  FROM (SELECT *
+875             , max(month) AS max_mon_by_cnty
+876        FROM (SELECT *
+877                   , count(enr_cnty) as n_county
+878              FROM raw.memlist0
+879              GROUP BY mcaid_id
+880                     , dt_qrtr
+881                     , enr_cnty)
+882        GROUP BY mcaid_id, dt_qrtr, n_county)
+883  GROUP BY mcaid_id, dt_qrtr
+884  HAVING max(n_county)=n_county
+885  AND    month=max_mon_by_cnty;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.COUNTY created, with 14039803 rows and 4 columns.
+
+886  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:01.05
+      cpu time            43.76 seconds
+
+
+886!       * 4/24 14039876;
+887
+888  * 4/26;
+889  PROC SQL;
+890  CREATE TABLE budget AS
+891  SELECT mcaid_id
+892       , dt_qrtr
+893       , budget_group
+894       , time
+895  FROM (SELECT *
+896             , max(month) AS max_mon_by_budget
+897        FROM (SELECT *
+898                   , count(budget_group) as n_budget_group
+899              FROM raw.memlist0
+900              GROUP BY mcaid_id
+901                     , dt_qrtr
+902                     , budget_group)
+903        GROUP BY mcaid_id, dt_qrtr, n_budget_group)
+904  GROUP BY mcaid_id, dt_qrtr
+905  HAVING max(n_budget_group)=n_budget_group
+906  AND    month=max_mon_by_budget;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.BUDGET created, with 14039803 rows and 4 columns.
+
+907  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           27.45 seconds
+      cpu time            44.48 seconds
+
+
+907!       *14039876;
+908
+909  * 4/26;
+910  PROC SQL;
+911  CREATE TABLE rae AS
+912  SELECT mcaid_id
+913       , dt_qrtr
+914       , rae_person_new
+915       , time
+916  FROM (SELECT *
+917             , max(month) AS max_mon_by_rae
+918        FROM (SELECT *
+919                   , count(rae_person_new) as n_rae_person_new
+920              FROM raw.memlist0
+921              GROUP BY mcaid_id
+922                     , dt_qrtr
+923                     , rae_person_new)
+924        GROUP BY mcaid_id, dt_qrtr, n_rae_person_new)
+925  GROUP BY mcaid_id, dt_qrtr
+926  HAVING max(n_rae_person_new)=n_rae_person_new
+927  AND    month=max_mon_by_rae;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table WORK.RAE created, with 14039803 rows and 4 columns.
+
+928  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           27.80 seconds
+      cpu time            45.56 seconds
+
+
+928!       *14039876;
+929
+930              *macro to find instances where n_ids >12 (should be 0 // in 00_config);
+931              %check_ids_n12(ds=budget); *0;
+MLOGIC(CHECK_IDS_N12):  Beginning execution.
+MLOGIC(CHECK_IDS_N12):  Parameter DS has value budget
+MPRINT(CHECK_IDS_N12):   proc sql;
+SYMBOLGEN:  Macro variable DS resolves to budget
+SYMBOLGEN:  Macro variable DS resolves to budget
+MPRINT(CHECK_IDS_N12):   create table n_ids_budget AS select mcaid_id , count(mcaid_id) as n_ids
+FROM budget GROUP BY mcaid_ID having n_ids>12;
+NOTE: Table WORK.N_IDS_BUDGET created, with 0 rows and 2 columns.
+
+MPRINT(CHECK_IDS_N12):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.74 seconds
+      cpu time            0.75 seconds
+
+
+MLOGIC(CHECK_IDS_N12):  Ending execution.
+932              %check_ids_n12(ds=county); *0;
+MLOGIC(CHECK_IDS_N12):  Beginning execution.
+MLOGIC(CHECK_IDS_N12):  Parameter DS has value county
+MPRINT(CHECK_IDS_N12):   proc sql;
+SYMBOLGEN:  Macro variable DS resolves to county
+SYMBOLGEN:  Macro variable DS resolves to county
+MPRINT(CHECK_IDS_N12):   create table n_ids_county AS select mcaid_id , count(mcaid_id) as n_ids
+FROM county GROUP BY mcaid_ID having n_ids>12;
+NOTE: Table WORK.N_IDS_COUNTY created, with 0 rows and 2 columns.
+
+MPRINT(CHECK_IDS_N12):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.68 seconds
+      cpu time            0.68 seconds
+
+
+MLOGIC(CHECK_IDS_N12):  Ending execution.
+933              %check_ids_n12(ds=rae);    *0;
+MLOGIC(CHECK_IDS_N12):  Beginning execution.
+MLOGIC(CHECK_IDS_N12):  Parameter DS has value rae
+MPRINT(CHECK_IDS_N12):   proc sql;
+SYMBOLGEN:  Macro variable DS resolves to rae
+SYMBOLGEN:  Macro variable DS resolves to rae
+MPRINT(CHECK_IDS_N12):   create table n_ids_rae AS select mcaid_id , count(mcaid_id) as n_ids FROM
+rae GROUP BY mcaid_ID having n_ids>12;
+NOTE: Table WORK.N_IDS_RAE created, with 0 rows and 2 columns.
+
+MPRINT(CHECK_IDS_N12):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.71 seconds
+      cpu time            0.70 seconds
+
+
+MLOGIC(CHECK_IDS_N12):  Ending execution.
+934
+935  %macro concat_id_time(ds=);
+936  DATA &ds;
+937  SET  &ds;
+938  id_time_helper = CATX('_', mcaid_id, time);
+939  RUN;
+940  %mend;
+941  * Created helper var for joins (was taking a long time and creating rows without id, idk why,
+941! so did this as quick fix for now);
+942  %concat_id_time(ds=county);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value county
+SYMBOLGEN:  Macro variable DS resolves to county
+MPRINT(CONCAT_ID_TIME):   DATA county;
+SYMBOLGEN:  Macro variable DS resolves to county
+MPRINT(CONCAT_ID_TIME):   SET county;
+MPRINT(CONCAT_ID_TIME):   id_time_helper = CATX('_', mcaid_id, time);
+MPRINT(CONCAT_ID_TIME):   RUN;
+
+NOTE: There were 14039803 observations read from the data set WORK.COUNTY.
+NOTE: The data set WORK.COUNTY has 14039803 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.52 seconds
+      cpu time            3.53 seconds
+
+
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+943  %concat_id_time(ds=budget);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value budget
+SYMBOLGEN:  Macro variable DS resolves to budget
+MPRINT(CONCAT_ID_TIME):   DATA budget;
+SYMBOLGEN:  Macro variable DS resolves to budget
+MPRINT(CONCAT_ID_TIME):   SET budget;
+MPRINT(CONCAT_ID_TIME):   id_time_helper = CATX('_', mcaid_id, time);
+MPRINT(CONCAT_ID_TIME):   RUN;
+
+NOTE: There were 14039803 observations read from the data set WORK.BUDGET.
+NOTE: The data set WORK.BUDGET has 14039803 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.70 seconds
+      cpu time            3.70 seconds
+
+
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+944  %concat_id_time(ds=rae);
+MLOGIC(CONCAT_ID_TIME):  Beginning execution.
+MLOGIC(CONCAT_ID_TIME):  Parameter DS has value rae
+SYMBOLGEN:  Macro variable DS resolves to rae
+MPRINT(CONCAT_ID_TIME):   DATA rae;
+SYMBOLGEN:  Macro variable DS resolves to rae
+MPRINT(CONCAT_ID_TIME):   SET rae;
+MPRINT(CONCAT_ID_TIME):   id_time_helper = CATX('_', mcaid_id, time);
+MPRINT(CONCAT_ID_TIME):   RUN;
+
+NOTE: There were 14039803 observations read from the data set WORK.RAE.
+NOTE: The data set WORK.RAE has 14039803 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3.71 seconds
+      cpu time            3.71 seconds
+
+
+MLOGIC(CONCAT_ID_TIME):  Ending execution.
+
