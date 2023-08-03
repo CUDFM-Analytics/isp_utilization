@@ -1,0 +1,41 @@
+------------------------
+COMPLETE MODEL VAR LIST: 
+------------------------
+&pvar (ind_pc_cost, ind_total_cost, ind_rx_cost)
+&cvar (adj_pd_pc_tc, adj_pd_total_tc, adj_pd_rx_tc)
+mcaid_id             
+int       
+int_imp
+budget_grp_new
+race
+sex
+rae_person_new
+age_cat
+fqhc
+bh_oth16	bh_oth17    bh_oth18
+bh_er16		bh_er17    	bh_er18
+bh_hosp16	bh_hosp17   bh_hosp18
+adj_pd_total_16cat		adj_pd_total_17cat	adj_pd_total_18cat
+IF TIME IS NOT IN CLASS STATEMENT, INCL: season1, season2, season3
+
+-----------------------------------------------
+CLASS STATEMENTS WITH REFERENCES: Complete list
+-----------------------------------------------
+mcaid_id             
+int(ref='0')         
+int_imp(ref='0') 
+budget_grp_new(ref='MAGI Eligible Children')
+race(ref='non-Hispanic White/Caucasian')
+sex(ref='Female')
+rae_person_new(ref='3')
+age_cat(ref='6') 
+fqhc(ref ='0')
+bh_oth16(ref='0')    bh_oth17(ref='0')       bh_oth18(ref='0')
+bh_er16(ref='0')     bh_er17(ref='0')        bh_er18(ref='0')
+bh_hosp16(ref='0')   bh_hosp17(ref='0')      bh_hosp18(ref='0')
+adj_pd_total_16cat(ref='0')
+adj_pd_total_17cat(ref='0')
+adj_pd_total_18cat(ref='0')
+&pvar(ref= '0') 
+	(where &pvar= (ind_pc_cost, ind_total_cost, ind_rx_cost))
+

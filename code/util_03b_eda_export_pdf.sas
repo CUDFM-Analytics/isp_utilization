@@ -39,24 +39,24 @@ p "Log File:         &log";
 p "Results File:  &pdf";
 p "Total Observations in Dataset: &nobs";
 p "Total unique medicaid IDs in Dataset: &nmem";
+p ""; 
+p "";
 RUN; 
 
 ods proclabel 'Data Specs';
 * Print specs ; 
 PROC ODSTEXT;
-p "Update/s to data.analysis (final ds)";
+p "Update/s to data.analysis (final ds)" /style=systemtitle;
 p "-- 06/24: Created rescaled integer visit DVs mult by 6 ";
 p "-- 06/19: Changed formats to hard coded values for budget vars, age";
 p "-- 06/08: Changed age determination date from EOFY to Quarter Month=2";
 p "-- 06/05: Collapsed bh FY16-18 variables by FY (ie bh_2016 = 1 if bh_oth2016, bh_er16, or bh_hosp16 = 1)";
-p "------ Removed bh_hospYY, bh_erYY, and bh_othYY from model, replaced by bh_YYYY (for 2016-2018)";
 p "-- 06/02: Re-generated dataset and updated to include FY22 Q1";
 p "-- 05/15: Effect Coding time with season variables"; 
 p "-- 05/10: Included fyqrtr variable in final analysis dataset"; 
 p " ";
 
-p "Final Dataset Inclusion Rules"
-  /style = systemtitle;
+p "Final Dataset Inclusion Rules"  /style = systemtitle;
 p "Eligibility determination based on ID presence in qry_longitudinal where records for FYs 19-22 indicated:" 
   /style = header;
 p "-----1) Age 0-64 (as of quarter month2)"; 
@@ -96,17 +96,27 @@ ods proclabel 'Analysis_Dataset Columns'; RUN;
 PROC ODSTEXT; 
 p "Dataset Contents" /style=systemtitle;
 RUN; 
-PROC PRINT DATA = data.analysis_meta ; RUN; 
+PROC CONTENTS DATA = data.analysis VARNUM; RUN; 
 
 ods proclabel 'Frequencies, Cat Vars: Ungrouped'; RUN; 
 proc odstext;
-p "Frequencies, Categorical Vars: Ungrouped" / style=systemtitle; RUN; 
+p "Frequencies, Categorical Vars: Ungrouped"; RUN; 
 
 PROC FREQ 
      DATA = data.analysis;
-     TABLES int int_imp time race sex budget_group age_cat
-            fqhc rae: bh: adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
-            ind: season: ;
+     TABLES time int int_imp season: ind: bh: race sex budget_grp: age age_cat:
+            fqhc rae: adj_pd_total_16cat: adj_pd_total_17cat: adj_pd_total_18cat:;
+RUN; 
+
+ods proclabel 'Frequencies, Cat Vars: GROUPED by INT (time invariant)'; RUN; 
+proc odstext;
+p "Frequencies, Categorical Vars: GROUPED by INT (time invariant)"; RUN; 
+
+PROC FREQ 
+     DATA = data.analysis;
+     TABLES time int int_imp season: ind: bh: race sex budget_grp: age age_cat:
+            fqhc rae: adj_pd_total_16cat: adj_pd_total_17cat: adj_pd_total_18cat:;
+     BY INT; 
 RUN; 
 
 %macro univar_gt0(var, title);
@@ -157,24 +167,6 @@ TITLE;
 /*format pct: percent10.2;*/
 /*VAR  time n_time pct_time_mem pct_time_missing; */
 /*RUN; */
-
-**************************************************************************************
-* UNIQUE PCMP COUNT; 
-ods proclabel 'PCMP Loc ID Description'; RUN; 
-proc odstext;
-p "Counts of Unique PCMP_LOC_IDs by Intervention Status (Time Invariant Var: 'int')" 
-   / style=systemtitle;RUN; 
-ods proclabel 'PCMP Loc ID table'; RUN; 
-PROC SQL ;
-CREATE TABLE un_pcmp_count AS  
-SELECT COUNT(DISTINCT pcmp_loc_id) as n_pcmp
-     , int as intervention
-FROM &dat
-GROUP BY int;
-QUIT; 
-
-
-PROC PRINT DATA = un_pcmp_count; RUN; 
 
 **************************************************************************************
 * PROC UNIVAR for continuous vars, ungrouped (entire dataset); 
@@ -260,7 +252,7 @@ PROC PRINT DATA = int.pctl1618; RUN;
 **************************************************************************************; 
 PROC FREQ DATA = &dat;
 FORMAT adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat adj1618fy. bho: bh1618fy.;
-TABLES adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat bho:;
+TABLES adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat bh:;
 RUN; 
 
 %macro means_adj(FY);

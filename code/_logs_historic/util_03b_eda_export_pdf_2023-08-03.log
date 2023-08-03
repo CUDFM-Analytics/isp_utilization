@@ -1,0 +1,628 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+713  ODS PDF FILE     = "&pdf"
+714                      STARTPAGE = no;
+NOTE: Writing ODS PDF output to DISK destination 
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\util_03b_eda_exp
+      ort_pdf_2023-08-03.pdf", printer "PDF".
+715  
+716  Title %sysget(SAS_EXECFILENAME);
+717  
+718  PROC SQL NOPRINT;
+719  SELECT count(*) into :nobs from &dat;
+720  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+      
+
+721  
+722  PROC SQL NOPRINT;
+723  SELECT COUNT (DISTINCT mcaid_id ) into :nmem
+724  FROM &dat ;
+725  QUIT ;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:01.84
+      cpu time            2.81 seconds
+      
+
+726  
+727  proc odstext;
+728  p "Date:              &today";
+729  p "Project Root: &root";
+730  p "Script:            %sysget(SAS_EXECFILENAME)";
+731  p "Log File:         &log";
+732  p "Results File:  &pdf";
+733  p "Total Observations in Dataset: &nobs";
+734  p "Total unique medicaid IDs in Dataset: &nmem";
+735  p "";
+736  p "";
+737  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+      
+
+738  
+739  ods proclabel 'Data Specs';
+740  * Print specs ;
+741  PROC ODSTEXT;
+742  p "Update/s to data.analysis (final ds)" /style=systemtitle;
+743  p "-- 06/24: Created rescaled integer visit DVs mult by 6 ";
+744  p "-- 06/19: Changed formats to hard coded values for budget vars, age";
+745  p "-- 06/08: Changed age determination date from EOFY to Quarter Month=2";
+746  p "-- 06/05: Collapsed bh FY16-18 variables by FY (ie bh_2016 = 1 if bh_oth2016,
+746! bh_er16, or bh_hosp16 = 1)";
+747  p "-- 06/02: Re-generated dataset and updated to include FY22 Q1";
+748  p "-- 05/15: Effect Coding time with season variables";
+749  p "-- 05/10: Included fyqrtr variable in final analysis dataset";
+750  p " ";
+751  
+752  p "Final Dataset Inclusion Rules"  /style = systemtitle;
+753  p "Eligibility determination based on ID presence in qry_longitudinal where records
+753!  for FYs 19-22 indicated:"
+754    /style = header;
+755  p "-----1) Age 0-64 (as of quarter month2)";
+756  p "-----2) rae_id not NA";
+757  p "-----3) pcmp_loc_id not NA";
+758  p "-----4) Sex = M, F only (excluded U)";
+759  p "-----5) ManagedCare = 0";
+760  p "-----6) budget_group NOT 16:27";
+761  p "Final dataset records aggregated by quarters.";
+762  p "-- Where unique value per quarter n >1 for variables rae_id, budget_group, and
+762! pcmp_loc_id:";
+763  p "----- a) Max value used where possible";
+764  p "----- b) In cases of ties, used value in quarter months that was most recent";
+765  p " ";
+766  p "The final dataset contains n=&nobs unique mcaid_id*time (quarter) records, with
+766! n=&nmem unique member ids." / style=header;
+767  p " ";
+768  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+769  
+770  
+771  PROC FORMAT;
+772  VALUE adj1618fy
+773  -1 = "(-1) Not Eligble for HFC during FY"
+774  0 = "(0) PMPM in YR is $0 (Eligible HFC)"
+775  1 = "(1) PMPM YR >0 and <= 50th percentile"
+776  2 = "(2) PMPM YR >50th percentiles, <= 75th percentile"
+777  3 = "(3) PMPM YR >75th percentiles, <= 90th percentile"
+778  4 = "(4) PMPM YR >90th percentiles, <= 95th percentile"
+779  5 = "(5) PMPM YR > 95th percentile";
+NOTE: Format ADJ1618FY is already on the library WORK.FORMATS.
+NOTE: Format ADJ1618FY has been output.
+780  
+781  VALUE bh1618fy
+782  0 = "FY Visits = 0"
+783  0.001 - high = "FY Visits >0";
+NOTE: Format BH1618FY is already on the library WORK.FORMATS.
+NOTE: Format BH1618FY has been output.
+784  
+785  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+786  *******************************************************************************
+787  * Print columns for dataset (use abbreviation 'columns');
+788  ods proclabel 'Analysis_Dataset Columns'; RUN;
+789  PROC ODSTEXT;
+790  p "Dataset Contents" /style=systemtitle;
+791  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+792  PROC CONTENTS DATA = data.analysis VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.04 seconds
+      
+
+793  
+794  ods proclabel 'Frequencies, Cat Vars: Ungrouped'; RUN;
+795  proc odstext;
+796  p "Frequencies, Categorical Vars: Ungrouped"; RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+797  
+798  PROC FREQ
+799       DATA = data.analysis;
+800       TABLES time int int_imp season: ind: bh: race sex budget_grp: age age_cat:
+801              fqhc rae: adj_pd_total_16cat: adj_pd_total_17cat: adj_pd_total_18cat:;
+802  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           8.53 seconds
+      cpu time            8.51 seconds
+      
+
+803  
+804  ods proclabel 'Frequencies, Cat Vars: GROUPED by INT (time invariant)'; RUN;
+805  proc odstext;
+806  p "Frequencies, Categorical Vars: GROUPED by INT (time invariant)"; RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+807  
+808  PROC FREQ
+809       DATA = data.analysis;
+810       TABLES time int int_imp season: ind: bh: race sex budget_grp: age age_cat:
+811              fqhc rae: adj_pd_total_16cat: adj_pd_total_17cat: adj_pd_total_18cat:;
+812       BY INT;
+813  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           8.49 seconds
+      cpu time            8.45 seconds
+      
+
+814  
+815  
+816  %macro univar_gt0(var, title);
+817  PROC UNIVARIATE DATA = &dat;
+818  TITLE &TITLE;
+819  VAR &var;
+820  WHERE &var gt 0 ;
+821  HISTOGRAM;
+822  RUN;
+823  TITLE;
+824  %mend;
+825  
+826  %macro univar(var, title);
+827  PROC UNIVARIATE DATA = &dat;
+828  TITLE &TITLE;
+829  VAR &var;
+830  HISTOGRAM;
+831  RUN;
+832  TITLE;
+833  %mend;
+834  
+835  /*proc odstext;*/
+836  /*p "New BH Variables (bh_2016, bh_2017, bh_2018)" / style=systemtitle; */
+837  /*p "Includes all records (not grouped by mcaid_id)"; RUN;  */
+838  /**/
+839  /*PROC SQL; */
+840  /*CREATE TABLE sums_bh_1618 AS */
+841  /*SELECT sum(bh_2016) as n_bh_16*/
+842  /*     , sum(bh_2017) as n_bh_17*/
+843  /*     , sum(bh_2018) as n_bh_18*/
+844  /*FROM &dat; */
+845  /*Quit; */
+846  
+847  /*PROC PRINT DATA = sums_bh_1618; RUN; */
+848  
+849  /**/
+850  /*********************************************************************************/
+851  /** Time frequency : find missing time, pct time; */
+852  /*ods proclabel 'Time Frequency Description';*/
+853  /*proc odstext;*/
+854  /*p "Time freq by member" / style=systemtitle;*/
+855  /*p "(Divided time frequency by total unique member ids (n=&nmem) to get percent,
+855! then subtracted percent from 1 to get missing val)"; */
+856  /*p "";*/
+857  /*RUN; */
+858  /**/
+859  /*ods proclabel 'Time Frequency Table';*/
+860  /*PROC PRINT DATA = int.eda_time_freq;*/
+861  /*format pct: percent10.2;*/
+862  /*VAR  time n_time pct_time_mem pct_time_missing; */
+863  /*RUN; */
+864  
+865  ***********************************************************************************
+865! ***
+866  * PROC UNIVAR for continuous vars, ungrouped (entire dataset);
+867  ods proclabel 'Top Coded Vals, text'; RUN;
+868  PROC ODSTEXT;
+869  p "Percentiles and values for top-coded DVs (cost: pc, rx, total)"
+870    /style = systemtitle;
+871  p "Means taken where value gt 95th percentile"; RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+872  
+873  /*PROC TRANSPOSE DATA = int.mu_pctl_1922 OUT=int.mu_pctl_1922_long (rename=(_NAME_
+873!  = percentile*/
+874  /*                                                                          _LABEL_
+874!  = label*/
+875  /*                                                                          COL1
+875!  = original_value));*/
+876  /*RUN; */
+877  ods proclabel 'Top Coded Vals'; RUN;
+878  PROC PRINT DATA = int.mu_pctl_1922_long; RUN;
+
+NOTE: There were 24 observations read from the data set INT.MU_PCTL_1922_LONG.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+879  
+880  ods proclabel 'Univar for DVs, text'; RUN;
+881  
+882  proc odstext;
+883  p "PROC UNIVAR for DV's: WHERE VALUES >0 ONLY" / style=systemtitle;
+884  p "For all values, including 0's, see the ind_: variables";  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+885  
+886  * Cost vars;
+887  %univar_gt0(var=adj_pd_total_tc, title = "WHERE &var gt 0");
+MLOGIC(UNIVAR_GT0):  Beginning execution.
+WARNING: Apparent symbolic reference VAR not resolved.
+MLOGIC(UNIVAR_GT0):  Parameter VAR has value adj_pd_total_tc
+MLOGIC(UNIVAR_GT0):  Parameter TITLE has value "WHERE &var gt 0"
+MPRINT(UNIVAR_GT0):   PROC UNIVARIATE DATA = data.analysis;
+MPRINT(UNIVAR_GT0):   TITLE "WHERE adj_pd_total_tc gt 0";
+MPRINT(UNIVAR_GT0):   VAR adj_pd_total_tc;
+MPRINT(UNIVAR_GT0):   WHERE adj_pd_total_tc gt 0 ;
+MPRINT(UNIVAR_GT0):   HISTOGRAM;
+MPRINT(UNIVAR_GT0):   RUN;
+
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           14.71 seconds
+      cpu time            14.39 seconds
+      
+
+MPRINT(UNIVAR_GT0):   TITLE;
+MLOGIC(UNIVAR_GT0):  Ending execution.
+888  %univar_gt0(var=adj_pd_pc_tc,    title = "WHERE &var gt 0");
+MLOGIC(UNIVAR_GT0):  Beginning execution.
+WARNING: Apparent symbolic reference VAR not resolved.
+MLOGIC(UNIVAR_GT0):  Parameter VAR has value adj_pd_pc_tc
+MLOGIC(UNIVAR_GT0):  Parameter TITLE has value "WHERE &var gt 0"
+MPRINT(UNIVAR_GT0):   PROC UNIVARIATE DATA = data.analysis;
+MPRINT(UNIVAR_GT0):   TITLE "WHERE adj_pd_pc_tc gt 0";
+MPRINT(UNIVAR_GT0):   VAR adj_pd_pc_tc;
+MPRINT(UNIVAR_GT0):   WHERE adj_pd_pc_tc gt 0 ;
+MPRINT(UNIVAR_GT0):   HISTOGRAM;
+MPRINT(UNIVAR_GT0):   RUN;
+
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           7.64 seconds
+      cpu time            7.45 seconds
+      
+
+MPRINT(UNIVAR_GT0):   TITLE;
+MLOGIC(UNIVAR_GT0):  Ending execution.
+889  %univar_gt0(var=adj_pd_rx_tc,    title = "WHERE &var gt 0");
+MLOGIC(UNIVAR_GT0):  Beginning execution.
+WARNING: Apparent symbolic reference VAR not resolved.
+MLOGIC(UNIVAR_GT0):  Parameter VAR has value adj_pd_rx_tc
+MLOGIC(UNIVAR_GT0):  Parameter TITLE has value "WHERE &var gt 0"
+MPRINT(UNIVAR_GT0):   PROC UNIVARIATE DATA = data.analysis;
+MPRINT(UNIVAR_GT0):   TITLE "WHERE adj_pd_rx_tc gt 0";
+MPRINT(UNIVAR_GT0):   VAR adj_pd_rx_tc;
+MPRINT(UNIVAR_GT0):   WHERE adj_pd_rx_tc gt 0 ;
+MPRINT(UNIVAR_GT0):   HISTOGRAM;
+MPRINT(UNIVAR_GT0):   RUN;
+
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           7.58 seconds
+      cpu time            7.46 seconds
+      
+
+MPRINT(UNIVAR_GT0):   TITLE;
+MLOGIC(UNIVAR_GT0):  Ending execution.
+890  
+891  * Visit vars;
+892  %univar_gt0(var=n_pc_pm,     title = "&var (Visits)");
+MLOGIC(UNIVAR_GT0):  Beginning execution.
+WARNING: Apparent symbolic reference VAR not resolved.
+MLOGIC(UNIVAR_GT0):  Parameter VAR has value n_pc_pm
+MLOGIC(UNIVAR_GT0):  Parameter TITLE has value "&var (Visits)"
+MPRINT(UNIVAR_GT0):   PROC UNIVARIATE DATA = data.analysis;
+MPRINT(UNIVAR_GT0):   TITLE "n_pc_pm (Visits)";
+MPRINT(UNIVAR_GT0):   VAR n_pc_pm;
+MPRINT(UNIVAR_GT0):   WHERE n_pc_pm gt 0 ;
+MPRINT(UNIVAR_GT0):   HISTOGRAM;
+MPRINT(UNIVAR_GT0):   RUN;
+
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           4.64 seconds
+      cpu time            4.53 seconds
+      
+
+MPRINT(UNIVAR_GT0):   TITLE;
+MLOGIC(UNIVAR_GT0):  Ending execution.
+893  %univar_gt0(var=n_ed_pm,     title = "&var (Visits)");
+MLOGIC(UNIVAR_GT0):  Beginning execution.
+WARNING: Apparent symbolic reference VAR not resolved.
+MLOGIC(UNIVAR_GT0):  Parameter VAR has value n_ed_pm
+MLOGIC(UNIVAR_GT0):  Parameter TITLE has value "&var (Visits)"
+MPRINT(UNIVAR_GT0):   PROC UNIVARIATE DATA = data.analysis;
+MPRINT(UNIVAR_GT0):   TITLE "n_ed_pm (Visits)";
+MPRINT(UNIVAR_GT0):   VAR n_ed_pm;
+MPRINT(UNIVAR_GT0):   WHERE n_ed_pm gt 0 ;
+MPRINT(UNIVAR_GT0):   HISTOGRAM;
+MPRINT(UNIVAR_GT0):   RUN;
+
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           2.60 seconds
+      cpu time            2.43 seconds
+      
+
+MPRINT(UNIVAR_GT0):   TITLE;
+MLOGIC(UNIVAR_GT0):  Ending execution.
+894  %univar_gt0(var=n_ffs_bh_pm, title = "&var (Visits)");
+MLOGIC(UNIVAR_GT0):  Beginning execution.
+WARNING: Apparent symbolic reference VAR not resolved.
+MLOGIC(UNIVAR_GT0):  Parameter VAR has value n_ffs_bh_pm
+MLOGIC(UNIVAR_GT0):  Parameter TITLE has value "&var (Visits)"
+MPRINT(UNIVAR_GT0):   PROC UNIVARIATE DATA = data.analysis;
+MPRINT(UNIVAR_GT0):   TITLE "n_ffs_bh_pm (Visits)";
+MPRINT(UNIVAR_GT0):   VAR n_ffs_bh_pm;
+MPRINT(UNIVAR_GT0):   WHERE n_ffs_bh_pm gt 0 ;
+MPRINT(UNIVAR_GT0):   HISTOGRAM;
+MPRINT(UNIVAR_GT0):   RUN;
+
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           2.04 seconds
+      cpu time            1.82 seconds
+      
+
+MPRINT(UNIVAR_GT0):   TITLE;
+MLOGIC(UNIVAR_GT0):  Ending execution.
+895  %univar_gt0(var=n_tel_pm,    title = "&var (Visits)");
+MLOGIC(UNIVAR_GT0):  Beginning execution.
+WARNING: Apparent symbolic reference VAR not resolved.
+MLOGIC(UNIVAR_GT0):  Parameter VAR has value n_tel_pm
+MLOGIC(UNIVAR_GT0):  Parameter TITLE has value "&var (Visits)"
+MPRINT(UNIVAR_GT0):   PROC UNIVARIATE DATA = data.analysis;
+MPRINT(UNIVAR_GT0):   TITLE "n_tel_pm (Visits)";
+MPRINT(UNIVAR_GT0):   VAR n_tel_pm;
+MPRINT(UNIVAR_GT0):   WHERE n_tel_pm gt 0 ;
+MPRINT(UNIVAR_GT0):   HISTOGRAM;
+MPRINT(UNIVAR_GT0):   RUN;
+
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           2.24 seconds
+      cpu time            2.11 seconds
+      
+
+MPRINT(UNIVAR_GT0):   TITLE;
+MLOGIC(UNIVAR_GT0):  Ending execution.
+896  
+897  ***********************************************************************************
+897! ***
+898  * CATEGORICAL FREQUENCIES, Grouped by INTERVENTION (0,1), time invariant
+899  ***********************************************************************************
+899! ***;
+900  ods proclabel 'Frequencies, Cat Vars: Int Status (excluded: adj fy1618)'; RUN;
+901  proc odstext;
+902  p "Frequencies, Categorical Vars by ISP Participation (Time-Invariant Indicator
+902! ('int'))" / style=systemtitle;
+903  p "adj fy 1618 vars have their own section";
+904  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+      
+
+905  ods proclabel 'Frequencies, Cat Vars: Int Status'; RUN;
+906  PROC FREQ DATA = &dat;
+907  TABLES (int_imp age_cat race sex time budget_group rae_person_new fqhc fy: bh: ind:
+907!  adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat)*int;
+ERROR: Variable BUDGET_GROUP not found.
+WARNING: No variables found beginning with 'FY' in data set DATA.ANALYSIS.
+908  RUN ;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+909  
+910  ***********************************************************************************
+910! ***
+911  * adj vars 16-18
+912  ***********************************************************************************
+912! ***;
+913  ods proclabel 'adj FY 1618: categories'; RUN;
+914  
+
+
+915  PROC ODSTEXT;
+916  p "FY16-18 Adjusted, Categorized Monthly Utilization (Cost) Frequencies (variables
+916! adj_pd_total_YYcat)"
+917    /style = systemtitle;
+918  
+919  p "(-1): Not Eligible";
+920  p "( 0): Eligible, PMPM $0";
+921  p "( 1): Eligible, PMPM > 0 and <=50 percentile";
+922  p "( 2): Eligible, PMPM >50 and <=75 percentile";
+923  p "( 3): Eligible, PMPM >75 and <=90 percentile";
+924  p "( 4): Eligible, PMPM >90 and <=95 percentile";
+925  p "( 5): Eligible, PMPM >95 percentile";
+926  p "";
+927  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+      
+
+928  
+929  ods proclabel 'adj FY 1618: Percentiles, Mus (text)'; RUN;
+930  PROC ODSTEXT;
+931  p "Percentiles,  Values for FY16-18 vars" /style = header;
+932  p "NB: Frequencies below generated from UNIQUE member records only - not from the
+932! final analysis dataset, where record frequency is multiplied by the quarters"/style
+932!  = header;
+933  p "Frequencies from final dataset are in section 2, and match Jakes proportions
+933! almost exactly."/style = header;
+934  RUN;
+NOTE: PROCEDURE ODSTEXT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+935  /*PROC TRANSPOSE DATA = int.pctl1618 OUT=int.pctl1618_long (rename=(_NAME_  =
+935! percentile*/
+936  /*                                                                  _LABEL_ =
+936! label*/
+937  /*                                                                  COL1    =
+937! original_value));*/
+938  /*RUN; */
+939  ods proclabel 'adj FY 1618: Percentiles, Mus (table)'; RUN;
+940  PROC PRINT DATA = int.pctl1618; RUN;
+
+NOTE: There were 1 observations read from the data set INT.PCTL1618.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.00 seconds
+      
+
+941  
+942  
+943  
+944  ***********************************************************************************
+944! ***
+945  * ADJ means FY1618
+946  ***********************************************************************************
+946! ***;
+947  PROC FREQ DATA = &dat;
+948  FORMAT adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat adj1618fy. bho:
+948! bh1618fy.;
+949  TABLES adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat bh:;
+950  RUN;
+
+NOTE: There were 15124679 observations read from the data set DATA.ANALYSIS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           3.60 seconds
+      cpu time            3.57 seconds
+      
+
+951  
+952  %macro means_adj(FY);
+953  PROC MEANS DATA = &dat stackodsoutput n mean std min max;
+954  CLASS adj_pd_total_&fy.cat;
+955  VAR   adj_pd_&fy.pm;
+956  ods output summary= mus&FY (drop=_control_ Variable) ;
+957  RUN;
+958  
+959  PROC PRINT DATA = mus&fy (drop=_control_ Variable NObs); RUN;
+960  %mend;
+961  
+962  ods proclabel 'adj FY 1618 MEANS'; RUN;
+963  
+964  %means_adj(FY=16);
+MLOGIC(MEANS_ADJ):  Beginning execution.
+MLOGIC(MEANS_ADJ):  Parameter FY has value 16
+MPRINT(MEANS_ADJ):   PROC MEANS DATA = data.analysis stackodsoutput n mean std min max;
+MPRINT(MEANS_ADJ):   CLASS adj_pd_total_16cat;
+MPRINT(MEANS_ADJ):   VAR adj_pd_16pm;
+ERROR: Variable ADJ_PD_16PM not found.
+MPRINT(MEANS_ADJ):   ods output summary= mus16 (drop=_control_ Variable) ;
+MPRINT(MEANS_ADJ):   RUN;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+WARNING: Output 'summary' was not created.  Make sure that the output object name, 
+         label, or path is spelled correctly.  Also, verify that the appropriate 
+         procedure options are used to produce the requested output object.  For 
+         example, verify that the NOPRINT option is not used.
+
+MPRINT(MEANS_ADJ):   PROC PRINT DATA = mus16 (drop=_control_ Variable NObs);
+ERROR: File WORK.MUS16.DATA does not exist.
+MPRINT(MEANS_ADJ):   RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+MLOGIC(MEANS_ADJ):  Ending execution.
+965  %means_adj(FY=17);
+MLOGIC(MEANS_ADJ):  Beginning execution.
+MLOGIC(MEANS_ADJ):  Parameter FY has value 17
+
+
+MPRINT(MEANS_ADJ):   PROC MEANS DATA = data.analysis stackodsoutput n mean std min max;
+MPRINT(MEANS_ADJ):   CLASS adj_pd_total_17cat;
+MPRINT(MEANS_ADJ):   VAR adj_pd_17pm;
+ERROR: Variable ADJ_PD_17PM not found.
+MPRINT(MEANS_ADJ):   ods output summary= mus17 (drop=_control_ Variable) ;
+MPRINT(MEANS_ADJ):   RUN;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+WARNING: Output 'summary' was not created.  Make sure that the output object name, 
+         label, or path is spelled correctly.  Also, verify that the appropriate 
+         procedure options are used to produce the requested output object.  For 
+         example, verify that the NOPRINT option is not used.
+
+MPRINT(MEANS_ADJ):   PROC PRINT DATA = mus17 (drop=_control_ Variable NObs);
+ERROR: File WORK.MUS17.DATA does not exist.
+MPRINT(MEANS_ADJ):   RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+MLOGIC(MEANS_ADJ):  Ending execution.
+966  %means_adj(FY=18);
+MLOGIC(MEANS_ADJ):  Beginning execution.
+MLOGIC(MEANS_ADJ):  Parameter FY has value 18
+
+
+MPRINT(MEANS_ADJ):   PROC MEANS DATA = data.analysis stackodsoutput n mean std min max;
+MPRINT(MEANS_ADJ):   CLASS adj_pd_total_18cat;
+MPRINT(MEANS_ADJ):   VAR adj_pd_18pm;
+ERROR: Variable ADJ_PD_18PM not found.
+MPRINT(MEANS_ADJ):   ods output summary= mus18 (drop=_control_ Variable) ;
+MPRINT(MEANS_ADJ):   RUN;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+WARNING: Output 'summary' was not created.  Make sure that the output object name, 
+         label, or path is spelled correctly.  Also, verify that the appropriate 
+         procedure options are used to produce the requested output object.  For 
+         example, verify that the NOPRINT option is not used.
+
+MPRINT(MEANS_ADJ):   PROC PRINT DATA = mus18 (drop=_control_ Variable NObs);
+ERROR: File WORK.MUS18.DATA does not exist.
+MPRINT(MEANS_ADJ):   RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+MLOGIC(MEANS_ADJ):  Ending execution.
+967  
+968  
+
+
+969  PROC PRINTTO; RUN;
+

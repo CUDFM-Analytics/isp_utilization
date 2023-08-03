@@ -1,0 +1,89 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Writing ODS PDF output to DISK destination 
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\reports\cost_pc_genmod_2023-06-29
+      .pdf", printer "PDF".
+WARNING: Apparent symbolic reference ROOT not resolved.
+WARNING: The TITLE statement is ambiguous due to invalid options or unquoted text.
+
+
+NOTE: PROC GENMOD is modeling the probability that ind_pc_cost='1'. One way to change this to model 
+      the probability that ind_pc_cost='0' is to specify the DESCENDING option in the PROC 
+      statement.
+NOTE: Algorithm converged.
+NOTE: Algorithm converged.
+NOTE: The GENMOD procedure generated the model item store OUT.STORE_PROB_PCCOST.
+NOTE: PROCEDURE GENMOD used (Total process time):
+      real time           12:42.29
+      cpu time            11:38.67
+      
+
+WARNING: The TITLE statement is ambiguous due to invalid options or unquoted text.
+
+
+NOTE: The DESCENDING option applies only to the multinomial distribution with ordinal response.
+NOTE: Algorithm converged.
+NOTE: Algorithm converged.
+NOTE: The GENMOD procedure generated the model item store OUT.STORE_COST_PCCOST.
+NOTE: PROCEDURE GENMOD used (Total process time):
+      real time           8:20.07
+      cpu time            8:19.43
+      
+
+
+NOTE: There were 1893477 observations read from the data set DATA.ANALYSIS.
+      WHERE int=1;
+NOTE: There were 1893477 observations read from the data set DATA.ANALYSIS.
+      WHERE int=1;
+NOTE: The data set WORK.INTGROUP has 3786954 observations and 55 variables.
+NOTE: DATA statement used (Total process time):
+      real time           5.07 seconds
+      cpu time            4.95 seconds
+      
+
+
+NOTE: The data set WORK.P_INTGROUP has 3786954 observations and 56 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           10.30 seconds
+      cpu time            10.09 seconds
+      
+
+
+NOTE: The data set WORK.CP_INTGROUP has 3786954 observations and 57 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           9.77 seconds
+      cpu time            9.75 seconds
+      
+
+
+NOTE: There were 3786954 observations read from the data set WORK.CP_INTGROUP.
+NOTE: The data set OUT.COST_PC_MEAN_GENMOD has 3786954 observations and 58 variables.
+NOTE: DATA statement used (Total process time):
+      real time           25.14 seconds
+      cpu time            2.71 seconds
+      
+
+NOTE: Table OUT.COST_PC_AVP created, with 1 rows and 3 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           18.34 seconds
+      cpu time            0.62 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 3786954 observations read from the data set OUT.COST_PC_MEAN_GENMOD.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           1.55 seconds
+      cpu time            1.53 seconds
+      
+
