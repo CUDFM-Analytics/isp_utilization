@@ -980,3 +980,11 @@ tables int;
 run;
 * int=0 pct 87.48%
   int=1 pct 12.52%; 
+
+
+DATA data.analysis_final;
+/*Drop the vars you're not using in the modeling*/
+SET  data.analysis (DROP= bh_2016 bh_2017 bh_2018 adj_pd_total_16cat_orig adj_pd_total_17cat_orig 
+                    adj_pd_total_18cat_orig budget_grp_fmt_ana budget_grp_num budget_grp_num_r age
+                    n_pc_pm n_ed_pm n_ffs_bh_pm n_tel_pm age_cat_num);
+RUN; *08-03 15124679:39;
