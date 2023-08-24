@@ -1,128 +1,135 @@
 **********************************************************************************************
 AUTHOR   : KTW
 PROJECT  : ISP Utilization
-PURPOSE  : Macro, Visit dv's
+PURPOSE  : Macro, VISIT dv's
 VERSION  : 2023-06-22
 OUTPUT   : pdf & log file
-RELATIONSHIPS : 
-NOTES    : changed outcome vars so it's an integer (multiply all by 6)
+
+https://stats.oarc.ucla.edu/sas/dae/negative-binomial-regression/
+The param=ref option changes the coding from effect coding (default) to reference coding (dummy coding)
+The ref=first option changes the reference group to the first level of prog. 
+The type3 option is used to get the multi-degree-of-freedom test of cat vars in class statement 
 ***********************************************************************************************;
-%macro hurdle1(dat=,pvar=,nvar=,dv=);
-* Send log output to code folder, pdf results to reports folder for MG to view;
-%LET log   = &util./code/&dv._&today..log;
-%LET pdf   = &report./&dv._&today..pdf;
+%macro hurdle(dat=,prob=,visits=,dv=);
+
+/*SECTION 01: INTRO / CONFIG/ DOCUMENTATION*/
+OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+%LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
+             %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname)));
+%LET script  = %qsubstr(%sysget(SAS_EXECFILENAME), 1,
+               %length(%sysget(SAS_EXECFILENAME))-4); * remove .sas to use in log, pdf;
+%LET today = %SYSFUNC(today(), YYMMDD10.);
+%LET log   = &root&dv._&today..log;
 
 PROC PRINTTO LOG = "&log" NEW; RUN;
-ODS PDF FILE     = "&pdf" STARTPAGE = no;
 
-Title &dv.;
-
-proc odstext;
-p "Date: &today";
-p "Log File: &log";
-p "Results File: &pdf";
-RUN; 
-
-TITLE "Probability Model: " &dv.; 
-PROC GEE DATA  = &dat DESC;
-CLASS  mcaid_id int(ref="0") int_imp(ref="0") budget_grp_num_r 
-             race sex rae_person_new age_cat_num fqhc(ref ="0")
-             bh_oth16(ref="0")      bh_oth17(ref="0")       bh_oth18(ref="0")
-             bh_er16(ref="0")       bh_er17(ref="0")        bh_er18(ref="0")
-             bh_hosp16(ref="0")     bh_hosp17(ref="0")      bh_hosp18(ref="0")
-             adj_pd_total_16cat(ref="0")
-             adj_pd_total_17cat(ref="0")
-             adj_pd_total_18cat(ref="0")
-       &pvar(ref= "0") ;
-MODEL  &pvar = int int_imp time budget_grp_num_r race sex rae_person_new age_cat_num fqhc
-             bh_oth16               bh_oth17                bh_oth18
-             bh_er16                bh_er17                 bh_er18
-             bh_hosp16              bh_hosp17               bh_hosp18
-             adj_pd_total_16cat 
-             adj_pd_total_17cat 
-             adj_pd_total_18cat            / DIST=binomial LINK=logit ; 
+/*SECTION 02: PROB MODEL*/
+PROC GENMOD DATA  = &dat;
+CLASS mcaid_id     
+       int(ref='0')         int_imp(ref='0') 
+       budget_grp_new(ref='MAGI Eligible Children')
+       race(ref='non-Hispanic White/Caucasian')
+       sex(ref='Female')
+       rae_person_new(ref='3')
+       age_cat(ref='5') 
+       fqhc(ref ='0')
+       bh_oth16(ref='0')    bh_oth17(ref='0')       bh_oth18(ref='0')
+       bh_er16(ref='0')     bh_er17(ref='0')        bh_er18(ref='0')
+       bh_hosp16(ref='0')   bh_hosp17(ref='0')      bh_hosp18(ref='0')
+       adj_pd_total_16cat(ref='0')
+       adj_pd_total_17cat(ref='0')
+       adj_pd_total_18cat(ref='0') 
+       &prob;
+MODEL &prob(event='1') = int      int_imp     time 
+       season1         season2     season3
+       budget_grp_new  race        sex         rae_person_new 
+       age_cat         fqhc
+       bh_oth16        bh_oth17    bh_oth18
+       bh_er16         bh_er17     bh_er18
+       bh_hosp16       bh_hosp17   bh_hosp18
+       adj_pd_total_16cat 
+       adj_pd_total_17cat 
+       adj_pd_total_18cat / DIST=binomial; 
 REPEATED SUBJECT = mcaid_id / type=exch ; 
-store p_MODEL;
+store out.&dv._pmodel;
 run;
 
-* positive visit model ;
-TITLE "Visit Model: " &dv; 
-PROC GEE DATA  = &dat desc;
-WHERE &nvar > 0;
-CLASS mcaid_id 
-      int(ref="0") int_imp(ref="0") budget_grp_num_r 
-      race sex rae_person_new age_cat_num fqhc(ref ="0")
-      bh_oth16(ref="0")      bh_oth17(ref="0")       bh_oth18(ref="0")
-      bh_er16(ref="0")       bh_er17(ref="0")        bh_er18(ref="0")
-      bh_hosp16(ref="0")     bh_hosp17(ref="0")      bh_hosp18(ref="0")
-      adj_pd_total_16cat(ref="0")
-      adj_pd_total_17cat(ref="0")
-      adj_pd_total_18cat(ref="0");
-MODEL &nvar = time   season1    season2     season3
-                     int        int_imp 
-                     age_cat_num        race    sex       
-                     budget_grp_num_r   fqhc    rae_person_new 
-                     bh_er16    bh_er17     bh_er18
-                     bh_hosp16  bh_hosp17   bh_hosp18
-                     bh_oth16   bh_oth17    bh_oth18    
-                     adj_pd_total_16cat  
-                     adj_pd_total_17cat  
-                     adj_pd_total_18cat     / dist = negbin link = log ;
+/*SECTION 03: POSITIVE VISIT MODEL*/
+TITLE 'Visit Model'; 
+PROC GENMOD DATA  = &dat desc;
+WHERE &visits > 0;
+CLASS mcaid_id    
+       int(ref='0')         int_imp(ref='0') 
+       budget_grp_new(ref='MAGI Eligible Children')
+       race(ref='non-Hispanic White/Caucasian')
+       sex(ref='Female')
+       rae_person_new(ref='3')
+       age_cat(ref='5') 
+       fqhc(ref ='0')
+       bh_oth16(ref='0')    bh_oth17(ref='0')       bh_oth18(ref='0')
+       bh_er16(ref='0')     bh_er17(ref='0')        bh_er18(ref='0')
+       bh_hosp16(ref='0')   bh_hosp17(ref='0')      bh_hosp18(ref='0')
+       adj_pd_total_16cat(ref='0')
+       adj_pd_total_17cat(ref='0')
+       adj_pd_total_18cat(ref='0') ;
+MODEL &visits = int      int_imp     time 
+       season1         season2     season3
+       budget_grp_new  race        sex         rae_person_new 
+       age_cat         fqhc
+       bh_oth16        bh_oth17    bh_oth18
+       bh_er16         bh_er17     bh_er18
+       bh_hosp16       bh_hosp17   bh_hosp18
+       adj_pd_total_16cat 
+       adj_pd_total_17cat 
+       adj_pd_total_18cat  / dist=negbin link=log ;
 REPEATED SUBJECT = mcaid_id / type = exch;
-store n_model;
+store out.&dv._vmodel;
 RUN;
 TITLE; 
 
-* interest group ;
-* the group of interest (emancipated youth) is set twice, 
-  the top in the stack will be recoded as not emancipated (unexposed)
-  the bottom group keeps the emancipated status;
-
+/*SECTION 04: AGGREGATING ACTUAL, PREDICTED OUTCOMES W/ GROUP OF INTEREST*/
+* OUT:[intgroup]      IN :[&dat &dat]
+the group of interest (int, time-invariant intervention status) is set twice, 
+the top in the stack will be recoded as not participants (unexposed)
+the bottom group keeps the int=1  status------------------------------------------------ ;
 data intgroup;
   set &dat &dat (in = b);
-  where int = 1;
-  if ^b then int = 0;
+  where int_imp = 1;
+  if ^b then int_imp = 0;
   exposed = b;
 run;
 
-* the predictions for util and visits will be made for each person twice, once exposed and once unexposed;
-
-* prob of util ;
-proc plm restore=p_model;
-   score data=intgroup out=p_intgroup predicted=p_prob / ilink;
+* the predictions for util and visit will be made for each person twice, once exposed and once unexposed;
+* OUT:[P_INTGROUP]      IN :[out=out.&dv._pmodel]
+ prob of util------------------------------------------------ ;
+proc plm restore=out.&dv._pmodel;
+score data=intgroup out=p_intgroup predicted=p_prob / ilink;
 run;
 
-* prob of visits ;
-proc plm restore=n_model;
-   score data=p_intgroup out=np_intgroup predicted=p_visit / ilink;
+* OUT:[VP_INTGROUP]     IN :[out=out.&dv._vmodel]
+prob of visit -------------------------------------------------;
+proc plm restore=out.&dv._vmodel;
+score data=p_intgroup out=VP_intgroup predicted=p_visit / ilink;
 run;
 
-* person average visits is calculated ;
-data out.&dv._meanVisits;
-  set np_intgroup;
+* OUT:[out.&dv._mean] IN:[VP_intgroup]
+Person average visit is calculated------------------------------;
+data out.&dv._mean;
+  set VP_intgroup;
   a_visit = p_prob*p_visit;* (1-p term = 0);
 run;
 
-* group average visits is calculated and contrasted ;
+* OUT:[out.&dv._avp] IN:[out.&dv._mean]
+Group average visit is calculated and contrasted-----------------;
 proc sql;
 create table out.&dv._avp as
-  select mean(case when exposed=1 then a_visit else . end ) as n_visits_exposed,
-         mean(case when exposed=0 then a_visit else . end ) as n_visits_unexposed,
-  calculated n_visits_exposed - calculated n_visits_unexposed as n_visit_diff
-  from out.&dv._meanVisits;
+  select mean(case when exposed=1 then a_visit else . end ) as visit_exposed,
+         mean(case when exposed=0 then a_visit else . end ) as visit_unexposed,
+  calculated visit_exposed - calculated visit_unexposed as visit_diff
+  from out.&dv._mean;
 quit;
 
-TITLE "&dv._avp"; 
-proc print data = out.&dv._avp;
-run;
-
-proc means data = out.&dv._meanVisits;
-by exposed;
-var p_prob p_visit a_visit; 
-RUN; 
-
 PROC PRINTTO; RUN; 
-ODS PDF CLOSE; 
 %mend;
 
 

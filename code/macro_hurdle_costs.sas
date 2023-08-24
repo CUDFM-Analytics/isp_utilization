@@ -14,15 +14,17 @@ variables listed on the class statement
 %macro hurdle(dat=,pvar=,cvar=,dv=);
 
 /*SECTION 01: INTRO / CONFIG/ DOCUMENTATION*/
-OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+OPTIONS 
+/*pageno=1 linesize=88 pagesize=60 */
+SOURCE;
 %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
              %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname)));
 %LET script  = %qsubstr(%sysget(SAS_EXECFILENAME), 1,
                %length(%sysget(SAS_EXECFILENAME))-4); * remove .sas to use in log, pdf;
 %LET today = %SYSFUNC(today(), YYMMDD10.);
-%LET log   = &root&dv._&today..log;
+%LET log   = &root&dv._int_imp_&today..log;
 
-PROC PRINTTO LOG = "&log" NEW; RUN;
+PROC PRINTTO LOG = "&log"; RUN;
 
 /*SECTION 02: PROB MODEL*/
 PROC GENMOD DATA  = &dat;
@@ -95,8 +97,8 @@ the top in the stack will be recoded as not participants (unexposed)
 the bottom group keeps the int=1  status------------------------------------------------ ;
 data intgroup;
   set &dat &dat (in = b);
-  where int = 1;
-  if ^b then int = 0;
+  where int_imp = 1;
+  if ^b then int_imp = 0;
   exposed = b;
 run;
 
@@ -113,21 +115,21 @@ proc plm restore=out.&dv._cmodel;
    score data=p_intgroup out=cp_intgroup predicted=p_cost / ilink;
 run;
 
-* OUT:[out.&dv._meanCost] IN:[cp_intgroup]
+* OUT:[out.&dv._mean] IN:[cp_intgroup]
 Person average cost is calculated------------------------------;
-data out.&dv._meanCost;
+data out.&dv._mean;
   set cp_intgroup;
   a_cost = p_prob*p_cost;* (1-p term = 0);
 run;
 
-* OUT:[out.&dv._avp] IN:[out.&dv._meanCost]
+* OUT:[out.&dv._avp] IN:[out.&dv._mean]
 Group average cost is calculated and contrasted-----------------;
 proc sql;
 create table out.&dv._avp as
   select mean(case when exposed=1 then a_cost else . end ) as cost_exposed,
          mean(case when exposed=0 then a_cost else . end ) as cost_unexposed,
   calculated cost_exposed - calculated cost_unexposed as cost_diff
-  from out.&dv._meanCost;
+  from out.&dv._mean;
 quit;
 
 PROC PRINTTO; RUN; 

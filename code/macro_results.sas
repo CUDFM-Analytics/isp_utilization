@@ -8,17 +8,18 @@ OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
                %length(%sysget(SAS_EXECFILEPATH))-4);
 
 %LET today   = %SYSFUNC(today(), YYMMDD10.);
-%LET pdf     = &root./code/&dv._&today..pdf;
+%LET pdf     = &root./code/&dv._int_imp_&today..pdf;
 
 ODS PDF FILE = "&pdf" STARTPAGE = no;
 
 TITLE "&dv";
 
 proc odstext;
-p "DATE: &today";
-p "DV: &dv";
-p "prob model plm: out.&pmodel";
-p "cost model plm: out.&cmodel";
+p "Probability DV: &pvar";
+p "Cost DV: &cvar"; 
+p ""; 
+p "prob plm: out.&pmodel";
+p "cost plm: out.&cmodel";
 p "";
 RUN; 
 
@@ -29,7 +30,7 @@ PROC PRINT data = out.&dv._avp;
 RUN;
 
 Title "Means";
-PROC MEANS data = out.&dv._meancost;
+PROC MEANS data = out.&dv._mean;
 by   exposed;
 var  p_prob p_cost a_cost; 
 RUN;  
