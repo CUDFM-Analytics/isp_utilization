@@ -10,12 +10,9 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 *include macro program ;
 %INCLUDE "&projRoot./code/util_bootstrap/MACRO_parallel.sas";
 
-%LET folder = &projRoot/code/util_bootstrap;
-
-%put _global_;
 * kick off the processes ;
 %parallel(
-    folder  = &folder                       /* data, program location */,
+    folder  = &projRoot/code/util_bootstrap /* data, program location */,
     progName= program_to_boot_cost_pc.sas   /* name of the program that will act on the data  */,
     taskName= mytask                        /*, place holder names for the individual tasks */,
     nprocess= 8                             /* number of processes to activate */,

@@ -47,7 +47,6 @@ two new variables are added:
 !!!!! the old ID variable is still included, BUT YOU CAN NOT US IT IN THIS DATA FOR STATISTICS!!!!!!!!!!!
 ;
 
-
 ods select none;
 %resample(data=&data
         , out=_resample_out_

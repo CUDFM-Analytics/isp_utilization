@@ -1,22 +1,31 @@
 **********************************************************************************************
-AUTHOR   : Carter Sevick, adapted by KW
+AUTHOR   : Carter Sevick, adapted for ISP by KW
 PROJECT  : ISP
 PURPOSE  : define the bootstrap process to parallelize
 VERSION  : 2023-08-24
 HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 CHANGES  : -moved projRoot, libname in, libname out to config_boot
-***********************************************************************************************;
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config_boot.sas";
+***********************************************************************************************
+
+STEPS: 
+1. Change macro value for indicators: ind_cost, cost (rows 15:16) 
+2. change out for each DV?? 
+;
+
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_bootstrap/00_config_boot.sas"; 
+libname out "&projRoot\data_boot_processed";
+
+* macro programs;
 %LET ind_cost = ind_pc_cost;
 %LET cost     = adj_pd_pc_tc; 
 
 * INCLUDE macro;
-%INCLUDE "&projRoot\code\macro_resample_V4.sas";
+%INCLUDE "&projRoot\code\util_bootstrap\macro_resample_V4.sas";
 * get process parameters ;
 ** process number ;
 %LET   i = %scan(&SYSPARM,1,%str( ));
 ** seed number ;
-%LET    seed = %scan(&SYSPARM,2,%str( ));
+%LET   seed = %scan(&SYSPARM,2,%str( ));
 ** N bootstrap samples ;
 %LET    N = %scan(&SYSPARM,3,%str( ));
 
@@ -34,7 +43,7 @@ ODS SELECT NONE;
         , seed=&seed
         , bootUnit=bootUnit
         , repName = replicate
-        , samprate = (1.0 .20)
+        , samprate = (1 .20)
 );
 
 * save a copy of the booted data ;
