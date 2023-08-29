@@ -1,4 +1,4 @@
-1                                                          The SAS System                             10:01 Tuesday, August 29, 2023
+1                                                          The SAS System                             11:11 Tuesday, August 29, 2023
 
 NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
 NOTE: All registry changes will be lost at the end of the session.
@@ -22,20 +22,13 @@ NOTE: Analytical products:
       SAS/IML 15.2
       SAS/QC 15.2
 
-WARNING: Your system is scheduled to expire on September 28, 2023, which is 30 days from now. The 
-         SAS System will no longer function on or after that date. Please contact your SAS 
-         Installation Representative to obtain your updated SAS Installation Data (SID) file, which 
-         includes SETINIT information.
-To locate the name of your SAS Installation Representative go to http://support.sas.com/repfinder 
-and provide your site number 70082279 and company name as UNIVERSITY OF COLORADO SYSTEM - SFA - 
-T&R. On the SAS REP list provided, locate the REP for operating system Windows.
 NOTE: Additional host information:
 
  X64_10PRO WIN 10.0.19041  Workstation
 
 NOTE: SAS initialization used:
-      real time           0.33 seconds
-      cpu time            0.32 seconds
+      real time           0.32 seconds
+      cpu time            0.35 seconds
       
 1          *****************************************************************************************
 1        ! *****
@@ -54,8 +47,6 @@ NOTE: SAS initialization used:
 13         ;
 14         
 15         %INCLUDE
-2                                          The SAS System             10:01 Tuesday, August 29, 2023
-
 15       ! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_bootstrap/00_confi
 15       ! g_boot.sas";
 NOTE: Libref IN was successfully assigned as follows: 
@@ -63,6 +54,8 @@ NOTE: Libref IN was successfully assigned as follows:
       Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
 NOTE: Libref OUT was successfully assigned as follows: 
       Engine:        V9 
+2                                          The SAS System             11:11 Tuesday, August 29, 2023
+
       Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
 33         libname out "&projRoot\data_boot_processed";
 NOTE: Libref OUT was successfully assigned as follows: 
@@ -90,9 +83,6 @@ NOTE: Libref OUT was successfully assigned as follows:
 159        !!!!! the old ID variable is still included, BUT YOU CAN NOT USE IT IN THIS DATA FOR
 159      ! STATISTICS!!!!!!!!!!!;
 160        ODS SELECT NONE;
-WARNING: The Base SAS Software product with which SASODR is associated will be expiring soon, and 
-         is currently in warning mode to indicate this upcoming expiration. Please run PROC SETINIT 
-         to obtain more information on your warning period.
 161        %resample(data= &data
 162                , out=_resample_out_
 163                , subject=mcaid_id
@@ -108,34 +98,132 @@ NOTE: There were 500000 observations read from the data set IN.MINI.
 NOTE: 73836 observations with duplicate key values were deleted.
 NOTE: The data set WORK._DEDUP_ has 426164 observations and 2 variables.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           2.82 seconds
-      cpu time            0.45 seconds
-3                                          The SAS System             10:01 Tuesday, August 29, 2023
-
+      real time           2.09 seconds
+      cpu time            0.23 seconds
       
 
-WARNING: The SAS/STAT product with which SURVEYSELECT is associated will be expiring soon, and is 
-         currently in warning mode to indicate this upcoming expiration. Please run PROC SETINIT to 
-         obtain more information on your warning period.
 
 NOTE: The data set WORK._RESAMPLE_OUT__TMP has 24100461 observations and 6 variables.
 NOTE: PROCEDURE SURVEYSELECT used (Total process time):
-      real time           6.44 seconds
-      cpu time            6.40 seconds
+      real time           6.21 seconds
+      cpu time            6.18 seconds
       
 
+
+3                                          The SAS System             11:11 Tuesday, August 29, 2023
 
 NOTE: There were 24100461 observations read from the data set WORK._RESAMPLE_OUT__TMP.
 NOTE: The data set WORK._RESAMPLE_OUT__TMP has 24100461 observations and 6 variables.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           15.41 seconds
-      cpu time            16.31 seconds
+      real time           15.75 seconds
+      cpu time            17.82 seconds
       
 
 
 NOTE: There were 24100461 observations read from the data set WORK._RESAMPLE_OUT__TMP.
 NOTE: The data set WORK._RESAMPLE_OUT__TMP has 24100461 observations and 7 variables.
 NOTE: DATA statement used (Total process time):
-      real time           4.57 seconds
-      cpu time            4.09 seconds
+      real time           4.71 seconds
+      cpu time            4.37 seconds
+      
+
+NOTE: Table WORK._RESAMPLE_OUT_ created, with 28340341 rows and 47 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2:18.82
+      cpu time            58.39 seconds
+      
+
+
+NOTE: Deleting WORK._DEDUP_ (memtype=DATA).
+NOTE: Deleting WORK._RESAMPLE_OUT__TMP (memtype=DATA).
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.40 seconds
+      cpu time            0.40 seconds
+      
+
+171        
+172        * save a copy of the booted data ;
+173        DATA out._resample_out_&i;
+174        SET _resample_out_;
+175        RUN;
+
+NOTE: There were 28340341 observations read from the data set WORK._RESAMPLE_OUT_.
+NOTE: The data set OUT._RESAMPLE_OUT_6 has 28340341 observations and 47 variables.
+NOTE: DATA statement used (Total process time):
+      real time           12:41.38
+      cpu time            26.57 seconds
+      
+
+176        
+177        * run models and output store objects ;
+178        
+179        * probability model
+180        QUESTIONS why isn't pvar in the class statement? What happens to mcaid_id in class but
+180      ! not model?;
+181        ODS SELECT NONE;
+182        OPTIONS NONOTES;
+183        PROC GENMOD DATA = _resample_out_ desc;
+184           BY    replicate;
+4                                          The SAS System             11:11 Tuesday, August 29, 2023
+
+185           CLASS bootunit mcaid_id int (ref='0') int_imp (ref='0') budget_grp_new (ref='MAGI
+185      ! Eligible Children')
+186                 race (ref='non-Hispanic White/Caucasian') sex (ref='Female') rae_person_new
+186      ! (ref='3') age_cat(ref='6') fqhc(ref ='0')
+187                 bh_oth16 (ref='0') bh_oth17 (ref='0') bh_oth18 (ref='0') bh_er16 (ref='0')
+187      ! bh_er17 (ref='0') bh_er18 (ref='0')
+188                 bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0')
+189                 adj_pd_total_16cat(ref='0') adj_pd_total_17cat(ref='0')
+189      ! adj_pd_total_18cat(ref='0');
+190           MODEL &ind_cost(event="1") = int int_imp budget_grp_new race sex rae_person_new
+190      ! age_cat fqhc
+191                                     bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16
+191      !  bh_hosp17 bh_hosp18
+192                                     adj_pd_total_16cat adj_pd_total_17catadj_pd_total_18cat /
+ERROR: Variable adj_pd_total_17catadj_pd_total_1 not found.
+193                 DIST=binomial LINK=logit;
+194           REPEATED SUBJECT = bootunit;
+195           STORE out.prob_stored_&i;
+196        RUN;
+197        ODS SELECT ALL;
+198        OPTIONS NOTES;
+199        
+200        * cost model ;
+201        ODS SELECT NONE;
+202        OPTIONS NONOTES;
+203        PROC GENMOD DATA = _resample_out_  ;
+204           BY    replicate;
+205           WHERE &cost >0;
+206           CLASS bootunit mcaid_id int (ref='0') int_imp (ref='0') budget_grp_new (ref='MAGI
+206      ! Eligible Children')
+207                 race (ref='non-Hispanic White/Caucasian') sex (ref='Female') rae_person_new
+207      ! (ref='3') age_cat(ref='6') fqhc(ref ='0')
+208                 bh_oth16 (ref='0') bh_oth17 (ref='0') bh_oth18 (ref='0') bh_er16 (ref='0')
+208      ! bh_er17 (ref='0') bh_er18 (ref='0')
+209                 bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0')
+210                 adj_pd_total_16cat(ref='0') adj_pd_total_17cat(ref='0')
+210      ! adj_pd_total_18cat(ref='0');
+211           MODEL &cost = int int_imp budget_grp_new race sex rae_person_new age_cat fqhc
+212                                     bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16
+212      !  bh_hosp17 bh_hosp18
+213                                     adj_pd_total_16cat adj_pd_total_17catadj_pd_total_18cat /
+ERROR: Variable adj_pd_total_17catadj_pd_total_1 not found.
+214                 DIST = gamma LINK = log;
+215           REPEATED SUBJECT = bootunit;
+216           STORE out.cost_stored_&i;
+217        RUN;
+218        ODS SELECT ALL;
+219        OPTIONS NOTES;
+
+
+ERROR: Errors printed on page 4.
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+5                                          The SAS System             11:11 Tuesday, August 29, 2023
+
+      real time           15:29.83
+      cpu time            1:54.46
       

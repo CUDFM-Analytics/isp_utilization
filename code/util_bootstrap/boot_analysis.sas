@@ -5,7 +5,7 @@ PURPOSE  : Part 3 of 3>  combine the parallel process results and analyze
 VERSION  : 2023-08-24
 HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 ***********************************************************************************************;
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_bootstrap/config_boot.sas"; 
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_bootstrap/00_config_boot.sas"; 
 
 %macro combineAndScore(data= /*list datasets to combine and score*/,
                        lib = out /*libname for the data location */,
