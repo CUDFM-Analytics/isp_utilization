@@ -1,0 +1,933 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.16 seconds
+      cpu time            0.82 seconds
+
+1    **********************************************************************************************
+2    AUTHOR   : Carter Sevick (adapted: KW)
+3    PROJECT  : ISP Utilization Analysis
+4    PURPOSE  : bootstrap specs
+5    VERSION  : 2023-08-24
+6    HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+7    ***********************************************************************************************
+7  ! ;
+8    %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+9    OPTIONS FMTSEARCH = (in);
+10
+11   *include macro program ;
+12   %INCLUDE "&projRoot./code/util_bootstrap/MACRO_parallel.sas";
+107
+108  * kick off the processes ;
+109  %parallel(
+110      folder  = &projRoot/code/util_bootstrap /* data, program location */,
+111      progName= program_to_boot_cost_pc.sas   /* name of the program that will act on the data
+111! */,
+112      taskName= mytask                        /*, place holder names for the individual tasks */,
+113      nprocess= 8                             /* number of processes to activate */,
+114      nboot   = 500                           /* total number of bootstrap iterations*/,
+115      seed    = 837567                        /* a seed value for replicability */,
+116      topseed = 1000000000                    /* largest possible seed */
+117  );
+
+NOTE: The data set WORK._SEEDS_ has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+
+NOTE: The data set WORK._NBOOTS_ has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+NOTE: Task "task_mytask8" produced no LOG/Output.
+NOTE: Task "task_mytask4" produced no LOG/Output.
+NOTE: Task "task_mytask2" produced no LOG/Output.
+NOTE: Task "task_mytask1" produced no LOG/Output.
+NOTE: Task "task_mytask3" produced no LOG/Output.
+NOTE: Task "task_mytask7" produced no LOG/Output.
+NOTE: Task "task_mytask6" produced no LOG/Output.
+NOTE: Task "task_mytask5" produced no LOG/Output.
+118  **********************************************************************************************
+119  AUTHOR   : Carter Sevick (KW adapted)
+120  PROJECT  : ISP
+121  PURPOSE  : Part 3 of 3>  combine the parallel process results and analyze
+122  VERSION  : 2023-08-30
+123  HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+124  CHANGES  : [row 108] added _diff_
+125  ***********************************************************************************************
+125! ;
+126  %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+127
+128  * location for bootstrap products ;
+129  libname dataPro "&projRoot\data_boot_processed";
+NOTE: Libref DATAPRO was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
+130
+131  * Get formats;
+132  libname in      "&projRoot\data";
+NOTE: Libref IN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
+133  OPTIONS FMTSEARCH = (in);
+134
+135  %macro combineAndScore(data=                /*list datasets to combine and score*/,
+136                         lib = dataPro        /*libname for the data location */,
+137                         prob= prob_stored_   /*prefix of the store objects for the probability
+137! model */,
+138                         cost= cost_stored_   /*prefix of the store objects for the cost model
+138! */,
+139                         subset=              /* subset of the data to score */,
+140                         exposure =           /* define exposure */,
+141                         compare =            /* define comparison */,
+142                         out =                /* name dataset for bootstrap results */
+143  );
+144
+145  %local N_data;
+146
+147  * count data sets to score ;
+148  %let N_data = %sysfunc(countw(&data, %str( )));
+149
+150  * define exposure groups, score the results and aggregate by boot replicate ;
+151  %do i = 1 %to &N_data;
+152
+153    data _tmp_&i;
+154      set &lib..%scan(&data, &i, %str( )) (in = a) &lib..%scan(&data, &i, %str( ));
+155      %if %scan(&subset, 1) NE %then %do;
+156        where &subset;
+157      %end;
+158
+159      if a then do;
+160        _score_group_ = 1;
+161        &exposure;
+162      end;
+163
+164      if ^a then do;
+165        _score_group_ = 2;
+166        &compare;
+167      end;
+168
+169    run;
+170
+171    * the predictions for util and cost will be made for each person twice, once exposed and once
+171!  unexposed;
+172    * prob of util ;
+173    ods select none;
+174    proc plm restore=&lib..&prob&i;
+175       score data=_tmp_&i out=p_tmp_&i predicted=pred_prob / ilink;
+176    run;
+177
+178    * predicted cost ;
+179    proc plm restore=&lib..&cost&i;
+180       score data=p_tmp_&i out=cp_tmp_&i predicted=pred_cost / ilink;
+181    run;
+182    ods select all;
+183
+184    * average cost is calculated ;
+185    proc sql;
+186    create table _calcCost_&i as
+187      select  &i as p_set, /* tracker for the parallel run */
+188              replicate, _score_group_,  mean(pred_prob*pred_cost) as m_cost
+189      from cp_tmp_&i
+190      group by p_set, replicate, _score_group_
+191      order by p_set, replicate, _score_group_;
+192    quit;
+193
+194  %end;
+195
+196  * combine the results from each parallel process ;
+197  DATA _allPred_;
+198  SET _calcCost_:;
+199  RUN;
+200
+201  * contrast the risk groups ;
+202  DATA &out;
+203    MERGE _allPred_(keep =  m_cost _score_group_  p_set replicate
+204                    where = (_score_group_ = 1))
+205          _allPred_(keep =  m_cost _score_group_ p_set replicate
+206                    rename = (m_cost = m_cost_2)
+207                    where = (_score_group_ = 2));
+208    BY p_set replicate ;
+209
+210    DIFF = m_cost - m_cost_2;
+211
+212    DROP _score_group_;
+213  RUN;
+214
+215  %mend;
+216  option mprint;
+217
+218  * call the MACRO analysis ;
+219  %combineAndScore(
+220      data     = _resample_out_1 _resample_out_2 _resample_out_3 _resample_out_4 _resample_out_5
+220! _resample_out_6 _resample_out_7 _resample_out_8 /*list datasets to combine and score*/,
+221      lib      = dataPro              /*libname for the data location */,
+222      prob     = prob_stored_         /*prefix of the store objects for the probability model */,
+223      cost     = cost_stored_         /*prefix of the store objects for the cost model */,
+224      subset   = %str(int_imp = 1)    /* subset of the data to score */,
+225      exposure = %str(int_imp = 1;)   /* define exposure */,
+226      compare  = %str(int_imp = 0;)   /* define comparison */,
+227      out      = _diff_
+228  );
+MPRINT(COMBINEANDSCORE):   * count data sets to score ;
+MPRINT(COMBINEANDSCORE):   * define exposure groups, score the results and aggregate by boot
+replicate ;
+MPRINT(COMBINEANDSCORE):   data _tmp_1;
+MPRINT(COMBINEANDSCORE):   set dataPro._resample_out_1 (in = a) dataPro._resample_out_1;
+MPRINT(COMBINEANDSCORE):   where int_imp = 1;
+MPRINT(COMBINEANDSCORE):   if a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 1;
+MPRINT(COMBINEANDSCORE):   int_imp = 1;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   if ^a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 2;
+MPRINT(COMBINEANDSCORE):   int_imp = 0;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: There were 537595 observations read from the data set DATAPRO._RESAMPLE_OUT_1.
+      WHERE int_imp=1;
+NOTE: There were 537595 observations read from the data set DATAPRO._RESAMPLE_OUT_1.
+      WHERE int_imp=1;
+NOTE: The data set WORK._TMP_1 has 1075190 observations and 48 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:39.84
+      cpu time            5.25 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * the predictions for util and cost will be made for each person twice,
+once exposed and once unexposed;
+MPRINT(COMBINEANDSCORE):   * prob of util ;
+MPRINT(COMBINEANDSCORE):   ods select none;
+NOTE: Writing HTML Body file: sashtml.htm
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.prob_stored_1;
+MPRINT(COMBINEANDSCORE):   score data=_tmp_1 out=p_tmp_1 predicted=pred_prob / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.P_TMP_1 has 1075190 observations and 49 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           18.39 seconds
+      cpu time            16.12 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * predicted cost ;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.cost_stored_1;
+MPRINT(COMBINEANDSCORE):   score data=p_tmp_1 out=cp_tmp_1 predicted=pred_cost / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.CP_TMP_1 has 1075190 observations and 50 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           9.18 seconds
+      cpu time            7.45 seconds
+
+
+MPRINT(COMBINEANDSCORE):   ods select all;
+MPRINT(COMBINEANDSCORE):   * average cost is calculated ;
+MPRINT(COMBINEANDSCORE):   proc sql;
+MPRINT(COMBINEANDSCORE):   create table _calcCost_1 as select 1 as p_set, replicate, _score_group_,
+mean(pred_prob*pred_cost) as m_cost from cp_tmp_1 group by p_set, replicate, _score_group_ order by
+p_set, replicate, _score_group_;
+NOTE: At least one nonessential grouping column reference has been removed from a GROUP BY's
+      reference list.
+NOTE: At least one nonessential ordering column reference has been removed from an ORDER BY's
+      reference list.
+NOTE: Table WORK._CALCCOST_1 created, with 126 rows and 4 columns.
+
+MPRINT(COMBINEANDSCORE):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.29 seconds
+      cpu time            0.42 seconds
+
+
+MPRINT(COMBINEANDSCORE):   data _tmp_2;
+MPRINT(COMBINEANDSCORE):   set dataPro._resample_out_2 (in = a) dataPro._resample_out_2;
+MPRINT(COMBINEANDSCORE):   where int_imp = 1;
+MPRINT(COMBINEANDSCORE):   if a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 1;
+MPRINT(COMBINEANDSCORE):   int_imp = 1;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   if ^a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 2;
+MPRINT(COMBINEANDSCORE):   int_imp = 0;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: There were 537132 observations read from the data set DATAPRO._RESAMPLE_OUT_2.
+      WHERE int_imp=1;
+NOTE: There were 537132 observations read from the data set DATAPRO._RESAMPLE_OUT_2.
+      WHERE int_imp=1;
+NOTE: The data set WORK._TMP_2 has 1074264 observations and 48 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:11.48
+      cpu time            5.37 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * the predictions for util and cost will be made for each person twice,
+once exposed and once unexposed;
+MPRINT(COMBINEANDSCORE):   * prob of util ;
+MPRINT(COMBINEANDSCORE):   ods select none;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.prob_stored_2;
+MPRINT(COMBINEANDSCORE):   score data=_tmp_2 out=p_tmp_2 predicted=pred_prob / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.P_TMP_2 has 1074264 observations and 49 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           20.39 seconds
+      cpu time            16.51 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * predicted cost ;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.cost_stored_2;
+MPRINT(COMBINEANDSCORE):   score data=p_tmp_2 out=cp_tmp_2 predicted=pred_cost / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.CP_TMP_2 has 1074264 observations and 50 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           10.38 seconds
+      cpu time            7.43 seconds
+
+
+MPRINT(COMBINEANDSCORE):   ods select all;
+MPRINT(COMBINEANDSCORE):   * average cost is calculated ;
+MPRINT(COMBINEANDSCORE):   proc sql;
+MPRINT(COMBINEANDSCORE):   create table _calcCost_2 as select 2 as p_set, replicate, _score_group_,
+mean(pred_prob*pred_cost) as m_cost from cp_tmp_2 group by p_set, replicate, _score_group_ order by
+p_set, replicate, _score_group_;
+NOTE: At least one nonessential grouping column reference has been removed from a GROUP BY's
+      reference list.
+NOTE: At least one nonessential ordering column reference has been removed from an ORDER BY's
+      reference list.
+NOTE: Table WORK._CALCCOST_2 created, with 126 rows and 4 columns.
+
+MPRINT(COMBINEANDSCORE):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.27 seconds
+      cpu time            0.34 seconds
+
+
+MPRINT(COMBINEANDSCORE):   data _tmp_3;
+MPRINT(COMBINEANDSCORE):   set dataPro._resample_out_3 (in = a) dataPro._resample_out_3;
+MPRINT(COMBINEANDSCORE):   where int_imp = 1;
+MPRINT(COMBINEANDSCORE):   if a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 1;
+MPRINT(COMBINEANDSCORE):   int_imp = 1;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   if ^a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 2;
+MPRINT(COMBINEANDSCORE):   int_imp = 0;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: There were 537715 observations read from the data set DATAPRO._RESAMPLE_OUT_3.
+      WHERE int_imp=1;
+NOTE: There were 537715 observations read from the data set DATAPRO._RESAMPLE_OUT_3.
+      WHERE int_imp=1;
+NOTE: The data set WORK._TMP_3 has 1075430 observations and 48 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:43.28
+      cpu time            5.68 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * the predictions for util and cost will be made for each person twice,
+once exposed and once unexposed;
+MPRINT(COMBINEANDSCORE):   * prob of util ;
+MPRINT(COMBINEANDSCORE):   ods select none;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.prob_stored_3;
+MPRINT(COMBINEANDSCORE):   score data=_tmp_3 out=p_tmp_3 predicted=pred_prob / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.P_TMP_3 has 1075430 observations and 49 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           17.73 seconds
+      cpu time            15.92 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * predicted cost ;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.cost_stored_3;
+MPRINT(COMBINEANDSCORE):   score data=p_tmp_3 out=cp_tmp_3 predicted=pred_cost / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.CP_TMP_3 has 1075430 observations and 50 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           9.43 seconds
+      cpu time            7.57 seconds
+
+
+MPRINT(COMBINEANDSCORE):   ods select all;
+MPRINT(COMBINEANDSCORE):   * average cost is calculated ;
+MPRINT(COMBINEANDSCORE):   proc sql;
+MPRINT(COMBINEANDSCORE):   create table _calcCost_3 as select 3 as p_set, replicate, _score_group_,
+mean(pred_prob*pred_cost) as m_cost from cp_tmp_3 group by p_set, replicate, _score_group_ order by
+p_set, replicate, _score_group_;
+NOTE: At least one nonessential grouping column reference has been removed from a GROUP BY's
+      reference list.
+NOTE: At least one nonessential ordering column reference has been removed from an ORDER BY's
+      reference list.
+NOTE: Table WORK._CALCCOST_3 created, with 126 rows and 4 columns.
+
+MPRINT(COMBINEANDSCORE):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.29 seconds
+      cpu time            0.46 seconds
+
+
+MPRINT(COMBINEANDSCORE):   data _tmp_4;
+MPRINT(COMBINEANDSCORE):   set dataPro._resample_out_4 (in = a) dataPro._resample_out_4;
+MPRINT(COMBINEANDSCORE):   where int_imp = 1;
+MPRINT(COMBINEANDSCORE):   if a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 1;
+MPRINT(COMBINEANDSCORE):   int_imp = 1;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   if ^a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 2;
+MPRINT(COMBINEANDSCORE):   int_imp = 0;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: There were 538338 observations read from the data set DATAPRO._RESAMPLE_OUT_4.
+      WHERE int_imp=1;
+NOTE: There were 538338 observations read from the data set DATAPRO._RESAMPLE_OUT_4.
+      WHERE int_imp=1;
+NOTE: The data set WORK._TMP_4 has 1076676 observations and 48 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:42.45
+      cpu time            5.09 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * the predictions for util and cost will be made for each person twice,
+once exposed and once unexposed;
+MPRINT(COMBINEANDSCORE):   * prob of util ;
+MPRINT(COMBINEANDSCORE):   ods select none;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.prob_stored_4;
+MPRINT(COMBINEANDSCORE):   score data=_tmp_4 out=p_tmp_4 predicted=pred_prob / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.P_TMP_4 has 1076676 observations and 49 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           18.08 seconds
+      cpu time            15.87 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * predicted cost ;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.cost_stored_4;
+MPRINT(COMBINEANDSCORE):   score data=p_tmp_4 out=cp_tmp_4 predicted=pred_cost / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.CP_TMP_4 has 1076676 observations and 50 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           9.33 seconds
+      cpu time            7.53 seconds
+
+
+MPRINT(COMBINEANDSCORE):   ods select all;
+MPRINT(COMBINEANDSCORE):   * average cost is calculated ;
+MPRINT(COMBINEANDSCORE):   proc sql;
+MPRINT(COMBINEANDSCORE):   create table _calcCost_4 as select 4 as p_set, replicate, _score_group_,
+mean(pred_prob*pred_cost) as m_cost from cp_tmp_4 group by p_set, replicate, _score_group_ order by
+p_set, replicate, _score_group_;
+NOTE: At least one nonessential grouping column reference has been removed from a GROUP BY's
+      reference list.
+NOTE: At least one nonessential ordering column reference has been removed from an ORDER BY's
+      reference list.
+NOTE: Table WORK._CALCCOST_4 created, with 126 rows and 4 columns.
+
+MPRINT(COMBINEANDSCORE):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.28 seconds
+      cpu time            0.48 seconds
+
+
+MPRINT(COMBINEANDSCORE):   data _tmp_5;
+MPRINT(COMBINEANDSCORE):   set dataPro._resample_out_5 (in = a) dataPro._resample_out_5;
+MPRINT(COMBINEANDSCORE):   where int_imp = 1;
+MPRINT(COMBINEANDSCORE):   if a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 1;
+MPRINT(COMBINEANDSCORE):   int_imp = 1;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   if ^a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 2;
+MPRINT(COMBINEANDSCORE):   int_imp = 0;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: There were 538230 observations read from the data set DATAPRO._RESAMPLE_OUT_5.
+      WHERE int_imp=1;
+NOTE: There were 538230 observations read from the data set DATAPRO._RESAMPLE_OUT_5.
+      WHERE int_imp=1;
+NOTE: The data set WORK._TMP_5 has 1076460 observations and 48 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:40.49
+      cpu time            5.53 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * the predictions for util and cost will be made for each person twice,
+once exposed and once unexposed;
+MPRINT(COMBINEANDSCORE):   * prob of util ;
+MPRINT(COMBINEANDSCORE):   ods select none;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.prob_stored_5;
+MPRINT(COMBINEANDSCORE):   score data=_tmp_5 out=p_tmp_5 predicted=pred_prob / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.P_TMP_5 has 1076460 observations and 49 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           17.71 seconds
+      cpu time            15.81 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * predicted cost ;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.cost_stored_5;
+MPRINT(COMBINEANDSCORE):   score data=p_tmp_5 out=cp_tmp_5 predicted=pred_cost / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.CP_TMP_5 has 1076460 observations and 50 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           8.74 seconds
+      cpu time            7.68 seconds
+
+
+MPRINT(COMBINEANDSCORE):   ods select all;
+MPRINT(COMBINEANDSCORE):   * average cost is calculated ;
+MPRINT(COMBINEANDSCORE):   proc sql;
+MPRINT(COMBINEANDSCORE):   create table _calcCost_5 as select 5 as p_set, replicate, _score_group_,
+mean(pred_prob*pred_cost) as m_cost from cp_tmp_5 group by p_set, replicate, _score_group_ order by
+p_set, replicate, _score_group_;
+NOTE: At least one nonessential grouping column reference has been removed from a GROUP BY's
+      reference list.
+NOTE: At least one nonessential ordering column reference has been removed from an ORDER BY's
+      reference list.
+NOTE: Table WORK._CALCCOST_5 created, with 126 rows and 4 columns.
+
+MPRINT(COMBINEANDSCORE):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.28 seconds
+      cpu time            0.37 seconds
+
+
+MPRINT(COMBINEANDSCORE):   data _tmp_6;
+MPRINT(COMBINEANDSCORE):   set dataPro._resample_out_6 (in = a) dataPro._resample_out_6;
+MPRINT(COMBINEANDSCORE):   where int_imp = 1;
+MPRINT(COMBINEANDSCORE):   if a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 1;
+MPRINT(COMBINEANDSCORE):   int_imp = 1;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   if ^a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 2;
+MPRINT(COMBINEANDSCORE):   int_imp = 0;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: There were 538819 observations read from the data set DATAPRO._RESAMPLE_OUT_6.
+      WHERE int_imp=1;
+NOTE: There were 538819 observations read from the data set DATAPRO._RESAMPLE_OUT_6.
+      WHERE int_imp=1;
+NOTE: The data set WORK._TMP_6 has 1077638 observations and 48 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:40.28
+      cpu time            5.40 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * the predictions for util and cost will be made for each person twice,
+once exposed and once unexposed;
+MPRINT(COMBINEANDSCORE):   * prob of util ;
+MPRINT(COMBINEANDSCORE):   ods select none;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.prob_stored_6;
+MPRINT(COMBINEANDSCORE):   score data=_tmp_6 out=p_tmp_6 predicted=pred_prob / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.P_TMP_6 has 1077638 observations and 49 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           18.08 seconds
+      cpu time            15.87 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * predicted cost ;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.cost_stored_6;
+MPRINT(COMBINEANDSCORE):   score data=p_tmp_6 out=cp_tmp_6 predicted=pred_cost / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.CP_TMP_6 has 1077638 observations and 50 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           8.64 seconds
+      cpu time            7.67 seconds
+
+
+MPRINT(COMBINEANDSCORE):   ods select all;
+MPRINT(COMBINEANDSCORE):   * average cost is calculated ;
+MPRINT(COMBINEANDSCORE):   proc sql;
+MPRINT(COMBINEANDSCORE):   create table _calcCost_6 as select 6 as p_set, replicate, _score_group_,
+mean(pred_prob*pred_cost) as m_cost from cp_tmp_6 group by p_set, replicate, _score_group_ order by
+p_set, replicate, _score_group_;
+NOTE: At least one nonessential grouping column reference has been removed from a GROUP BY's
+      reference list.
+NOTE: At least one nonessential ordering column reference has been removed from an ORDER BY's
+      reference list.
+NOTE: Table WORK._CALCCOST_6 created, with 126 rows and 4 columns.
+
+MPRINT(COMBINEANDSCORE):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.28 seconds
+      cpu time            0.43 seconds
+
+
+MPRINT(COMBINEANDSCORE):   data _tmp_7;
+MPRINT(COMBINEANDSCORE):   set dataPro._resample_out_7 (in = a) dataPro._resample_out_7;
+MPRINT(COMBINEANDSCORE):   where int_imp = 1;
+MPRINT(COMBINEANDSCORE):   if a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 1;
+MPRINT(COMBINEANDSCORE):   int_imp = 1;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   if ^a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 2;
+MPRINT(COMBINEANDSCORE):   int_imp = 0;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: There were 537135 observations read from the data set DATAPRO._RESAMPLE_OUT_7.
+      WHERE int_imp=1;
+NOTE: There were 537135 observations read from the data set DATAPRO._RESAMPLE_OUT_7.
+      WHERE int_imp=1;
+NOTE: The data set WORK._TMP_7 has 1074270 observations and 48 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:46.94
+      cpu time            5.31 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * the predictions for util and cost will be made for each person twice,
+once exposed and once unexposed;
+MPRINT(COMBINEANDSCORE):   * prob of util ;
+MPRINT(COMBINEANDSCORE):   ods select none;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.prob_stored_7;
+MPRINT(COMBINEANDSCORE):   score data=_tmp_7 out=p_tmp_7 predicted=pred_prob / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.P_TMP_7 has 1074270 observations and 49 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           18.48 seconds
+      cpu time            16.24 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * predicted cost ;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.cost_stored_7;
+MPRINT(COMBINEANDSCORE):   score data=p_tmp_7 out=cp_tmp_7 predicted=pred_cost / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.CP_TMP_7 has 1074270 observations and 50 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           9.56 seconds
+      cpu time            7.43 seconds
+
+
+MPRINT(COMBINEANDSCORE):   ods select all;
+MPRINT(COMBINEANDSCORE):   * average cost is calculated ;
+MPRINT(COMBINEANDSCORE):   proc sql;
+MPRINT(COMBINEANDSCORE):   create table _calcCost_7 as select 7 as p_set, replicate, _score_group_,
+mean(pred_prob*pred_cost) as m_cost from cp_tmp_7 group by p_set, replicate, _score_group_ order by
+p_set, replicate, _score_group_;
+NOTE: At least one nonessential grouping column reference has been removed from a GROUP BY's
+      reference list.
+NOTE: At least one nonessential ordering column reference has been removed from an ORDER BY's
+      reference list.
+NOTE: Table WORK._CALCCOST_7 created, with 126 rows and 4 columns.
+
+MPRINT(COMBINEANDSCORE):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.28 seconds
+      cpu time            0.46 seconds
+
+
+MPRINT(COMBINEANDSCORE):   data _tmp_8;
+MPRINT(COMBINEANDSCORE):   set dataPro._resample_out_8 (in = a) dataPro._resample_out_8;
+MPRINT(COMBINEANDSCORE):   where int_imp = 1;
+MPRINT(COMBINEANDSCORE):   if a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 1;
+MPRINT(COMBINEANDSCORE):   int_imp = 1;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   if ^a then do;
+MPRINT(COMBINEANDSCORE):   _score_group_ = 2;
+MPRINT(COMBINEANDSCORE):   int_imp = 0;
+MPRINT(COMBINEANDSCORE):  ;
+MPRINT(COMBINEANDSCORE):   end;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: There were 504279 observations read from the data set DATAPRO._RESAMPLE_OUT_8.
+      WHERE int_imp=1;
+NOTE: There were 504279 observations read from the data set DATAPRO._RESAMPLE_OUT_8.
+      WHERE int_imp=1;
+NOTE: The data set WORK._TMP_8 has 1008558 observations and 48 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:35.67
+      cpu time            4.56 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * the predictions for util and cost will be made for each person twice,
+once exposed and once unexposed;
+MPRINT(COMBINEANDSCORE):   * prob of util ;
+MPRINT(COMBINEANDSCORE):   ods select none;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.prob_stored_8;
+MPRINT(COMBINEANDSCORE):   score data=_tmp_8 out=p_tmp_8 predicted=pred_prob / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.P_TMP_8 has 1008558 observations and 49 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           18.62 seconds
+      cpu time            14.96 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * predicted cost ;
+MPRINT(COMBINEANDSCORE):   proc plm restore=dataPro.cost_stored_8;
+MPRINT(COMBINEANDSCORE):   score data=p_tmp_8 out=cp_tmp_8 predicted=pred_cost / ilink;
+MPRINT(COMBINEANDSCORE):   run;
+
+NOTE: The data set WORK.CP_TMP_8 has 1008558 observations and 50 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           9.43 seconds
+      cpu time            6.89 seconds
+
+
+MPRINT(COMBINEANDSCORE):   ods select all;
+MPRINT(COMBINEANDSCORE):   * average cost is calculated ;
+MPRINT(COMBINEANDSCORE):   proc sql;
+MPRINT(COMBINEANDSCORE):   create table _calcCost_8 as select 8 as p_set, replicate, _score_group_,
+mean(pred_prob*pred_cost) as m_cost from cp_tmp_8 group by p_set, replicate, _score_group_ order by
+p_set, replicate, _score_group_;
+NOTE: At least one nonessential grouping column reference has been removed from a GROUP BY's
+      reference list.
+NOTE: At least one nonessential ordering column reference has been removed from an ORDER BY's
+      reference list.
+NOTE: Table WORK._CALCCOST_8 created, with 118 rows and 4 columns.
+
+MPRINT(COMBINEANDSCORE):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.27 seconds
+      cpu time            0.40 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * combine the results from each parallel process ;
+MPRINT(COMBINEANDSCORE):   DATA _allPred_;
+MPRINT(COMBINEANDSCORE):   SET _calcCost_:;
+MPRINT(COMBINEANDSCORE):   RUN;
+
+NOTE: There were 126 observations read from the data set WORK._CALCCOST_1.
+NOTE: There were 126 observations read from the data set WORK._CALCCOST_2.
+NOTE: There were 126 observations read from the data set WORK._CALCCOST_3.
+NOTE: There were 126 observations read from the data set WORK._CALCCOST_4.
+NOTE: There were 126 observations read from the data set WORK._CALCCOST_5.
+NOTE: There were 126 observations read from the data set WORK._CALCCOST_6.
+NOTE: There were 126 observations read from the data set WORK._CALCCOST_7.
+NOTE: There were 118 observations read from the data set WORK._CALCCOST_8.
+NOTE: The data set WORK._ALLPRED_ has 1000 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+MPRINT(COMBINEANDSCORE):   * contrast the risk groups ;
+MPRINT(COMBINEANDSCORE):   DATA _diff_;
+MPRINT(COMBINEANDSCORE):   MERGE _allPred_(keep = m_cost _score_group_ p_set replicate where =
+(_score_group_ = 1)) _allPred_(keep = m_cost _score_group_ p_set replicate rename = (m_cost =
+m_cost_2) where = (_score_group_ = 2));
+MPRINT(COMBINEANDSCORE):   BY p_set replicate ;
+MPRINT(COMBINEANDSCORE):   DIFF = m_cost - m_cost_2;
+MPRINT(COMBINEANDSCORE):   DROP _score_group_;
+MPRINT(COMBINEANDSCORE):   RUN;
+
+NOTE: There were 500 observations read from the data set WORK._ALLPRED_.
+      WHERE _score_group_=1;
+NOTE: There were 500 observations read from the data set WORK._ALLPRED_.
+      WHERE _score_group_=2;
+NOTE: The data set WORK._DIFF_ has 500 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+229
+230  title  'bootstrap standard error' ;
+231  proc means data = _diff_  n nmiss mean median stddev;
+232    var diff;
+233  run;
+
+NOTE: There were 500 observations read from the data set WORK._DIFF_.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+234
+235  title 'Bootstrap distribution';
+236  proc sgplot data = _diff_;
+237    histogram diff;
+238  run;
+
+NOTE: PROCEDURE SGPLOT used (Total process time):
+      real time           0.62 seconds
+      cpu time            0.23 seconds
+
+NOTE: There were 500 observations read from the data set WORK._DIFF_.
+
+239  title;
+

@@ -1,4 +1,4 @@
-1                                                          The SAS System                             11:11 Tuesday, August 29, 2023
+1                                                          The SAS System                            09:28 Thursday, August 31, 2023
 
 NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
 NOTE: All registry changes will be lost at the end of the session.
@@ -27,8 +27,8 @@ NOTE: Additional host information:
  X64_10PRO WIN 10.0.19041  Workstation
 
 NOTE: SAS initialization used:
-      real time           0.35 seconds
-      cpu time            0.34 seconds
+      real time           0.34 seconds
+      cpu time            0.32 seconds
       
 1          *****************************************************************************************
 1        ! *****
@@ -37,193 +37,251 @@ NOTE: SAS initialization used:
 4          PURPOSE  : define the bootstrap process to parallelize
 5          VERSION  : 2023-08-24
 6          HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
-7          CHANGES  : -moved projRoot, libname in, libname out to config_boot
-8          *****************************************************************************************
-8        ! ******
-9          
-10         STEPS:
-11         1. Change macro value for indicators: ind_cost, cost (rows 15:16)
-12         2. change out for each DV??
-13         ;
+7          CHANGES  :  -- [row 13] projRoot > %LET projRoot =
+7        ! S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization
+8                      -- [row 16] libname out to DV > libname out
+8        ! "&projRoot\data_boot_processed\cost_pc"
+9                      -- [row 20] add OPTIONS FMTSEARCH = (in)
+10                     -- [row 73] prob model positive cost > ind_pc_cost
+11                     -- [row 94] cost model DV > adj_pd_pc_tc
+12         *****************************************************************************************
+12       ! ******;
+13         %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
 14         
-15         %INCLUDE
-15       ! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_bootstrap/00_confi
-15       ! g_boot.sas";
+15         * location for bootstrap products ;
+16         libname out "&projRoot\data_boot_processed\cost_pc";
+NOTE: Libref OUT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: 
+      S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed\cost_pc
+2                                          The SAS System            09:28 Thursday, August 31, 2023
+
+17         * location of input data to boot ;
+18         libname in "&projRoot\data";
 NOTE: Libref IN was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
-NOTE: Libref OUT was successfully assigned as follows: 
-      Engine:        V9 
-2                                          The SAS System             11:11 Tuesday, August 29, 2023
+19         * get formats;
+20         OPTIONS FMTSEARCH = (in);
+21         
+22         * data to boot ;
+23         %let data = in.analysis;
+24         
+25         * include macro programs;
+26         %INCLUDE "&projRoot\code\util_bootstrap\MACRO_resample_V4.sas";
+133        
+134        * get process parameters ;
+135        ** process number ;
+136        %LET   i = %scan(&SYSPARM,1,%str( ));
+137        ** seed number ;
+138        %LET   seed = %scan(&SYSPARM,2,%str( ));
+139        ** N bootstrap samples ;
+140        %LET    N = %scan(&SYSPARM,3,%str( ));
+141        
+142        * Draw bootstrap samples
+143        Two new variables are added
+144        1) bootUnit = the new subject identifier
+145        2) replicate = identifies specific bootstrap samples
+146        !!!!! the old ID variable is still included, BUT YOU CAN NOT USE IT IN THIS DATA FOR
+146      ! STATISTICS!!!!!!!!!!!;
+147        ODS SELECT NONE;
+148        %resample(data= &data
+149                , out =_resample_out_
+150                , subject=mcaid_id
+151                , reps= &N
+152                , strata=int
+153                , seed=&seed
+154                , bootUnit=bootUnit
+155                , repName = replicate
+156                , samprate = (1 .2)
+157        );
 
-      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
-33         libname out "&projRoot\data_boot_processed";
-NOTE: Libref OUT was successfully assigned as follows: 
-      Engine:        V9 
-      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
-34         
-35         * macro programs;
-36         %LET ind_cost = ind_pc_cost;
-37         %LET cost     = adj_pd_pc_tc;
-38         
-39         * INCLUDE macro;
-40         %INCLUDE "&projRoot\code\util_bootstrap\macro_resample_V4.sas";
-147        * get process parameters ;
-148        ** process number ;
-149        %LET   i = %scan(&SYSPARM,1,%str( ));
-150        ** seed number ;
-151        %LET   seed = %scan(&SYSPARM,2,%str( ));
-152        ** N bootstrap samples ;
-153        %LET    N = %scan(&SYSPARM,3,%str( ));
-154        
-155        * Draw bootstrap samples
-156        Two new variables are added
-157        1) bootUnit = the new subject identifier
-158        2) replicate = identifies specific bootstrap samples
-159        !!!!! the old ID variable is still included, BUT YOU CAN NOT USE IT IN THIS DATA FOR
-159      ! STATISTICS!!!!!!!!!!!;
-160        ODS SELECT NONE;
-161        %resample(data= &data
-162                , out=_resample_out_
-163                , subject=mcaid_id
-164                , reps= &N
-165                , strata=int
-166                , seed=&seed
-167                , bootUnit=bootUnit
-168                , repName = replicate
-169                , samprate = (1 .20)
-170        );
-
-NOTE: There were 500000 observations read from the data set IN.MINI.
-NOTE: 73836 observations with duplicate key values were deleted.
-NOTE: The data set WORK._DEDUP_ has 426164 observations and 2 variables.
+NOTE: There were 15124679 observations read from the data set IN.ANALYSIS.
+NOTE: 13365704 observations with duplicate key values were deleted.
+NOTE: The data set WORK._DEDUP_ has 1758975 observations and 2 variables.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           2.26 seconds
-      cpu time            0.25 seconds
+      real time           49.58 seconds
+      cpu time            6.53 seconds
       
 
 
-NOTE: The data set WORK._RESAMPLE_OUT__TMP has 24100461 observations and 6 variables.
+NOTE: The data set WORK._RESAMPLE_OUT__TMP has 96576921 observations and 6 variables.
 NOTE: PROCEDURE SURVEYSELECT used (Total process time):
-      real time           6.45 seconds
-      cpu time            6.40 seconds
+      real time           33.57 seconds
+      cpu time            33.40 seconds
       
+3                                          The SAS System            09:28 Thursday, August 31, 2023
 
 
-3                                          The SAS System             11:11 Tuesday, August 29, 2023
 
-NOTE: There were 24100461 observations read from the data set WORK._RESAMPLE_OUT__TMP.
-NOTE: The data set WORK._RESAMPLE_OUT__TMP has 24100461 observations and 6 variables.
+NOTE: There were 96576921 observations read from the data set WORK._RESAMPLE_OUT__TMP.
+NOTE: The data set WORK._RESAMPLE_OUT__TMP has 96576921 observations and 6 variables.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           15.83 seconds
-      cpu time            16.51 seconds
+      real time           1:14.49
+      cpu time            58.07 seconds
       
 
 
-NOTE: There were 24100461 observations read from the data set WORK._RESAMPLE_OUT__TMP.
-NOTE: The data set WORK._RESAMPLE_OUT__TMP has 24100461 observations and 7 variables.
+NOTE: There were 96576921 observations read from the data set WORK._RESAMPLE_OUT__TMP.
+NOTE: The data set WORK._RESAMPLE_OUT__TMP has 96576921 observations and 7 variables.
 NOTE: DATA statement used (Total process time):
-      real time           4.67 seconds
-      cpu time            4.29 seconds
+      real time           39.18 seconds
+      cpu time            15.32 seconds
       
 
-NOTE: Table WORK._RESAMPLE_OUT_ created, with 28345636 rows and 47 columns.
+ERROR: Sort execution failure.
 
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: Due to ERROR(s) above, SAS set option OBS=0, enabling syntax check mode. 
+      This prevents execution of subsequent data modification statements.
 NOTE: PROCEDURE SQL used (Total process time):
-      real time           2:18.48
-      cpu time            58.96 seconds
+      real time           33:30.25
+      cpu time            10:37.21
       
 
 
-NOTE: Deleting WORK._DEDUP_ (memtype=DATA).
-NOTE: Deleting WORK._RESAMPLE_OUT__TMP (memtype=DATA).
+
 
 NOTE: PROCEDURE DATASETS used (Total process time):
-      real time           0.38 seconds
-      cpu time            0.39 seconds
+      real time           0.00 seconds
+      cpu time            0.00 seconds
       
 
-171        
-172        * save a copy of the booted data ;
-173        DATA out._resample_out_&i;
-174        SET _resample_out_;
-175        RUN;
+158        
+159        * save a copy of the booted data ;
+160        DATA out._resample_out_&i;
+161        SET _resample_out_;
+ERROR: File WORK._RESAMPLE_OUT_.DATA does not exist.
+162        RUN;
 
-NOTE: There were 28345636 observations read from the data set WORK._RESAMPLE_OUT_.
-NOTE: The data set OUT._RESAMPLE_OUT_2 has 28345636 observations and 47 variables.
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set OUT._RESAMPLE_OUT_2 may be incomplete.  When this step was stopped there were 
+         0 observations and 0 variables.
+WARNING: Data set OUT._RESAMPLE_OUT_2 was not replaced because this step was stopped.
 NOTE: DATA statement used (Total process time):
-      real time           12:44.38
-      cpu time            25.65 seconds
+      real time           0.15 seconds
+      cpu time            0.01 seconds
       
 
-176        
-177        * run models and output store objects ;
-178        
-179        * probability model
-180        QUESTIONS why isn't pvar in the class statement? What happens to mcaid_id in class but
-180      ! not model?;
-181        ODS SELECT NONE;
-182        OPTIONS NONOTES;
-183        PROC GENMOD DATA = _resample_out_ desc;
-184           BY    replicate;
-4                                          The SAS System             11:11 Tuesday, August 29, 2023
+163        
+164        * run models and output store objects ;
+4                                          The SAS System            09:28 Thursday, August 31, 2023
 
-185           CLASS bootunit mcaid_id int (ref='0') int_imp (ref='0') budget_grp_new (ref='MAGI
-185      ! Eligible Children')
-186                 race (ref='non-Hispanic White/Caucasian') sex (ref='Female') rae_person_new
-186      ! (ref='3') age_cat(ref='6') fqhc(ref ='0')
-187                 bh_oth16 (ref='0') bh_oth17 (ref='0') bh_oth18 (ref='0') bh_er16 (ref='0')
-187      ! bh_er17 (ref='0') bh_er18 (ref='0')
-188                 bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0')
-189                 adj_pd_total_16cat(ref='0') adj_pd_total_17cat(ref='0')
-189      ! adj_pd_total_18cat(ref='0');
-190           MODEL &ind_cost(event="1") = int int_imp budget_grp_new race sex rae_person_new
-190      ! age_cat fqhc
-191                                     bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16
-191      !  bh_hosp17 bh_hosp18
-192                                     adj_pd_total_16cat adj_pd_total_17catadj_pd_total_18cat /
-ERROR: Variable adj_pd_total_17catadj_pd_total_1 not found.
-193                 DIST=binomial LINK=logit;
-194           REPEATED SUBJECT = bootunit;
-195           STORE out.prob_stored_&i;
-196        RUN;
-197        ODS SELECT ALL;
-198        OPTIONS NOTES;
-199        
-200        * cost model ;
-201        ODS SELECT NONE;
-202        OPTIONS NONOTES;
-203        PROC GENMOD DATA = _resample_out_  ;
-204           BY    replicate;
-205           WHERE &cost >0;
-206           CLASS bootunit mcaid_id int (ref='0') int_imp (ref='0') budget_grp_new (ref='MAGI
-206      ! Eligible Children')
-207                 race (ref='non-Hispanic White/Caucasian') sex (ref='Female') rae_person_new
-207      ! (ref='3') age_cat(ref='6') fqhc(ref ='0')
-208                 bh_oth16 (ref='0') bh_oth17 (ref='0') bh_oth18 (ref='0') bh_er16 (ref='0')
-208      ! bh_er17 (ref='0') bh_er18 (ref='0')
-209                 bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0')
-210                 adj_pd_total_16cat(ref='0') adj_pd_total_17cat(ref='0')
-210      ! adj_pd_total_18cat(ref='0');
-211           MODEL &cost = int int_imp budget_grp_new race sex rae_person_new age_cat fqhc
-212                                     bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16
-212      !  bh_hosp17 bh_hosp18
-213                                     adj_pd_total_16cat adj_pd_total_17catadj_pd_total_18cat /
-ERROR: Variable adj_pd_total_17catadj_pd_total_1 not found.
-214                 DIST = gamma LINK = log;
-215           REPEATED SUBJECT = bootunit;
-216           STORE out.cost_stored_&i;
-217        RUN;
-218        ODS SELECT ALL;
-219        OPTIONS NOTES;
+165        
+166        * probability model
+167        Changes: pvar added to class statement
+168        Questions: What happens to mcaid_id in class but not model? Is it needed?;
+169        ODS SELECT NONE;
+170        OPTIONS NONOTES;
+171        PROC GENMOD DATA = _resample_out_ desc;
+ERROR: File WORK._RESAMPLE_OUT_.DATA does not exist.
+172           BY    replicate;
+ERROR: No data set open to look up variables.
+173           CLASS bootunit int (ref='0') int_imp (ref='0') budget_grp_new (ref='MAGI Eligible
+173      ! Children')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+174                 race (ref='non-Hispanic White/Caucasian') sex (ref='Female') rae_person_new
+174      ! (ref='3') age_cat(ref='6') fqhc(ref ='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+175                 bh_oth16 (ref='0') bh_oth17 (ref='0') bh_oth18 (ref='0') bh_er16 (ref='0')
+175      ! bh_er17 (ref='0') bh_er18 (ref='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+176                 bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+177                 adj_pd_total_16cat(ref='0') adj_pd_total_17cat(ref='0')
+177      ! adj_pd_total_18cat(ref='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+178                 ind_pc_cost(ref='0');
+ERROR: No data set open to look up variables.
+179           MODEL ind_pc_cost = int int_imp budget_grp_new race sex rae_person_new age_cat fqhc
+ERROR: No data set open to look up variables.
+180                                     bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16
+180      !  bh_hosp17 bh_hosp18
+181                                     adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat /
+182                 DIST=binomial LINK=logit;
+183           REPEATED SUBJECT = bootunit / type=exch;
+184           STORE out.prob_stored_&i;
+185        RUN;
+186        ODS SELECT ALL;
+187        OPTIONS NOTES;
+188        
+5                                          The SAS System            09:28 Thursday, August 31, 2023
+
+189        * cost model - UPDATE DV in WHERE statement and MODEL statements;
+190        ODS SELECT NONE;
+191        OPTIONS NONOTES;
+192        PROC GENMOD DATA = _resample_out_  ;
+ERROR: File WORK._RESAMPLE_OUT_.DATA does not exist.
+193           BY    replicate;
+ERROR: No data set open to look up variables.
+194           WHERE adj_pd_pc_tc >0;
+WARNING: No data sets qualify for WHERE processing.
+195           CLASS bootunit int (ref='0') int_imp (ref='0') budget_grp_new (ref='MAGI Eligible
+195      ! Children')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+196                 race (ref='non-Hispanic White/Caucasian') sex (ref='Female') rae_person_new
+196      ! (ref='3') age_cat(ref='6') fqhc(ref ='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+197                 bh_oth16 (ref='0') bh_oth17 (ref='0') bh_oth18 (ref='0') bh_er16 (ref='0')
+197      ! bh_er17 (ref='0') bh_er18 (ref='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+198                 bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+199                 adj_pd_total_16cat(ref='0') adj_pd_total_17cat(ref='0')
+199      ! adj_pd_total_18cat(ref='0');
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+200           MODEL adj_pd_pc_tc = int int_imp budget_grp_new race sex rae_person_new age_cat fqhc
+ERROR: No data set open to look up variables.
+201                                     bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16
+201      !  bh_hosp17 bh_hosp18
+202                                     adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat /
+203                 DIST = gamma LINK = log;
+204           REPEATED SUBJECT = bootunit / type=exch;
+205           STORE out.cost_stored_&i;
+206        RUN;
+207        ODS SELECT ALL;
+208        OPTIONS NOTES;
 
 
-ERROR: Errors printed on page 4.
+ERROR: Errors printed on pages 3,4,5.
+
+6                                          The SAS System            09:28 Thursday, August 31, 2023
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-5                                          The SAS System             11:11 Tuesday, August 29, 2023
-
-      real time           15:32.99
-      cpu time            1:52.95
+      real time           36:47.78
+      cpu time            12:31.03
       

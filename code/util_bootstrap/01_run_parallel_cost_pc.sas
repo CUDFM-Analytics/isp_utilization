@@ -1,11 +1,11 @@
 **********************************************************************************************
-AUTHOR   : Carter Sevick, adapted KW
-PROJECT  : ISP
-PURPOSE  : Part 2 of 3 > bootstrap specs
-VERSION  : 2023-08-24
+AUTHOR   : Carter Sevick (adapted: KW)
+PROJECT  : ISP Utilization Analysis
+PURPOSE  : bootstrap specs
+VERSION  : 2023-08-30
 HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 ***********************************************************************************************;
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_bootstrap/00_config_boot.sas"; 
+%LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization; 
 
 *include macro program ;
 %INCLUDE "&projRoot./code/util_bootstrap/MACRO_parallel.sas";

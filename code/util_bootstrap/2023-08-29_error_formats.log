@@ -1,0 +1,440 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.90 seconds
+      cpu time            0.62 seconds
+
+1    **********************************************************************************************
+2    AUTHOR   : Carter Sevick (adapted: KW)
+3    PROJECT  : ISP Utilization Analysis
+4    PURPOSE  : bootstrap specs
+5    VERSION  : 2023-08-24
+6    HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+7    ***********************************************************************************************
+7  ! ;
+8    %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+9
+10   *include macro program ;
+11   %INCLUDE "&projRoot./code/util_bootstrap/MACRO_parallel.sas";
+106
+107  * kick off the processes ;
+108  %parallel(
+109      folder  = &projRoot/code/util_bootstrap /* data, program location */,
+110      progName= program_to_boot_cost_pc.sas   /* name of the program that will act on the data
+110! */,
+111      taskName= mytask                        /*, place holder names for the individual tasks */,
+112      nprocess= 8                             /* number of processes to activate */,
+113      nboot   = 500                           /* total number of bootstrap iterations*/,
+114      seed    = 837567                        /* a seed value for replicability */,
+115      topseed = 1000000000                    /* largest possible seed */
+116  );
+
+NOTE: The data set WORK._SEEDS_ has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.03 seconds
+
+
+
+NOTE: The data set WORK._NBOOTS_ has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+NOTE: Task "task_mytask8" produced no LOG/Output.
+NOTE: Task "task_mytask5" produced no LOG/Output.
+NOTE: Task "task_mytask1" produced no LOG/Output.
+NOTE: Task "task_mytask6" produced no LOG/Output.
+NOTE: Task "task_mytask7" produced no LOG/Output.
+NOTE: Task "task_mytask2" produced no LOG/Output.
+NOTE: Task "task_mytask3" produced no LOG/Output.
+NOTE: Task "task_mytask4" produced no LOG/Output.
+117  %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+118
+119  * location for bootstrap products ;
+120  libname out "&projRoot\data_boot_processed";
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
+121
+122  * location of input data to boot ;
+123  libname in "&projRoot\data";
+NOTE: Libref IN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
+
+124  **********************************************************************************************
+125  AUTHOR   : Carter Sevick (adapted: KW)
+126  PROJECT  : ISP Utilization Analysis
+127  PURPOSE  : bootstrap specs
+128  VERSION  : 2023-08-24
+129  HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+130  ***********************************************************************************************
+130! ;
+131  %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+132
+133  *include macro program ;
+134  %INCLUDE "&projRoot./code/util_bootstrap/MACRO_parallel.sas";
+229
+230  * kick off the processes ;
+231  %parallel(
+232      folder  = &projRoot/code/util_bootstrap /* data, program location */,
+233      progName= program_to_boot_cost_pc.sas   /* name of the program that will act on the data
+233! */,
+234      taskName= mytask                        /*, place holder names for the individual tasks */,
+235      nprocess= 8                             /* number of processes to activate */,
+236      nboot   = 500                           /* total number of bootstrap iterations*/,
+237      seed    = 837567                        /* a seed value for replicability */,
+238      topseed = 1000000000                    /* largest possible seed */
+239  );
+
+NOTE: The data set WORK._SEEDS_ has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: The data set WORK._NBOOTS_ has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You
+      might have unbalanced quotation marks.
+NOTE: Task "task_mytask8" produced no LOG/Output.
+NOTE: Task "task_mytask4" produced no LOG/Output.
+NOTE: Task "task_mytask3" produced no LOG/Output.
+NOTE: Task "task_mytask6" produced no LOG/Output.
+NOTE: Task "task_mytask5" produced no LOG/Output.
+NOTE: Task "task_mytask2" produced no LOG/Output.
+NOTE: Task "task_mytask1" produced no LOG/Output.
+NOTE: Task "task_mytask7" produced no LOG/Output.
+ERROR: Format $RACE_RC_ not found or couldn't be loaded for variable race.
+ERROR: Format $GNDR_CD not found or couldn't be loaded for variable sex.
+240  %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+241
+242  * location for bootstrap products ;
+243  libname out "&projRoot\data_boot_processed";
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
+244
+245  * location of input data to boot ;
+246  libname in "&projRoot\data";
+NOTE: Libref IN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
+247
+248  * get formats;
+249  OPTIONS FMTSEARCH = (in);
+
+250  %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+251  OPTIONS FMTSEARCH = (in);
+
+252  PROC FORMAT FMTLIB LIB=In.Formats;
+252!                                    SELECT $Race_cd;
+252!                                                     RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.40 seconds
+      cpu time            0.25 seconds
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: Non-portable document will be produced. The current settings of FORMCHAR use nonstandard
+      line-drawing characters and the resulting output file will not render correctly unless all
+      readers of the document have the SAS Monospace font installed. To make your document
+      portable, issue the following command:
+      OPTIONS FORMCHAR="|----|+|---+=|-/\<>*";
+
+
+253  %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+254
+255  * location for bootstrap products ;
+256  libname out "&projRoot\data_boot_processed";
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
+257
+258  * location of input data to boot ;
+259  libname in "&projRoot\data";
+NOTE: Libref IN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
+260
+261  * get formats;
+262  OPTIONS FMTSEARCH = (in);
+
