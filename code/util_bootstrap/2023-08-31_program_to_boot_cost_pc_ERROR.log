@@ -1,0 +1,283 @@
+1                                                          The SAS System                            12:35 Thursday, August 31, 2023
+
+NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
+NOTE: All registry changes will be lost at the end of the session.
+
+WARNING: Unable to copy SASUSER registry to WORK registry. Because of this, you will not see registry customizations during this 
+         session.
+NOTE: Unable to open SASUSER.PROFILE. WORK.PROFILE will be opened instead.
+NOTE: All profile changes will be lost at the end of the session.
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7) 
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+      
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.34 seconds
+      cpu time            0.29 seconds
+      
+1          *****************************************************************************************
+1        ! *****
+2          AUTHOR   : Carter Sevick, adapted for ISP by KW
+3          PROJECT  : ISP
+4          PURPOSE  : define the bootstrap process to parallelize
+5          VERSION  : 2023-08-24
+6          HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+7          CHANGES  :  -- [row 13] projRoot > %LET projRoot =
+7        ! S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization
+8                      -- [row 20] add OPTIONS FMTSEARCH = (in)
+9                      -- [row 73] prob model positive cost > ind_pc_cost
+10                     -- [row 94] cost model DV > adj_pd_pc_tc
+11         *****************************************************************************************
+11       ! ******;
+12         %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+13         
+14         * location for bootstrap products ;
+15         libname out "&projRoot\data_boot_processed";
+NOTE: Libref OUT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
+16         * location of input data to boot ;
+17         libname in "&projRoot\data";
+NOTE: Libref IN was successfully assigned as follows: 
+2                                          The SAS System            12:35 Thursday, August 31, 2023
+
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
+18         * get formats;
+19         OPTIONS FMTSEARCH = (in);
+20         
+21         * data to boot ;
+22         %let data = in.analysis;
+23         
+24         * include macro programs;
+25         %INCLUDE "&projRoot\code\util_bootstrap\MACRO_resample_V4.sas";
+132        
+133        * get process parameters ;
+134        ** process number ;
+135        %LET   i = %scan(&SYSPARM,1,%str( ));
+136        ** seed number ;
+137        %LET   seed = %scan(&SYSPARM,2,%str( ));
+138        ** N bootstrap samples ;
+139        %LET    N = %scan(&SYSPARM,3,%str( ));
+140        
+141        * Draw bootstrap samples
+142        Two new variables are added
+143        1) bootUnit = the new subject identifier
+144        2) replicate = identifies specific bootstrap samples
+145        !!!!! the old ID variable is still included, BUT YOU CAN NOT USE IT IN THIS DATA FOR
+145      ! STATISTICS!!!!!!!!!!!;
+146        ODS SELECT NONE;
+147        %resample(data= &data
+148                , out =_resample_out_
+149                , subject=mcaid_id
+150                , reps= &N
+151                , strata=int
+152                , seed=&seed
+153                , bootUnit=bootUnit
+154                , repName = replicate
+155                , samprate = (1 .2)
+156        );
+
+NOTE: There were 15124679 observations read from the data set IN.ANALYSIS.
+NOTE: 13365704 observations with duplicate key values were deleted.
+NOTE: The data set WORK._DEDUP_ has 1758975 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:19.17
+      cpu time            6.48 seconds
+      
+
+
+NOTE: The data set WORK._RESAMPLE_OUT__TMP has 96576921 observations and 6 variables.
+NOTE: PROCEDURE SURVEYSELECT used (Total process time):
+      real time           40.47 seconds
+      cpu time            31.21 seconds
+      
+
+
+NOTE: There were 96576921 observations read from the data set WORK._RESAMPLE_OUT__TMP.
+3                                          The SAS System            12:35 Thursday, August 31, 2023
+
+NOTE: The data set WORK._RESAMPLE_OUT__TMP has 96576921 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           2:30.32
+      cpu time            57.01 seconds
+      
+
+
+NOTE: There were 96576921 observations read from the data set WORK._RESAMPLE_OUT__TMP.
+NOTE: The data set WORK._RESAMPLE_OUT__TMP has 96576921 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:19.99
+      cpu time            19.26 seconds
+      
+
+ERROR: Sort execution failure.
+
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: Due to ERROR(s) above, SAS set option OBS=0, enabling syntax check mode. 
+      This prevents execution of subsequent data modification statements.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           34:01.37
+      cpu time            11:04.09
+      
+
+
+
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+157        
+158        * save a copy of the booted data ;
+159        DATA out._resample_out_&i;
+160        SET _resample_out_;
+ERROR: File WORK._RESAMPLE_OUT_.DATA does not exist.
+161        RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set OUT._RESAMPLE_OUT_1 may be incomplete.  When this step was stopped there were 
+         0 observations and 0 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.28 seconds
+      cpu time            0.01 seconds
+      
+
+162        
+163        * run models and output store objects ;
+164        
+165        * probability model
+166        Changes: pvar added to class statement
+167        Questions: What happens to mcaid_id in class but not model? Is it needed?;
+4                                          The SAS System            12:35 Thursday, August 31, 2023
+
+168        ODS SELECT NONE;
+169        OPTIONS NONOTES;
+170        PROC GENMOD DATA = _resample_out_ desc;
+ERROR: File WORK._RESAMPLE_OUT_.DATA does not exist.
+171           BY    replicate;
+ERROR: No data set open to look up variables.
+172           CLASS bootunit int (ref='0') int_imp (ref='0') budget_grp_new (ref='MAGI Eligible
+172      ! Children')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+173                 race (ref='non-Hispanic White/Caucasian') sex (ref='Female') rae_person_new
+173      ! (ref='3') age_cat(ref='6') fqhc(ref ='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+174                 bh_oth16 (ref='0') bh_oth17 (ref='0') bh_oth18 (ref='0') bh_er16 (ref='0')
+174      ! bh_er17 (ref='0') bh_er18 (ref='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+175                 bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+176                 adj_pd_total_16cat(ref='0') adj_pd_total_17cat(ref='0')
+176      ! adj_pd_total_18cat(ref='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+177                 ind_pc_cost(ref='0');
+ERROR: No data set open to look up variables.
+178           MODEL ind_pc_cost = int int_imp budget_grp_new race sex rae_person_new age_cat fqhc
+ERROR: No data set open to look up variables.
+179                                     bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16
+179      !  bh_hosp17 bh_hosp18
+180                                     adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat /
+181                 DIST=binomial LINK=logit;
+182           REPEATED SUBJECT = bootunit / type=exch;
+183           STORE out.prob_stored_&i;
+184        RUN;
+185        ODS SELECT ALL;
+186        OPTIONS NOTES;
+187        
+188        * cost model - UPDATE DV in WHERE statement and MODEL statements;
+189        ODS SELECT NONE;
+190        OPTIONS NONOTES;
+191        PROC GENMOD DATA = _resample_out_  ;
+5                                          The SAS System            12:35 Thursday, August 31, 2023
+
+ERROR: File WORK._RESAMPLE_OUT_.DATA does not exist.
+192           BY    replicate;
+ERROR: No data set open to look up variables.
+193           WHERE adj_pd_pc_tc >0;
+WARNING: No data sets qualify for WHERE processing.
+194           CLASS bootunit int (ref='0') int_imp (ref='0') budget_grp_new (ref='MAGI Eligible
+194      ! Children')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+195                 race (ref='non-Hispanic White/Caucasian') sex (ref='Female') rae_person_new
+195      ! (ref='3') age_cat(ref='6') fqhc(ref ='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+196                 bh_oth16 (ref='0') bh_oth17 (ref='0') bh_oth18 (ref='0') bh_er16 (ref='0')
+196      ! bh_er17 (ref='0') bh_er18 (ref='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+197                 bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0')
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+198                 adj_pd_total_16cat(ref='0') adj_pd_total_17cat(ref='0')
+198      ! adj_pd_total_18cat(ref='0');
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+ERROR: No data set open to look up variables.
+199           MODEL adj_pd_pc_tc = int int_imp budget_grp_new race sex rae_person_new age_cat fqhc
+ERROR: No data set open to look up variables.
+200                                     bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16
+200      !  bh_hosp17 bh_hosp18
+201                                     adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat /
+202                 DIST = gamma LINK = log;
+203           REPEATED SUBJECT = bootunit / type=exch;
+204           STORE out.cost_stored_&i;
+205        RUN;
+206        ODS SELECT ALL;
+207        OPTIONS NOTES;
+
+
+ERROR: Errors printed on pages 3,4,5.
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           39:52.17
+      cpu time            12:58.56
+6                                          The SAS System            12:35 Thursday, August 31, 2023
+
+      

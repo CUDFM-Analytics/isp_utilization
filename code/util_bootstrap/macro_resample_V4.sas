@@ -49,7 +49,7 @@ run;
 
 %mend;
 
-%macro resample(data=, out=_resample_out_, subject=, reps=, strata=, seed=0, bootUnit=bootUnit, repName = replicate, samprate=1, lightSort = NO);
+%macro resample(data=, out=_resample_out_, subject=, reps=, strata=, seed=0, bootUnit=bootUnit, repName = replicate, samprate=1, lightSort = No);
 
 %if &subject = %str() %then %do;
 
@@ -77,7 +77,7 @@ create table &out as
          b.*
   from &out._tmp as a inner join &data as b
     on a.&subject = b.&subject
-	%if %scan(&strata,1) ne %then %do; and a.&strata = b.&strata %end;
+    %if %scan(&strata,1) ne %then %do; and a.&strata = b.&strata %end;
     %if %upcase(&lightSort) NE YES %then %do;
   order by &repName, 
              &bootUnit

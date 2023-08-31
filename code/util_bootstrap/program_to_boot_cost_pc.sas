@@ -16,7 +16,7 @@ libname out "&projRoot\data_boot_processed";
 * location of input data to boot ;
 libname in "&projRoot\data";
 * get formats; 
-OPTIONS FMTSEARCH = (in);
+OPTIONS FMTSEARCH=(in, work, out);
 
 * data to boot ;
 %let data = in.analysis;
@@ -41,6 +41,7 @@ ODS SELECT NONE;
 %resample(data= &data
         , out =_resample_out_
         , subject=mcaid_id
+        , lightSort = YES
         , reps= &N
         , strata=int
         , seed=&seed
