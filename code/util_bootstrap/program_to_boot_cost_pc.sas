@@ -47,7 +47,7 @@ ODS SELECT NONE;
         , seed=&seed
         , bootUnit=bootUnit
         , repName = replicate
-        , samprate = (1 .2)
+        , samprate = (.5 .15)
 );
 
 * save a copy of the booted data ;

@@ -5,6 +5,8 @@ PURPOSE  : bootstrap specs
 VERSION  : 2023-08-30
 HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 ***********************************************************************************************;
+proc options option=memsize value; run;
+
 %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization; 
 
 *include macro program ;
