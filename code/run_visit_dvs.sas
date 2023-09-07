@@ -68,8 +68,7 @@ Last Ran 08-23-2023 > Updated rows 95:100 to use int_imp instead of int=========
 %hurdle  (dat=data.analysis_final, 
           prob=ind_&outcome._visit, 
           visits=n_&outcome._pm_r, 
-          dv=visits_&outcome.
-          );
+          dv=visits_&outcome.);
 %results (pmodel=visits_&outcome._pmodel, vmodel=visits_&outcome._vmodel, dv=visits_&outcome., 
           prob_dv=ind_&outcome._visit, 
           visit_dv=n_&outcome._pm_r);
@@ -77,28 +76,26 @@ Last Ran 08-23-2023 > Updated rows 95:100 to use int_imp instead of int=========
 %deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
 
 *[DV: visit FFS BH] =========================================================================;
-%LET data = data.analysis;
-%hurdle  (dat=&data, 
-          prob=ind_ffs_bh_visit, 
-          visits=n_ffs_bh_pm_r, 
-          dv=visits_ffs_bh
-          );
-
-%results (pmodel=visits_ffs_bh_pmodel, vmodel=visits_ffs_bh_vmodel, dv=visits_ffs_bh, 
-          prob_dv=ind_ffs_bh_visit, 
-          visit_dv=n_ffs_by_pm_r);
-
-%deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
+/*%LET data = data.analysis;*/
+/*%hurdle  (dat=&data, */
+/*          prob=ind_ffs_bh_visit, */
+/*          visits=n_ffs_bh_pm_r, */
+/*          dv=visits_ffs_bh*/
+/*          );*/
+/**/
+/*%results (pmodel=visits_ffs_bh_pmodel, vmodel=visits_ffs_bh_vmodel, dv=visits_ffs_bh, */
+/*          prob_dv=ind_ffs_bh_visit, */
+/*          visit_dv=n_ffs_by_pm_r);*/
+/**/
+/*%deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);*/
 
 *[DV: visit TEL] =========================================================================;
 %LET outcome = tel; %LET data = data.analysis;
 
-%hurdle  (dat=&data, 
+%hurdle  (dat=data.analysis, 
           prob=ind_&outcome._visit, 
           visits=n_&outcome._pm_r, 
-          dv=visits_&outcome
-          );
-
+          dv=visits_&outcome.);
 %results (pmodel=visits_&outcome._pmodel, vmodel=visits_&outcome._vmodel, dv=visits_&outcome., 
           prob_dv=ind_&outcome._visit, 
           visit_dv=n_&outcome._pm_r);
