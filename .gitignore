@@ -10,6 +10,8 @@
 *.sas7bdat
 */04_data/*
 */04 data/*
+*/data_boot_processed/*
+*/data/*
 
 # History files
 .Rhistory

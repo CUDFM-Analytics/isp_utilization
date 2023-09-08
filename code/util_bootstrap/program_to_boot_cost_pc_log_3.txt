@@ -1,4 +1,4 @@
-1                                                          The SAS System                         13:25 Wednesday, September 6, 2023
+1                                                          The SAS System                          14:55 Thursday, September 7, 2023
 
 NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
 NOTE: All registry changes will be lost at the end of the session.
@@ -27,12 +27,12 @@ NOTE: Additional host information:
  X64_10PRO WIN 10.0.19041  Workstation
 
 NOTE: SAS initialization used:
-      real time           0.31 seconds
-      cpu time            0.31 seconds
+      real time           0.52 seconds
+      cpu time            0.37 seconds
       
 1          *****************************************************************************************
 1        ! *****
-2          AUTHOR   : Carter Sevick, adapted for ISP by KW
+2          AUTHOR   : Carter Sevick (adapted KW)
 3          PROJECT  : ISP
 4          PURPOSE  : define the bootstrap process to parallelize
 5          VERSION  : 2023-08-24
@@ -47,20 +47,19 @@ NOTE: SAS initialization used:
 12         %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
 13         
 14         * location for bootstrap products ;
-15         libname out "&projRoot\data_boot_processed\cost_pc";
+15         libname out "C:\Data\isp_utilization_cost_pc";
 NOTE: Libref OUT was successfully assigned as follows: 
       Engine:        V9 
-      Physical Name: 
-      S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed\cost_pc
+      Physical Name: C:\Data\isp_utilization_cost_pc
 16         * location of input data to boot ;
 17         libname in "&projRoot\data";
-2                                          The SAS System         13:25 Wednesday, September 6, 2023
-
 NOTE: Libref IN was successfully assigned as follows: 
+2                                          The SAS System          14:55 Thursday, September 7, 2023
+
       Engine:        V9 
       Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
 18         * get formats;
-19         OPTIONS FMTSEARCH=(in, work, out);
+19         OPTIONS FMTSEARCH=(in);
 20         
 21         * data to boot ;
 22         %let data = in.analysis;
@@ -84,7 +83,7 @@ NOTE: Libref IN was successfully assigned as follows:
 145      ! STATISTICS!!!!!!!!!!!;
 146        ODS SELECT NONE;
 147        %resample(data= &data
-148                , out = _resample_out_
+148                , out = out._resample_out_&i
 149                , subject=mcaid_id
 150                , lightSort = YES
 151                , reps= &N
@@ -99,84 +98,82 @@ NOTE: There were 15124679 observations read from the data set IN.ANALYSIS.
 NOTE: 13365704 observations with duplicate key values were deleted.
 NOTE: The data set WORK._DEDUP_ has 1758975 observations and 2 variables.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           58.89 seconds
-      cpu time            6.32 seconds
+      real time           1:46.55
+      cpu time            6.54 seconds
       
 
 
-NOTE: The data set WORK._RESAMPLE_OUT__TMP has 49178367 observations and 6 variables.
+NOTE: The data set OUT._RESAMPLE_OUT_3_TMP has 49178367 observations and 6 variables.
 NOTE: PROCEDURE SURVEYSELECT used (Total process time):
-      real time           18.40 seconds
-      cpu time            17.14 seconds
+      real time           20.11 seconds
+      cpu time            14.93 seconds
       
 
-3                                          The SAS System         13:25 Wednesday, September 6, 2023
 
+3                                          The SAS System          14:55 Thursday, September 7, 2023
 
-NOTE: There were 49178367 observations read from the data set WORK._RESAMPLE_OUT__TMP.
-NOTE: The data set WORK._RESAMPLE_OUT__TMP has 49178367 observations and 6 variables.
+NOTE: There were 49178367 observations read from the data set OUT._RESAMPLE_OUT_3_TMP.
+NOTE: The data set OUT._RESAMPLE_OUT_3_TMP has 49178367 observations and 6 variables.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           2:13.66
-      cpu time            29.39 seconds
+      real time           1:55.57
+      cpu time            31.09 seconds
       
 
 
-NOTE: There were 49178367 observations read from the data set WORK._RESAMPLE_OUT__TMP.
-NOTE: The data set WORK._RESAMPLE_OUT__TMP has 49178367 observations and 7 variables.
+NOTE: There were 49178367 observations read from the data set OUT._RESAMPLE_OUT_3_TMP.
+NOTE: The data set OUT._RESAMPLE_OUT_3_TMP has 49178367 observations and 7 variables.
 NOTE: DATA statement used (Total process time):
-      real time           58.73 seconds
-      cpu time            10.54 seconds
+      real time           54.62 seconds
+      cpu time            9.78 seconds
       
 
-NOTE: Table WORK._RESAMPLE_OUT_ created, with 434664508 rows and 41 columns.
+NOTE: Table OUT._RESAMPLE_OUT_3 created, with 434664508 rows and 41 columns.
 
 NOTE: PROCEDURE SQL used (Total process time):
-      real time           43:42.08
-      cpu time            4:43.39
+      real time           44:15.95
+      cpu time            4:45.51
       
 
 
-ERROR: Insufficient space in file WORK._RESAMPLE_OUT_.DATA.
-ERROR: File WORK._RESAMPLE_OUT_.DATA is damaged. I/O processing did not complete.
+NOTE: Tagsort reads each observation of the input data set twice.
+NOTE: The data set OUT._RESAMPLE_OUT_3 has 434664508 observations and 41 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           2:45:54.13
+      cpu time            34:50.43
+      
+
+NOTE: Enter RUN; to continue or QUIT; to end the procedure.
+
+NOTE: Statements not processed because of errors noted above.
+
 NOTE: The SAS System stopped processing this step because of errors.
 NOTE: Due to ERROR(s) above, SAS set option OBS=0, enabling syntax check mode. 
       This prevents execution of subsequent data modification statements.
-WARNING: The data set WORK._RESAMPLE_OUT_ may be incomplete.  When this step was stopped there were 
-         168707427 observations and 41 variables.
-WARNING: Data set WORK._RESAMPLE_OUT_ was not replaced because this step was stopped.
-NOTE: PROCEDURE SORT used (Total process time):
-      real time           1:29:38.95
-      cpu time            17:51.26
-      
-
-
-
-
 NOTE: PROCEDURE DATASETS used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.00 seconds
+      real time           0.00 seconds
+      cpu time            0.01 seconds
       
-
+NOTE: Line generated by the macro variable "OUT".
+157         out._resample_out_3_tmp
+            _______________________
+            22
+            201
+ERROR 22-322: Syntax error, expecting one of the following: a name, ;, (, -, /, :.  
+ERROR 201-322: The option is not recognized and will be ignored.
 158        
-159        * save a copy of the booted data ;
-160        DATA out._resample_out_&i;
-161        SET _resample_out_;
-162        RUN;
-
-NOTE: The data set OUT._RESAMPLE_OUT_3 has 0 observations and 41 variables.
-NOTE: DATA statement used (Total process time):
-      real time           0.14 seconds
-4                                          The SAS System         13:25 Wednesday, September 6, 2023
-
-      cpu time            0.03 seconds
-      
-
+159        /** save a copy of the booted data ;*/
+160        /*DATA out._resample_out_&i; */
+161        /*SET _resample_out_; */
+162        /*RUN;*/
 163        
+4                                          The SAS System          14:55 Thursday, September 7, 2023
+
+
 
 ERROR: Errors printed on page 3.
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           2:17:51.38
-      cpu time            23:38.48
+      real time           3:35:07.59
+      cpu time            40:38.78
       

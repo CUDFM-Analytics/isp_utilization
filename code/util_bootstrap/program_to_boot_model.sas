@@ -1,3 +1,37 @@
+**********************************************************************************************
+AUTHOR   : Carter Sevick (adapted KW)
+PROJECT  : ISP
+PURPOSE  : define the bootstrap process to parallelize
+VERSION  : 2023-08-24
+HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+CHANGES  :  -- [row 13] projRoot > %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization
+            -- [row 20] add OPTIONS FMTSEARCH = (in)
+            -- [row 73] prob model positive cost > ind_pc_cost
+            -- [row 94] cost model DV > adj_pd_pc_tc
+***********************************************************************************************;
+%LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+
+* location for bootstrap products ;
+libname out "&projRoot\data_boot_processed\cost_pc";
+* location of input data to boot ;
+libname in "&projRoot\data";
+* get formats; 
+OPTIONS FMTSEARCH=(in);
+
+* data to boot ;
+%let data = in.analysis;
+
+* include macro programs;
+%INCLUDE "&projRoot\code\util_bootstrap\MACRO_resample_V4.sas"; 
+
+* get process parameters ;
+** process number ;
+%LET   i = %scan(&SYSPARM,1,%str( ));
+** seed number ;
+%LET   seed = %scan(&SYSPARM,2,%str( ));
+** N bootstrap samples ;
+%LET    N = %scan(&SYSPARM,3,%str( ));
+
 * run models and output store objects ;
 
 * probability model 
@@ -43,3 +77,4 @@ PROC GENMOD DATA = out._resample_out_&i  ;
 RUN;
 ODS SELECT ALL;
 OPTIONS NOTES;
+

@@ -12,7 +12,7 @@ CHANGES  :  -- [row 13] projRoot > %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_
 %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
 
 * location for bootstrap products ;
-libname out "C:\Data\isp_utilization_cost_pc";
+libname out "&projRoot\data_boot_processed\cost_pc";
 * location of input data to boot ;
 libname in "&projRoot\data";
 * get formats; 
@@ -50,7 +50,7 @@ ODS SELECT NONE;
         , samprate = (.5 .15)
 );
 
-/** save a copy of the booted data ;*/
+* save a copy of the booted data ;
 /*DATA out._resample_out_&i; */
 /*SET _resample_out_; */
 /*RUN;*/

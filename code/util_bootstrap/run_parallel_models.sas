@@ -14,7 +14,7 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 * kick off the processes ;
 %parallel(
     folder  = &projRoot/code/util_bootstrap /* data, program location */,
-    progName= program_to_boot_cost_pc.sas   /* name of the program that will act on the data  */,
+    progName= program_to_boot_model.sas   /* name of the program that will act on the data  */,
     taskName= mytask                        /*, place holder names for the individual tasks */,
     nprocess= 8                             /* number of processes to activate */,
     nboot   = 500                           /* total number of bootstrap iterations*/,
