@@ -2,12 +2,13 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization Analysis
 PURPOSE  : Gather, Process datasets from analytic subset dir, Create final analysis dataset and mini dataset
-VERSION  : 2023-06-06
-           - updated 5/30 due to issues in the hcpf file and to get Sept 2022 since it's available now (cs email re: hcpf)
-           - updated 06/01-02 bc ana.long & ana.demo were missing months
-           - updated 6/5 to combine bh cat variables into 1 bh cat var
-           - updated 6/6 to check on the BH's by adding a total var and seeing
-                if any of them are wrong as I'm still getting Hessian errors
+VERSION  : 2023-09-08
+            - 09-08 manually renamed data.analysis as data.analysis_prev, created minimized length data.utilization look for #UPDATE[09-08-2023] approx row 948
+            - 06-06 to check on the BH's: added total var maybe some are wrong as I'm still getting Hessian errors
+            - 06-05 to combine bh cat variables into 1 bh cat var
+            - 06-02 bc ana.long & ana.demo were missing months
+            - 05-30 due to issues in the hcpf file and to get Sept 2022 since it's available now (cs email re: hcpf)
+
 DEPENDS  : -ana subset folder, config file, 
            -%include helper file in code/util_dataset_prep/incl_extract_check_fy19210.sas
            -other macro code referenced is stored in the util_00_config.sas file
@@ -16,7 +17,7 @@ SECTION1 : data.analysis
 SECTION2 : data.analysis_allcols
 SECTION3 : data.mini_ds (test set with only 500000 records) ;
 
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas"; 
 
 * 
 [RAW.time_dim] ==============================================================================
@@ -943,6 +944,76 @@ SET  int.analysis3 (DROP= bh_2016 bh_2017 bh_2018 adj_pd_total_16cat_orig adj_pd
                     n_pc_pm n_ed_pm n_ffs_bh_pm n_tel_pm age_cat_num);
 RUN; *08-03 15124679:39;
 
+** UPDATE 09-08-2023 ====================================
+0. MANUALLY renamed data.analysis = data.analysis_prev
+1. Removed int. datasets bc of size issues. 
+2. Minimize data.analysis_prev (create data.utilization) by: 
+    2a. Minimizing dataset size variables - i.e. budgetgroup doesn't need to be char 22, should be numeric. 
+    2b. Binary variables can be length = 3
+    2c. mcaid_id length = 7
+    2d. Per CS, formats don't add any length etc, so don't need to worry about them. 
+;
+PROC CONTENTS DATA = data.analysis_prev VARNUM; RUN; 
+
+DATA data.utilization0 (rename=(ind_ed_visit     = ind_visit_ed
+                                ind_ffs_bh_visit = ind_visit_ffs_bh
+                                ind_tel_visit    = ind_visit_tel
+                                inc_pc_visit     = ind_visit_pc
+                                ind_total_cost   = ind_cost_total
+                                ind_pc_cost      = ind_cost_pc
+                                ind_rx_cost      = ind_cost_rx)
+                                );
+LENGTH time age rae_person_new int int_imp bh_hosp16 bh_hosp17 bh_hosp18 bh_er16 bh_er17 bh_er18 bh_oth16 bh_oth17 bh_oth18 
+       adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat ind_pc_visit ind_ed_visit ind_ffs_bh_visit ind_tel_visit
+       budget_grp_num_r fyqrtr season1 season2 season3 3.
+       mcaid_id 7. 
+       sex $1. ;
+FORMAT budget_grp_num budget_grp_new_.
+SET  data.analysis_prev ;
+* assign new numeric values to 3, 5-12 / else 0 (Other);
+IF       budget_grp_new = "Other"                  THEN budget_grp_num = 0;
+ELSE IF  budget_grp_new = "MAGI 69 - 133% FPL"     THEN budget_grp_num = 1;
+ELSE IF  budget_grp_new = "MAGI TO 68% FPL"        THEN budget_grp_num = 2;
+ELSE IF  budget_grp_new = "Disabled"               THEN budget_grp_num = 3;
+ELSE IF  budget_grp_new = "Foster Care"            THEN budget_grp_num = 4;
+ELSE IF  budget_grp_new = "MAGI Eligible Children" THEN budget_grp_num = 5;
+ELSE                                                    budget_grp_num = 999;  
+RUN; *  15124679 : 34; 
+
+
+
+
+
+
+* Reordered so I could see related cols together; 
+DATA int.analysis3;
+RETAIN mcaid_id time int int_imp season1 season2 season3 
+       ind_total_cost     adj_pd_total_tc
+       ind_pc_cost        adj_pd_pc_tc
+       ind_rx_cost        adj_pd_rx_tc
+       ind_pc_visit       n_pc_pm   n_pc_pm_r
+       ind_ed_visit       n_ed_pm   n_ed_pm_r
+       ind_ffs_bh_visit   n_ffs_bh_pm   n_ffs_bh_pm_r
+       ind_tel_visit      n_tel_pm      n_tel_pm_r
+       bh_2016  bh_hosp16   bh_er16   bh_oth16
+       bh_2017  bh_hosp17   bh_er17   bh_oth17
+       bh_2018  bh_hosp18   bh_er18   bh_oth18
+       adj_pd_total_16cat_orig  adj_pd_total_16cat
+       adj_pd_total_17cat_orig  adj_pd_total_17cat
+       adj_pd_total_18cat_orig  adj_pd_total_18cat
+       fqhc 
+       budget_grp_fmt_ana   budget_grp_num  budget_grp_num_r budget_grp_new
+       age      age_cat     age_cat_num
+       rae_person_new race sex  ;
+SET int.analysis2;
+RUN;
+
+DATA data.analysis;
+/*Drop the vars you're not using in the modeling*/
+SET  int.analysis3 (DROP= bh_2016 bh_2017 bh_2018 adj_pd_total_16cat_orig adj_pd_total_17cat_orig 
+                    adj_pd_total_18cat_orig budget_grp_fmt_ana budget_grp_num budget_grp_num_r age
+                    n_pc_pm n_ed_pm n_ffs_bh_pm n_tel_pm age_cat_num);
+RUN; *08-03 15124679:39;
 
 
 * create data.analysis_meta ; 
@@ -986,6 +1057,5 @@ tables int;
 run;
 * int=0 pct 87.48%
   int=1 pct 12.52% (100-87.48%); 
-
 
 
