@@ -944,7 +944,8 @@ SET  int.analysis3 (DROP= bh_2016 bh_2017 bh_2018 adj_pd_total_16cat_orig adj_pd
                     n_pc_pm n_ed_pm n_ffs_bh_pm n_tel_pm age_cat_num);
 RUN; *08-03 15124679:39;
 
-** UPDATE 09-08-2023 ====================================
+
+** #UPDATE[09-08-2023] ====================================
 0. MANUALLY renamed data.analysis = data.analysis_prev
 1. Removed int. datasets bc of size issues. 
 2. Minimize data.analysis_prev (create data.utilization) by: 
@@ -958,17 +959,17 @@ PROC CONTENTS DATA = data.analysis_prev VARNUM; RUN;
 DATA data.utilization0 (rename=(ind_ed_visit     = ind_visit_ed
                                 ind_ffs_bh_visit = ind_visit_ffs_bh
                                 ind_tel_visit    = ind_visit_tel
-                                inc_pc_visit     = ind_visit_pc
+                                ind_pc_visit     = ind_visit_pc
                                 ind_total_cost   = ind_cost_total
                                 ind_pc_cost      = ind_cost_pc
                                 ind_rx_cost      = ind_cost_rx)
                                 );
 LENGTH time age rae_person_new int int_imp bh_hosp16 bh_hosp17 bh_hosp18 bh_er16 bh_er17 bh_er18 bh_oth16 bh_oth17 bh_oth18 
        adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat ind_pc_visit ind_ed_visit ind_ffs_bh_visit ind_tel_visit
-       budget_grp_num_r fyqrtr season1 season2 season3 3.
-       mcaid_id 7. 
+       budget_grp_num fyqrtr season1 season2 season3 3.
+       mcaid_id $7. 
        sex $1. ;
-FORMAT budget_grp_num budget_grp_new_.
+FORMAT budget_grp_num budget_grp_new_. ;
 SET  data.analysis_prev ;
 * assign new numeric values to 3, 5-12 / else 0 (Other);
 IF       budget_grp_new = "Other"                  THEN budget_grp_num = 0;
@@ -981,9 +982,9 @@ ELSE                                                    budget_grp_num = 999;
 RUN; *  15124679 : 34; 
 
 
+PROC FREQ DATA = data.utilization0; tables budget_grp_num; RUN; 
 
-
-
+PROC CONTENTS DATA = data.utilization0 VARNUM; RUN;
 
 * Reordered so I could see related cols together; 
 DATA int.analysis3;
