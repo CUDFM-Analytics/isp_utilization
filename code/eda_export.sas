@@ -1,10 +1,10 @@
 
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas"; 
 
-%let dat = data.analysis; 
+%let dat = data.utilization; 
 /*%let all = data.analysis_allcols; */
 
-OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE fmtsearch=(data, work);
 %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
              %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname))-6); *remove \Code\;
 
@@ -32,48 +32,45 @@ FROM &dat ;
 QUIT ; 
 
 proc odstext;
-p "Date:              &today";
+p "Date: &today";
 p "Project Root: &root";
-p "Script:            %sysget(SAS_EXECFILENAME)";
-p "Log File:         &log";
-p "Results File:  &pdf";
+p "Script: %sysget(SAS_EXECFILENAME)";
 p "Total Observations in Dataset: &nobs";
 p "Total unique medicaid IDs in Dataset: &nmem";
 p ""; 
-p "";
 RUN; 
 
 ods proclabel 'Data Specs';
 * Print specs ; 
 PROC ODSTEXT;
-p "Update/s to data.analysis (final ds)" /style=systemtitle;
-p "-- 06/24: Created rescaled integer visit DVs mult by 6 ";
-p "-- 06/19: Changed formats to hard coded values for budget vars, age";
-p "-- 06/08: Changed age determination date from EOFY to Quarter Month=2";
-p "-- 06/05: Collapsed bh FY16-18 variables by FY (ie bh_2016 = 1 if bh_oth2016, bh_er16, or bh_hosp16 = 1)";
-p "-- 06/02: Re-generated dataset and updated to include FY22 Q1";
-p "-- 05/15: Effect Coding time with season variables"; 
-p "-- 05/10: Included fyqrtr variable in final analysis dataset"; 
-p " ";
-
-p "Final Dataset Inclusion Rules"  /style = systemtitle;
-p "Eligibility determination based on ID presence in qry_longitudinal where records for FYs 19-22 indicated:" 
-  /style = header;
-p "-----1) Age 0-64 (as of quarter month2)"; 
-p "-----2) rae_id not NA";
-p "-----3) pcmp_loc_id not NA";
-p "-----4) Sex = M, F only (excluded U)";
-p "-----5) ManagedCare = 0";
-p "-----6) budget_group NOT 16:27";
-p "Final dataset records aggregated by quarters.";
-p "-- Where unique value per quarter n >1 for variables rae_id, budget_group, and pcmp_loc_id:";
-p "----- a) Max value used where possible";
-p "----- b) In cases of ties, used value in quarter months that was most recent";
-p " ";
+/*p "Update/s to data.utilization (final ds)" /style=systemtitle;*/
+/*p "-- 09-11: changed to data.utilization, renamed data.utilization to data.analysis_prev to adjust length of variables (also renamed some)."; */
+/*p "-- 06/24: Created rescaled integer visit DVs mult by 6 ";*/
+/*p "-- 06/19: Changed formats to hard coded values for budget vars, age";*/
+/*p "-- 06/08: Changed age determination date from EOFY to Quarter Month=2";*/
+/*p "-- 06/05: Collapsed bh FY16-18 variables by FY (ie bh_2016 = 1 if bh_oth2016, bh_er16, or bh_hosp16 = 1)";*/
+/*p "-- 06/02: Re-generated dataset and updated to include FY22 Q1";*/
+/*p "-- 05/15: Effect Coding time with season variables"; */
+/*p "-- 05/10: Included fyqrtr variable in final analysis dataset"; */
+/*p " ";*/
+/**/
+/*p "Final Dataset Inclusion Rules"  /style = systemtitle;*/
+/*p "Eligibility determination based on ID presence in qry_longitudinal where records for FYs 19-22 indicated:" */
+/*  /style = header;*/
+/*p "-----1) Age 0-64 (as of quarter month2)"; */
+/*p "-----2) rae_id not NA";*/
+/*p "-----3) pcmp_loc_id not NA";*/
+/*p "-----4) Sex = M, F only (excluded U)";*/
+/*p "-----5) ManagedCare = 0";*/
+/*p "-----6) budget_group NOT 16:27";*/
+/*p "Final dataset records aggregated by quarters.";*/
+/*p "-- Where unique value per quarter n >1 for variables rae_id, budget_group, and pcmp_loc_id:";*/
+/*p "----- a) Max value used where possible";*/
+/*p "----- b) In cases of ties, used value in quarter months that was most recent";*/
+/*p " ";*/
 p "The final dataset contains n=&nobs unique mcaid_id*time (quarter) records, with n=&nmem unique member ids." / style=header;
 p " ";
 RUN; 
-
 
 PROC FORMAT;
 VALUE adj1618fy
@@ -92,31 +89,27 @@ VALUE bh1618fy
 RUN; 
 *******************************************************************************
 * Print columns for dataset (use abbreviation 'columns'); 
-ods proclabel 'Analysis_Dataset Columns'; RUN;
+ods proclabel 'Analytic Dataset Columns'; RUN;
 PROC ODSTEXT; 
 p "Dataset Contents" /style=systemtitle;
 RUN; 
-PROC CONTENTS DATA = data.analysis VARNUM; RUN; 
+PROC CONTENTS DATA = data.utilization VARNUM; RUN; 
 
 ods proclabel 'Frequencies, Cat Vars: Ungrouped'; RUN; 
-proc odstext;
-p "Frequencies, Categorical Vars: Ungrouped"; RUN; 
+proc odstext; p "Frequencies, Categorical Vars: Ungrouped"; RUN; 
 
-PROC FREQ 
-     DATA = data.analysis;
-     TABLES time int int_imp season: ind: bh: race sex budget_grp: age age_cat:
-            fqhc rae: adj_pd_total_16cat: adj_pd_total_17cat: adj_pd_total_18cat:;
+PROC FREQ DATA = data.utilization;
+TABLES time int int_imp season: ind: bh: race sex budget_grp_num age_cat fqhc rae: adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
 RUN; 
 
 ods proclabel 'Frequencies, Cat Vars: GROUPED by INT (time invariant)'; RUN; 
 proc odstext;
 p "Frequencies, Categorical Vars: GROUPED by INT (time invariant)"; RUN; 
 
-PROC FREQ 
-     DATA = data.analysis;
-     TABLES time int int_imp season: ind: bh: race sex budget_grp: age age_cat:
-            fqhc rae: adj_pd_total_16cat: adj_pd_total_17cat: adj_pd_total_18cat:;
-     BY INT; 
+PROC FREQ DATA = data.utilization;
+TABLES time int int_imp season: ind: bh: race sex budget_grp_num age_cat fqhc rae: 
+            adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
+BY INT; 
 RUN; 
 
 %macro univar_gt0(var, title);
@@ -204,11 +197,14 @@ p "For all values, including 0's, see the ind_: variables";  RUN;
 * CATEGORICAL FREQUENCIES, Grouped by INTERVENTION (0,1), time invariant 
 **************************************************************************************; 
 ods proclabel 'Frequencies, Cat Vars: Int Status (excluded: adj fy1618)'; RUN; 
+
 proc odstext;
 p "Frequencies, Categorical Vars by ISP Participation (Time-Invariant Indicator ('int'))" / style=systemtitle;
 p "adj fy 1618 vars have their own section"; 
 RUN; 
+
 ods proclabel 'Frequencies, Cat Vars: Int Status'; RUN; 
+
 PROC FREQ DATA = &dat; 
 TABLES (int_imp age_cat race sex time budget_group rae_person_new fqhc fy: bh: ind: adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat)*int; 
 RUN ; 
@@ -242,7 +238,7 @@ RUN;
 /*                                                                  _LABEL_ = label*/
 /*                                                                  COL1    = original_value));*/
 /*RUN; */
-ods proclabel 'adj FY 1618: Percentiles, Mus (table)'; RUN; 
+ods proclabel 'adj FY 1618: Percentiles, Mus'; RUN; 
 PROC PRINT DATA = int.pctl1618; RUN; 
 
 

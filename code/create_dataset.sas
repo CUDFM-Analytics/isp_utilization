@@ -956,17 +956,18 @@ RUN; *08-03 15124679:39;
 ;
 PROC CONTENTS DATA = data.analysis_prev VARNUM; RUN; 
 
-DATA data.utilization0 (rename=(ind_ed_visit     = ind_visit_ed
-                                ind_ffs_bh_visit = ind_visit_ffs_bh
-                                ind_tel_visit    = ind_visit_tel
-                                ind_pc_visit     = ind_visit_pc
-                                ind_total_cost   = ind_cost_total
-                                ind_pc_cost      = ind_cost_pc
-                                ind_rx_cost      = ind_cost_rx)
-                                );
+DATA data.utilization0 (rename=(ind_ed_visit    = ind_visit_ed
+                               ind_ffs_bh_visit = ind_visit_ffs_bh
+                               ind_tel_visit    = ind_visit_tel
+                               ind_pc_visit     = ind_visit_pc
+                               ind_total_cost   = ind_cost_total
+                               ind_pc_cost      = ind_cost_pc
+                               ind_rx_cost      = ind_cost_rx)
+                               );
 LENGTH time age rae_person_new int int_imp bh_hosp16 bh_hosp17 bh_hosp18 bh_er16 bh_er17 bh_er18 bh_oth16 bh_oth17 bh_oth18 
        adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat ind_pc_visit ind_ed_visit ind_ffs_bh_visit ind_tel_visit
-       budget_grp_num fyqrtr season1 season2 season3 3.
+       budget_grp_num season1 season2 season3 fqhc ind_rx_cost ind_pc_cost ind_total_cost
+       n_pc_pm_r n_ed_pm_r n_ffs_bh_pm_r n_tel_pm_r 3.
        mcaid_id $7. 
        sex $1. ;
 FORMAT budget_grp_num budget_grp_new_. ;
@@ -979,47 +980,54 @@ ELSE IF  budget_grp_new = "Disabled"               THEN budget_grp_num = 3;
 ELSE IF  budget_grp_new = "Foster Care"            THEN budget_grp_num = 4;
 ELSE IF  budget_grp_new = "MAGI Eligible Children" THEN budget_grp_num = 5;
 ELSE                                                    budget_grp_num = 999;  
-RUN; *  15124679 : 34; 
 
-
-PROC FREQ DATA = data.utilization0; tables budget_grp_num; RUN; 
+age_cat2 = input(age_cat, best12.);
+DROP age_cat budget_grp_new;
+RENAME age_cat2=age_cat; 
+RUN; * 09-08-2023  15124679 : 34; 
 
 PROC CONTENTS DATA = data.utilization0 VARNUM; RUN;
+DATA data.utilization1 (RENAME=(adj_pd_total_tc  = cost_total
+                                adj_pd_pc_tc     = cost_pc
+                                adj_pd_rx_tc     = cost_rx
+                                n_pc_pm_r        = visits_pc
+                                n_ed_pm_r        = visits_ed
+                                n_ffs_bh_pm_r    = visits_ffsbh
+                                n_tel_pm_r       = visits_tel
+                                ind_visit_ffs_bh = ind_visit_ffsbh)) ;  * remove that second ffsbh underscore was giving me issues in hurdle macro; 
+LENGTH age_cat 3.;
+FORMAT age_cat age_cat_.; 
+SET  data.utilization0 (DROP=age);
+RUN; *15124679 : 40;
 
-* Reordered so I could see related cols together; 
-DATA int.analysis3;
-RETAIN mcaid_id time int int_imp season1 season2 season3 
-       ind_total_cost     adj_pd_total_tc
-       ind_pc_cost        adj_pd_pc_tc
-       ind_rx_cost        adj_pd_rx_tc
-       ind_pc_visit       n_pc_pm   n_pc_pm_r
-       ind_ed_visit       n_ed_pm   n_ed_pm_r
-       ind_ffs_bh_visit   n_ffs_bh_pm   n_ffs_bh_pm_r
-       ind_tel_visit      n_tel_pm      n_tel_pm_r
-       bh_2016  bh_hosp16   bh_er16   bh_oth16
-       bh_2017  bh_hosp17   bh_er17   bh_oth17
-       bh_2018  bh_hosp18   bh_er18   bh_oth18
-       adj_pd_total_16cat_orig  adj_pd_total_16cat
-       adj_pd_total_17cat_orig  adj_pd_total_17cat
-       adj_pd_total_18cat_orig  adj_pd_total_18cat
-       fqhc 
-       budget_grp_fmt_ana   budget_grp_num  budget_grp_num_r budget_grp_new
-       age      age_cat     age_cat_num
-       rae_person_new race sex  ;
-SET int.analysis2;
+* Reordered so I could see related cols together 
+(I think the renaming in data statement overwrote the retain part when it was in the same step
+so did in a separate step); 
+DATA data.utilization;
+RETAIN mcaid_id         time            int         int_imp 
+       season1          season2         season3 
+       ind_cost_total   cost_total
+       ind_cost_pc      cost_pc
+       ind_cost_rx      cost_rx
+       ind_visit_pc     visits_pc
+       ind_visit_ed     visits_ed
+       ind_visit_ffsbh  visits_ffsbh
+       ind_visit_tel    visits_tel
+       bh_hosp16        bh_hosp17       bh_hosp18
+       bh_er16          bh_er17         bh_er18
+       bh_oth16         bh_oth17        bh_oth18
+       adj_pd_total_16cat   adj_pd_total_17cat  adj_pd_total_18cat
+       fqhc             budget_grp_num
+       age_cat          rae_person_new  race    sex  ;
+SET data.utilization1;
 RUN;
 
-DATA data.analysis;
-/*Drop the vars you're not using in the modeling*/
-SET  int.analysis3 (DROP= bh_2016 bh_2017 bh_2018 adj_pd_total_16cat_orig adj_pd_total_17cat_orig 
-                    adj_pd_total_18cat_orig budget_grp_fmt_ana budget_grp_num budget_grp_num_r age
-                    n_pc_pm n_ed_pm n_ffs_bh_pm n_tel_pm age_cat_num);
-RUN; *08-03 15124679:39;
+PROC CONTENTS DATA = data.utilization VARNUM; RUN;
 
 
-* create data.analysis_meta ; 
+** CREATE META DS  ====================================;
 PROC SQL; 
-CREATE TABLE data.analysis_meta AS 
+CREATE TABLE data.UTILIZATION_meta AS 
 SELECT name as variable
      , type
      , length
@@ -1028,7 +1036,7 @@ SELECT name as variable
      , informat
 FROM sashelp.vcolumn
 WHERE LIBNAME = 'DATA' 
-AND   MEMNAME = 'ANALYSIS';
+AND   MEMNAME = 'UTILIZATION';
 quit;
 
 * 

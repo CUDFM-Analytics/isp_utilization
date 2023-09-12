@@ -69,7 +69,7 @@ VALUE age_cat_
     21-44 = 5
     45-64 = 6 ;
 
-VALUE $age_cat_
+VALUE age_cat_
     1 = "ages 0-5"
     2 = "ages 6-10"
     3 = "ages 11-15"

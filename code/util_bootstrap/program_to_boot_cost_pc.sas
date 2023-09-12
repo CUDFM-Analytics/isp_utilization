@@ -12,14 +12,14 @@ CHANGES  :  -- [row 13] projRoot > %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_
 %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
 
 * location for bootstrap products ;
-libname out "&projRoot\data_boot_processed\cost_pc";
+libname out "&projRoot\data_boot_processed";
 * location of input data to boot ;
 libname in "&projRoot\data";
 * get formats; 
 OPTIONS FMTSEARCH=(in);
 
 * data to boot ;
-%let data = in.analysis;
+%let data = in.utilization;
 
 * include macro programs;
 %INCLUDE "&projRoot\code\util_bootstrap\MACRO_resample_V4.sas"; 
