@@ -37,7 +37,8 @@ LOG
         LIBNAME store "&store";
 /*    %LET eda = &data/results_util_eda_tests;*/
 /*      LIBNAME eda "&eda";*/
-
+/*%LET out_boot = &util/data_boot_processed;*/
+/*LIBNAME boot "&out_boot";*/
     * export folder for excel files output; 
       %LET report = &util/reports; 
 

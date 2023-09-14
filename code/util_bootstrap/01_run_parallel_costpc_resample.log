@@ -1,0 +1,240 @@
+1                                                          The SAS System                        14:48 Wednesday, September 13, 2023
+
+NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
+NOTE: All registry changes will be lost at the end of the session.
+
+WARNING: Unable to copy SASUSER registry to WORK registry. Because of this, you will not see registry customizations during this 
+         session.
+NOTE: Unable to open SASUSER.PROFILE. WORK.PROFILE will be opened instead.
+NOTE: All profile changes will be lost at the end of the session.
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7) 
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+      
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+WARNING: Your system is scheduled to expire on September 28, 2023, which is 15 days from now. The SAS 
+         System will no longer function on or after that date. Please contact your SAS Installation 
+         Representative to obtain your updated SAS Installation Data (SID) file, which includes 
+         SETINIT information.
+To locate the name of your SAS Installation Representative go to http://support.sas.com/repfinder and 
+provide your site number 70082279 and company name as UNIVERSITY OF COLORADO SYSTEM - SFA - T&R. On 
+the SAS REP list provided, locate the REP for operating system Windows.
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.52 seconds
+      cpu time            0.37 seconds
+      
+1          *******************************************************************************************
+1        ! ***
+2          AUTHOR   : Carter Sevick (adapted: KW)
+3          PROJECT  : ISP Utilization Analysis
+4          PURPOSE  : bootstrap specs
+5          VERSION  : 2023-08-30
+6          HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+7                     09-13: changed lightSort to No (program_to_boot_resample_costpc.sas)
+8          *******************************************************************************************
+8        ! ****;
+9          
+10         * CHECK memsize, work drive...;
+11         /*proc options option=memsize value; run;*/
+12         /*PROC OPTIONS option = work; run; */
+13         
+14         %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+15         
+2                                           The SAS System         14:48 Wednesday, September 13, 2023
+
+16         *include macro program ;
+17         %INCLUDE "&projRoot./code/util_bootstrap/MACRO_parallel.sas";
+112        
+113        * kick off the processes ;
+114        %parallel(
+115            folder  = &projRoot/code/util_bootstrap         /* data, program location */,
+116            progName= program_to_boot_costpc_resample.sas   /* name of the program that will act on
+116      !  the data  */,
+117            taskName= mytask                                /*, place holder names for the
+117      ! individual tasks */,
+118            nprocess= 8                                     /* number of processes to activate */,
+119            nboot   = 500                                   /* total number of bootstrap
+119      ! iterations*/,
+120            seed    = 837567                                /* a seed value for replicability */,
+121            topseed = 1000000000                            /* largest possible seed */
+122        );
+WARNING: The Base SAS Software product with which DATASTEP is associated will be expiring soon, and 
+         is currently in warning mode to indicate this upcoming expiration. Please run PROC SETINIT 
+         to obtain more information on your warning period.
+
+NOTE: The data set WORK._SEEDS_ has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: The data set WORK._NBOOTS_ has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You 
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+3                                           The SAS System         14:48 Wednesday, September 13, 2023
+
+      
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You 
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You 
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You 
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+4                                           The SAS System         14:48 Wednesday, September 13, 2023
+
+      cpu time            0.00 seconds
+      
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You 
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You 
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You 
+      might have unbalanced quotation marks.
+
+NOTE: There were 1 observations read from the data set WORK._SEEDS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set WORK._NBOOTS_.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: The quoted string currently being processed has become more than 262 characters long.  You 
+      might have unbalanced quotation marks.
+NOTE: Task "task_mytask2" produced no LOG/Output.
+5                                           The SAS System         14:48 Wednesday, September 13, 2023
+
+NOTE: Task "task_mytask3" produced no LOG/Output.
+NOTE: Task "task_mytask4" produced no LOG/Output.
+NOTE: Task "task_mytask5" produced no LOG/Output.
+NOTE: Task "task_mytask8" produced no LOG/Output.
+NOTE: Task "task_mytask6" produced no LOG/Output.
+NOTE: Task "task_mytask1" produced no LOG/Output.
+NOTE: Task "task_mytask7" produced no LOG/Output.
+123        
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           4:26:08.83
+      cpu time            1.10 seconds
+      

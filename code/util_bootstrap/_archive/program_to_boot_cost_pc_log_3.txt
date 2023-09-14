@@ -1,4 +1,4 @@
-1                                                          The SAS System                           16:17 Monday, September 11, 2023
+1                                                          The SAS System                          14:59 Tuesday, September 12, 2023
 
 NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
 NOTE: All registry changes will be lost at the end of the session.
@@ -27,8 +27,8 @@ NOTE: Additional host information:
  X64_10PRO WIN 10.0.19041  Workstation
 
 NOTE: SAS initialization used:
-      real time           0.41 seconds
-      cpu time            0.28 seconds
+      real time           0.29 seconds
+      cpu time            0.31 seconds
       
 1          *****************************************************************************************
 1        ! *****
@@ -54,7 +54,7 @@ NOTE: Libref OUT was successfully assigned as follows:
 16         * location of input data to boot ;
 17         libname in "&projRoot\data";
 NOTE: Libref IN was successfully assigned as follows: 
-2                                          The SAS System           16:17 Monday, September 11, 2023
+2                                          The SAS System          14:59 Tuesday, September 12, 2023
 
       Engine:        V9 
       Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
@@ -85,7 +85,7 @@ NOTE: Libref IN was successfully assigned as follows:
 147        %resample(data= &data
 148                , out = out._resample_out_&i
 149                , subject=mcaid_id
-150                , lightSort = YES
+150                , lightSort=YES
 151                , reps= &N
 152                , strata=int
 153                , seed=&seed
@@ -98,38 +98,58 @@ NOTE: There were 15124679 observations read from the data set IN.UTILIZATION.
 NOTE: 13365704 observations with duplicate key values were deleted.
 NOTE: The data set WORK._DEDUP_ has 1758975 observations and 2 variables.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           19.79 seconds
-      cpu time            4.76 seconds
+      real time           22.49 seconds
+      cpu time            4.14 seconds
       
 
 
-NOTE: The data set OUT._RESAMPLE_OUT_1_TMP has 49178367 observations and 6 variables.
+NOTE: The data set OUT._RESAMPLE_OUT_3_TMP has 49178367 observations and 6 variables.
 NOTE: PROCEDURE SURVEYSELECT used (Total process time):
-      real time           2:37.94
-      cpu time            13.48 seconds
+      real time           3:31.01
+      cpu time            13.81 seconds
       
 
 
-3                                          The SAS System           16:17 Monday, September 11, 2023
+3                                          The SAS System          14:59 Tuesday, September 12, 2023
 
-NOTE: There were 49178367 observations read from the data set OUT._RESAMPLE_OUT_1_TMP.
-NOTE: The data set OUT._RESAMPLE_OUT_1_TMP has 49178367 observations and 6 variables.
+NOTE: There were 49178367 observations read from the data set OUT._RESAMPLE_OUT_3_TMP.
+NOTE: The data set OUT._RESAMPLE_OUT_3_TMP has 49178367 observations and 6 variables.
 NOTE: PROCEDURE SORT used (Total process time):
-      real time           5:07.96
-      cpu time            23.20 seconds
+      real time           5:08.79
+      cpu time            20.46 seconds
       
 
 
-NOTE: There were 49178367 observations read from the data set OUT._RESAMPLE_OUT_1_TMP.
-NOTE: The data set OUT._RESAMPLE_OUT_1_TMP has 49178367 observations and 7 variables.
+NOTE: There were 49178367 observations read from the data set OUT._RESAMPLE_OUT_3_TMP.
+NOTE: The data set OUT._RESAMPLE_OUT_3_TMP has 49178367 observations and 7 variables.
 NOTE: DATA statement used (Total process time):
-      real time           5:42.38
-      cpu time            7.98 seconds
+      real time           5:26.10
+      cpu time            7.57 seconds
       
 
-NOTE: Table OUT._RESAMPLE_OUT_1 created, with 434650002 rows and 41 columns.
+NOTE: Table OUT._RESAMPLE_OUT_3 created, with 434664508 rows and 41 columns.
 
 NOTE: PROCEDURE SQL used (Total process time):
-      real time           2:09:36.97
-      cpu time            3:13.65
+      real time           1:23:28.10
+      cpu time            2:48.78
+      
+
+
+ERROR: User asked for termination
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: Due to ERROR(s) above, SAS set option OBS=0, enabling syntax check mode. 
+      This prevents execution of subsequent data modification statements.
+WARNING: The data set OUT._RESAMPLE_OUT_3 may be incomplete.  When this step was stopped there were 
+         7787241 observations and 41 variables.
+WARNING: Data set OUT._RESAMPLE_OUT_3 was not replaced because this step was stopped.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           18:14:54.33
+      cpu time            2:55.23
+      
+ERROR: Errors printed on page 3.
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           19:52:51.24
+      cpu time            6:30.40
       

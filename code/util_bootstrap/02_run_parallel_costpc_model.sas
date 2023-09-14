@@ -13,12 +13,12 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 
 * kick off the processes ;
 %parallel(
-    folder  = &projRoot/code/util_bootstrap /* data, program location */,
-    progName= program_to_boot_model.sas   /* name of the program that will act on the data  */,
-    taskName= mytask                        /*, place holder names for the individual tasks */,
-    nprocess= 8                             /* number of processes to activate */,
-    nboot   = 500                           /* total number of bootstrap iterations*/,
-    seed    = 837567                        /* a seed value for replicability */,
-    topseed = 1000000000                    /* largest possible seed */
+    folder  = &projRoot/code/util_bootstrap     /* data, program location */,
+    progName= program_to_boot_costpc_model.sas  /* name of the program that will act on the data  */,
+    taskName= mytask                            /*, place holder names for the individual tasks */,
+    nprocess= 8                                 /* number of processes to activate */,
+    nboot   = 500                               /* total number of bootstrap iterations*/,
+    seed    = 837567                            /* a seed value for replicability */,
+    topseed = 1000000000                        /* largest possible seed */
 );
  

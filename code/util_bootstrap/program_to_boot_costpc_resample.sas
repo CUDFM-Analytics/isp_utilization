@@ -41,13 +41,13 @@ ODS SELECT NONE;
 %resample(data= &data
         , out = out._resample_out_&i
         , subject=mcaid_id
-        , lightSort = YES
+        , lightSort=No
         , reps= &N
         , strata=int
         , seed=&seed
         , bootUnit=bootUnit
         , repName = replicate
-        , samprate = (.5 .15)
+        , samprate = (1 .2)
 );
 
 * save a copy of the booted data ;

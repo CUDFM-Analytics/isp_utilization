@@ -1,0 +1,184 @@
+1                                                          The SAS System                        14:48 Wednesday, September 13, 2023
+
+NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
+NOTE: All registry changes will be lost at the end of the session.
+
+WARNING: Unable to copy SASUSER registry to WORK registry. Because of this, you will not see registry customizations during this 
+         session.
+NOTE: Unable to open SASUSER.PROFILE. WORK.PROFILE will be opened instead.
+NOTE: All profile changes will be lost at the end of the session.
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7) 
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+      
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+WARNING: Your system is scheduled to expire on September 28, 2023, which is 15 days from now. The SAS 
+         System will no longer function on or after that date. Please contact your SAS Installation 
+         Representative to obtain your updated SAS Installation Data (SID) file, which includes 
+         SETINIT information.
+To locate the name of your SAS Installation Representative go to http://support.sas.com/repfinder and 
+provide your site number 70082279 and company name as UNIVERSITY OF COLORADO SYSTEM - SFA - T&R. On 
+the SAS REP list provided, locate the REP for operating system Windows.
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.60 seconds
+      cpu time            0.43 seconds
+      
+1          *******************************************************************************************
+1        ! ***
+2          AUTHOR   : Carter Sevick (adapted KW)
+3          PROJECT  : ISP
+4          PURPOSE  : define the bootstrap process to parallelize
+5          VERSION  : 2023-08-24
+6          HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+7          CHANGES  :  -- [row 13] projRoot > %LET projRoot =
+7        ! S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization
+8                      -- [row 20] add OPTIONS FMTSEARCH = (in)
+9                      -- [row 73] prob model positive cost > ind_pc_cost
+10                     -- [row 94] cost model DV > adj_pd_pc_tc
+11         *******************************************************************************************
+11       ! ****;
+12         %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+13         
+14         * location for bootstrap products ;
+2                                           The SAS System         14:48 Wednesday, September 13, 2023
+
+15         libname out "&projRoot\data_boot_processed";
+NOTE: Libref OUT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
+16         * location of input data to boot ;
+17         libname in "&projRoot\data";
+NOTE: Libref IN was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
+18         * get formats;
+19         OPTIONS FMTSEARCH=(in);
+20         
+21         * data to boot ;
+22         %let data = in.utilization;
+23         
+24         * include macro programs;
+25         %INCLUDE "&projRoot\code\util_bootstrap\MACRO_resample_V4.sas";
+132        
+133        * get process parameters ;
+134        ** process number ;
+135        %LET   i = %scan(&SYSPARM,1,%str( ));
+136        ** seed number ;
+137        %LET   seed = %scan(&SYSPARM,2,%str( ));
+138        ** N bootstrap samples ;
+139        %LET    N = %scan(&SYSPARM,3,%str( ));
+140        
+141        * Draw bootstrap samples
+142        Two new variables are added
+143        1) bootUnit = the new subject identifier
+144        2) replicate = identifies specific bootstrap samples
+145        !!!!! the old ID variable is still included, BUT YOU CAN NOT USE IT IN THIS DATA FOR
+145      ! STATISTICS!!!!!!!!!!!;
+146        ODS SELECT NONE;
+WARNING: The Base SAS Software product with which SASODR is associated will be expiring soon, and is 
+         currently in warning mode to indicate this upcoming expiration. Please run PROC SETINIT to 
+         obtain more information on your warning period.
+147        %resample(data= &data
+148                , out = out._resample_out_&i
+149                , subject=mcaid_id
+150                , lightSort=No
+151                , reps= &N
+152                , strata=int
+153                , seed=&seed
+154                , bootUnit=bootUnit
+155                , repName = replicate
+156                , samprate = (1 .2)
+157        );
+
+NOTE: There were 15124679 observations read from the data set IN.UTILIZATION.
+NOTE: 13365704 observations with duplicate key values were deleted.
+NOTE: The data set WORK._DEDUP_ has 1758975 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           24.05 seconds
+      cpu time            4.43 seconds
+3                                           The SAS System         14:48 Wednesday, September 13, 2023
+
+      
+
+WARNING: The SAS/STAT product with which SURVEYSELECT is associated will be expiring soon, and is 
+         currently in warning mode to indicate this upcoming expiration. Please run PROC SETINIT to 
+         obtain more information on your warning period.
+
+NOTE: The data set OUT._RESAMPLE_OUT_6_TMP has 96576921 observations and 6 variables.
+NOTE: PROCEDURE SURVEYSELECT used (Total process time):
+      real time           6:18.29
+      cpu time            24.28 seconds
+      
+
+
+NOTE: There were 96576921 observations read from the data set OUT._RESAMPLE_OUT_6_TMP.
+NOTE: The data set OUT._RESAMPLE_OUT_6_TMP has 96576921 observations and 6 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           10:49.10
+      cpu time            29.78 seconds
+      
+
+
+NOTE: There were 96576921 observations read from the data set OUT._RESAMPLE_OUT_6_TMP.
+NOTE: The data set OUT._RESAMPLE_OUT_6_TMP has 96576921 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           12:01.46
+      cpu time            11.59 seconds
+      
+
+NOTE: Table OUT._RESAMPLE_OUT_6 created, with 857442470 rows and 41 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           3:54:06.96
+      cpu time            14:29.98
+      
+
+NOTE: Enter RUN; to continue or QUIT; to end the procedure.
+
+NOTE: Statements not processed because of errors noted above.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: Due to ERROR(s) above, SAS set option OBS=0, enabling syntax check mode. 
+      This prevents execution of subsequent data modification statements.
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+NOTE: Line generated by the macro variable "OUT".
+157         out._resample_out_6_tmp
+            _______________________
+            22
+            201
+ERROR 22-322: Syntax error, expecting one of the following: a name, ;, (, -, /, :.  
+ERROR 201-322: The option is not recognized and will be ignored.
+158        
+4                                           The SAS System         14:48 Wednesday, September 13, 2023
+
+159        * save a copy of the booted data ;
+160        /*DATA out._resample_out_&i; */
+161        /*SET _resample_out_; */
+162        /*RUN;*/
+163        
+
+
+ERROR: Errors printed on page 3.
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           4:23:40.55
+      cpu time            15:40.57
+      
