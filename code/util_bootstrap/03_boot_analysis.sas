@@ -2,21 +2,32 @@
 AUTHOR   : Carter Sevick (KW adapted)
 PROJECT  : ISP
 PURPOSE  : Part 3 of 3>  combine the parallel process results and analyze
-VERSION  : 2023-08-30
+VERSION  : 2023-09-18
 HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 CHANGES  : [row 108] added _diff_ 
+PRE PROCESSING: COPY STORED PROCS INTO DV/FOLDER... 
+
+NOTE: Copy the stored procs into specific DV folder after running this? This requires the resampled data to be in same folder? 
+Not sure  - tried using so I could keep but didn't have in same folder as dataset, but nothing worked... 
 ***********************************************************************************************;
+* for outputs by DV, reporting // Change 12, 13 then okay; 
+%LET pdftitle = Cost_PC;
+%LET dv = cost_pc;
+
+LIBNAME &dv "&projRoot\data_boot_processed\&dv.";
+%LET pdf      = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\reports\booted_se_&dv..pdf;
+
+**** BOOT ANALYSIS*******; 
 %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
-
-* location for bootstrap products ;
+* location for bootstrap products / resampled datasets; 
 libname dataPro "&projRoot\data_boot_processed";
+* for format search; 
+libname data   "&projRoot\data";
 
-* Get formats; 
-libname in      "&projRoot\data";
-OPTIONS FMTSEARCH = (in);
+OPTIONS FMTSEARCH = (dataPro, data);
 
 %macro combineAndScore(data=                /*list datasets to combine and score*/,
-                       lib = dataPro        /*libname for the data location */,
+                       lib = dataPro       /*libname for the data location */,
                        prob= prob_stored_   /*prefix of the store objects for the probability model */,
                        cost= cost_stored_   /*prefix of the store objects for the cost model */,
                        subset=              /* subset of the data to score */,
@@ -25,7 +36,7 @@ OPTIONS FMTSEARCH = (in);
                        out =                /* name dataset for bootstrap results */
 );
 
-%local N_data;
+%local N_data; *local exists only during the execution of this specific macro (vs global, which is for duration of session/job);
 
 * count data sets to score ;
 %let N_data = %sysfunc(countw(&data, %str( )));
@@ -100,7 +111,8 @@ option mprint;
 
 * call the MACRO analysis ;
 %combineAndScore(
-    data     = _resample_out_1 _resample_out_2 _resample_out_3 _resample_out_4 _resample_out_5 _resample_out_6 _resample_out_7 _resample_out_8 /*list datasets to combine and score*/,
+    data     = _resample_out_1 _resample_out_2 _resample_out_3 _resample_out_4 
+               _resample_out_5 _resample_out_6 _resample_out_7 _resample_out_8 /*list datasets to combine and score*/,
     lib      = dataPro              /*libname for the data location */,
     prob     = prob_stored_         /*prefix of the store objects for the probability model */,
     cost     = cost_stored_         /*prefix of the store objects for the cost model */,
@@ -110,13 +122,24 @@ option mprint;
     out      = _diff_
 );
 
-title  'bootstrap standard error' ;
-proc means data = _diff_  n nmiss mean median stddev;
+****** RESULTS PRINT to PDF, SAVE _diff_ ***********************; 
+* save the work._diff_ and _allpred_ to libname dv ; 
+DATA &dv.._diff_;    SET  _diff_; RUN; 
+DATA &dv.._allpred_; SET  _allpred_; RUN; 
+
+ods pdf file="&pdf" STARTPAGE=no; TITLE &pdftitle;
+
+%LET today = %SYSFUNC(today(), YYMMDD10.); %put &today;
+
+TITLE  'Bootstrap Standard Error:' &pdftitle ;
+proc means data = &dv.._diff_  n nmiss mean median stddev;
   var diff;
 run;
 
 title 'Bootstrap distribution';
-proc sgplot data = _diff_;
+proc sgplot data = &dv.._diff_;
   histogram diff;
 run;
 title;
+
+ODS PDF CLOSE; 

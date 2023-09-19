@@ -20,7 +20,7 @@ libname data "&projRoot\data";
 OPTIONS FMTSEARCH=(in, data);
 
 * data to boot ;
-%let data = in.analysis;
+%let data = in.utilization;
 
 * include macro programs;
 %INCLUDE "&projRoot\code\util_bootstrap\MACRO_resample_V4.sas"; 
@@ -40,7 +40,7 @@ Changes: pvar added to class statement
 Questions: What happens to mcaid_id in class but not model? Is it needed?;
 ODS SELECT NONE;
 OPTIONS NONOTES;
-PROC GENMOD DATA = out._resample_out_&i desc;
+PROC GENMOD DATA = in._resample_out_&i desc;
    BY    replicate;
    CLASS bootunit int (ref='0') int_imp (ref='0') budget_grp_num (ref='MAGI Eligible Children')
          race (ref='non-Hispanic White/Caucasian') sex (ref='Female') rae_person_new (ref='3') age_cat(ref='ages 45-64') fqhc(ref ='0') 
@@ -61,7 +61,7 @@ OPTIONS NOTES;
 * cost model - UPDATE DV in WHERE statement and MODEL statements;
 ODS SELECT NONE;
 OPTIONS NONOTES;
-PROC GENMOD DATA = out._resample_out_&i  ;
+PROC GENMOD DATA = in._resample_out_&i  ;
    BY    replicate;
    WHERE cost_pc >0;
    CLASS bootunit int (ref='0') int_imp (ref='0') budget_grp_num (ref='MAGI Eligible Children')
