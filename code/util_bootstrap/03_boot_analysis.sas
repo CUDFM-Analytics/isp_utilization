@@ -2,7 +2,7 @@
 AUTHOR   : Carter Sevick (KW adapted)
 PROJECT  : ISP
 PURPOSE  : Part 3 of 3>  combine the parallel process results and analyze
-VERSION  : 2023-09-18
+VERSION  : 2023-09-25
 HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 CHANGES  : [row 108] added _diff_ 
 PRE PROCESSING: COPY STORED PROCS INTO DV/FOLDER... 
@@ -12,19 +12,21 @@ Not sure  - tried using so I could keep but didn't have in same folder as datase
 ***********************************************************************************************;
 * for outputs by DV, reporting // Change 12, 13 then okay; 
 %LET pdftitle = Cost_PC;
+%LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
 %LET dv = cost_pc;
-
-LIBNAME &dv "&projRoot\data_boot_processed\&dv.";
-%LET pdf      = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\reports\booted_se_&dv..pdf;
+* pdf output; 
+%LET pdf      = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\reports\boot_se_&dv..pdf;
 
 **** BOOT ANALYSIS*******; 
-%LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
-* location for bootstrap products / resampled datasets; 
-libname dataPro "&projRoot\data_boot_processed";
+* stored bootstrap products -- ;
+LIBNAME dataPro "&projRoot\data_boot_processed";
+LIBNAME cost_pc "&projRoot\data_boot_processed\cost_pc";
+
 * for format search; 
 libname data   "&projRoot\data";
 
-OPTIONS FMTSEARCH = (dataPro, data);
+OPTIONS FMTSEARCH = (dataPro, data &dv);
+%put &dv;
 
 %macro combineAndScore(data=                /*list datasets to combine and score*/,
                        lib = dataPro       /*libname for the data location */,
@@ -65,12 +67,12 @@ OPTIONS FMTSEARCH = (dataPro, data);
   * the predictions for util and cost will be made for each person twice, once exposed and once unexposed;
   * prob of util ;
   ods select none;
-  proc plm restore=&lib..&prob&i;
+  proc plm restore=&dv..&prob&i;
      score data=_tmp_&i out=p_tmp_&i predicted=pred_prob / ilink;
   run;
 
   * predicted cost ;
-  proc plm restore=&lib..&cost&i;
+  proc plm restore=&dv..&cost&i;
      score data=p_tmp_&i out=cp_tmp_&i predicted=pred_cost / ilink;
   run;
   ods select all;
@@ -111,8 +113,7 @@ option mprint;
 
 * call the MACRO analysis ;
 %combineAndScore(
-    data     = _resample_out_1 _resample_out_2 _resample_out_3 _resample_out_4 
-               _resample_out_5 _resample_out_6 _resample_out_7 _resample_out_8 /*list datasets to combine and score*/,
+    data     = _resample_out_1 _resample_out_2 _resample_out_3 _resample_out_4 _resample_out_5 _resample_out_6 _resample_out_7 _resample_out_8 /*list datasets to combine and score*/,
     lib      = dataPro              /*libname for the data location */,
     prob     = prob_stored_         /*prefix of the store objects for the probability model */,
     cost     = cost_stored_         /*prefix of the store objects for the cost model */,
@@ -123,6 +124,7 @@ option mprint;
 );
 
 ****** RESULTS PRINT to PDF, SAVE _diff_ ***********************; 
+
 * save the work._diff_ and _allpred_ to libname dv ; 
 DATA &dv.._diff_;    SET  _diff_; RUN; 
 DATA &dv.._allpred_; SET  _allpred_; RUN; 

@@ -1,41 +1,197 @@
-------------------------
-COMPLETE MODEL VAR LIST: 
-------------------------
-&pvar (ind_pc_cost, ind_total_cost, ind_rx_cost)
-&cvar (adj_pd_pc_tc, adj_pd_total_tc, adj_pd_rx_tc)
-mcaid_id             
-int       
-int_imp
-budget_grp_new
-race
-sex
-rae_person_new
-age_cat
-fqhc
-bh_oth16	bh_oth17    bh_oth18
-bh_er16		bh_er17    	bh_er18
-bh_hosp16	bh_hosp17   bh_hosp18
-adj_pd_total_16cat		adj_pd_total_17cat	adj_pd_total_18cat
-IF TIME IS NOT IN CLASS STATEMENT, INCL: season1, season2, season3
+-----------------------------------------------
+HURDLE CLASS STATEMENT 
+-----------------------------------------------
+
+int (ref='0') int_imp (ref='0') budget_grp_num (ref='MAGI Eligible Children')
+race (ref='non-Hispanic White/Caucasian') sex (ref='Female') rae_person_new (ref='3') age_cat(ref='ages 45-64') fqhc(ref ='0') 
+bh_oth16 (ref='0') bh_oth17 (ref='0') bh_oth18 (ref='0') bh_er16 (ref='0') bh_er17 (ref='0') bh_er18 (ref='0')
+bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0') 
+adj_pd_total_16cat(ref='0') adj_pd_total_17cat(ref='0') adj_pd_total_18cat(ref='0')
+* THEN ADD DV;
+ind_cost_total(ref='0')
 
 -----------------------------------------------
-CLASS STATEMENTS WITH REFERENCES: Complete list
+BOOTUNIT Notes 
 -----------------------------------------------
-mcaid_id             
-int(ref='0')         
-int_imp(ref='0') 
-budget_grp_new(ref='MAGI Eligible Children')
-race(ref='non-Hispanic White/Caucasian')
-sex(ref='Female')
-rae_person_new(ref='3')
-age_cat(ref='6') 
-fqhc(ref ='0')
-bh_oth16(ref='0')    bh_oth17(ref='0')       bh_oth18(ref='0')
-bh_er16(ref='0')     bh_er17(ref='0')        bh_er18(ref='0')
-bh_hosp16(ref='0')   bh_hosp17(ref='0')      bh_hosp18(ref='0')
-adj_pd_total_16cat(ref='0')
-adj_pd_total_17cat(ref='0')
-adj_pd_total_18cat(ref='0')
-&pvar(ref= '0') 
-	(where &pvar= (ind_pc_cost, ind_total_cost, ind_rx_cost))
+Probability Model: 
+Class Statement has 22 variables, including the DV;
+MODEL statement has 1 DV, 24 explanatory variables
+COST MODEL 
+Class statement has 21 variables (DV excluded, but now in WHERE statement)
+MODEL statement has 1 DV, 24 explanatory variables. 
+-----------------------------------------------
+BOOTUNIT CLASS STATEMENT 
+-----------------------------------------------
+CLASS bootunit 
+      int(ref='0')  
+      int_imp(ref='0') 
+      bh_oth16(ref='0') bh_oth17(ref='0') bh_oth18(ref='0') 
+      bh_er16(ref='0') bh_er17(ref='0') bh_er18(ref='0')
+      bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0') 
+      adj_pd_total_16cat(ref='0') 
+      adj_pd_total_17cat(ref='0') 
+      adj_pd_total_18cat(ref='0')
+      fqhc(ref ='0')
+      budget_grp_num(ref='MAGI Eligible Children')
+      age_cat(ref='ages 45-64')
+      rae_person_new(ref='3')
+      race(ref='non-Hispanic White/Caucasian') 
+      sex(ref='Female') 
+	  * CHANGE THIS ONE TO DV; 
+      ind_DV----------(ref='0');
+
+-----------------------------------------------
+ALL MODELS 
+-----------------------------------------------
+1 mcaid_id 			char 7 MCAID_ID $255. $255.  
+
+Obs variable 		type length label format informat 
+2 time 				num 3 Linearized qrtrs, 1-13 BEST12. BEST32. 
+3 int 				num 3 ISP Participation: Time Invariant     
+4 int_imp 			num 3 ISP Participation: Time-Varying     
+5 season1 			num 3 Effect Coding FYQ1     
+6 season2 			num 3 Effect Coding FYQ2     
+7 season3 			num 3 Effect Coding FYQ3     
+22 bh_hosp16 		num 3       
+23 bh_hosp17 		num 3       
+24 bh_hosp18 		num 3       
+25 bh_er16 			num 3       
+26 bh_er17 			num 3       
+27 bh_er18 			num 3       
+28 bh_oth16 		num 3       
+29 bh_oth17 		num 3       
+30 bh_oth18 		num 3       
+31 adj_pd_total_16cat num 3 Categorical adj ffs total 2016, Scale 0 to 6     
+32 adj_pd_total_17cat num 3 Categorical adj ffs total 2017, Scale 0 to 6     
+33 adj_pd_total_18cat num 3 Categorical adj ffs total 2018, Scale 0 to 6     
+34 fqhc 			num 3 FQHC: 0 No, 1 Yes     
+35 budget_grp_num 	num 3   BUDGET_GRP_NEW_.   
+36 age_cat 			num 3   AGE_CAT_.   
+37 rae_person_new 	num 3 RAE ID BEST12. BEST32. 
+38 race 			char 7 RACE_CD $RACE_RC_. $255. 
+39 sex 				char 1 Sex (M,F) $GNDR_CD. $255. 
+
+MODEL ind_DV-------- = time int int_imp season1 season2 season3 
+                       bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16 bh_hosp17 bh_hosp18
+                       adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+                       fqhc budget_grp_num age_cat rae_person_new race sex / DIST=binomial LINK=logit;
+
+-----------------------------------------------
+DVs 
+----------------------------------------------- 
+8 ind_cost_total 	num 3 FFS Total Cost Positive     
+9 cost_total 		num 8 FFS total Cost PMPQ     
+10 ind_cost_pc 		num 3 PC Cost Positive     
+11 cost_pc 			num 8 PC Cost PMPQ     
+12 ind_cost_rx 		num 3 Rx Cost Positive     
+13 cost_rx 			num 8 Rx Cost PMPQ     
+14 ind_visit_pc 	num 3 FFS PC Visit Count Positive     
+15 visits_pc 		num 3 Mult og val x6 to get integer for negbin     
+16 ind_visit_ed 	num 3 BH plus FFS ED Visit Count Positive     
+17 visits_ed 		num 3 Mult og val x6 to get integer for negbin     
+18 ind_visit_ffsbh 	num 3 FFS BH Visit Count Positive     
+19 visits_ffsbh 	num 3 Mult og val x6 to get integer for negbin     
+20 ind_visit_tel 	num 3 Telehealth Visit Count Positive     
+21 visits_tel 		num 3 Mult og val x6 to get integer for negbin     
+
+
+
+
+-----------------------------------------------
+PROGRAM TO BOOT (costpc_model) 
+----------------------------------------------- 
+
+**********************************************************************************************
+AUTHOR   : Carter Sevick (adapted KW)
+PROJECT  : ISP
+PURPOSE  : define the bootstrap process to parallelize
+VERSION  : 2023-08-24
+HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+CHANGES  :  -- [row 13] projRoot > %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization
+            -- [row 20] add OPTIONS FMTSEARCH = (in)
+            -- [row 73] prob model positive cost > ind_pc_cost
+            -- [row 94] cost model DV > adj_pd_pc_tc
+***********************************************************************************************;
+%LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+
+* location for bootstrap products 
+(I think they have to be in the same folder sas the resampled datasets for step 03, 
+so I just keep them here for not then manually move them to their DV/folder
+after running 03_boot_analysis...;
+libname out "&projRoot\data_boot_processed\cost_pc";
+* location of input data to boot (where resampled sets are); 
+libname in "&projRoot\data_boot_processed";
+* get formats; 
+libname util "&projRoot\data"; 
+OPTIONS FMTSEARCH=(in, util);
+
+* include macro programs;
+%INCLUDE "&projRoot\code\util_bootstrap\MACRO_resample_V4.sas"; 
+
+* get process parameters ;
+** process number ;
+%LET   i = %scan(&SYSPARM,1,%str( ));
+** seed number ;
+%LET   seed = %scan(&SYSPARM,2,%str( ));
+** N bootstrap samples ;
+%LET    N = %scan(&SYSPARM,3,%str( ));
+
+* run models and output store objects ;
+* probability model ;
+ODS SELECT NONE; OPTIONS NONOTES;
+PROC GENMOD DATA = in._resample_out_&i desc;
+BY    replicate;
+CLASS bootunit 
+      int(ref='0')  
+      int_imp(ref='0') 
+      bh_oth16(ref='0') bh_oth17(ref='0') bh_oth18(ref='0') 
+      bh_er16(ref='0') bh_er17(ref='0') bh_er18(ref='0')
+      bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0') 
+      adj_pd_total_16cat(ref='0') 
+      adj_pd_total_17cat(ref='0') 
+      adj_pd_total_18cat(ref='0')
+      fqhc(ref ='0')
+      budget_grp_num(ref='MAGI Eligible Children')
+      age_cat(ref='ages 45-64')
+      rae_person_new(ref='3')
+      race(ref='non-Hispanic White/Caucasian') 
+      rae_person_new(ref='3') 
+      sex(ref='Female') 
+      ind_cost_pc(ref='0');
+MODEL ind_cost_pc = time int int_imp season1 season2 season3 
+                    bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16 bh_hosp17 bh_hosp18
+                    adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+                    fqhc budget_grp_num age_cat rae_person_new race sex / DIST=binomial LINK=logit;
+REPEATED SUBJECT = bootunit / type=exch;
+STORE out.prob_stored_&i;
+RUN;
+ODS SELECT ALL; OPTIONS NOTES;
+
+* cost model - UPDATE DV in WHERE statement and MODEL statements;
+ODS SELECT NONE; OPTIONS NONOTES;
+PROC GENMOD DATA = in._resample_out_&i  ;
+BY    replicate;
+WHERE cost_pc >0;
+CLASS bootunit 
+      int (ref='0')  
+      int_imp (ref='0') 
+      budget_grp_num (ref='MAGI Eligible Children')
+      race (ref='non-Hispanic White/Caucasian') 
+      sex (ref='Female') 
+      rae_person_new (ref='3') 
+      age_cat(ref='ages 45-64') 
+      fqhc(ref ='0') 
+      bh_oth16 (ref='0') bh_oth17 (ref='0') bh_oth18 (ref='0') 
+      bh_er16 (ref='0') bh_er17 (ref='0') bh_er18 (ref='0')
+      bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0') 
+      adj_pd_total_16cat(ref='0') adj_pd_total_17cat(ref='0') adj_pd_total_18cat(ref='0');
+MODEL cost_pc = time int int_imp season1 season2 season3 
+                bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16 bh_hosp17 bh_hosp18
+                adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+                fqhc budget_grp_num age_cat rae_person_new race sex /  
+DIST = gamma LINK = log;
+REPEATED SUBJECT = bootunit / type=exch;
+STORE out.cost_stored_&i;
+RUN;
+ODS SELECT ALL; OPTIONS NOTES;
 
