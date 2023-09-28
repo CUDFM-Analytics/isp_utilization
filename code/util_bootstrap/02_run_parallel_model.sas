@@ -31,6 +31,6 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
     nprocess= 8                                 /* number of processes to activate */,
     nboot   = 500                               /* total number of bootstrap iterations*/,
     seed    = 837567                            /* a seed value for replicability */,
-    topseed = 1000000000                        /* largest possible seed 
+    topseed = 1000000000                        /* largest possible seed */
 );
  

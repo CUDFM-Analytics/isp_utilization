@@ -97,3 +97,4 @@ reports/test_avp_20230328.mht
 *.sas7bitm
 data/out_hurdle/visits_tel_pmodel.sas7bitm
 data/out_hurdle/visits_tel_vmodel.sas7bitm
+*.sas7bitm
