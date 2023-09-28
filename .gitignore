@@ -1,5 +1,6 @@
 # pdfs too large for github 
 *.pdf
+*.sas7bitm
 
 *.mht
 
