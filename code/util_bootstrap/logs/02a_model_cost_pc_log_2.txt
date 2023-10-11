@@ -1,0 +1,153 @@
+1                                                          The SAS System                         15:34 Thursday, September 21, 2023
+
+NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
+NOTE: All registry changes will be lost at the end of the session.
+
+WARNING: Unable to copy SASUSER registry to WORK registry. Because of this, you will not see registry customizations during this 
+         session.
+NOTE: Unable to open SASUSER.PROFILE. WORK.PROFILE will be opened instead.
+NOTE: All profile changes will be lost at the end of the session.
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7) 
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+      
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.30 seconds
+      cpu time            0.29 seconds
+      
+1          *****************************************************************************************
+1        ! *****
+2          AUTHOR   : Carter Sevick (adapted KW)
+3          PROJECT  : ISP
+4          PURPOSE  : define the bootstrap process to parallelize
+5          VERSION  : 2023-08-24
+6          HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+7          CHANGES  :  -- [row 13] projRoot > %LET projRoot =
+7        ! S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization
+8                      -- [row 20] add OPTIONS FMTSEARCH = (in)
+9                      -- [row 73] prob model positive cost > ind_pc_cost
+10                     -- [row 94] cost model DV > adj_pd_pc_tc
+11         *****************************************************************************************
+11       ! ******;
+12         %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+13         
+14         * location for bootstrap products
+15         (I think they have to be in the same folder sas the resampled datasets for step 03,
+16         so I just keep them here for not then manually move them to their DV/folder
+17         after running 03_boot_analysis...;
+18         libname out "&projRoot\data_boot_processed\cost_pc";
+NOTE: Libref OUT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: 
+2                                          The SAS System         15:34 Thursday, September 21, 2023
+
+      S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed\cost_pc
+19         * location of input data to boot (where resampled sets are);
+20         libname in "&projRoot\data_boot_processed";
+NOTE: Libref IN was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
+21         * get formats;
+22         libname util "&projRoot\data";
+NOTE: Libref UTIL was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
+23         OPTIONS FMTSEARCH=(in, util);
+24         
+25         * include macro programs;
+26         %INCLUDE "&projRoot\code\util_bootstrap\MACRO_resample_V4.sas";
+133        
+134        * get process parameters ;
+135        ** process number ;
+136        %LET   i = %scan(&SYSPARM,1,%str( ));
+137        ** seed number ;
+138        %LET   seed = %scan(&SYSPARM,2,%str( ));
+139        ** N bootstrap samples ;
+140        %LET    N = %scan(&SYSPARM,3,%str( ));
+141        
+142        * run models and output store objects ;
+143        * probability model ;
+144        ODS SELECT NONE; OPTIONS NONOTES;
+145        PROC GENMOD DATA = in._resample_out_&i desc;
+146        BY    replicate;
+147        CLASS bootunit
+148              int(ref='0')
+149              int_imp(ref='0')
+150              bh_oth16(ref='0') bh_oth17(ref='0') bh_oth18(ref='0')
+151              bh_er16(ref='0') bh_er17(ref='0') bh_er18(ref='0')
+152              bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0')
+153              adj_pd_total_16cat(ref='0')
+154              adj_pd_total_17cat(ref='0')
+155              adj_pd_total_18cat(ref='0')
+156              fqhc(ref ='0')
+157              budget_grp_num(ref='MAGI Eligible Children')
+158              age_cat(ref='ages 45-64')
+159              rae_person_new(ref='3')
+160              race(ref='non-Hispanic White/Caucasian')
+161              sex(ref='Female')
+162              ind_cost_pc(ref='0');
+163        MODEL ind_cost_pc = time int int_imp season1 season2 season3
+164                            bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16
+164      ! bh_hosp17 bh_hosp18
+165                            adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+166                            fqhc budget_grp_num age_cat rae_person_new race sex / DIST=binomial
+166      ! LINK=logit;
+167        REPEATED SUBJECT = bootunit / type=exch;
+168        STORE out.prob_stored_&i;
+169        RUN;
+3                                          The SAS System         15:34 Thursday, September 21, 2023
+
+170        ODS SELECT ALL; OPTIONS NOTES;
+171        
+172        * cost model - UPDATE DV in WHERE statement and MODEL statements;
+173        ODS SELECT NONE; OPTIONS NONOTES;
+174        PROC GENMOD DATA = in._resample_out_&i  ;
+175        BY    replicate;
+176        WHERE cost_pc >0;
+177        CLASS bootunit
+178              int(ref='0')
+179              int_imp(ref='0')
+180              bh_oth16(ref='0') bh_oth17(ref='0') bh_oth18(ref='0')
+181              bh_er16(ref='0') bh_er17(ref='0') bh_er18(ref='0')
+182              bh_hosp16(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0')
+183              adj_pd_total_16cat(ref='0')
+184              adj_pd_total_17cat(ref='0')
+185              adj_pd_total_18cat(ref='0')
+186              fqhc(ref ='0')
+187              budget_grp_num(ref='MAGI Eligible Children')
+188              age_cat(ref='ages 45-64')
+189              rae_person_new(ref='3')
+190              race(ref='non-Hispanic White/Caucasian')
+191              sex(ref='Female') ;
+192        MODEL cost_pc = time int int_imp season1 season2 season3
+193                        bh_oth16 bh_oth17 bh_oth18 bh_er16 bh_er17 bh_er18 bh_hosp16 bh_hosp17
+193      ! bh_hosp18
+194                        adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+195                        fqhc budget_grp_num age_cat rae_person_new race sex / DIST = gamma LINK =
+195      !  log;
+196        REPEATED SUBJECT = bootunit / type=exch;
+197        STORE out.cost_stored_&i;
+198        RUN;
+199        ODS SELECT ALL; OPTIONS NOTES;
+200        
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           83:03:12.42
+      cpu time            23:21:04.65
+      

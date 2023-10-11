@@ -7,25 +7,30 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 CHANGES  : [row 108] added _diff_ 
 PRE PROCESSING: COPY STORED PROCS INTO DV/FOLDER... 
 
-NOTE: Copy the stored procs into specific DV folder after running this? This requires the resampled data to be in same folder? 
-Not sure  - tried using so I could keep but didn't have in same folder as dataset, but nothing worked... 
+NOTE: CHANGE rows 16-xxx, rows 26-xxx!! 
 ***********************************************************************************************;
 * for outputs by DV, reporting // Change 12, 13 then okay; 
-%LET pdftitle = Cost_PC;
+%LET pdftitle = Cost_Total;
 %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
-%LET dv = cost_pc;
+
+%LET dv = cost_tot;  
+/*%LET dv = cost_pc;*/
+
 * pdf output; 
 %LET pdf      = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\reports\boot_se_&dv..pdf;
 
 **** BOOT ANALYSIS*******; 
 * stored bootstrap products -- ;
 LIBNAME dataPro "&projRoot\data_boot_processed";
-LIBNAME cost_pc "&projRoot\data_boot_processed\cost_pc";
+
+* Make this match row 16 name; 
+LIBNAME cost_tot "&projRoot\data_boot_processed\cost_total";
+/*LIBNAME cost_pc "&projRoot\data_boot_processed\cost_pc";*/
 
 * for format search; 
 libname data   "&projRoot\data";
 
-OPTIONS FMTSEARCH = (dataPro, data &dv);
+OPTIONS FMTSEARCH = (dataPro, data, &dv);
 %put &dv;
 
 %macro combineAndScore(data=                /*list datasets to combine and score*/,
