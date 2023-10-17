@@ -6,7 +6,7 @@ VERSION  : 2023-05-30
 DEPENDS  : ana subset folder, config file [dependencies]
 NOTES    : Updated 05/30 to include records through Sept 2022;
 
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas"; 
 ***********************************************************************************************;
 
 * primary care records ;
@@ -15,7 +15,7 @@ data raw.pc;
   where hosp_episode NE 1
     and ER NE 1
     and primCare = 1;
-run;* 6/01 44674203;
+run;
 
 * telehealth records ;
 proc format;
@@ -49,7 +49,7 @@ data raw.telecare;
    * keeping only rows that are ER or primary or urgent or tele care ;
   if teleCare or teleElig;
 
-run; * 6/01 74218243 : 32; 
+run; 
 
 * indicators of telehealth and tele-eligible care ;
 proc sql;
@@ -84,26 +84,26 @@ FROM raw.teleCare_FINAL
 GROUP BY mcaid_id, month;
 quit; *6/01 1078563 : 3 ; 
 
-DATA int.tel_fact_1922_m; 
+DATA int.tel; 
 SET  RAW.teleCare_monthly; 
 format    dt_qrtr month date9.; 
 dt_qrtr = intnx('quarter', month ,0,'b');
 WHERE     month ge '01JUL2019'd 
-AND       month le '30SEP2022'd;
+AND       month lt '01JUL2023'd;
 RUN ; * 6/1 968223 observations and 5 variables; 
 
-%create_qrtr(data= int.tel_fact_1922_m, set=int.tel_fact_1922_m,var = dt_qrtr, qrtr=time); *;
-
-* Q 5/30 KW --average it here - members might have different denominators for telehealth than ffs, right?; 
-PROC SQL;
-CREATE TABLE int.tel_fact_1922_q as
-SELECT mcaid_id
-     , count(*)    AS n_months_per_q
-     , time
-     , avg(n_tele) AS avg_tel_pmpq
-     , sum(n_tele) AS n_tel_q
-FROM int.tel_fact_1922_m
-GROUP BY mcaid_id, time;
-QUIT; * 762244 : 5; 
-
-PROC SORT DATA =int.tel_fact_1922_q; by mcaid_id time ; RUN ; 
+%create_qrtr(data= int.tel, set=int.tel,var = dt_qrtr, qrtr=time); 
+/**/
+/** Q 5/30 KW --average it here - members might have different denominators for telehealth than ffs, right?; */
+/*PROC SQL;*/
+/*CREATE TABLE int.tel_fact_1922_q as*/
+/*SELECT mcaid_id*/
+/*     , count(*)    AS n_months_per_q*/
+/*     , time*/
+/*     , avg(n_tele) AS avg_tel_pmpq*/
+/*     , sum(n_tele) AS n_tel_q*/
+/*FROM int.tel_fact_1922_m*/
+/*GROUP BY mcaid_id, time;*/
+/*QUIT; * 762244 : 5; */
+/**/
+/*PROC SORT DATA =int.tel_fact_1922_q; by mcaid_id time ; RUN ; */

@@ -45,7 +45,7 @@ LOG
       %LET report = &util/reports; 
 
       %LET raw = &data/_raw;
-/*        LIBNAME raw "&raw";*/
+        LIBNAME raw "&raw";
 
       %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
       LIBNAME ana "&ana"; 
@@ -65,14 +65,14 @@ id_time_helper = CATX('_', mcaid_id, time);
 RUN; 
 %mend; 
 
- %macro check_ids_n13(ds=);
+ %macro check_ids_n16(ds=);
             proc sql; 
             create table n_ids_&ds AS 
             select mcaid_id
                  , count(mcaid_id) as n_ids
             FROM &ds
             GROUP BY mcaid_ID
-            having n_ids>13;
+            having n_ids>16;
             quit; 
  %mend;
 
@@ -98,6 +98,9 @@ if &var in ('01OCT2021'd , '01NOV2021'd , '01DEC2021'd ) then &qrtr = 10;
 if &var in ('01JAN2022'd , '01FEB2022'd , '01MAR2022'd ) then &qrtr = 11;
 if &var in ('01APR2022'd , '01MAY2022'd , '01JUN2022'd ) then &qrtr = 12;
 if &var in ('01JUL2022'd , '01AUG2022'd , '01SEP2022'd ) then &qrtr = 13;
+if &var in ('01OCT2022'd , '01NOV2022'd , '01DEC2022'd ) then &qrtr = 14;
+if &var in ('01JAN2023'd , '01FEB2023'd , '01MAR2023'd ) then &qrtr = 15;
+if &var in ('01APR2023'd , '01MAY2023'd , '01JUN2023'd ) then &qrtr = 16;
 run;
 %mend create_qrtr;
 

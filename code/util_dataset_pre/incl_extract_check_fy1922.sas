@@ -4,13 +4,12 @@ PROJECT  : ISP Utilization Analysis
 PURPOSE  : INCLUDE file that:
             1) extracts unique pcmp_loc_id, budget_group, and rae_id's from qrylong file,
             2) selects max value when n=2 per quarter or most recent when n=1 and k>1 per quarter
-            3) Checks that there are no mcaid_id's with >12 records (macro %check_ids_n12)
 VERSION  : 2023-05-30
 DEPENDS  : raw.final00 
 EXPORTS  : work.budget
            work.rae
-           int.pcmp_attr_qrtr
-           macro results (#3 above);
+           int.pcmp_attr_qrtr;  
+
 %macro demo(var=, ds=);
 PROC SQL; 
 CREATE TABLE &var AS
@@ -47,7 +46,7 @@ FROM (SELECT *
            , max(month) AS max_month_by_pcmp
       FROM (SELECT *
                  , count(pcmp_loc_id) as n_pcmp
-            FROM &dv1922
+            FROM &ds
             GROUP BY mcaid_id 
                    , dt_qrtr
                    , pcmp_loc_id) 
