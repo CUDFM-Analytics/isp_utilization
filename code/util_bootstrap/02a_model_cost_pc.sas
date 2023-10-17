@@ -11,10 +11,7 @@ CHANGES  :  -- [row 13] projRoot > %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_
 ***********************************************************************************************;
 %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
 
-* location for bootstrap products 
-(I think they have to be in the same folder sas the resampled datasets for step 03, 
-so I just keep them here for not then manually move them to their DV/folder
-after running 03_boot_analysis...;
+* location for bootstrap products ;
 libname out "&projRoot\data_boot_processed\cost_pc";
 * location of input data to boot (where resampled sets are); 
 libname in "&projRoot\data_boot_processed";

@@ -18,11 +18,13 @@ LOG
 * PROJECT ROOT DIR ----------------------------------------------------------------------------; 
       %LET util = &hcpf/Kim/isp/isp_utilization;
 
-    * DATA
+    * DATA dir tree:
       |--data           [libname 'data': stores final analytic dataset and other data folders]                                                     
          |--_raw`       [libname 'raw' : raw, read-only files to be prepped then stored in /interim]
+         |--_refs       files from others: Carter's bootstrap examples, etc. 
          |--interim     [libname 'int' : intermediate ds used to make final analytic ds or eda]
-         |--results     [libname 'out' : results tables, get exported to ../results
+         |--out_attr    
+         |--out_hurdle  
       ;
 
       %LET data = &util/data;   
@@ -46,12 +48,11 @@ LOG
 /*        LIBNAME raw "&raw";*/
 
       %LET ana = &hcpf/HCPF_SqlServer/AnalyticSubset;
-/*      LIBNAME ana "&ana"; */
+      LIBNAME ana "&ana"; 
 
 * PROJECT-WIDE GLOBAL OPTIONS ----------------------------------------------------------; 
- OPTIONS NOFMTERR
-         MPRINT MLOGIC
-         FMTSEARCH =(ana, datasets, data, util, work);
+OPTIONS 
+NOFMTERR MPRINT MLOGIC FMTSEARCH =(ana, datasets, data, util, work);
 
 %macro nodupkey(ds, out);
 PROC SORT DATA = &ds NODUPKEY OUT=&out; BY _ALL_ ; RUN; 

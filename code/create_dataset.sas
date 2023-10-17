@@ -19,8 +19,8 @@ SECTION3 : data.mini_ds (test set with only 500000 records) ;
 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas"; 
 
-* 
-[RAW.time_dim] ==============================================================================
+* [RAW.time_dim] 10-17-2023 ===============================================================
+NB: Update might be needed (last updated to include through June 2023 / FYQ4 2023
 Import a .csv file I made with months, FY, FY quarters, and the linearized time var
 ===========================================================================================;
 PROC IMPORT FILE="&util./data/_raw/fy_q_dts_dim.csv"
@@ -41,7 +41,7 @@ run;
 ===========================================================================================;
 DATA   raw.qrylong_00 (DROP=managedCare);
 LENGTH mcaid_id $11; 
-SET    ana.qry_longitudinal (WHERE=(month ge '01Jul2016'd AND month le '30Sep2022'd 
+SET    ana.qry_longitudinal (WHERE=(month ge '01Jul2016'd 
                                     AND BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
                                     AND managedCare = 0
                                     AND pcmp_loc_id ne ' ') 

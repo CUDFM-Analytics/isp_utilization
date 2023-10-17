@@ -10,11 +10,12 @@ PRE PROCESSING: COPY STORED PROCS INTO DV/FOLDER...
 NOTE: CHANGE rows 16-xxx, rows 26-xxx!! 
 ***********************************************************************************************;
 * for outputs by DV, reporting // Change 12, 13 then okay; 
-%LET pdftitle = Cost_Total;
+* %LET pdftitle = Cost_Total;
+%LET pdftitle = Cost_PC; 
 %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
 
-%LET dv = cost_tot;  
-/*%LET dv = cost_pc;*/
+* %LET dv = cost_tot;  
+%LET dv = cost_pc;
 
 * pdf output; 
 %LET pdf      = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\reports\boot_se_&dv..pdf;
@@ -24,8 +25,8 @@ NOTE: CHANGE rows 16-xxx, rows 26-xxx!!
 LIBNAME dataPro "&projRoot\data_boot_processed";
 
 * Make this match row 16 name; 
-LIBNAME cost_tot "&projRoot\data_boot_processed\cost_total";
-/*LIBNAME cost_pc "&projRoot\data_boot_processed\cost_pc";*/
+/*LIBNAME cost_tot "&projRoot\data_boot_processed\cost_total";*/
+LIBNAME cost_pc "&projRoot\data_boot_processed\cost_pc";
 
 * for format search; 
 libname data   "&projRoot\data";
