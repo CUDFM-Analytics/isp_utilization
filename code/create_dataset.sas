@@ -327,11 +327,10 @@ run; *4618851 observations and 8 variables;
 
 %create_qrtr(data=int.bh, set=raw.bh_0, var = dt_qrtr, qrtr=time);
 
-** NEED TEL_fact here! ; 
+**RUN / exec 02_get_prep_telehealth to get int.tel here; 
 
 * INT.QRYLONG_04 ==============================================================================
 join bh and util to qrylong to get averages (all utils - monthly, bho, telehealth) to qrylong4
-    drop the demo vars because the good ones are on int.final1
 ===========================================================================================;
 PROC SQL; 
 CREATE TABLE int.qrylong_03 AS 
@@ -350,9 +349,9 @@ SELECT a.mcaid_id, a.month, a.dt_qrtr, a.FY, a.time
      , c.adj_pd_ffs_bh
      , d.n_tele
 FROM int.qrylong_02            AS A
-LEFT JOIN raw.bh1              AS B    ON a.mcaid_id=B.mcaid_id AND a.month=B.month
-LEFT JOIN int.util3            AS C    ON a.mcaid_id=C.mcaid_id AND a.month=C.month
-LEFT JOIN int.tel_fact_1922_m  AS D    ON a.mcaid_id=D.mcaid_id AND a.month=D.month;
+LEFT JOIN int.bh               AS B    ON a.mcaid_id=B.mcaid_id AND a.month=B.month
+LEFT JOIN int.util_3           AS C    ON a.mcaid_id=C.mcaid_id AND a.month=C.month
+LEFT JOIN int.tel              AS D    ON a.mcaid_id=D.mcaid_id AND a.month=D.month;
 QUIT;  *06/08 nrow 68741452 //  68079369 rows and 18 columns.;
 
 * [int.qrylong_pre] ==============================================================================
@@ -360,7 +359,7 @@ QUIT;  *06/08 nrow 68741452 //  68079369 rows and 18 columns.;
 1. [Step 1]
 2. [Step 2]
 ===========================================================================================;
-DATA raw.fy_1618_0; 
+DATA int.qrylong_pre_0; 
 SET  int.qrylong_03;
 WHERE month lt '01Jul2019'd; 
 RUN; *6/8 24127948 // 23976758; 
