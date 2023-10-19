@@ -5,10 +5,10 @@ PURPOSE  : Run file for exporting EDA tables on final analysis dataset, exportin
 VERSION  : [2023-05-18] (added season frequency)
 DEPENDS  : ;
 
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/util_00_config.sas"; 
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas"; 
 ***********************************************************************************************;
 
-%let dat = data.analysis; 
+%let dat = data.utilization; 
 %let all = data.analysis_allcols; 
 
 PROC FREQ DATA = &dat;

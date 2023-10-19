@@ -31,16 +31,21 @@ SELECT COUNT (DISTINCT mcaid_id ) into :nmem
 FROM &dat ; 
 QUIT ; 
 
+PROC SQL NOPRINT;
+SELECT count(distinct mcaid_id) into :int
+FROM &dat; 
+QUIT; 
+
 proc odstext;
 p "Date: &today";
 p "Project Root: &root";
 p "Script: %sysget(SAS_EXECFILENAME)";
 p "Total Observations in Dataset: &nobs";
 p "Total unique medicaid IDs in Dataset: &nmem";
+p "Total medicaid ID's where int 1: &int"; 
 p ""; 
 RUN; 
 
-ods proclabel 'Data Specs';
 * Print specs ; 
 PROC ODSTEXT;
 /*p "Update/s to data.utilization (final ds)" /style=systemtitle;*/
@@ -68,24 +73,23 @@ PROC ODSTEXT;
 /*p "----- a) Max value used where possible";*/
 /*p "----- b) In cases of ties, used value in quarter months that was most recent";*/
 /*p " ";*/
-p "The final dataset contains n=&nobs unique mcaid_id*time (quarter) records, with n=&nmem unique member ids." / style=header;
+p "The final dataset contains n=&nobs unique mcaid_id*time (quarter) records, with n=&nmem unique member ids, where &int members had time-invariant status 1" / style=header;
 p " ";
 RUN; 
 
 PROC FORMAT;
 VALUE adj1618fy
--1 = "(-1) Not Eligble for HFC during FY"
-0 = "(0) PMPM in YR is $0 (Eligible HFC)"
-1 = "(1) PMPM YR >0 and <= 50th percentile"
-2 = "(2) PMPM YR >50th percentiles, <= 75th percentile"
-3 = "(3) PMPM YR >75th percentiles, <= 90th percentile"
-4 = "(4) PMPM YR >90th percentiles, <= 95th percentile"
-5 = "(5) PMPM YR > 95th percentile";
+0 = "(0) Not Eligble for HFC during FY"
+1 = "(1) PMPM in YR is $0 (Eligible HFC)"
+2 = "(2) PMPM YR >0 and <= 50th percentile"
+3 = "(3) PMPM YR >50th percentiles, <= 75th percentile"
+4 = "(4) PMPM YR >75th percentiles, <= 90th percentile"
+5 = "(5) PMPM YR >90th percentiles, <= 95th percentile"
+6 = "(6) PMPM YR > 95th percentile";
 
 VALUE bh1618fy
 0 = "FY Visits = 0"
 0.001 - high = "FY Visits >0";
-
 RUN; 
 *******************************************************************************
 * Print columns for dataset (use abbreviation 'columns'); 
@@ -93,12 +97,12 @@ ods proclabel 'Analytic Dataset Columns'; RUN;
 PROC ODSTEXT; 
 p "Dataset Contents" /style=systemtitle;
 RUN; 
-PROC CONTENTS DATA = data.utilization VARNUM; RUN; 
+PROC CONTENTS DATA = &dat VARNUM; RUN; 
 
 ods proclabel 'Frequencies, Cat Vars: Ungrouped'; RUN; 
 proc odstext; p "Frequencies, Categorical Vars: Ungrouped"; RUN; 
 
-PROC FREQ DATA = data.utilization;
+PROC FREQ DATA = &dat;
 TABLES time int int_imp season: ind: bh: race sex budget_grp_num age_cat fqhc rae: adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
 RUN; 
 
@@ -106,7 +110,7 @@ ods proclabel 'Frequencies, Cat Vars: GROUPED by INT (time invariant)'; RUN;
 proc odstext;
 p "Frequencies, Categorical Vars: GROUPED by INT (time invariant)"; RUN; 
 
-PROC FREQ DATA = data.utilization;
+PROC FREQ DATA = &dat;
 TABLES time int int_imp season: ind: bh: race sex budget_grp_num age_cat fqhc rae: 
             adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
 BY INT; 
@@ -169,10 +173,10 @@ p "Percentiles and values for top-coded DVs (cost: pc, rx, total)"
   /style = systemtitle;
 p "Means taken where value gt 95th percentile"; RUN; 
 
-/*PROC TRANSPOSE DATA = int.mu_pctl_1922 OUT=int.mu_pctl_1922_long (rename=(_NAME_  = percentile*/
-/*                                                                          _LABEL_ = label*/
-/*                                                                          COL1    = original_value));*/
-/*RUN; */
+PROC TRANSPOSE DATA = int.mu_pctl_1922 OUT=int.mu_pctl_1922_long (rename=(_NAME_  = percentile
+                                                                          _LABEL_ = label
+                                                                          COL1    = original_value));
+RUN; 
 ods proclabel 'Top Coded Vals'; RUN; 
 PROC PRINT DATA = int.mu_pctl_1922_long; RUN; 
 
@@ -183,31 +187,33 @@ p "PROC UNIVAR for DV's: WHERE VALUES >0 ONLY" / style=systemtitle;
 p "For all values, including 0's, see the ind_: variables";  RUN; 
 
 * Cost vars;
-%univar_gt0(var=adj_pd_total_tc, title = "WHERE &var gt 0"); 
-%univar_gt0(var=adj_pd_pc_tc,    title = "WHERE &var gt 0"); 
-%univar_gt0(var=adj_pd_rx_tc,    title = "WHERE &var gt 0"); 
+%univar_gt0(var=cost_total, title = "Cost Total, WHERE &var gt 0"); 
+%univar_gt0(var=cost_pc,    title = "Cost PC where &var gt 0"); 
+%univar_gt0(var=cost_rx,    title = "Cost Rx WHERE &var gt 0"); 
 
 * Visit vars; 
-%univar_gt0(var=n_pc_pm,     title = "&var (Visits)");
-%univar_gt0(var=n_ed_pm,     title = "&var (Visits)");
-%univar_gt0(var=n_ffs_bh_pm, title = "&var (Visits)");
-%univar_gt0(var=n_tel_pm,    title = "&var (Visits)");
+%univar_gt0(var=n_visits_pc,     title = "&var (Visits) where gt 0");
+%univar_gt0(var=n_visits_ed,     title = "&var (Visits) where gt 0");
+%univar_gt0(var=n_visits_ffsbh,  title = "&var (Visits) where gt 0");
+%univar_gt0(var=n_visits_tel,    title = "&var (Visits) where gt 0");
 
-**************************************************************************************
-* CATEGORICAL FREQUENCIES, Grouped by INTERVENTION (0,1), time invariant 
-**************************************************************************************; 
-ods proclabel 'Frequencies, Cat Vars: Int Status (excluded: adj fy1618)'; RUN; 
+ods proclabel 'Univar for DVs, text'; RUN; 
 
 proc odstext;
-p "Frequencies, Categorical Vars by ISP Participation (Time-Invariant Indicator ('int'))" / style=systemtitle;
-p "adj fy 1618 vars have their own section"; 
-RUN; 
+p "PROC UNIVAR for DV's: WHERE VALUES >0 ONLY" / style=systemtitle;
+p "For all values, including 0's, see the ind_: variables";  RUN; 
 
-ods proclabel 'Frequencies, Cat Vars: Int Status'; RUN; 
+* Cost vars;
+%univar(var=cost_total, title = "Cost Total, all values (incl 0s)"); 
+%univar(var=cost_pc,    title = "Cost PC, all values incl 0s"); 
+%univar(var=cost_rx,    title = "Cost Rx, all values incl 0s"); 
 
-PROC FREQ DATA = &dat; 
-TABLES (int_imp age_cat race sex time budget_group rae_person_new fqhc fy: bh: ind: adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat)*int; 
-RUN ; 
+* Visit vars; 
+%univar(var=n_visits_pc,     title = ", all values incl 0s");
+%univar(var=n_visits_ed,     title = ", all values incl 0s");
+%univar(var=n_visits_ffsbh,  title = ", all values incl 0s");
+%univar(var=n_visits_tel,    title = ", all values incl 0s");
+
 
 **************************************************************************************
 * adj vars 16-18
@@ -218,13 +224,13 @@ PROC ODSTEXT;
 p "FY16-18 Adjusted, Categorized Monthly Utilization (Cost) Frequencies (variables adj_pd_total_YYcat)"
   /style = systemtitle;
 
-p "(-1): Not Eligible";
-p "( 0): Eligible, PMPM $0"; 
-p "( 1): Eligible, PMPM > 0 and <=50 percentile"; 
-p "( 2): Eligible, PMPM >50 and <=75 percentile"; 
-p "( 3): Eligible, PMPM >75 and <=90 percentile"; 
-p "( 4): Eligible, PMPM >90 and <=95 percentile"; 
-p "( 5): Eligible, PMPM >95 percentile"; 
+p "(0): Not Eligible";
+p "(1): Eligible, PMPM $0"; 
+p "(2): Eligible, PMPM > 0 and <=50 percentile"; 
+p "(3): Eligible, PMPM >50 and <=75 percentile"; 
+p "(4): Eligible, PMPM >75 and <=90 percentile"; 
+p "(5): Eligible, PMPM >90 and <=95 percentile"; 
+p "(6): Eligible, PMPM >95 percentile"; 
 p "";
 RUN; 
 
@@ -234,13 +240,12 @@ p "Percentiles,  Values for FY16-18 vars" /style = header;
 p "NB: Frequencies below generated from UNIQUE member records only - not from the final analysis dataset, where record frequency is multiplied by the quarters"/style = header;
 p "Frequencies from final dataset are in section 2, and match Jakes proportions almost exactly."/style = header;
 RUN; 
-/*PROC TRANSPOSE DATA = int.pctl1618 OUT=int.pctl1618_long (rename=(_NAME_  = percentile*/
-/*                                                                  _LABEL_ = label*/
-/*                                                                  COL1    = original_value));*/
-/*RUN; */
+PROC TRANSPOSE DATA = int.pctl1618 OUT=int.pctl1618_long (rename=(_NAME_  = percentile
+                                                                  _LABEL_ = label
+                                                                  COL1    = original_value));
+RUN; 
 ods proclabel 'adj FY 1618: Percentiles, Mus'; RUN; 
 PROC PRINT DATA = int.pctl1618; RUN; 
-
 
 
 **************************************************************************************
