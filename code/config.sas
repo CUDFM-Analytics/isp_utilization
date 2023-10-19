@@ -82,6 +82,13 @@ PROC SORT DATA = &ds2; by &by;
 RUN; 
 %mend;
 
+%macro colstring(into=, memname=,nchar=,string=);
+PROC SQL; 
+SELECT name INTO :&into separated by ' ' FROM dictionary.columns 
+WHERE memname=&memname AND substr(name, 1, &nchar)=&string;
+QUIT; 
+%mend; 
+
 %macro create_qrtr(data=,set=,var=,qrtr=);
 data &data;
 set  &set; 

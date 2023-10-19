@@ -13,7 +13,10 @@ value fyqrtr_cat
 10 = "Q2"
 11 = "Q3"
 12 = "Q4"
-13 = "Q1";
+13 = "Q1"
+14 = "Q2"
+15 = "Q3"
+16 = "Q4";
 
 invalue fyqrtr_num
 1  = 1
@@ -28,18 +31,22 @@ invalue fyqrtr_num
 10 = 2
 11 = 3
 12 = 4
-13 = 1;
+13 = 1
+14 = 2
+15 = 3
+16 = 4;
 
 * Formats for values in datasets in ana library:; 
-/*VALUE budget_grp_new_    */
-/* 0   low-<3 = "Other"*/
-/* 1   3      = "MAGI 69 - 133% FPL"*/
-/* 0   4      = "Other"*/
-/* 2   5      = "MAGI TO 68% FPL"*/
-/* 3   6-10   = "Disabled"  */
-/* 4   11     = "Foster Care"  */
-/* 5   12     = "MAGI Eligible Children"*/
-/* 0   13-27  = "Other"; */
+VALUE budget_grp_r   
+ low-<3 = 0   /*"Other"*/
+      3 = 1   /*"MAGI 69 - 133% FPL"*/
+      4 = 0   /*"Other"*/
+      5 = 2   /*"MAGI TO 68% FPL"*/
+   6-10 = 3   /*"Disabled"  */
+     11 = 4   /*"Foster Care"  */
+     12 = 5   /*"MAGI Eligible Children"*/
+13-high = 0   /*"Other"*/
+; 
 
 * New format for the if/then/else variable in util_01 rows 866-871;
 VALUE budget_grp_new_
@@ -49,6 +56,14 @@ VALUE budget_grp_new_
 3 = "Disabled"
 4 = "Foster Care" 
 5 = "MAGI Eligible Children";
+
+VALUE budget_group_rc_
+3 = "MAGI 69 - 133% FPL"
+5 = "MAGI TO 68% FPL"
+6-10 = "Disabled"
+11 = "Foster Care"
+12 = "MAGI Eligible Children"
+Other = "Other"; 
 
 VALUE $race_rc_  
     .         = "Other" 
