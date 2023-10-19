@@ -1,3 +1,34 @@
+*RAW.TIME_DIM==; 
+   PROC PRINT DATA = raw.time_dim; RUN; 
+*  Checks: time, fy_qrtr should have n=3, fy n=12 (12 months per FY), month_qrtr n=16, month (n=1, cumul_n=48 - 12*4); 
+   proc freq data = raw.time_dim; run; 
+
+*RAW.QRYLONG_00a;
+   PROC CONTENTS DATA = raw.qrylong_00 VARNUM; RUN; 
+   PROC PRINT DATA = raw.qrylong_00a (obs=25); RUN; 
+   PROC FREQ DATA = raw.qrylong_00a; tables MONTH; where month ge '01JAN2023'd; run; 
+   PROC FREQ DATA = raw.qrylong_00a; tables FY; RUN; 
+   PROC FREQ DATA = raw.qrylong_00a; tables fqhc; RUN; 
+   PROC FREQ DATA = raw.qrylong_00a; tables pcmp_loc_type_cd; RUN; 
+   PROC SQL; SELECT count(distinct mcaid_id) FROM raw.qrylong_00a; QUIT; 
+
+*RAW.QRYLONG_01;
+   %LET check = int.qrylong_01; 
+   PROC CONTENTS DATA = raw.qrylong_01 VARNUM; RUN; 
+   PROC PRINT DATA = &check (obs=25); RUN; 
+   PROC FREQ DATA = &check; tables time; RUN; 
+   PROC SQL; SELECT count(distinct mcaid_id) FROM &check; QUIT; 
+
+*INT.AGE_DIM;
+   %LET check = int.age_dim; 
+   PROC CONTENTS DATA = &check VARNUM; RUN; 
+   PROC PRINT DATA = &check (obs=25); RUN; 
+   PROC FREQ DATA = &check; tables time; RUN; 
+   PROC SQL; SELECT count(distinct mcaid_id) FROM &check; QUIT; 
+
+
+
+
 proc sql; select count(distinct mcaid_id) as n_un_mcaid from int.final_00; QUIT; 
 proc sql; select count(distinct mcaid_id) as n_un_mcaid from int.qrylong_02; QUIT; 
 PROC CONTENTS DATA = int.qrylong_03 VARNUM; RUN;
