@@ -2,7 +2,8 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization Analysis
 PURPOSE  : Gather, Process datasets from analytic subset dir, Create final analysis dataset and mini dataset
-VERSION  : 2023-09-08
+VERSION  : 2023-10-18 Get updated datasets, up to and including June 2023 (less than July 01, 2023)
+            - 10-18 Details: Updated raw.time_dim to include q's through 16
             - 09-08 manually renamed data.analysis as data.analysis_prev, created minimized length data.utilization look for #UPDATE[09-08-2023] approx row 948
             - 06-06 to check on the BH's: added total var maybe some are wrong as I'm still getting Hessian errors
             - 06-05 to combine bh cat variables into 1 bh cat var

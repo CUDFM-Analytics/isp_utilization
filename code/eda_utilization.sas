@@ -103,7 +103,7 @@ ods proclabel 'Frequencies, Cat Vars: Ungrouped'; RUN;
 proc odstext; p "Frequencies, Categorical Vars: Ungrouped"; RUN; 
 
 PROC FREQ DATA = &dat;
-TABLES time int int_imp season: ind: bh: race sex budget_grp_num age_cat fqhc rae: adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
+TABLES time int int_imp season: ind: bh: race sex budget: age_cat fqhc rae: adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
 RUN; 
 
 ods proclabel 'Frequencies, Cat Vars: GROUPED by INT (time invariant)'; RUN; 
@@ -111,7 +111,7 @@ proc odstext;
 p "Frequencies, Categorical Vars: GROUPED by INT (time invariant)"; RUN; 
 
 PROC FREQ DATA = &dat;
-TABLES time int int_imp season: ind: bh: race sex budget_grp_num age_cat fqhc rae: 
+TABLES time int int_imp season: ind: bh: race sex budget: age_cat fqhc rae: 
             adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
 BY INT; 
 RUN; 
