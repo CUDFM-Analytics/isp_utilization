@@ -33,7 +33,6 @@ AND    month=max_month;
 QUIT;  
 %mend;
 
-
 PROC SQL; 
 CREATE TABLE int.pcmp_attr_qrtr AS
 SELECT mcaid_id 

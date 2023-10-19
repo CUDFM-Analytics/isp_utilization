@@ -156,21 +156,22 @@ Start final list where age in range based on FY's 19-22 and rae_ not missing
 PROC SQL;
 CREATE TABLE int.final_00 AS 
 SELECT a.mcaid_id
+     , a.month
+     , a.dt_qrtr
      , a.time
      , a.FY
-     , a.dt_qrtr
-     , a.month
      , a.pcmp_loc_id
+     , a.rae_person_new
+     , a.fqhc
      , a.budget_group
      , a.sex
      , a.race
-     , a.rae_person_new
-     , b.age
+     , b.age_cat
 FROM int.qrylong_01    AS A 
 INNER JOIN int.age_dim AS B ON (a.mcaid_id=b.mcaid_id AND a.time=b.time)
 WHERE rae_person_new ne . 
-AND FY IN (2019, 2020, 2021, 2022) ;
-QUIT;  *see zzz_scratch for unique ID count; 
+AND   month ge '01JUL2019'd;
+QUIT; 
 
 * [INT.QRYLONG_02] ==============================================================================
 Limit ds to members id's found in age_dim
@@ -184,12 +185,12 @@ SELECT mcaid_id
      , month
 FROM int.qrylong_01
 WHERE mcaid_id IN (SELECT mcaid_id FROM int.final_00);
-QUIT; * no dupkey checked; 
+QUIT; 
 
 * [int.final_00] & [RAW.DEMO_1922] =========================================================
 Subset to mcaid_id's that have an rae_assigned in FY's 19-22
 ===========================================================================================;
-DATA int.final_01  (KEEP = mcaid_id month dt_qrtr FY time age)
+DATA int.final_01  (KEEP = mcaid_id month dt_qrtr FY time age_cat)
      int.demo      (KEEP = mcaid_id month dt_qrtr FY time sex race rae_person_new pcmp_loc_id budget_group);
 SET  int.final_00 ; 
 RUN;  
@@ -201,11 +202,11 @@ Creates table with max months' pcmp. In case of ties, takes most recent
 2. output: int.pcmp_attr_qrtr
 ===========================================================================================;
 %LET ds = int.demo;
-%INCLUDE "&util/code/util_dataset_pre/incl_extract_check_fy1922.sas"; * creates int.pcmp_attr_qrtr too; 
+%INCLUDE "&util/code/util_dataset_pre/incl_extract_check_fy2023.sas"; * creates int.pcmp_attr_qrtr too; 
 %demo(var=budget_group,   ds=&ds);
 %demo(var=rae_person_new, ds=&ds);
 %demo(var=sex,            ds=&ds);
-%demo(var=race,           ds=&ds);   * all have 15104152 rows; 
+%demo(var=race,           ds=&ds);   
 
 *macro to find instances where n_ids >16 (should be 0 // in 00_config) VERY fast!; 
 %check_ids_n16(ds=budget_group);      *0;
@@ -223,23 +224,19 @@ idk why, so did this as quick fix for now);
 %concat_id_time(ds=int.final_01);
 %concat_id_time(ds=int.age_dim);
 
-* int.final_02 ==============================================================================
-Joins final_01 with the calculated demo variables as well as int, int_imp
-===========================================================================================;
 PROC SQL ; 
 CREATE TABLE int.final_02 AS 
 SELECT a.mcaid_id
-     , a.dt_qrtr
      , a.month
+     , a.dt_qrtr
      , a.FY
      , a.time
      , a.id_time_helper
-     , a.age
+     , a.age_cat
      , b.budget_group
      , c.rae_person_new
      , d.pcmp_loc_id
      , d.int
-     , e.fqhc
      , f.time2 as time_start_isp
      , case WHEN f.time2 ne . 
             AND  a.time >= f.time2
@@ -250,37 +247,32 @@ FROM int.final_01                    AS A
 LEFT JOIN budget_group               AS B   ON A.id_time_helper = B.id_time_helper
 LEFT JOIN rae_person_new             AS C   ON A.id_time_helper = C.id_time_helper
 LEFT JOIN int.pcmp_attr_qrtr         AS D   ON A.id_time_helper = D.id_time_helper
-LEFT JOIN int.pcmp_dim               AS E   ON D.pcmp_loc_id    = E.pcmp_loc_id   
 LEFT JOIN int.isp_un_pcmp_dtstart    AS F   ON D.pcmp_loc_id    = F.pcmp_loc_id    
 LEFT JOIN race                       AS G   ON A.id_time_helper = G.id_time_helper
 LEFT JOIN sex                        AS H   ON A.id_time_helper = H.id_time_helper;
 QUIT ;  
 
-* int.final_03 ==============================================================================
-drops some vars no longer needed so you can remove duplicates
-===========================================================================================;
 DATA  int.final_03;
 SET   int.final_02   (DROP=time_start_isp month id_time_helper);
-RUN; *44202204 ;
+RUN;
 
-* int.util3  ==============================================================================
-Gets utilization dv's
-===========================================================================================;
+* int.util  ==============================================================================;
 DATA    int.util_0; 
 SET     ana.qry_monthlyutilization (WHERE=(month ge '01Jul2016'd AND month lt '01Jul2023'd));
 FORMAT  dt_qrtr date9.;
 dt_qrtr =intnx('QTR', month, 0, 'BEGINNING'); 
-FY      =year(intnx('year.7', month, 0, 'BEGINNING'));
-run; *;
+FY      =year(intnx('year.7', month, 0, 'END'));
+run; 
 
+* UPDATED 10-19 to include 2023 values; 
 PROC SQL;
 CREATE TABLE int.util_1 as
 SELECT a.*
      , (a.pd_amt/b.index_2021_1) AS adj_pd_amount 
-FROM   int.util_0    AS A
-LEFT JOIN int.adj   AS b    ON a.dt_qrtr=b.date
+FROM   int.util_0      AS A
+LEFT JOIN int.adj_2023 AS b    ON a.dt_qrtr=b.date
 WHERE mcaid_id IN (SELECT mcaid_id FROM int.final_03);
-quit; *58207623; 
+quit; 
 
 PROC SQL;
 CREATE TABLE int.util_2 AS
@@ -289,19 +281,20 @@ SELECT MCAID_ID
       , month
       , sum(case when clmClass=4     then count else 0 end) as n_pc
       , sum(case when clmClass=3     then count else 0 end) as n_er
-      , sum(case when clmClass=2     then count else 0 end) as n_rx
-      , sum(case when clmClass=5     then count else 0 end) as n_ffs_bh
+      , sum(case when clmClass=5     then count else 0 end) as n_ffsbh
         
-      , sum(adj_pd_amount) as adj_pd_total
-      , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pd_pc
-      , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_pd_er
-      , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_pd_rx
-      , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_pd_ffs_bh
+      , sum(adj_pd_amount)                                          as adj_total
+      , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pc
+      , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_er
+      , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_rx
+      , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_ffsbh
 FROM  int.util_1
 GROUP BY MCAID_ID,month;
 quit; *6/7 58207623; 
 
-%nodupkey(ds=int.util_2, out=int.util_3); *6/7 28628763, 12; 
+PROC PRINT DATA = int.util_2 (obs=25); WHERE FY=2023; RUN; 
+
+%nodupkey(ds=int.util_2, out=int.util); *6/7 28628763, 12; 
 
 * 
 RAW.BH1 ==============================================================================
@@ -313,12 +306,13 @@ format dt_qrtr month2 date9.;
 dt_qrtr = intnx('quarter', month ,0,'b');
 month2  = month; DROP month; RENAME month2 = month; /* make numeric, for some reason month coming in as character*/
 WHERE   month ge '01Jul2016'd AND  month le '01Jul2023'd;
-FY      = year(intnx('year.7', month, 0, 'BEGINNING'));
+FY      = year(intnx('year.7', month, 0, 'END'));
 run; 
 
 %create_qrtr(data=int.bh, set=raw.bh_0, var = dt_qrtr, qrtr=time);
 
 **RUN / exec 02_get_prep_telehealth to get int.tel here; 
+PROC SORT data = INT.tel; by mcaid_id month ; run; 
 
 * INT.QRYLONG_04 ==============================================================================
 join bh and util to qrylong to get averages (all utils - monthly, bho, telehealth) to qrylong4
@@ -331,50 +325,48 @@ SELECT a.mcaid_id, a.month, a.dt_qrtr, a.FY, a.time
      , b.bho_n_other
      , c.n_pc
      , c.n_er
-     , c.n_rx
-     , c.n_ffs_bh
-     , c.adj_pd_total
-     , c.adj_pd_pc
-     , c.adj_pd_er
-     , c.adj_pd_rx
-     , c.adj_pd_ffs_bh
+     , c.n_ffsbh
+     , c.adj_total
+     , c.adj_pc
+     , c.adj_er
+     , c.adj_rx
+     , c.adj_ffsbh
      , d.n_tele
-FROM int.qrylong_02            AS A
-LEFT JOIN int.bh               AS B    ON a.mcaid_id=B.mcaid_id AND a.month=B.month
-LEFT JOIN int.util_3           AS C    ON a.mcaid_id=C.mcaid_id AND a.month=C.month
-LEFT JOIN int.tel              AS D    ON a.mcaid_id=D.mcaid_id AND a.month=D.month;
+     , coalesce(b.bho_n_er, 0) + coalesce(c.n_er, 0) as n_ed
+FROM int.qrylong_02  AS A
+LEFT JOIN int.bh     AS B ON a.mcaid_id=B.mcaid_id AND a.month=B.month
+LEFT JOIN int.util   AS C ON a.mcaid_id=C.mcaid_id AND a.month=C.month
+LEFT JOIN int.tel    AS D ON a.mcaid_id=D.mcaid_id AND a.month=D.month;
 QUIT;  
 
 * [int.qrylong_pre] ==============================================================================
-[Descr]
-1. [Step 1]
-2. [Step 2]
 ===========================================================================================;
-DATA int.qrylong_pre_0; 
+DATA int.qrylong_pre_0 int.qrylong_post_0 (DROP=bho_n_hosp bho_n_other); 
 SET  int.qrylong_03;
-WHERE month lt '01Jul2019'd; 
+IF month <  '01Jul2019'd THEN OUTPUT int.qrylong_pre_0;
+IF month >= '01JUL2019'd THEN OUTPUT int.qrylong_post_0;
 RUN;  
 
 PROC SQL;
 CREATE TABLE int.qrylong_pre_1 as
 SELECT mcaid_id
-     , max(case when FY = 2016 then 1 else 0 end) as elig2016
      , max(case when FY = 2017 then 1 else 0 end) as elig2017
      , max(case when FY = 2018 then 1 else 0 end) as elig2018
+     , max(case when FY = 2019 then 1 else 0 end) as elig2019
 
-     , avg(case when FY = 2016 then adj_pd_total else . end) as adj_pd_16pm
-     , avg(case when FY = 2017 then adj_pd_total else . end) as adj_pd_17pm
-     , avg(case when FY = 2018 then adj_pd_total else . end) as adj_pd_18pm
+     , avg(case when FY = 2017 then adj_total else . end) as adj_pd_17pm
+     , avg(case when FY = 2018 then adj_total else . end) as adj_pd_18pm
+     , avg(case when FY = 2019 then adj_total else . end) as adj_pd_19pm
 
-     , avg(case when FY = 2016 then bho_n_hosp  else . end) as bho_n_hosp_16pm
-     , avg(case when FY = 2017 then bho_n_hosp  else . end) as bho_n_hosp_17pm 
-     , avg(case when FY = 2018 then bho_n_hosp  else . end) as bho_n_hosp_18pm
-     , avg(case when FY = 2016 then bho_n_er    else . end) as bho_n_er_16pm
-     , avg(case when FY = 2017 then bho_n_er    else . end) as bho_n_er_17pm 
-     , avg(case when FY = 2018 then bho_n_er    else . end) as bho_n_er_18pm
-     , avg(case when FY = 2016 then bho_n_other else . end) as bho_n_other_16pm 
+     , avg(case when FY = 2017 then bho_n_hosp  else . end) as bho_n_hosp_17pm
+     , avg(case when FY = 2018 then bho_n_hosp  else . end) as bho_n_hosp_18pm 
+     , avg(case when FY = 2019 then bho_n_hosp  else . end) as bho_n_hosp_19pm
+     , avg(case when FY = 2017 then bho_n_er    else . end) as bho_n_er_17pm
+     , avg(case when FY = 2018 then bho_n_er    else . end) as bho_n_er_18pm 
+     , avg(case when FY = 2019 then bho_n_er    else . end) as bho_n_er_19pm
      , avg(case when FY = 2017 then bho_n_other else . end) as bho_n_other_17pm 
-     , avg(case when FY = 2018 then bho_n_other else . end) as bho_n_other_18pm
+     , avg(case when FY = 2018 then bho_n_other else . end) as bho_n_other_18pm 
+     , avg(case when FY = 2019 then bho_n_other else . end) as bho_n_other_19pm
 
 FROM int.qrylong_pre_0
 GROUP BY mcaid_id;
@@ -384,10 +376,6 @@ QUIT;
 DATA int.qrylong_pre_2;
 SET  int.qrylong_pre_1;
 
-IF      elig2016 = 0 THEN adj_pd_16pm = -1; 
-ELSE IF elig2016 = 1 AND  adj_pd_16pm = .   THEN adj_pd_16pm = 0;
-ELSE adj_pd_16pm = adj_pd_16pm; 
-
 IF      elig2017 = 0 THEN adj_pd_17pm = -1; 
 ELSE IF elig2017 = 1 AND  adj_pd_17pm = .   THEN adj_pd_17pm = 0;
 ELSE adj_pd_17pm = adj_pd_17pm; 
@@ -396,9 +384,13 @@ IF      elig2018 = 0 THEN adj_pd_18pm = -1;
 ELSE IF elig2018 = 1 AND  adj_pd_18pm = .   THEN adj_pd_18pm = 0;
 ELSE adj_pd_18pm = adj_pd_18pm; 
 
-ARRAY bh(*) bho_n_hosp_16pm  bho_n_hosp_17pm  bho_n_hosp_18pm
-            bho_n_er_16pm    bho_n_er_17pm    bho_n_er_18pm
-            bho_n_other_16pm bho_n_other_17pm bho_n_other_18pm;
+IF      elig2019 = 0 THEN adj_pd_19pm = -1; 
+ELSE IF elig2019 = 1 AND  adj_pd_19pm = .   THEN adj_pd_19pm = 0;
+ELSE adj_pd_19pm = adj_pd_19pm; 
+
+ARRAY bh(*) bho_n_hosp_17pm  bho_n_hosp_18pm  bho_n_hosp_19pm
+            bho_n_er_17pm    bho_n_er_18pm    bho_n_er_19pm
+            bho_n_other_17pm bho_n_other_18pm bho_n_other_19pm;
 
 DO i=1 to dim(bh);
     IF bh(i)=. THEN bh(i)=0; 
@@ -419,13 +411,13 @@ run;
 %mend; 
 
 ** SEE UTIL_02_CHECKS for code to investigate the values and check percentiles; 
-%pctl_1618(var = adj_pd_16pm, out = pd16pctle, pctlpre = p16_); 
 %pctl_1618(var = adj_pd_17pm, out = pd17pctle, pctlpre = p17_); 
 %pctl_1618(var = adj_pd_18pm, out = pd18pctle, pctlpre = p18_); 
+%pctl_1618(var = adj_pd_19pm, out = pd19pctle, pctlpre = p19_); 
 
-data int.pctl1618; merge pd16pctle pd17pctle pd18pctle ; run;
+data int.pctl1719; merge pd17pctle pd18pctle pd19pctle ; run;
 
-PROC PRINT DATA = int.pctl1618; RUN; 
+PROC PRINT DATA = int.pctl1719; RUN; 
 
 * https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 proc sql noprint;
@@ -438,10 +430,10 @@ proc sql noprint;
   from sashelp.vcolumn 
   where 
     libname = "INT" 
-    and memname = "PCTL1618"
+    and memname = "PCTL1719"
   ;
   select &COL_NAMES into &MVAR_NAMES
-  from int.pctl1618;
+  from int.pctl1719;
 quit;
 
 %macro insert_pctile(ds_in,ds_out,year);
@@ -472,69 +464,67 @@ RUN;
 %mend;
 
 * Made separate ds's for testing but merge if poss later, save final to int/; 
-%insert_pctile(ds_in = int.qrylong_pre_2, ds_out = adj0,             year = 16);
-%insert_pctile(ds_in = adj0,              ds_out = adj1,             year = 17);
-%insert_pctile(ds_in = adj1,              ds_out = int.qrylong_1618, year = 18); *1138579;
+%insert_pctile(ds_in = int.qrylong_pre_2, ds_out = adj0,             year = 17);
+%insert_pctile(ds_in = adj0,              ds_out = adj1,             year = 18);
+%insert_pctile(ds_in = adj1,              ds_out = int.qrylong_1719, year = 19);
 
 * [int.final_04] ==============================================================================
-Combine final_03 with the final 1618 outcomes
+Add FY1719 outcomes to final_03
 ===========================================================================================;
 PROC SQL;
 CREATE TABLE int.final_04 AS 
 SELECT a.*
      , b.*
 FROM int.final_03           AS A
-LEFT JOIN int.qrylong_1618  AS B ON a.mcaid_id=b.mcaid_id;
+LEFT JOIN int.qrylong_1719  AS B ON a.mcaid_id=b.mcaid_id;
 QUIT; 
-
-%nodupkey(ds = int.final_04, out=int.final_04); *15124679, 31; 
+%nodupkey(ds = int.final_04, out=int.final_04); 
 
 * INT.qrylong_1922 ======================================================================
 DVs (n=7)
 --VISITS (n=4): 1) n_ed = n_er+bho_n_er, 2) n_pc, 3) n_ffs_bh (rename to n_ffsbh later), 4) n_tele
 --COST (n=3): 1) adj_pd_total, 2) adj_pd_pc, 3_ adj_pd_rx
 ========================================================================================;
-DATA int.qrylong_post_0 (KEEP = mcaid_id month time FY n_ed n_pc n_ffs_bh n_tele adj_pd_total adj_pd_pc adj_pd_rx);
-SET  int.qrylong_03     (KEEP = mcaid_id    month   dt_qrtr     time       FY
-                                bho_n_er    n_er    n_pc        n_ffs_bh   n_tele   
-                                adj_pd_total        adj_pd_pc   adj_pd_rx
+DATA int.qrylong_post_1 (KEEP = mcaid_id month time FY n_ed n_pc n_ffsbh n_tele adj_total adj_pc adj_rx);
+SET  int.qrylong_post_0 (KEEP = mcaid_id    month   dt_qrtr     time       FY
+                                n_ed        n_pc    n_ffsbh     n_tele   
+                                adj_total   adj_pc  adj_rx
                          WHERE = (month ge '01JUL2019'd)); 
-ARRAY dv(*) n_pc  n_er  n_ffs_bh  bho_n_er  n_tele adj_pd_total   adj_pd_pc adj_pd_rx;
-DO i=1 to dim(dv);
+ARRAY dv(*) n_pc n_ed n_ffsbh n_tele adj_total adj_pc adj_rx;
+DO i=1 to dim(dv); 
 IF dv(i)=. THEN dv(i)=0; ELSE dv(i)=dv(i);
 END;
-* Get n_ed as sum of ffs and bh ed visits; 
-n_ed = sum(n_er, bho_n_er); 
 RUN; 
 
-DATA int.qrylong_post_1 (DROP=i);
-SET  int.qrylong_post_0; 
-length month time FY n: adj: 3.; 
+DATA int.qrylong_post_2 (DROP=i);
+SET  int.qrylong_post_1; 
+length month time FY n: 3.; 
 * Create multiplier for visits so you have integers when dividing;
-ARRAY mult(*) n_ed n_pc n_ffs_bh n_tele;
-DO i=1 to dim(mult); mult(i)=mult(i)*6; 
+ARRAY mult(*) n_ed n_pc n_ffsbh n_tele;
+DO i=1 to dim(mult); 
+mult(i)=mult(i)*6; 
 END;
 RUN; 
 
 ** AVERAGE the quarter PM costs, then get 95th percentiles for FY's ; 
 PROC SQL;
-CREATE TABLE int.qrylong_post_2 as
+CREATE TABLE int.qrylong_post_3 as
 SELECT mcaid_id
      , count(*) as n_months
      , time
      , FY
-     , avg(n_pc)          AS n_pc_pmpq
-     , avg(n_ed)          AS n_ed_pmpq
-     , avg(n_ffs_bh)      AS n_ffsbh_pmpq
-     , avg(n_tele)        AS n_tel_pmpq
-     , avg(adj_pd_total)  AS adj_total_pmpq
-     , avg(adj_pd_pc)     AS adj_pc_pmpq
-     , avg(adj_pd_rx)     AS adj_rx_pmpq
-FROM int.qrylong_post_1
+     , avg(n_pc)       AS n_pc_pmpq
+     , avg(n_ed)       AS n_ed_pmpq
+     , avg(n_ffsbh)    AS n_ffsbh_pmpq
+     , avg(n_tele)     AS n_tel_pmpq
+     , avg(adj_total)  AS adj_total_pmpq
+     , avg(adj_pc)     AS adj_pc_pmpq
+     , avg(adj_rx)     AS adj_rx_pmpq
+FROM int.qrylong_post_2
 GROUP BY mcaid_id, time;
 QUIT; 
 
-%nodupkey(ds=int.qrylong_post_2, out=int.qrylong_1922); 
+%nodupkey(ds=int.qrylong_post_3, out=int.qrylong_2023); 
 * IT's OK THAT ITs HIGHER bc didn't subset bh, tele to memlist yet!!!; 
 
 * [INT.FINAL_05];
