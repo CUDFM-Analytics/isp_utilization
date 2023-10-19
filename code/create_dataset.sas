@@ -750,8 +750,7 @@ PROC SORT DATA = int.final_08; BY mcaid_id time; RUN;
 DATA   data.analysis_allcols;
 LENGTH &len08 &bhcols 3. ;
 SET    int.final_08; 
-FORMAT race $race_rc_. ;
-age_cat      = put(age, age_cat_.);
+
 budget_grp_r = input(put(budget_group, budget_grp_r.), 12.);
 FORMAT budget_grp_r budget_grp_new_. ; 
 * testing; 
@@ -759,131 +758,40 @@ FORMAT budget_grp_r budget_grp_new_. ;
 adj_pd_total_16cat = adj_pd_total_16cat + 1; 
 adj_pd_total_17cat = adj_pd_total_17cat + 1; 
 adj_pd_total_18cat = adj_pd_total_18cat + 1; 
+
+IF            age <   5 THEN age_cat = 1;
+ELSE IF  6 <= age <= 10 THEN age_cat = 2;
+ELSE IF 11 <= age <= 15 THEN age_cat = 3;
+ELSE IF 16 <= age <= 20 THEN age_cat = 4;
+ELSE IF 21 <= age <= 44 THEN age_cat = 5;
+ELSE                         age_cat = 6;
+
+FORMAT race $race_rc_. age_cat age_cat_.; 
 RUN; 
 
 PROC FREQ DATA = data.analysis_allcols; tables budget: ; run; 
 
+*[DATA.UTILIZATION];
+%LET drop   = n_months fyqrtr_txt age FY budget_group fyqrtr pcmp_loc_id;
+%LET retain = mcaid_id time int int_imp season1 season2 season3 ind_cost_total cost_total ind_cost_pc cost_pc ind_cost_rx cost_rx 
+              ind_visit_pc visits_pc ind_visit_ed visits_ed ind_visit_ffsbh visits_ffsbh ind_visit_tel visits_tel
+              bh_hosp16 bh_hosp17 bh_hosp18 bh_er16 bh_er17 bh_er18 bh_oth16 bh_oth17 bh_oth18 adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
+              fqhc budget_grp_new age_cat rae_person_new  race sex  ;
 
-* [6/22/2023]
-Integer values for count values so I can use negbin // mult all by 6
-n_ed_pm     n_ffs_bh_pm     n_pc_pm     n_tel_pm;
-DATA int.analysis2;
-LENGTH &len06 &bhcols &indcols &ncols 3. ;  
-SET  int.analysis1; 
+* previous version had 39 cols; 
+DATA data.utilization ;
+RETAIN &retain;
+LENGTH budget_grp_new age_cat 3. mcaid_id $7. sex $1.;
+SET    data.analysis_allcols (RENAME=(budget_grp_r    = budget_grp_new
+                                      adj_pd_total_tc = cost_total
+                                      adj_pd_pc_tc    = cost_pc
+                                      adj_pd_rx_tc    = cost_rx
+                                      n_pc_pmpq       = visits_pc
+                                      n_ed_pmpq       = visits_ed
+                                      n_ffsbh_pmpq    = visits_ffsbh
+                                      n_tel_pmpq      = visits_tel)
+                              DROP= &drop);
 RUN; 
-
-* Reordered so I could see related cols together; 
-DATA int.analysis3;
-RETAIN mcaid_id time int int_imp season1 season2 season3 
-       ind_total_cost     adj_pd_total_tc
-       ind_pc_cost        adj_pd_pc_tc
-       ind_rx_cost        adj_pd_rx_tc
-       ind_pc_visit       n_pc_pm   n_pc_pm_r
-       ind_ed_visit       n_ed_pm   n_ed_pm_r
-       ind_ffs_bh_visit   n_ffs_bh_pm   n_ffs_bh_pm_r
-       ind_tel_visit      n_tel_pm      n_tel_pm_r
-       bh_2016  bh_hosp16   bh_er16   bh_oth16
-       bh_2017  bh_hosp17   bh_er17   bh_oth17
-       bh_2018  bh_hosp18   bh_er18   bh_oth18
-       adj_pd_total_16cat_orig  adj_pd_total_16cat
-       adj_pd_total_17cat_orig  adj_pd_total_17cat
-       adj_pd_total_18cat_orig  adj_pd_total_18cat
-       fqhc 
-       budget_grp_fmt_ana   budget_grp_num  budget_grp_num_r budget_grp_new
-       age      age_cat     age_cat_num
-       rae_person_new race sex  ;
-SET int.analysis2;
-RUN;
-
-DATA data.analysis;
-/*Drop the vars you're not using in the modeling*/
-SET  int.analysis3 (DROP= bh_2016 bh_2017 bh_2018 adj_pd_total_16cat_orig adj_pd_total_17cat_orig 
-                    adj_pd_total_18cat_orig budget_grp_fmt_ana budget_grp_num budget_grp_num_r age
-                    n_pc_pm n_ed_pm n_ffs_bh_pm n_tel_pm age_cat_num);
-RUN; *08-03 15124679:39;
-
-
-** #UPDATE[09-08-2023] ====================================
-0. MANUALLY renamed data.analysis = data.analysis_prev
-1. Removed int. datasets bc of size issues. 
-2. Minimize data.analysis_prev (create data.utilization) by: 
-    2a. Minimizing dataset size variables - i.e. budgetgroup doesn't need to be char 22, should be numeric. 
-    2b. Binary variables can be length = 3
-    2c. mcaid_id length = 7
-    2d. Per CS, formats don't add any length etc, so don't need to worry about them. 
-;
-PROC CONTENTS DATA = data.analysis_prev VARNUM; RUN; 
-
-DATA data.utilization0 (rename=(ind_ed_visit    = ind_visit_ed
-                               ind_ffs_bh_visit = ind_visit_ffs_bh
-                               ind_tel_visit    = ind_visit_tel
-                               ind_pc_visit     = ind_visit_pc
-                               ind_total_cost   = ind_cost_total
-                               ind_pc_cost      = ind_cost_pc
-                               ind_rx_cost      = ind_cost_rx)
-                               );
-LENGTH time age rae_person_new int int_imp bh_hosp16 bh_hosp17 bh_hosp18 bh_er16 bh_er17 bh_er18 bh_oth16 bh_oth17 bh_oth18 
-       adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat ind_pc_visit ind_ed_visit ind_ffs_bh_visit ind_tel_visit
-       budget_grp_num season1 season2 season3 fqhc ind_rx_cost ind_pc_cost ind_total_cost
-       n_pc_pm_r n_ed_pm_r n_ffs_bh_pm_r n_tel_pm_r 3.
-       mcaid_id $7. 
-       sex $1. ;
-FORMAT budget_grp_num budget_grp_new_. ;
-SET  data.analysis_prev ;
-* assign new numeric values to 3, 5-12 / else 0 (Other);
-IF       budget_grp_new = "Other"                  THEN budget_grp_num = 0;
-ELSE IF  budget_grp_new = "MAGI 69 - 133% FPL"     THEN budget_grp_num = 1;
-ELSE IF  budget_grp_new = "MAGI TO 68% FPL"        THEN budget_grp_num = 2;
-ELSE IF  budget_grp_new = "Disabled"               THEN budget_grp_num = 3;
-ELSE IF  budget_grp_new = "Foster Care"            THEN budget_grp_num = 4;
-ELSE IF  budget_grp_new = "MAGI Eligible Children" THEN budget_grp_num = 5;
-ELSE                                                    budget_grp_num = 999;  
-
-age_cat2 = input(age_cat, best12.);
-DROP age_cat budget_grp_new;
-RENAME age_cat2=age_cat; 
-RUN; * 09-08-2023  15124679 : 34; 
-
-PROC CONTENTS DATA = data.utilization0 VARNUM; RUN;
-DATA data.utilization1 (RENAME=(adj_pd_total_tc  = cost_total
-                                adj_pd_pc_tc     = cost_pc
-                                adj_pd_rx_tc     = cost_rx
-                                n_pc_pm_r        = visits_pc
-                                n_ed_pm_r        = visits_ed
-                                n_ffs_bh_pm_r    = visits_ffsbh
-                                n_tel_pm_r       = visits_tel
-                                ind_visit_ffs_bh = ind_visit_ffsbh)) ;  * remove that second ffsbh underscore was giving me issues in hurdle macro; 
-LENGTH age_cat 3.;
-FORMAT age_cat age_cat_.; 
-SET  data.utilization0 (DROP=age);
-RUN; *15124679 : 40;
-
-* Reordered so I could see related cols together 
-(I think the renaming in data statement overwrote the retain part when it was in the same step
-so did in a separate step); 
-DATA data.utilization;
-RETAIN mcaid_id         time            int         int_imp 
-       season1          season2         season3 
-       ind_cost_total   cost_total
-       ind_cost_pc      cost_pc
-       ind_cost_rx      cost_rx
-       ind_visit_pc     visits_pc
-       ind_visit_ed     visits_ed
-       ind_visit_ffsbh  visits_ffsbh
-       ind_visit_tel    visits_tel
-       bh_hosp16        bh_hosp17       bh_hosp18
-       bh_er16          bh_er17         bh_er18
-       bh_oth16         bh_oth17        bh_oth18
-       adj_pd_total_16cat   adj_pd_total_17cat  adj_pd_total_18cat
-       fqhc             budget_grp_num
-       age_cat          rae_person_new  race    sex  ;
-SET data.utilization1;
-RUN;
-
-PROC CONTENTS DATA = data.utilization VARNUM; RUN;
-
-
-PROC SQL; SELECT * FROM dictionary.columns WHERE libname = "INT"; QUIT; 
 
 
 ** CREATE META DS  ====================================;

@@ -75,15 +75,6 @@ VALUE $race_rc_
     Other     = "Unknown Race/Ethnicity";
 
 * Formats for values created originally in the util files; 
-
-VALUE age_cat_              
-    0 - 5 = 1
-    6 -10 = 2
-    11-15 = 3
-    16-20 = 4 
-    21-44 = 5
-    45-64 = 6 ;
-
 VALUE age_cat_
     1 = "ages 0-5"
     2 = "ages 6-10"
