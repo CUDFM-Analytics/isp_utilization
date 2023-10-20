@@ -13,10 +13,8 @@ VERSION  : 2023-10-18 Get updated datasets, up to and including June 2023 (less 
 DEPENDS  : -ana subset folder, config file, 
            -%include helper file in code/util_dataset_prep/incl_extract_check_fy19210.sas
            -other macro code referenced is stored in the util_00_config.sas file
-OUTPUT
-SECTION1 : data.analysis
-SECTION2 : data.analysis_allcols
-SECTION3 : data.mini_ds (test set with only 500000 records) 
+           -DHLCHRG...xlsx file
+           -int.rae_dim
 
 SEE excel file with comparison outcomes / results/ nobs analytic_ds_previous_results.xlsx (or something);
 
@@ -95,6 +93,16 @@ LEFT JOIN raw.time_dim          AS D on a.dt_qrtr  = d.month
 WHERE  pcmp_loc_id ne .
 AND    SEX IN ('F','M');
 QUIT;   
+
+* [PCMP_DIM] 
+This DOES need to be separate bc the pcmp_loc_id attr might change within q per member when we do attr; 
+PROC SQL; 
+CREATE TABLE int.pcmp_dim AS 
+SELECT distinct pcmp_loc_id
+     , fqhc
+FROM int.qrylong_01
+GROUP BY pcmp_loc_id; 
+QUIT; 
 
 * [INT.AGE_DIM] ==============================================================================
 Extract dob to get age as of the 2nd month in each quarter
@@ -530,8 +538,10 @@ PROC SQL;
 CREATE TABLE int.final_05 AS 
 SELECT a.*
      , b.*
+     , c.fqhc
 FROM int.final_04            AS A
-LEFT JOIN int.qrylong_2023   AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time;
+LEFT JOIN int.qrylong_2023   AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time
+LEFT JOIN int.pcmp_dim       AS C ON a.pcmp_loc_id=c.pcmp_loc_id;
 QUIT; 
 
 * setting to 0 where . for variables not using elig category (adj 16-18 vars) 
@@ -543,15 +553,9 @@ SELECT name INTO :bhcols separated by ' ' FROM dictionary.columns
 WHERE memname='FINAL_06' AND substr(name, 1, 4)="bho_";
 QUIT; 
 
-*Get indicator colnames: ; 
-PROC SQL; 
-SELECT name INTO :ncols separated by ' ' FROM dictionary.columns 
-WHERE memname='FINAL_06' AND substr(name, 1, 2)="n_";
-QUIT; 
-
 DATA int.final_06 (DROP = dt_qrtr elig: adj_pd_17pm adj_pd_18pm adj_pd_19pm);
 * Not yet setting length for time and mcaid_id bc they might get joined later; 
-LENGTH FY age_cat budget_group rae_person_new pcmp_loc_id int int_imp &bhcols &ncols 3. sex $1. ;
+LENGTH FY age_cat budget_group rae_person_new int int_imp &bhcols 3. sex $1. ;
 SET  int.final_05; 
 ARRAY dv(*) bho_n_hosp_17pm     bho_n_hosp_18pm     bho_n_hosp_19pm
             bho_n_er_17pm       bho_n_er_18pm       bho_n_er_19pm
@@ -601,16 +605,11 @@ RUN;
 
 PROC SORT DATA = int.final_06; BY FY; run; 
 
-PROC MEANS DATA = int.final_06 mean median max min p25 p50 p75 p95; 
-BY FY; 
-VAR adj_total_pmpq adj_pc_pmpq adj_rx_pmpq; 
-RUN; 
-
-PROC MEANS DATA = int.final_06 mean median max min p25 p50 p75 p95; 
-BY FY; 
-VAR adj_total_pmpq; *adj_pc_pmpq adj_rx_pmpq; 
-WHERE adj_total_pmpq > 0;
-RUN; 
+/*PROC MEANS DATA = int.final_06 mean median max min p25 p50 p75 p95; */
+/*BY FY; */
+/*VAR adj_total_pmpq; *adj_pc_pmpq adj_rx_pmpq; */
+/*WHERE adj_total_pmpq > 0;*/
+/*RUN; */
 
 %pctl_2023(var = adj_total_pmpq,   out = int.adj_total_pctl,   pctlpre = adj_total_,  t_var = adj_total_95); 
 %pctl_2023(var = adj_pc_pmpq,      out = int.adj_pc_pctl,      pctlpre = adj_pc_,     t_var = adj_pc_95); 
@@ -669,9 +668,6 @@ merge mu_total_20       mu_total_21     mu_total_22     mu_total_23
 RUN; 
 PROC PRINT DATA = int.mu_pctl_2023; RUN; 
 
-PROC means DATA = int.final_06 n nmiss;
-VAR adj_total: adj_pc: adj_rx: ; RUN; 
-
 proc sql noprint;
   select name, cats(':',name)
   into 
@@ -714,22 +710,19 @@ PROC SORT DATA = int.final_07; by mcaid_id time; run;
 *** Add quarter variables, one with text for readability ; 
 DATA int.final_08 ;
 SET  int.final_07 (DROP = adj_total_pmpq adj_pc_pmpq adj_rx_pmpq
-                   RENAME=(bho_n_hosp_16pm  = BH_Hosp16
-                           bho_n_hosp_17pm  = BH_Hosp17
+                   RENAME=(bho_n_hosp_17pm  = BH_Hosp17
                            bho_n_hosp_18pm  = BH_Hosp18
-                           bho_n_er_16pm    = BH_ER16
+                           bho_n_hosp_19pm  = BH_Hosp19
                            bho_n_er_17pm    = BH_ER17
                            bho_n_er_18pm    = BH_ER18
-                           bho_n_other_16pm = BH_Oth16
+                           bho_n_er_19pm    = BH_ER19
                            bho_n_other_17pm = BH_Oth17
                            bho_n_other_18pm = BH_Oth18
-                           ind_visit_pv     =ind_visit_pc /** somewhere I named it pv by mistake; */
-                           ));
+                           bho_n_other_19pm = BH_Oth19));
 * make binary; 
-ARRAY bh(*) BH_Hosp16 BH_Hosp17 BH_Hosp18 BH_ER16 BH_ER17 BH_ER18 BH_Oth16 BH_Oth17 BH_Oth18;
+ARRAY bh(*) BH_Hosp17 BH_Hosp18 BH_Hosp19 BH_ER17 BH_ER18 BH_ER19 BH_Oth17 BH_Oth18 BH_Oth19;
 DO i=1 to dim(bh); IF bh(i)>0 THEN bh(i)=1; ELSE bh(i)=bh(i); END; DROP i; 
 
-fyqrtr_txt = put(time,   fyqrtr_cat.); 
 fyqrtr     = input(time, fyqrtr_num.);
 IF fyqrtr  = 1 THEN season1 = 1; ELSE IF fyqrtr = 4 THEN season1 = -1; ELSE season1 = 0; 
 IF fyqrtr  = 2 THEN season2 = 1; ELSE IF fyqrtr = 4 THEN season2 = -1; ELSE season2 = 0;  
@@ -742,29 +735,22 @@ PROC SORT DATA = int.final_08; BY mcaid_id time; RUN;
 ===========================================================================================;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config_formats.sas"; 
 
-* Get col names by starting string and the rando-strings... for setting to 3, but only for integers w 4 values... ; 
-%LET len08 = FY time age pcmp_loc_id int int_imp fqhc int_imp budget_group rae_person_new fyqrtr season1 season2 season3
-             adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat 
-             ind_visit_pc ind_visit_ed ind_visit_ffsbh ind_visit_tel ind_cost_total ind_cost_pc ind_cost_rx 
-             n_months n_pc_pmpq n_ed_pmpq n_ffsbh_pmpq n_tel_pmpq ; 
+* Numeric vars that can be set to length=3 to reduce dataset in int.final_08 step ; 
+%LET len08 = time fqhc season1 season2 season3 adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat 
+             ind_visit_pc ind_visit_ed ind_visit_ffsbh ind_visit_tel ind_cost_total ind_cost_pc ind_cost_rx; 
 
-
-DATA   data.analysis_allcols;
-LENGTH &len08 &bhcols 3. ;
+DATA   data.utilization_large;
+LENGTH &len08 3 pcmp_loc_id 4;
 SET    int.final_08; 
 
 budget_grp_r = input(put(budget_group, budget_grp_r.), 12.);
-FORMAT budget_grp_r budget_grp_new_. ; 
-* testing; 
+FORMAT budget_grp_r budget_grp_new_. race $race_rc_. age_cat age_cat_.; 
 
-adj_pd_total_16cat = adj_pd_total_16cat + 1; 
 adj_pd_total_17cat = adj_pd_total_17cat + 1; 
 adj_pd_total_18cat = adj_pd_total_18cat + 1; 
+adj_pd_total_19cat = adj_pd_total_19cat + 1; 
 
-FORMAT race $race_rc_. age_cat age_cat_.; 
 RUN; 
-
-PROC FREQ DATA = data.analysis_allcols; tables budget: ; run; 
 
 *[DATA.UTILIZATION];
 %LET drop   = n_months fyqrtr_txt age FY budget_group fyqrtr pcmp_loc_id;
@@ -777,8 +763,7 @@ PROC FREQ DATA = data.analysis_allcols; tables budget: ; run;
 DATA data.utilization ;
 RETAIN &retain;
 LENGTH budget_grp_new age_cat 3. mcaid_id $7. sex $1.;
-SET    data.analysis_allcols (RENAME=(budget_grp_r    = budget_grp_new
-                                      adj_pd_total_tc = cost_total
+SET    data.analysis_allcols (RENAME=(adj_pd_total_tc = cost_total
                                       adj_pd_pc_tc    = cost_pc
                                       adj_pd_rx_tc    = cost_rx
                                       n_pc_pmpq       = visits_pc

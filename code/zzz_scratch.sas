@@ -12,7 +12,7 @@
    PROC FREQ DATA = raw.qrylong_00a; tables pcmp_loc_type_cd; RUN; 
    PROC SQL; SELECT count(distinct mcaid_id) FROM raw.qrylong_00a; QUIT; 
 
-%LET check = int.qrylong_01; 
+%LET check = int.qrylong_02; 
    PROC CONTENTS DATA = &check VARNUM; RUN; 
    PROC PRINT DATA = &check (obs=25); RUN; 
    PROC FREQ DATA = &check; tables time; RUN; 
@@ -46,6 +46,12 @@ TITLE "&check";
    PROC PRINT DATA    = &check (obs=25); RUN; 
 TITLE; 
 
+%LET check = int.util; 
+TITLE "&check"; 
+   PROC PRINT DATA = &check (obs=200); RUN; 
+TITLE; 
+
+
 %LET check = int.qrylong_pre_0; 
 TITLE "&check"; 
    PROC CONTENTS DATA = &check VARNUM; RUN; 
@@ -56,25 +62,21 @@ TITLE "&check";
    PROC PRINT DATA    = &check (obs=25); RUN; 
 TITLE; 
 
-%LET check = int.qrylong_post_2; 
-TITLE "&check"; 
+%LET check = int.final_06; 
+title "&check"; 
    PROC CONTENTS DATA = &check VARNUM; RUN; 
    PROC PRINT DATA    = &check (obs=25); RUN; 
-   PROC FREQ DATA = &check; tables month fy time n_: ; RUN; 
+   PROC FREQ DATA     = &check; tables ind_: ; RUN; 
+   PROC SQL; SELECT count(distinct mcaid_id) FROM &check; QUIT; 
 TITLE; 
 
-%LET check = int.qrylong_2023; 
-TITLE "&check"; 
+%LET check = int.final_08; 
+title "&check"; 
    PROC CONTENTS DATA = &check VARNUM; RUN; 
    PROC PRINT DATA    = &check (obs=25); RUN; 
-   PROC FREQ DATA = &check; tables month fy time n_: ; RUN; 
+   PROC FREQ DATA     = &check; tables ind_: ; RUN; 
+   PROC SQL; SELECT count(distinct mcaid_id) FROM &check; QUIT; 
 TITLE; 
-
-PROC PRINT DATA = ana.qry_monthlyutilization;
-WHERE mcaid_id="A000405" 
-AND   month ge '01JAN2023'd; 
-RUN; 
-
 
 
 
