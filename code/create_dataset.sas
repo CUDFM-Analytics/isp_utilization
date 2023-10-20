@@ -753,24 +753,28 @@ adj_pd_total_19cat = adj_pd_total_19cat + 1;
 RUN; 
 
 *[DATA.UTILIZATION];
-%LET drop   = n_months fyqrtr_txt age FY budget_group fyqrtr pcmp_loc_id;
+%LET drop   = n_months FY budget_group fyqrtr pcmp_loc_id;
+
 %LET retain = mcaid_id time int int_imp season1 season2 season3 ind_cost_total cost_total ind_cost_pc cost_pc ind_cost_rx cost_rx 
+              adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat 
               ind_visit_pc visits_pc ind_visit_ed visits_ed ind_visit_ffsbh visits_ffsbh ind_visit_tel visits_tel
-              bh_hosp16 bh_hosp17 bh_hosp18 bh_er16 bh_er17 bh_er18 bh_oth16 bh_oth17 bh_oth18 adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat
-              fqhc budget_grp_new age_cat rae_person_new  race sex  ;
+              bh_hosp17 bh_hosp18 bh_hosp19 bh_er17 bh_er18 bh_er19 bh_oth17 bh_oth18 bh_oth19
+              fqhc budget_grp_new age_cat rae_person_new  race sex 
+              ;
 
 * previous version had 39 cols; 
 DATA data.utilization ;
 RETAIN &retain;
 LENGTH budget_grp_new age_cat 3. mcaid_id $7. sex $1.;
-SET    data.analysis_allcols (RENAME=(adj_pd_total_tc = cost_total
-                                      adj_pd_pc_tc    = cost_pc
-                                      adj_pd_rx_tc    = cost_rx
-                                      n_pc_pmpq       = visits_pc
-                                      n_ed_pmpq       = visits_ed
-                                      n_ffsbh_pmpq    = visits_ffsbh
-                                      n_tel_pmpq      = visits_tel)
-                              DROP= &drop);
+SET    data.utilization_large (RENAME=(adj_pd_total_tc = cost_total
+                                       adj_pd_pc_tc    = cost_pc
+                                       adj_pd_rx_tc    = cost_rx
+                                       n_pc_pmpq       = visits_pc
+                                       n_ed_pmpq       = visits_ed
+                                       n_ffsbh_pmpq    = visits_ffsbh
+                                       n_tel_pmpq      = visits_tel
+                                       budget_grp_r    = budget_grp_new)
+                               DROP= &drop);
 RUN; 
 
 
@@ -797,22 +801,22 @@ Step 2: specify nrow, allocation, and strata
 Step 3: Check frequency to test
 ===========================================================================================;
 * Step 1;
-proc sort data = data.analysis;
-by int ;
-run;
-
-* Step 2;
-PROC SURVEYSELECT 
-DATA = data.analysis
-n    = 500000
-OUT  = data.mini;
-STRATA int / alloc=prop;
-RUN;
-
-* Step 3; 
-PROC FREQ DATA = data.mini;
-tables int; 
-run;
+/*proc sort data = data.analysis;*/
+/*by int ;*/
+/*run;*/
+/**/
+/** Step 2;*/
+/*PROC SURVEYSELECT */
+/*DATA = data.analysis*/
+/*n    = 500000*/
+/*OUT  = data.mini;*/
+/*STRATA int / alloc=prop;*/
+/*RUN;*/
+/**/
+/** Step 3; */
+/*PROC FREQ DATA = data.mini;*/
+/*tables int; */
+/*run;*/
 * int=0 pct 87.48%
   int=1 pct 12.52% (100-87.48%); 
 

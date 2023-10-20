@@ -78,15 +78,124 @@ title "&check";
    PROC SQL; SELECT count(distinct mcaid_id) FROM &check; QUIT; 
 TITLE; 
 
+%LET check = data.utilization_large; 
+title "&check"; 
+   PROC CONTENTS DATA = &check VARNUM; RUN; 
+   PROC PRINT DATA    = &check (obs=25); RUN; 
+   * SAS keeps freezing doing too many tables so broke it up: 
+     * DEMO vars; 
+     PROC FREQ DATA = &check; tables time ; RUN; 
+     PROC FREQ DATA = &check; tables age: race sex ; RUN; 
+     PROC FREQ DATA = &check; tables budget_group*budget_grp_r; RUN; 
+     PROC FREQ DATA = &check; tables ind: ; RUN; 
+     PROC FREQ DATA = &check; tables adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat ; RUN; 
+     PROC FREQ DATA = &check; tables FY*time; RUN; 
+
+     LIBNAME eda "&data/out_eda_checks"; 
+
+PROC CONTENTS DATA = int.final_07; RUN; 
+
+PROC SQL; 
+     CREATE TABLE eda.cost_pc_tc_prepost AS
+     SELECT FY
+           , min(adj_pc_pmpq)  as min_pre_tc
+           , max(adj_pc_pmpq)  as max_pre_tc
+           , mean(adj_pc_pmpq) as mean_pre_tc
+           , std(adj_pc_pmpq) as sd_pre_tc
+           , min(adj_pd_pc_tc) as min_post_tc
+           , max(adj_pd_pc_tc) as max_post_tc
+           , mean(adj_pd_pc_tc) as mean_post_tc
+           , std(adj_pd_pc_tc) as sd_post_tc
+     FROM int.final_07
+     GROUP BY FY; 
+QUIT; 
+
+PROC SQL; 
+     CREATE TABLE eda.cost_pc_tc_prepost_gt0 AS
+     SELECT FY
+           , min(adj_pc_pmpq)  as min
+           , max(adj_pc_pmpq)  as max_pre_tc
+           , mean(adj_pc_pmpq) as mean_pre_tc
+           , std(adj_pc_pmpq) as sd_pre_tc
+           , max(adj_pd_pc_tc) as max_post_tc
+           , mean(adj_pd_pc_tc) as mean_post_tc
+           , std(adj_pd_pc_tc) as sd_post_tc
+     FROM int.final_07
+     WHERE adj_pc_pmpq >0
+     GROUP BY FY; 
+QUIT; 
+
+     PROC SQL; 
+     CREATE TABLE eda.cost_RX_tc_prepost AS
+     SELECT FY
+             , min(adj_rx_pmpq)  as min_pre_tc
+             , max(adj_rx_pmpq)  as max_pre_tc
+             , mean(adj_rx_pmpq) as mean_pre_tc
+             , std(adj_rx_pmpq) as sd_pre_tc
+             , min(adj_pd_rx_tc) as min_post_tc
+             , max(adj_pd_rx_tc) as max_post_tc
+             , mean(adj_pd_rx_tc) as mean_post_tc
+             , std(adj_pd_rx_tc) as sd_post_tc
+     FROM int.final_07
+     GROUP BY FY; 
+     QUIT; 
+
+PROC SQL; 
+     CREATE TABLE eda.cost_rx_tc_prepost_gt0 AS
+     SELECT FY
+           , min(adj_rx_pmpq)  as min
+           , max(adj_rx_pmpq)  as max_pre_tc
+           , mean(adj_rx_pmpq) as mean_pre_tc
+           , std(adj_rx_pmpq) as sd_pre_tc
+           , max(adj_pd_rx_tc) as max_post_tc
+           , mean(adj_pd_rx_tc) as mean_post_tc
+           , std(adj_pd_rx_tc) as sd_post_tc
+     FROM int.final_07
+     WHERE adj_rx_pmpq >0
+     GROUP BY FY; 
+QUIT; 
+
+     PROC SQL; 
+     CREATE TABLE eda.cost_total_tc_prepost AS
+     SELECT FY
+             , min(adj_total_pmpq)  as min_pre_tc
+             , max(adj_total_pmpq)  as max_pre_tc
+             , mean(adj_total_pmpq) as mean_pre_tc
+             , std(adj_total_pmpq) as sd_pre_tc
+             , min(adj_pd_total_tc) as min_post_tc
+             , max(adj_pd_total_tc) as max_post_tc
+             , mean(adj_pd_total_tc) as mean_post_tc
+             , std(adj_pd_total_tc) as sd_post_tc
+     FROM int.final_07
+     GROUP BY FY; 
+     QUIT; 
+
+ PROC SQL; 
+     CREATE TABLE eda.cost_total_tc_prepost_gt0 AS
+     SELECT FY
+           , min(adj_total_pmpq)  as min
+           , max(adj_total_pmpq)  as max_pre_tc
+           , mean(adj_total_pmpq) as mean_pre_tc
+           , std(adj_total_pmpq) as sd_pre_tc
+           , max(adj_pd_total_tc) as max_post_tc
+           , mean(adj_pd_total_tc) as mean_post_tc
+           , std(adj_pd_total_tc) as sd_post_tc
+     FROM int.final_07
+     WHERE adj_total_pmpq >0
+     GROUP BY FY; 
+QUIT;     
 
 
+PROC PRINT DATA = eda.cost_total_tc_prepost noobs; RUN; 
+PROC PRINT DATA = eda.cost_rx_tc_prepost noobs; RUN; 
+PROC PRINT DATA = eda.cost_pc_tc_prepost noobs; RUN; 
 
+PROC PRINT DATA = eda.cost_total_tc_prepost_gt0 noobs; RUN; 
+PROC PRINT DATA = eda.cost_rx_tc_prepost_gt0 noobs; RUN; 
+PROC PRINT DATA = eda.cost_pc_tc_prepost_gt0 noobs; RUN; 
 
-proc sql; select count(distinct mcaid_id) as n_un_mcaid from int.final_00; QUIT; 
-proc sql; select count(distinct mcaid_id) as n_un_mcaid from int.qrylong_02; QUIT; 
-PROC CONTENTS DATA = int.qrylong_03 VARNUM; RUN;
-PROC CONTENTS DATA = int.qrylong_post_0 VARNUM; RUN;
-PROC PRINT DATA = int.qrylong_post_1 (obs=100); RUN; 
+PROC CONTENTS DATA = data.utilization_large VARNUM; RUN; 
+
 
 PROC SQL; 
 SELECT mcaid_id

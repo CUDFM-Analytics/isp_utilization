@@ -1,4 +1,3 @@
-
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas"; 
 
 %let dat = data.utilization; 
@@ -33,8 +32,17 @@ QUIT ;
 
 PROC SQL NOPRINT;
 SELECT count(distinct mcaid_id) into :int
-FROM &dat; 
+FROM &dat
+WHERE int=1; 
 QUIT; 
+
+PROC SQL NOPRINT;
+SELECT count(*) into :nobsint
+FROM &dat
+WHERE int=1; 
+QUIT; 
+
+%put &nobs &nmem &int &nobsint; 
 
 proc odstext;
 p "Date: &today";
@@ -77,6 +85,9 @@ p "The final dataset contains n=&nobs unique mcaid_id*time (quarter) records, wi
 p " ";
 RUN; 
 
+%LET cat = time int_imp season: ind: bh: race sex budget: age_cat fqhc rae: adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat;
+%LET num = cost: visits: ; 
+
 PROC FORMAT;
 VALUE adj1618fy
 0 = "(0) Not Eligble for HFC during FY"
@@ -89,7 +100,7 @@ VALUE adj1618fy
 
 VALUE bh1618fy
 0 = "FY Visits = 0"
-0.001 - high = "FY Visits >0";
+1 = "FY Visits > 0";
 RUN; 
 *******************************************************************************
 * Print columns for dataset (use abbreviation 'columns'); 
@@ -103,16 +114,16 @@ ods proclabel 'Frequencies, Cat Vars: Ungrouped'; RUN;
 proc odstext; p "Frequencies, Categorical Vars: Ungrouped"; RUN; 
 
 PROC FREQ DATA = &dat;
-TABLES time int int_imp season: ind: bh: race sex budget: age_cat fqhc rae: adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
+TABLES int &cat;
 RUN; 
+%check_for_errors;
 
 ods proclabel 'Frequencies, Cat Vars: GROUPED by INT (time invariant)'; RUN; 
 proc odstext;
 p "Frequencies, Categorical Vars: GROUPED by INT (time invariant)"; RUN; 
 
 PROC FREQ DATA = &dat;
-TABLES time int int_imp season: ind: bh: race sex budget: age_cat fqhc rae: 
-            adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat;
+TABLES &cat;
 BY INT; 
 RUN; 
 
@@ -135,21 +146,6 @@ RUN;
 TITLE; 
 %mend; 
 
-/*proc odstext;*/
-/*p "New BH Variables (bh_2016, bh_2017, bh_2018)" / style=systemtitle; */
-/*p "Includes all records (not grouped by mcaid_id)"; RUN;  */
-/**/
-/*PROC SQL; */
-/*CREATE TABLE sums_bh_1618 AS */
-/*SELECT sum(bh_2016) as n_bh_16*/
-/*     , sum(bh_2017) as n_bh_17*/
-/*     , sum(bh_2018) as n_bh_18*/
-/*FROM &dat; */
-/*Quit; */
-
-/*PROC PRINT DATA = sums_bh_1618; RUN; */
-
-/**/
 /*********************************************************************************/
 /** Time frequency : find missing time, pct time; */
 /*ods proclabel 'Time Frequency Description';*/
@@ -252,8 +248,8 @@ PROC PRINT DATA = int.pctl1618; RUN;
 * ADJ means FY1618
 **************************************************************************************; 
 PROC FREQ DATA = &dat;
-FORMAT adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat adj1618fy. bho: bh1618fy.;
-TABLES adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat bh:;
+FORMAT adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat adj1618fy. bho: bh1618fy.;
+TABLES adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat bh:;
 RUN; 
 
 %macro means_adj(FY);
