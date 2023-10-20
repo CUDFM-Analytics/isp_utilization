@@ -1,0 +1,32 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(HURDLE):   PROC GENMOD DATA = data.utilization;
+MPRINT(HURDLE):   CLASS mcaid_id int(ref='0') int_imp(ref='0') budget_grp_new(ref='MAGI Eligible 
+Children') race(ref='non-Hispanic White/Caucasian') sex(ref='Female') rae_person_new(ref='3') 
+age_cat(ref='ages 21-44') fqhc(ref ='0') bh_oth17(ref='0') bh_oth18(ref='0') bh_oth19(ref='0') 
+bh_er17(ref='0') bh_er18(ref='0') bh_er19(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0') 
+bh_hosp19(ref='0') adj_pd_total_17cat(ref='0') adj_pd_total_18cat(ref='0') 
+adj_pd_total_19cat(ref='0') ind_cost_total;
+MPRINT(HURDLE):   MODEL ind_cost_total(event='1') = int int_imp time season1 season2 season3 
+budget_grp_new race sex rae_person_new age_cat fqhc bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 
+bh_er19 bh_hosp17 bh_hosp18 bh_hosp19 adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / 
+DIST=binomial;
+MPRINT(HURDLE):   REPEATED SUBJECT = mcaid_id / type=exch ;
+MPRINT(HURDLE):   store out.cost_total_pmodel;
+MPRINT(HURDLE):   run;
+
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GENMOD is modeling the probability that ind_cost_total='1'. One way to change this to 
+      model the probability that ind_cost_total='0' is to specify the DESCENDING option in the PROC 
+      statement.
+NOTE: Algorithm converged.
+NOTE: Algorithm converged.
+NOTE: The GENMOD procedure generated the model item store OUT.COST_TOTAL_PMODEL.
+NOTE: PROCEDURE GENMOD used (Total process time):
+      real time           15:00.37
+      cpu time            14:11.92
+      

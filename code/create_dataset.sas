@@ -119,7 +119,7 @@ SELECT distinct(mcaid_id) as mcaid_id
 FROM int.qrylong_01
 WHERE FY in (2020, 2021, 2022, 2023)
 AND   rae_person_new ne .;
-QUIT; * 6/7 15719759 obs 2 col; 
+QUIT; 
 
 * I could not for the life of me find a way to do this from the macro values and had to get moving but I'm sure there's a better way to do this? ;
 %LET m2q1  = 01Aug2019; %LET m2q2  = 01Nov2019; %LET m2q3  = 01Feb2020; %LET m2q4  = 01May2020;
@@ -404,10 +404,9 @@ DO i=1 to dim(bh);
     END;
 DROP i; 
 
-RUN; *6/8 1138252 : 16;
+RUN; 
 
 ** GET PERCENTILES FOR ALL & TOP CODE DV's FOR MEMBERS ONLY ; 
-* 1618; 
 %macro pctl_1618(var,out,pctlpre);
 proc univariate noprint data=int.qrylong_pre_2; 
 where &var gt 0; 
@@ -486,7 +485,7 @@ LEFT JOIN int.qrylong_1719  AS B ON a.mcaid_id=b.mcaid_id;
 QUIT; 
 %nodupkey(ds = int.final_04, out=int.final_04); 
 
-* INT.qrylong_1922 ======================================================================
+* INT.qrylong_2023 ======================================================================
 DVs (n=7)
 --VISITS (n=4): 1) n_ed = n_er+bho_n_er, 2) n_pc, 3) n_ffs_bh (rename to n_ffsbh later), 4) n_tele
 --COST (n=3): 1) adj_pd_total, 2) adj_pd_pc, 3_ adj_pd_rx

@@ -34,25 +34,18 @@ CLASS mcaid_id
        race(ref='non-Hispanic White/Caucasian')
        sex(ref='Female')
        rae_person_new(ref='3')
-       age_cat(ref='5') 
+       age_cat(ref='ages 21-44') 
        fqhc(ref ='0')
-       bh_oth16(ref='0')    bh_oth17(ref='0')       bh_oth18(ref='0')
-       bh_er16(ref='0')     bh_er17(ref='0')        bh_er18(ref='0')
-       bh_hosp16(ref='0')   bh_hosp17(ref='0')      bh_hosp18(ref='0')
-       adj_pd_total_16cat(ref='0')
+       bh_oth17(ref='0')    bh_oth18(ref='0')       bh_oth19(ref='0')
+       bh_er17(ref='0')     bh_er18(ref='0')        bh_er19(ref='0')
+       bh_hosp17(ref='0')   bh_hosp18(ref='0')      bh_hosp19(ref='0')
        adj_pd_total_17cat(ref='0')
-       adj_pd_total_18cat(ref='0') 
-       &pvar;
-MODEL &pvar(event='1') = int      int_imp     time 
-       season1         season2     season3
-       budget_grp_new  race        sex         rae_person_new 
-       age_cat         fqhc
-       bh_oth16        bh_oth17    bh_oth18
-       bh_er16         bh_er17     bh_er18
-       bh_hosp16       bh_hosp17   bh_hosp18
-       adj_pd_total_16cat 
-       adj_pd_total_17cat 
-       adj_pd_total_18cat / DIST=binomial; 
+       adj_pd_total_18cat(ref='0')
+       adj_pd_total_19cat(ref='0') 
+      &pvar;
+MODEL &pvar(event='1') = int int_imp time season1 season2 season3 budget_grp_new race sex rae_person_new age_cat fqhc
+                         bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 bh_er19 bh_hosp17 bh_hosp18 bh_hosp19
+                         adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / DIST=binomial; 
 REPEATED SUBJECT = mcaid_id / type=exch ; 
 store out.&dv._pmodel;
 run;
@@ -67,24 +60,17 @@ CLASS mcaid_id
        race(ref='non-Hispanic White/Caucasian')
        sex(ref='Female')
        rae_person_new(ref='3')
-       age_cat(ref='5') 
+       age_cat(ref='ages 21-44') 
        fqhc(ref ='0')
-       bh_oth16(ref='0')    bh_oth17(ref='0')       bh_oth18(ref='0')
-       bh_er16(ref='0')     bh_er17(ref='0')        bh_er18(ref='0')
-       bh_hosp16(ref='0')   bh_hosp17(ref='0')      bh_hosp18(ref='0')
-       adj_pd_total_16cat(ref='0')
+       bh_oth17(ref='0')    bh_oth18(ref='0')       bh_oth19(ref='0')
+       bh_er17(ref='0')     bh_er18(ref='0')        bh_er19(ref='0')
+       bh_hosp17(ref='0')   bh_hosp18(ref='0')      bh_hosp19(ref='0')
        adj_pd_total_17cat(ref='0')
-       adj_pd_total_18cat(ref='0') ;
-MODEL &cvar = int      int_imp     time 
-       season1         season2     season3
-       budget_grp_new  race        sex         rae_person_new 
-       age_cat         fqhc
-       bh_oth16        bh_oth17    bh_oth18
-       bh_er16         bh_er17     bh_er18
-       bh_hosp16       bh_hosp17   bh_hosp18
-       adj_pd_total_16cat 
-       adj_pd_total_17cat 
-       adj_pd_total_18cat  / dist=gamma link=log ;
+       adj_pd_total_18cat(ref='0')
+       adj_pd_total_19cat(ref='0') ;
+MODEL &cvar = int int_imp time season1 season2 season3 budget_grp_new race sex rae_person_new age_cat fqhc
+              bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 bh_er19 bh_hosp17 bh_hosp18 bh_hosp19
+              adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / dist=gamma link=log ;
 REPEATED SUBJECT = mcaid_id / type = exch;
 store out.&dv._cmodel;
 RUN;
