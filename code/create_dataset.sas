@@ -270,14 +270,13 @@ CREATE TABLE int.util_1 as
 SELECT a.*
      , (a.pd_amt/b.index_2021_1) AS adj_pd_amount 
 FROM   int.util_0      AS A
-LEFT JOIN int.adj_2023 AS b    ON a.dt_qrtr=b.date
+LEFT JOIN int.adj      AS b    ON a.dt_qrtr=b.date
 WHERE mcaid_id IN (SELECT mcaid_id FROM int.final_03);
 quit; 
 
 PROC SQL;
 CREATE TABLE int.util_2 AS
 SELECT MCAID_ID
-      , FY
       , month
       , sum(case when clmClass=4     then count else 0 end) as n_pc
       , sum(case when clmClass=3     then count else 0 end) as n_er
@@ -292,9 +291,8 @@ FROM  int.util_1
 GROUP BY MCAID_ID,month;
 quit; *6/7 58207623; 
 
-PROC PRINT DATA = int.util_2 (obs=25); WHERE FY=2023; RUN; 
-
 %nodupkey(ds=int.util_2, out=int.util); *6/7 28628763, 12; 
+PROC PRINT DATA = int.util (obs=200); run; 
 
 * 
 RAW.BH1 ==============================================================================
@@ -533,16 +531,31 @@ CREATE TABLE int.final_05 AS
 SELECT a.*
      , b.*
 FROM int.final_04            AS A
-LEFT JOIN int.qrylong_1922   AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time;
+LEFT JOIN int.qrylong_2023   AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time;
 QUIT; 
 
 * setting to 0 where . for variables not using elig category (adj 16-18 vars) 
 Create indicator variables for DV's where >0 (use when creating pctiles or just in gee but needed eventually anyway);
-DATA int.final_06 (DROP = dt_qrtr elig: adj_pd_16pm adj_pd_17pm adj_pd_18pm);
+
+*Get bh_col names; 
+PROC SQL; 
+SELECT name INTO :bhcols separated by ' ' FROM dictionary.columns 
+WHERE memname='FINAL_06' AND substr(name, 1, 4)="bho_";
+QUIT; 
+
+*Get indicator colnames: ; 
+PROC SQL; 
+SELECT name INTO :ncols separated by ' ' FROM dictionary.columns 
+WHERE memname='FINAL_06' AND substr(name, 1, 2)="n_";
+QUIT; 
+
+DATA int.final_06 (DROP = dt_qrtr elig: adj_pd_17pm adj_pd_18pm adj_pd_19pm);
+* Not yet setting length for time and mcaid_id bc they might get joined later; 
+LENGTH FY age_cat budget_group rae_person_new pcmp_loc_id int int_imp &bhcols &ncols 3. sex $1. ;
 SET  int.final_05; 
-ARRAY dv(*) bho_n_hosp_16pm     bho_n_hosp_17pm     bho_n_hosp_18pm
-            bho_n_er_16pm       bho_n_er_17pm       bho_n_er_18pm
-            bho_n_other_16pm    bho_n_other_17pm    bho_n_other_18pm
+ARRAY dv(*) bho_n_hosp_17pm     bho_n_hosp_18pm     bho_n_hosp_19pm
+            bho_n_er_17pm       bho_n_er_18pm       bho_n_er_19pm
+            bho_n_other_17pm    bho_n_other_18pm    bho_n_other_19pm
             n_pc_pmpq           n_ed_pmpq           n_ffsbh_pmpq     n_tel_pmpq   
             adj_total_pmpq      adj_pc_pmpq         adj_rx_pmpq;
 DO i=1 to dim(dv);
@@ -551,12 +564,12 @@ DO i=1 to dim(dv);
     END;
 DROP i; 
 
-* adj vars for 16-18cat, if not in ds then set to -1; 
-adj_pd_total_16cat = coalesce(adj_pd_total_16cat, -1);
+* adj vars for 17-19cat, if not in ds then set to -1; 
 adj_pd_total_17cat = coalesce(adj_pd_total_17cat, -1);
 adj_pd_total_18cat = coalesce(adj_pd_total_18cat, -1);
+adj_pd_total_19cat = coalesce(adj_pd_total_19cat, -1);
 
-ind_visit_pv    = n_pc_pmpq      > 0;
+ind_visit_pc    = n_pc_pmpq      > 0;
 ind_visit_ed    = n_ed_pmpq      > 0;
 ind_visit_ffsbh = n_ffsbh_pmpq   > 0;
 ind_visit_tel   = n_tel_pmpq     > 0;
@@ -565,12 +578,10 @@ ind_cost_pc     = adj_pc_pmpq    > 0;
 ind_cost_rx     = adj_rx_pmpq    > 0;
 RUN;  
 
-PROC SORT DATA = int.final_06; BY FY; run; 
-
-* INT.PCTL_1922 ===========================================================================
+* INT.PCTL_2023 ===========================================================================
 Identifying 95th percentile and replacing values gt x w/mean
 ===========================================================================================;
-%macro pctl_1922(var, out, pctlpre, t_var);
+%macro pctl_2023(var, out, pctlpre, t_var);
 PROC UNIVARIATE DATA = int.final_06;
 BY FY; 
 WHERE &VAR gt 0; 
@@ -580,21 +591,37 @@ RUN;
 
 PROC TRANSPOSE DATA = &out  
 OUT=&out._a (DROP   = _name_ _label_
-             RENAME = (col1 = &t_var.p_19
-                       col2 = &t_var.p_20
-                       col3 = &t_var.p_21
-                       col4 = &t_var.p_22));
+             RENAME = (col1 = &t_var.p_20
+                       col2 = &t_var.p_21
+                       col3 = &t_var.p_22
+                       col4 = &t_var.p_23));
 var &t_var ; 
 RUN; 
 %mend; 
 
-%pctl_1922(var = adj_total_pmpq,   out = int.adj_total_pctl,   pctlpre = adj_total_,  t_var = adj_total_95); 
-%pctl_1922(var = adj_pc_pmpq,      out = int.adj_pc_pctl,      pctlpre = adj_pc_,     t_var = adj_pc_95); 
-%pctl_1922(var = adj_rx_pmpq,      out = int.adj_rx_pctl,      pctlpre = adj_rx_,     t_var = adj_rx_95); 
+PROC SORT DATA = int.final_06; BY FY; run; 
 
-data int.pctl1922; merge int.adj_total_pctl_a int.adj_pc_pctl_a int.adj_rx_pctl_a ; run;
+PROC MEANS DATA = int.final_06 mean median max min p25 p50 p75 p95; 
+BY FY; 
+VAR adj_total_pmpq adj_pc_pmpq adj_rx_pmpq; 
+RUN; 
 
-PROC PRINT DATA = int.pctl1922; RUN; 
+PROC MEANS DATA = int.final_06 mean median max min p25 p50 p75 p95; 
+BY FY; 
+VAR adj_total_pmpq; *adj_pc_pmpq adj_rx_pmpq; 
+WHERE adj_total_pmpq > 0;
+RUN; 
+
+%pctl_2023(var = adj_total_pmpq,   out = int.adj_total_pctl,   pctlpre = adj_total_,  t_var = adj_total_95); 
+%pctl_2023(var = adj_pc_pmpq,      out = int.adj_pc_pctl,      pctlpre = adj_pc_,     t_var = adj_pc_95); 
+%pctl_2023(var = adj_rx_pmpq,      out = int.adj_rx_pctl,      pctlpre = adj_rx_,     t_var = adj_rx_95); 
+
+data int.pctl2023; merge int.adj_total_pctl_a int.adj_pc_pctl_a int.adj_rx_pctl_a ; run;
+
+PROC PRINT DATA = int.pctl2023; RUN; 
+PROC PRINT DATA = int.adj_total_pctl; 
+PROC PRINT DATA = int.adj_pc_pctl;
+PROC PRINT DATA = int.adj_rx_pctl; RUN; 
 
 * https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
 proc sql noprint;
@@ -604,11 +631,12 @@ proc sql noprint;
     :MVAR_NAMES separated by ','
   from sashelp.vcolumn 
   where libname = "INT" 
-    and memname = "PCTL1922";
+    and memname = "PCTL2023";
   select &COL_NAMES into &MVAR_NAMES
-  from int.pctl1922;
+  from int.pctl2023;
 quit;
 
+* Get mean where value gt 95th pctl value; 
 %MACRO means_95p(fy=,var=,gt=,out=,mean=);
 PROC UNIVARIATE NOPRINT DATA = int.final_06; 
 WHERE FY=&FY 
@@ -618,28 +646,31 @@ OUTPUT OUT=&out MEAN=&mean; RUN;
 %MEND;
 
 * tried with proc means to compare to macro and got exact same results; 
-%means_95p(FY=2019, var=adj_total_pmpq, gt=&adj_total_95p_19, out=mu_total_19, MEAN=Mu_total19);
 %means_95p(FY=2020, var=adj_total_pmpq, gt=&adj_total_95p_20, out=mu_total_20, MEAN=Mu_total20);
 %means_95p(FY=2021, var=adj_total_pmpq, gt=&adj_total_95p_21, out=mu_total_21, MEAN=Mu_total21);
 %means_95p(FY=2022, var=adj_total_pmpq, gt=&adj_total_95p_22, out=mu_total_22, MEAN=Mu_total22);
+%means_95p(FY=2023, var=adj_total_pmpq, gt=&adj_total_95p_23, out=mu_total_23, MEAN=Mu_total23);
 
-%means_95p(FY=2019, var=adj_pc_pmpq,    gt=&adj_pc_95p_19,    out=mu_pc_19,    MEAN=Mu_pc19);
 %means_95p(FY=2020, var=adj_pc_pmpq,    gt=&adj_pc_95p_20,    out=mu_pc_20,    MEAN=Mu_pc20);
 %means_95p(FY=2021, var=adj_pc_pmpq,    gt=&adj_pc_95p_21,    out=mu_pc_21,    MEAN=Mu_pc21);
 %means_95p(FY=2022, var=adj_pc_pmpq,    gt=&adj_pc_95p_22,    out=mu_pc_22,    MEAN=Mu_pc22);
+%means_95p(FY=2023, var=adj_pc_pmpq,    gt=&adj_pc_95p_23,    out=mu_pc_23,    MEAN=Mu_pc23);
 
-%means_95p(FY=2019, var=adj_rx_pmpq,    gt=&adj_rx_95p_19,    out=mu_rx_19,    MEAN=Mu_rx19);
 %means_95p(FY=2020, var=adj_rx_pmpq,    gt=&adj_rx_95p_20,    out=mu_rx_20,    MEAN=Mu_rx20);
 %means_95p(FY=2021, var=adj_rx_pmpq,    gt=&adj_rx_95p_21,    out=mu_rx_21,    MEAN=Mu_rx21);
 %means_95p(FY=2022, var=adj_rx_pmpq,    gt=&adj_rx_95p_22,    out=mu_rx_22,    MEAN=Mu_rx22);
+%means_95p(FY=2023, var=adj_rx_pmpq,    gt=&adj_rx_95p_23,    out=mu_rx_23,    MEAN=Mu_rx23);
 
-data int.mu_pctl_1922; 
-merge mu_total_19       mu_total_20     mu_total_21     mu_total_22
-      mu_pc_19          mu_pc_20        mu_pc_21        mu_pc_22
-      mu_rx_19          mu_rx_20        mu_rx_21        mu_rx_22
+data int.mu_pctl_2023; 
+merge mu_total_20       mu_total_21     mu_total_22     mu_total_23
+      mu_pc_20          mu_pc_21        mu_pc_22        mu_pc_23
+      mu_rx_20          mu_rx_21        mu_rx_22        mu_rx_23
       int.adj_total_pctl_a  int.adj_pc_pctl_a   int.adj_rx_pctl_a;
 RUN; 
-PROC PRINT DATA = int.mu_pctl_1922; RUN; 
+PROC PRINT DATA = int.mu_pctl_2023; RUN; 
+
+PROC means DATA = int.final_06 n nmiss;
+VAR adj_total: adj_pc: adj_rx: ; RUN; 
 
 proc sql noprint;
   select name, cats(':',name)
@@ -648,31 +679,31 @@ proc sql noprint;
     :MVAR_NAMES separated by ','
   from sashelp.vcolumn 
   where libname = "INT" 
-    and memname = "MU_PCTL_1922";
+    and memname = "MU_PCTL_2023";
   select &COL_NAMES into &MVAR_NAMES
-  from int.mu_pctl_1922;
+  from int.mu_pctl_2023;
 quit;
 
 DATA int.final_07;
 SET  int.final_06;
 
 * replace values >95p with mu95;
-IF      FY = 2019 AND adj_total_pmpq gt &adj_total_95p_19 THEN adj_pd_total_tc = &mu_total19; 
-ELSE IF FY = 2020 AND adj_total_pmpq gt &adj_total_95p_20 THEN adj_pd_total_tc = &mu_total20; 
+IF      FY = 2020 AND adj_total_pmpq gt &adj_total_95p_20 THEN adj_pd_total_tc = &mu_total20; 
 ELSE IF FY = 2021 AND adj_total_pmpq gt &adj_total_95p_21 THEN adj_pd_total_tc = &mu_total21; 
 ELSE IF FY = 2022 AND adj_total_pmpq gt &adj_total_95p_22 THEN adj_pd_total_tc = &mu_total22; 
+ELSE IF FY = 2023 AND adj_total_pmpq gt &adj_total_95p_23 THEN adj_pd_total_tc = &mu_total23; 
 ELSE adj_pd_total_tc= adj_total_pmpq;
 
-IF FY = 2019 AND adj_pc_pmpq         gt &adj_pc_95p_19    THEN adj_pd_pc_tc    = &mu_pc19;    
-ELSE IF FY = 2020 AND adj_pc_pmpq    gt &adj_pc_95p_20    THEN adj_pd_pc_tc    = &mu_pc20;    
+IF      FY = 2020 AND adj_pc_pmpq    gt &adj_pc_95p_20    THEN adj_pd_pc_tc    = &mu_pc20;    
 ELSE IF FY = 2021 AND adj_pc_pmpq    gt &adj_pc_95p_21    THEN adj_pd_pc_tc    = &mu_pc21;    
-ELSE IF FY = 2022 AND adj_pc_pmpq    gt &adj_pc_95p_22    THEN adj_pd_pc_tc    = &mu_pc22; 
+ELSE IF FY = 2022 AND adj_pc_pmpq    gt &adj_pc_95p_22    THEN adj_pd_pc_tc    = &mu_pc22;    
+ELSE IF FY = 2023 AND adj_pc_pmpq    gt &adj_pc_95p_23    THEN adj_pd_pc_tc    = &mu_pc23; 
 ELSE adj_pd_pc_tc= adj_pc_pmpq;
 
-IF      FY = 2019 AND adj_rx_pmpq    gt &adj_rx_95p_19    THEN adj_pd_rx_tc    = &mu_rx19;    
-ELSE IF FY = 2020 AND adj_rx_pmpq    gt &adj_rx_95p_20    THEN adj_pd_rx_tc    = &mu_rx20;    
-ELSE IF FY = 2021 AND adj_rx_pmpq    gt &adj_rx_95p_21    THEN adj_pd_rx_tc    = &mu_rx21; 
-ELSE IF FY = 2022 AND adj_rx_pmpq    gt &adj_rx_95p_22    THEN adj_pd_rx_tc    = &mu_rx22;    
+IF      FY = 2020 AND adj_rx_pmpq    gt &adj_rx_95p_20    THEN adj_pd_rx_tc    = &mu_rx20;    
+ELSE IF FY = 2021 AND adj_rx_pmpq    gt &adj_rx_95p_21    THEN adj_pd_rx_tc    = &mu_rx21;    
+ELSE IF FY = 2022 AND adj_rx_pmpq    gt &adj_rx_95p_22    THEN adj_pd_rx_tc    = &mu_rx22; 
+ELSE IF FY = 2023 AND adj_rx_pmpq    gt &adj_rx_95p_23    THEN adj_pd_rx_tc    = &mu_rx23;    
 ELSE adj_pd_rx_tc= adj_rx_pmpq;
 RUN; 
 PROC SORT DATA = int.final_07; by mcaid_id time; run; 
@@ -717,7 +748,6 @@ PROC SORT DATA = int.final_08; BY mcaid_id time; RUN;
              ind_visit_pc ind_visit_ed ind_visit_ffsbh ind_visit_tel ind_cost_total ind_cost_pc ind_cost_rx 
              n_months n_pc_pmpq n_ed_pmpq n_ffsbh_pmpq n_tel_pmpq ; 
 
-%colstring(into=bhcols,  memname="FINAL_08", nchar=2, string='BH'); * case sensitive!;
 
 DATA   data.analysis_allcols;
 LENGTH &len08 &bhcols 3. ;
