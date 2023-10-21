@@ -11,7 +11,7 @@ The ref=first option changes the reference group to the first level of prog.  We
 on the model statement.  The type3 option is used to get the multi-degree-of-freedom test of the categorical 
 variables listed on the class statement 
 ***********************************************************************************************;
-%macro hurdle(dat=,pvar=,cvar=,dv=);
+%macro hurdle(dat=,pvar=,cvar=,dv=,type=);
 
 /*SECTION 01: INTRO / CONFIG/ DOCUMENTATION*/
 OPTIONS 
@@ -46,7 +46,7 @@ CLASS mcaid_id
 MODEL &pvar(event='1') = int int_imp time season1 season2 season3 budget_grp_new race sex rae_person_new age_cat fqhc
                          bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 bh_er19 bh_hosp17 bh_hosp18 bh_hosp19
                          adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / DIST=binomial; 
-REPEATED SUBJECT = mcaid_id / type=exch ; 
+REPEATED SUBJECT = mcaid_id / type=&type ; 
 store out.&dv._pmodel;
 run;
 
@@ -71,7 +71,7 @@ CLASS mcaid_id
 MODEL &cvar = int int_imp time season1 season2 season3 budget_grp_new race sex rae_person_new age_cat fqhc
               bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 bh_er19 bh_hosp17 bh_hosp18 bh_hosp19
               adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / dist=gamma link=log ;
-REPEATED SUBJECT = mcaid_id / type = exch;
+REPEATED SUBJECT = mcaid_id / type = &type;
 store out.&dv._cmodel;
 RUN;
 TITLE; 
@@ -91,19 +91,19 @@ run;
 * the predictions for util and cost will be made for each person twice, once exposed and once unexposed;
 * OUT:[P_INTGROUP]      IN :[out=out.&dv._pmodel]
  prob of util------------------------------------------------ ;
-proc plm restore=out.&dv._pmodel;
+proc plm restore=out.&dv._pmodel_&type ;
    score data=intgroup out=p_intgroup predicted=p_prob / ilink;
 run;
 
 * OUT:[CP_INTGROUP]     IN :[out=out.&dv._cmodel]
 prob of cost -------------------------------------------------;
-proc plm restore=out.&dv._cmodel;
+proc plm restore=out.&dv._cmodel_&type ;
    score data=p_intgroup out=cp_intgroup predicted=p_cost / ilink;
 run;
 
 * OUT:[out.&dv._mean] IN:[cp_intgroup]
 Person average cost is calculated------------------------------;
-data out.&dv._mean;
+data out.&dv._mean_&type ;
   set cp_intgroup;
   a_cost = p_prob*p_cost;* (1-p term = 0);
 run;
@@ -111,11 +111,11 @@ run;
 * OUT:[out.&dv._avp] IN:[out.&dv._mean]
 Group average cost is calculated and contrasted-----------------;
 proc sql;
-create table out.&dv._avp as
+create table out.&dv._avp_&type as
   select mean(case when exposed=1 then a_cost else . end ) as cost_exposed,
          mean(case when exposed=0 then a_cost else . end ) as cost_unexposed,
   calculated cost_exposed - calculated cost_unexposed as cost_diff
-  from out.&dv._mean;
+  from out.&dv._mean_&type;
 quit;
 
 PROC PRINTTO; RUN; 
