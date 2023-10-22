@@ -2,7 +2,8 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization
 PURPOSE  : Macro, VISIT dv's
-VERSION  : 2023-10-21
+VERSION  : 2023-10-22
+         : -- added data.intgroup to row 111 ish (no need to do it over and over it is the same each time)
 OUTPUT   : pdf & log file
 
 https://stats.oarc.ucla.edu/sas/dae/negative-binomial-regression/
@@ -11,11 +12,11 @@ The ref=first option changes the reference group to the first level of prog.
 The type3 option is used to get the multi-degree-of-freedom test of cat vars in class statement 
 ***********************************************************************************************;
 %macro hurdle(dat=,      /* data.utilization */
-			  prob=,     /* probability variable, starts wih `ind_`  */
-			  visits=,   /* visit DV var, start with `visits_` */
-			  dv=,		 /* just for some text in results field, not modeling*/
-			  type=      /* correlation type (exch, ind were tested) */
-			  );
+              prob=,     /* probability variable, starts wih `ind_`  */
+              visits=,   /* visit DV var, start with `visits_` */
+              dv=,       /* just for some text in results field, not modeling*/
+              type=      /* correlation type (exch, ind were tested) */
+              );
 
 /*SECTION 01: INTRO / CONFIG/ DOCUMENTATION*/
 OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
@@ -97,18 +98,18 @@ TITLE;
 the group of interest (int, time-invariant intervention status) is set twice, 
 the top in the stack will be recoded as not participants (unexposed)
 the bottom group keeps the int=1  status------------------------------------------------ ;
-data intgroup;
-  set &dat &dat (in = b);
-  where int_imp = 1;
-  if ^b then int_imp = 0;
-  exposed = b;
-run;
+/*data intgroup;*/
+/*  set &dat &dat (in = b);*/
+/*  where int_imp = 1;*/
+/*  if ^b then int_imp = 0;*/
+/*  exposed = b;*/
+/*run;*/
 
 * the predictions for util and visit will be made for each person twice, once exposed and once unexposed;
 * OUT:[P_INTGROUP]      IN :[out=out.&dv._pmodel]
  prob of util------------------------------------------------ ;
 proc plm restore=out.&dv._pmodel_&type;
-score data=intgroup out=p_intgroup predicted=p_prob / ilink;
+score data=data.intgroup out=p_intgroup predicted=p_prob / ilink;
 run;
 
 * OUT:[VP_INTGROUP]     IN :[out=out.&dv._vmodel]

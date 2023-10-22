@@ -12,7 +12,7 @@ Per Mark : Use mode for ref class vars budget_group & race if possible
             - race = I didn't want to tempt fate so just let it choose since it ran w/ default (ok w Mark)
 ***********************************************************************************************;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas"; 
-libname int clear; 
+/*libname int clear; */
 
 %LET dat = data.utilization; 
 

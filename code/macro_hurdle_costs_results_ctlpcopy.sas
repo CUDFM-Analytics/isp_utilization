@@ -1,3 +1,6 @@
+* for testing; 
+%LET dv = cost_pc;
+
 %macro results(dv=,pvar=,cvar=);
 
 OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
@@ -17,20 +20,18 @@ p "Cost DV: &cvar";
 p "";
 RUN; 
 
-ods text = "Fit Statistics, Corr Structure Exchangeable" ; 
-ods text = "Probability model";
+ods text = "Probability model Fit, type exch";
 PROC PLM RESTORE=out.&dv._pmodel_exch noinfo noclprint; show fit; RUN;
 
-ods text = "Cost Model"; 
-PROC PLM RESTORE=out.&dv._cmodel_exch noinfo noclprint; show fit; RUN; 
+ods text = "Prob Model Fit, type ind" ;
+PROC PLM RESTORE=out.&dv._pmodel_ind noinfo noclprint; show fit; RUN;
 
 ods pdf text="^{newline 1}";run;
 
-ods text = "Fit Statistics, Corr Structure Independent" ; 
-ods text = "Prob Model" ;
-PROC PLM RESTORE=out.&dv._pmodel_ind noinfo noclprint; show fit; RUN;
+ods text = "Cost Model fit, type exch"; 
+PROC PLM RESTORE=out.&dv._cmodel_exch noinfo noclprint; show fit; RUN; 
 
-ods text = "Cost Model"; 
+ods text = "Cost Model fit, type ind"; 
 PROC PLM RESTORE=out.&dv._cmodel_ind noinfo noclprint; show fit; RUN; 
 
 ods text = "Actual v Predicted, Structure Exch";
@@ -91,19 +92,15 @@ ods pdf text="^{newline 1}";run;
 
 /*ods pdf text="^{newline 1}";run;*/
 
-ods text = "Model Parameters, Corr Structure Exch"; 
-ods text =  "Probability Model Parms";
-PROC PLM RESTORE=out.&dv._exch_pmodel noclprint; show parms; RUN;
+ods pdf startpage = now;
+TITLE "Model Parameters and Program, Type EXCH"; 
+PROC PLM RESTORE=out.&dv._pmodel_exch noclprint; show parms program; RUN;
+PROC PLM RESTORE=out.&dv._cmodel_exch noclprint; show parms program; RUN;
 
-ods text="Cost Model Parms"; 
-PROC PLM RESTORE=out.&dv._exch_cmodel noclprint; show parms; RUN;
-
-ods text = "Model Parameters, Corr Structure Ind"; 
-ods text = "Probability Model Parms"; 
-PROC PLM RESTORE=out.&dv._ind_pmodel noclprint; show parms; RUN;
-
-ods text = "Cost Model Parms"; 
-PROC PLM RESTORE=out.&dv._ind_cmodel noclprint; show parms; RUN;
+ods pdf startpage = now;
+TITLE "Model Parameters and Program, Type IND"; 
+PROC PLM RESTORE=out.&dv._pmodel_ind noclprint; show parms program; RUN;
+PROC PLM RESTORE=out.&dv._cmodel_ind noclprint; show parms program; RUN;
 
 ODS PDF CLOSE; RUN; 
 

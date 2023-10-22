@@ -49,6 +49,7 @@ MODEL &pvar(event='1') = int int_imp time season1 season2 season3 budget_grp_new
                          adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / DIST=binomial; 
 REPEATED SUBJECT = mcaid_id / type=&type ; 
 store out.&dv._pmodel_&type;
+output out = predout pred = pred;
 run;
 
 /*SECTION 03: POSITIVE COST MODEL*/
@@ -74,11 +75,11 @@ MODEL &cvar = int int_imp time season1 season2 season3 budget_grp_new race sex r
               adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / dist=gamma link=log ;
 REPEATED SUBJECT = mcaid_id / type = &type;
 store out.&dv._cmodel_&type;
-output out = out.&dv._c_predout_&type 
-  reschi = pearson_resid 
-  pred = predicted_cost  
-  STDRESCHI = STDRESCHI 
-  xbeta=xbeta;
+/*output out = out.&dv._c_predout_&type */
+/*  reschi = pearson_resid */
+/*  pred = predicted_cost  */
+/*  STDRESCHI = STDRESCHI */
+/*  xbeta=xbeta;*/
 RUN;
 TITLE; 
 
@@ -87,18 +88,20 @@ TITLE;
 the group of interest is set twice, 
 the top in the stack will be recoded as not participants (unexposed)
 the bottom group keeps the int_imp=1  status------------------------------------------------ ;
-data intgroup;
-  set &dat &dat (in = b);
-  where int_imp = 1;
-  if ^b then int_imp = 0;
-  exposed = b;
-run;
+** 10-22 made separate dataset no need for it to populate every time - takes too long, and it doesn't change; 
+
+/*data intgroup;*/
+/*  set &dat &dat (in = b);*/
+/*  where int_imp = 1;*/
+/*  if ^b then int_imp = 0;*/
+/*  exposed = b;*/
+/*run;*/
 
 * the predictions for util and cost will be made for each person twice, once exposed and once unexposed;
 * OUT:[P_INTGROUP]      IN :[out=out.&dv._pmodel]
  prob of util------------------------------------------------ ;
 proc plm restore=out.&dv._pmodel_&type ;
-   score data=intgroup out=p_intgroup predicted=p_prob / ilink;
+   score data=data.intgroup out=p_intgroup predicted=p_prob / ilink;
 run;
 
 * OUT:[CP_INTGROUP]     IN :[out=out.&dv._cmodel]
@@ -123,6 +126,17 @@ create table out.&dv._avp_&type as
   calculated cost_exposed - calculated cost_unexposed as cost_diff
   from out.&dv._mean_&type;
 quit;
+
+proc rank data = predout out = predgroup groups = 10;
+  var pred;
+  ranks predgroup;
+run;
+
+proc means data = predgroup   noprint nway;
+  var pred ind_&dv.;
+  class predgroup;
+  output out = ctlp.&dv._meanout_&type mean = /autoname;
+run;
 
 PROC PRINTTO; RUN; 
 %mend;
