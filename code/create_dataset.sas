@@ -285,9 +285,9 @@ quit;
 PROC SQL;
 CREATE TABLE int.util_2 AS
 SELECT MCAID_ID
-      , month
       , FY
       , dt_qrtr
+      , month
       , sum(case when clmClass=4     then count else 0 end) as n_pc
       , sum(case when clmClass=3     then count else 0 end) as n_er
       , sum(case when clmClass=5     then count else 0 end) as n_ffsbh
@@ -301,35 +301,10 @@ FROM  int.util_1
 GROUP BY MCAID_ID,month;
 quit; *6/7 58207623; 
 
-%nodupkey(ds=int.util_2, out=int.util); *6/7 28628763, 12; 
+%nodupkey(ds=int.util_2, out=int.util); *10/22: 33227472 // 6/7 28628763, 12; 
 PROC PRINT DATA = int.util (obs=200); run; 
 
-* Seeing what to expect ;
-        DATA util; 
-        SET  int.util;
-        RUN; 
-
-        PROC SQL; 
-        Create table util_check as 
-        SELECT *
-             , avg(adj_total) as adj_total_pmpq
-             , avg(adj_rx)    as adj_rx_pmpq
-        FROM util 
-        WHERE month ge '01JUL2019'd; 
-        QUIT; 
-
-        proc univariate data=util;
-            var adj_total;
-            by fy;
-            output out=percentile_data
-            pctlpts = 95
-            pctlpre = P_;
-            WHERE adj_total gt 0; 
-        run;
-
-
-* 
-RAW.BH1 ==============================================================================
+* RAW.BH1 ==============================================================================
 Gets BH vars
 ===========================================================================================;
 DATA raw.bh_0;
