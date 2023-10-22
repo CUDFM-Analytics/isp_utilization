@@ -1,0 +1,110 @@
+%macro results(dv=,pvar=,cvar=);
+
+OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+%LET root    = S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\fphc_ctlp\code\sas; 
+%LET today   = %SYSFUNC(today(), YYMMDD10.);
+%LET pdf     = &root.\results_hurdle_&dv._&today..pdf;
+
+ODS PDF FILE = "&pdf" STARTPAGE = no style=styles.mimictitle dpi=300;
+ods escapechar="^";
+ODS Graphics on / width = 8in imagefmt=png;
+
+TITLE "&dv, &today";
+
+proc odstext;
+p "Probability DV: &pvar";
+p "Cost DV: &cvar"; 
+p "";
+RUN; 
+
+ods text = "Fit Statistics, Corr Structure Exchangeable" ; 
+ods text = "Probability model";
+PROC PLM RESTORE=out.&dv._pmodel_exch noinfo noclprint; show fit; RUN;
+
+ods text = "Cost Model"; 
+PROC PLM RESTORE=out.&dv._cmodel_exch noinfo noclprint; show fit; RUN; 
+
+ods pdf text="^{newline 1}";run;
+
+ods text = "Fit Statistics, Corr Structure Independent" ; 
+ods text = "Prob Model" ;
+PROC PLM RESTORE=out.&dv._pmodel_ind noinfo noclprint; show fit; RUN;
+
+ods text = "Cost Model"; 
+PROC PLM RESTORE=out.&dv._cmodel_ind noinfo noclprint; show fit; RUN; 
+
+ods text = "Actual v Predicted, Structure Exch";
+PROC PRINT data = out.&dv._avp_exch; RUN;
+
+PROC MEANS data = out.&dv._mean_exch; by exposed; var p_prob p_cost a_cost; RUN;  
+
+ods text = "Actual v Predicted, Structure Independent";
+PROC PRINT data = out.&dv._avp_ind; RUN;
+
+PROC MEANS data = out.&dv._mean_ind; by   exposed; var  p_prob p_cost a_cost; RUN;  
+
+ods pdf text="^{newline 1}";run;
+
+* Create dataset with both types so you can sgpanel by type in plots below: ; 
+DATA &dv._mean_exch;
+SET  out.&dv._mean_exch;
+type = "exch";
+RUN; 
+DATA &dv._mean_ind;
+SET  out.&dv._mean_ind; 
+type = "ind";
+RUN; 
+DATA out.&dv._mean;
+SET  &dv._mean_exch &dv._mean_ind; 
+RUN; 
+
+ods text = "Plots, Corr Structure Exch";
+proc sgpanel data = out.&dv._mean;
+styleattrs datacontrastcolors=(purple orange);
+panelby type / spacing=15 ;
+scatter x = predgroup y = pred_mean / markerattrs=(color=purple);
+scatter x = predgroup y = ind_&dv._mean / markerattrs=(color=orange);
+series x = predgroup y = pred_mean / break transparency=0.5 lineattrs=(color=purple);
+series x = predgroup y = ind_&dv._mean / break transparency=0.5 lineattrs=(color=orange);
+RUN; 
+
+
+proc sgpanel data = out.&dv._mean ;
+styleattrs datacontrastcolors=(purple orange);
+panelby type / spacing = 15; 
+scatter x = pred_mean y = ind_&dv._mean;
+lineparm x = 0 y = 0 slope = 1;
+run;
+
+ods pdf text="^{newline 1}";run;
+/**/
+/*ods text = "Plots, Corr Structure Ind";*/
+/*proc sgplot data = out.&dv._ind_mean ;*/
+/*scatter x = predgroup y = pred_mean;*/
+/*scatter x = predgroup y = ind_&dv._mean;*/
+/*run;*/
+/**/
+/*proc sgplot data = out.&dv._ind_mean ;*/
+/*scatter x = pred_mean y = ind_&dv._mean;*/
+/*lineparm x = 0 y = 0 slope = 1;*/
+/*run;*/
+
+/*ods pdf text="^{newline 1}";run;*/
+
+ods text = "Model Parameters, Corr Structure Exch"; 
+ods text =  "Probability Model Parms";
+PROC PLM RESTORE=out.&dv._exch_pmodel noclprint; show parms; RUN;
+
+ods text="Cost Model Parms"; 
+PROC PLM RESTORE=out.&dv._exch_cmodel noclprint; show parms; RUN;
+
+ods text = "Model Parameters, Corr Structure Ind"; 
+ods text = "Probability Model Parms"; 
+PROC PLM RESTORE=out.&dv._ind_pmodel noclprint; show parms; RUN;
+
+ods text = "Cost Model Parms"; 
+PROC PLM RESTORE=out.&dv._ind_cmodel noclprint; show parms; RUN;
+
+ODS PDF CLOSE; RUN; 
+
+%mend;

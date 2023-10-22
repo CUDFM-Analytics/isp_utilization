@@ -119,7 +119,7 @@ SELECT distinct(mcaid_id) as mcaid_id
 FROM int.qrylong_01
 WHERE FY in (2020, 2021, 2022, 2023)
 AND   rae_person_new ne .;
-QUIT; 
+QUIT; * 6/7 15719759 obs 2 col; 
 
 * I could not for the life of me find a way to do this from the macro values and had to get moving but I'm sure there's a better way to do this? ;
 %LET m2q1  = 01Aug2019; %LET m2q2  = 01Nov2019; %LET m2q3  = 01Feb2020; %LET m2q4  = 01May2020;
@@ -286,6 +286,8 @@ PROC SQL;
 CREATE TABLE int.util_2 AS
 SELECT MCAID_ID
       , month
+      , FY
+      , dt_qrtr
       , sum(case when clmClass=4     then count else 0 end) as n_pc
       , sum(case when clmClass=3     then count else 0 end) as n_er
       , sum(case when clmClass=5     then count else 0 end) as n_ffsbh
@@ -301,6 +303,30 @@ quit; *6/7 58207623;
 
 %nodupkey(ds=int.util_2, out=int.util); *6/7 28628763, 12; 
 PROC PRINT DATA = int.util (obs=200); run; 
+
+* Seeing what to expect ;
+        DATA util; 
+        SET  int.util;
+        RUN; 
+
+        PROC SQL; 
+        Create table util_check as 
+        SELECT *
+             , avg(adj_total) as adj_total_pmpq
+             , avg(adj_rx)    as adj_rx_pmpq
+        FROM util 
+        WHERE month ge '01JUL2019'd; 
+        QUIT; 
+
+        proc univariate data=util;
+            var adj_total;
+            by fy;
+            output out=percentile_data
+            pctlpts = 95
+            pctlpre = P_;
+            WHERE adj_total gt 0; 
+        run;
+
 
 * 
 RAW.BH1 ==============================================================================
@@ -404,9 +430,10 @@ DO i=1 to dim(bh);
     END;
 DROP i; 
 
-RUN; 
+RUN; *6/8 1138252 : 16;
 
 ** GET PERCENTILES FOR ALL & TOP CODE DV's FOR MEMBERS ONLY ; 
+* 1618; 
 %macro pctl_1618(var,out,pctlpre);
 proc univariate noprint data=int.qrylong_pre_2; 
 where &var gt 0; 
@@ -485,7 +512,7 @@ LEFT JOIN int.qrylong_1719  AS B ON a.mcaid_id=b.mcaid_id;
 QUIT; 
 %nodupkey(ds = int.final_04, out=int.final_04); 
 
-* INT.qrylong_2023 ======================================================================
+* INT.qrylong_1922 ======================================================================
 DVs (n=7)
 --VISITS (n=4): 1) n_ed = n_er+bho_n_er, 2) n_pc, 3) n_ffs_bh (rename to n_ffsbh later), 4) n_tele
 --COST (n=3): 1) adj_pd_total, 2) adj_pd_pc, 3_ adj_pd_rx
@@ -800,19 +827,19 @@ Step 2: specify nrow, allocation, and strata
 Step 3: Check frequency to test
 ===========================================================================================;
 * Step 1;
-/*proc sort data = data.analysis;*/
-/*by int ;*/
-/*run;*/
-/**/
-/** Step 2;*/
-/*PROC SURVEYSELECT */
-/*DATA = data.analysis*/
-/*n    = 500000*/
-/*OUT  = data.mini;*/
-/*STRATA int / alloc=prop;*/
-/*RUN;*/
-/**/
-/** Step 3; */
+proc sort data = data.utilization;
+by int ;
+run;
+
+* Step 2;
+PROC SURVEYSELECT 
+DATA = data.utilization
+n    = 500000
+OUT  = data.mini;
+STRATA int / alloc=prop;
+RUN;
+
+* Step 3; 
 /*PROC FREQ DATA = data.mini;*/
 /*tables int; */
 /*run;*/

@@ -2,7 +2,7 @@
 AUTHOR   : KTW
 PROJECT  : ISP Utilization
 PURPOSE  : Macro, COST dv's
-VERSION  : 2023-06-22
+VERSION  : 2023-10-20
 OUTPUT   : pdf & log file
 
 https://stats.oarc.ucla.edu/sas/dae/negative-binomial-regression/
@@ -22,7 +22,8 @@ SOURCE;
 %LET script  = %qsubstr(%sysget(SAS_EXECFILENAME), 1,
                %length(%sysget(SAS_EXECFILENAME))-4); * remove .sas to use in log, pdf;
 %LET today = %SYSFUNC(today(), YYMMDD10.);
-%LET log   = &root&dv._int_imp_&today..log;
+%LET log   = &root.results_&dv._type_&type._&today..log;
+%put &log;
 
 PROC PRINTTO LOG = "&log"; RUN;
 
@@ -47,7 +48,7 @@ MODEL &pvar(event='1') = int int_imp time season1 season2 season3 budget_grp_new
                          bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 bh_er19 bh_hosp17 bh_hosp18 bh_hosp19
                          adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / DIST=binomial; 
 REPEATED SUBJECT = mcaid_id / type=&type ; 
-store out.&dv._pmodel;
+store out.&dv._pmodel_&type;
 run;
 
 /*SECTION 03: POSITIVE COST MODEL*/
@@ -72,15 +73,20 @@ MODEL &cvar = int int_imp time season1 season2 season3 budget_grp_new race sex r
               bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 bh_er19 bh_hosp17 bh_hosp18 bh_hosp19
               adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / dist=gamma link=log ;
 REPEATED SUBJECT = mcaid_id / type = &type;
-store out.&dv._cmodel;
+store out.&dv._cmodel_&type;
+output out = out.&dv._c_predout_&type 
+  reschi = pearson_resid 
+  pred = predicted_cost  
+  STDRESCHI = STDRESCHI 
+  xbeta=xbeta;
 RUN;
 TITLE; 
 
 /*SECTION 04: AGGREGATING ACTUAL, PREDICTED OUTCOMES W/ GROUP OF INTEREST*/
 * OUT:[intgroup]      IN :[&dat &dat]
-the group of interest (int, time-invariant intervention status) is set twice, 
+the group of interest is set twice, 
 the top in the stack will be recoded as not participants (unexposed)
-the bottom group keeps the int=1  status------------------------------------------------ ;
+the bottom group keeps the int_imp=1  status------------------------------------------------ ;
 data intgroup;
   set &dat &dat (in = b);
   where int_imp = 1;

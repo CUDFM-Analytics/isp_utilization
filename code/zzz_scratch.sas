@@ -46,9 +46,27 @@ TITLE "&check";
    PROC PRINT DATA    = &check (obs=25); RUN; 
 TITLE; 
 
+%LET check = int.util_0; 
+TITLE "&check"; 
+    PROC MEANS DATA =&check n nmiss; RUN; 
+    PROC FREQ DATA = &check nlevels; TABLES month clmClass count fy dt_qrtr; RUN; 
+   PROC PRINT DATA = &check (obs=200); RUN; 
+TITLE; 
+
+PROC PRINT DATA = int.util_1; WHERE mcaid_id = "A000405"; RUN;
+
+%LET check = int.util_1; 
+TITLE "&check"; 
+    PROC MEANS DATA =&check nmiss; RUN; 
+    PROC FREQ DATA = &check nlevels; TABLES month*dt_qrtr fy clmClass; RUN; 
+   PROC PRINT DATA = &check (obs=200); RUN; 
+TITLE; 
+
+
 %LET check = int.util; 
 TITLE "&check"; 
    PROC PRINT DATA = &check (obs=200); RUN; 
+
 TITLE; 
 
 

@@ -1,0 +1,588 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.85 seconds
+      cpu time            0.73 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\out_hurdle
+NOTE: Library STORE does not exist.
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.37 seconds
+      cpu time            0.25 seconds
+
+
+133  PROC IMPORT FILE="&util./data/_raw/fy_q_dts_dim.csv"
+134      OUT = raw.time_dim
+135      DBMS=csv
+136      REPLACE;
+137  run;
+
+NOTE: A byte-order mark in the file
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw\fy_q_dts_dim.csv" (for
+      fileref "#LN00119") indicates that the data is encoded in "utf-8".  This encoding will be
+      used to process the file.
+NOTE: A byte-order mark in the file
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw\fy_q_dts_dim.csv" (for
+      fileref "#LN00120") indicates that the data is encoded in "utf-8".  This encoding will be
+      used to process the file.
+138   /**********************************************************************
+139   *   PRODUCT:   SAS
+140   *   VERSION:   9.4
+141   *   CREATOR:   External File Interface
+142   *   DATE:      17OCT23
+143   *   DESC:      Generated SAS Datastep Code
+144   *   TEMPLATE SOURCE:  (None Specified.)
+145   ***********************************************************************/
+146      data RAW.TIME_DIM    ;
+147      %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+148      infile
+148! 'S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/_raw/fy_q_dts_dim.csv'
+148! delimiter = ',' MISSOVER DSD lrecl=13106 firstobs=2 ;
+149         informat month DATE8. ;
+150         informat fy best32. ;
+151         informat fy_qrtr best32. ;
+152         informat time best32. ;
+153         informat month_qrtr best32. ;
+154         format month DATE8. ;
+155         format fy best12. ;
+156         format fy_qrtr best12. ;
+157         format time best12. ;
+158         format month_qrtr best12. ;
+159      input
+160                  month
+161                  fy
+162                  fy_qrtr
+163                  time
+164                  month_qrtr
+165      ;
+166      if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+167      run;
+
+NOTE: A byte-order mark in the file
+      "S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw\fy_q_dts_dim.csv" (for
+      fileref "#LN00121") indicates that the data is encoded in "utf-8".  This encoding will be
+      used to process the file.
+NOTE: The infile
+      'S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/_raw/fy_q_dts_dim.csv' is:
+
+      Filename=S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw\fy_q_dts_dim.cs
+      v,
+      RECFM=V,LRECL=52424,File Size (bytes)=1066,
+      Last Modified=17Oct2023:10:42:00,
+      Create Time=06Jun2023:17:25:07
+
+NOTE: 48 records were read from the infile
+      'S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/_raw/fy_q_dts_dim.csv'.
+      The minimum record length was 19.
+      The maximum record length was 20.
+NOTE: The data set RAW.TIME_DIM has 48 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.04 seconds
+
+
+48 rows created in RAW.TIME_DIM from
+S:/FHPC/DATA/HCPF_Data_files_SECURE/Kim/isp/isp_utilization/data/_raw/fy_q_dts_dim.csv.
+
+
+
+NOTE: RAW.TIME_DIM data set was successfully created.
+NOTE: The data set RAW.TIME_DIM has 48 observations and 5 variables.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.34 seconds
+      cpu time            0.12 seconds
+
+
+
+168  PROC FREQ DATA = raw.qrylong_00 (obs=100000);
+169  TABLES dt_qrtr*FY;
+170  RUN;
+
+NOTE: There were 100000 observations read from the data set RAW.QRYLONG_00.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.03 seconds
+      cpu time            0.07 seconds
+
+
+171  PROC SQL;
+172  CREATE TABLE int.qrylong_01 AS
+173  SELECT a.mcaid_id
+174       , a.pcmp_loc_id
+175       , a.month
+176       , a.enr_cnty
+177       , a.budget_group
+178       , a.dt_qrtr
+179       , a.FY
+180       , b.dob
+181       , b.gender as sex
+182       , b.race
+183       , c.rae_id as rae_person_new
+184       , d.time
+185       , d.fy_qrtr
+186  FROM raw.qrylong_00             AS A
+187  LEFT JOIN ana.qry_demographics  AS B ON a.mcaid_id = b.mcaid_id
+188  LEFT JOIN int.rae_dim           AS C ON a.enr_cnty = c.hcpf_county_code_c
+189  LEFT JOIN raw.time_dim          AS D on a.dt_qrtr  = d.month
+190  WHERE  pcmp_loc_id ne .
+191  AND    SEX IN ('F','M');
+NOTE: Table INT.QRYLONG_01 created, with 92516942 rows and 13 columns.
+
+192  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           3:57.99
+      cpu time            2:05.95
+
+
+192!         *06-07 75690836 : 10 cols;
+
+193   PROC FREQ Data=int.qrylong_01;
+194      table time*FY;
+195      RUN;
+
+NOTE: There were 92516942 observations read from the data set INT.QRYLONG_01.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1:25.61
+      cpu time            6.18 seconds
+
+
+196      proc print data = int.qrylong_01 (obs=20); where fy=2023; run;
+
+NOTE: There were 20 observations read from the data set INT.QRYLONG_01.
+      WHERE fy=2023;
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           1:16.23
+      cpu time            3.15 seconds
+
+
+
+197  DATA   raw.qrylong_00 (DROP=managedCare);
+198  LENGTH mcaid_id $11;
+199  SET    ana.qry_longitudinal (WHERE=(month ge '01Jul2016'd AND lt '01JUL2023'd
+                                                                      ------------
+                                                                      22
+                                                                      76
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, (, *, **, +, -, /, <, <=, <>,
+              =, >, >=, ?, AND, BETWEEN, CONTAINS, EQ, GE, GT, LE, LIKE, LT, NE, OR, ^=, |, ||,
+              ~=.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+200                                      AND BUDGET_GROUP not in
+200! (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
+201                                      AND managedCare = 0
+202                                      AND pcmp_loc_id ne ' ')
+ERROR: Syntax error while parsing WHERE clause.
+203                               DROP = FED_POV: DISBLD_IND aid_cd: title19: SPLM_SCRTY_INCM_IND
+204                                      SSI_: SS: dual eligGrp fost_aid_cd) ;
+205  format dt_qrtr date9.;
+206  dt_qrtr = intnx('quarter', month ,0,'b');
+207  FY      = year(intnx('year.7', month, 0, 'BEGINNING'));
+208  PCMP2   = input(pcmp_loc_id, best12.); DROP pcmp_loc_id; RENAME pcmp2 = pcmp_loc_id;
+209  RUN;
+
+NOTE: Numeric values have been converted to character values at the places given by:
+      (Line):(Column).
+      208:17
+WARNING: The variable managedCare in the DROP, KEEP, or RENAME list has never been referenced.
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set RAW.QRYLONG_00 may be incomplete.  When this step was stopped there were 0
+         observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.01 seconds
+
+
+210  DATA   raw.qrylong_00 (DROP=managedCare);
+211  LENGTH mcaid_id $11;
+212  SET    ana.qry_longitudinal (WHERE=(month ge '01Jul2016'd AND month lt '01Jul2023'd
+213                                      AND BUDGET_GROUP not in
+213! (16,17,18,19,20,21,22,23,24,25,26,27,-1,)
+214                                      AND managedCare = 0
+215                                      AND pcmp_loc_id ne ' ')
+216                               DROP = FED_POV: DISBLD_IND aid_cd: title19: SPLM_SCRTY_INCM_IND
+217                                      SSI_: SS: dual eligGrp fost_aid_cd) ;
+218  format dt_qrtr date9.;
+219  dt_qrtr = intnx('quarter', month ,0,'b');
+220  FY      = year(intnx('year.7', month, 0, 'BEGINNING'));
+221  PCMP2   = input(pcmp_loc_id, best12.); DROP pcmp_loc_id; RENAME pcmp2 = pcmp_loc_id;
+222  RUN;
+
+NOTE: There were 88494780 observations read from the data set ANA.QRY_LONGITUDINAL.
+      WHERE (month>='01JUL2016'D and month<'01JUL2023'D) and BUDGET_GROUP not in (-1, 16, 17, 18,
+      19, 20, 21, 22, 23, 24, 25, 26, 27) and (managedCare=0) and (pcmp_loc_id not = ' ');
+NOTE: The data set RAW.QRYLONG_00 has 88494780 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           5:54.36
+      cpu time            55.09 seconds
+
+
+223  DATA pcmp_type_qrylong ;
+224  SET  raw.qrylong_00   (KEEP = pcmp_loc_id  pcmp_loc_type_cd pcmp_loc_type_cd
+225                         WHERE= (pcmp_loc_id ne .));
+226  num_pcmp_type = input(pcmp_loc_type_cd, 7.);
+227  RUN ;
+
+NOTE: There were 88494780 observations read from the data set RAW.QRYLONG_00.
+      WHERE pcmp_loc_id not = .;
+NOTE: The data set WORK.PCMP_TYPE_QRYLONG has 88494780 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:05.91
+      cpu time            11.29 seconds
+
+
+228
+229  PROC SORT DATA = pcmp_type_qrylong NODUPKEY ; BY _ALL_ ; RUN ;
+
+NOTE: There were 88494780 observations read from the data set WORK.PCMP_TYPE_QRYLONG.
+NOTE: 88493274 observations with duplicate key values were deleted.
+NOTE: The data set WORK.PCMP_TYPE_QRYLONG has 1506 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           8.82 seconds
+      cpu time            20.09 seconds
+
+
+230
+231  DATA int.pcmp_dim;
+232  SET  pcmp_type_qrylong;
+233  IF pcmp_loc_type_cd in (32 45 61 62) then fqhc = 1 ; else fqhc = 0 ;
+234  RUN;
+
+NOTE: Character values have been converted to numeric values at the places given by:
+      (Line):(Column).
+      233:4
+NOTE: There were 1506 observations read from the data set WORK.PCMP_TYPE_QRYLONG.
+NOTE: The data set INT.PCMP_DIM has 1506 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.37 seconds
+      cpu time            0.04 seconds
+
+
+235  proc freq data = int.pcmp_dim; tables num_pcmp_type fqhc; run;
+
+NOTE: There were 1506 observations read from the data set INT.PCMP_DIM.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.01 seconds
+
+
+
+236  proc freq data = int.pcmp_dim nlevels; tables pcmp_loc_type_cd fqhc; run;
+
+NOTE: There were 1506 observations read from the data set INT.PCMP_DIM.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.01 seconds
+
+
+
+237  PROC SORT DATA = raw.qrylong_00 NODUPKEY; BY _ALL_; run;
+
+ERROR: Failure encountered before internal or external sort determination.
+ERROR: User asked for termination.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: There were 2177739 observations read from the data set RAW.QRYLONG_00.
+WARNING: The data set RAW.QRYLONG_00 may be incomplete.  When this step was stopped there were 0
+         observations and 9 variables.
+WARNING: Data set RAW.QRYLONG_00 was not replaced because this step was stopped.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           10.21 seconds
+      cpu time            0.85 seconds
+
+
+238  PROC SQL;
+239  CREATE TABLE int.qrylong_01 AS
+240  SELECT a.mcaid_id
+241       , a.pcmp_loc_id
+242       , a.month
+243       , a.enr_cnty
+244       , a.budget_group
+245       , a.dt_qrtr
+246       , a.FY
+247       , b.dob
+248       , b.gender as sex
+249       , b.race
+250       , c.rae_id as rae_person_new
+251       , d.time
+252       , d.fy_qrtr
+253  FROM raw.qrylong_00             AS A
+254  LEFT JOIN ana.qry_demographics  AS B ON a.mcaid_id = b.mcaid_id
+255  LEFT JOIN int.rae_dim           AS C ON a.enr_cnty = c.hcpf_county_code_c
+256  LEFT JOIN raw.time_dim          AS D on a.dt_qrtr  = d.month
+257  WHERE  pcmp_loc_id ne .
+258  AND    SEX IN ('F','M');
+NOTE: Table INT.QRYLONG_01 created, with 88494320 rows and 13 columns.
+
+259  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           3:39.41
+      cpu time            1:58.65
+
+
+259!         *06-07 75690836 : 10 cols;
+
+260  PROC SQL;
+261  CREATE TABLE raw.age_dim_00 AS
+262  SELECT distinct(mcaid_id) as mcaid_id
+263       , dob
+264       , time
+265  FROM int.qrylong_01
+266  WHERE FY in (2019, 2020, 2021, 2022)
+267  AND   rae_person_new ne .;
+NOTE: Table RAW.AGE_DIM_00 created, with 20057212 rows and 3 columns.
+
+268  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:40.71
+      cpu time            25.48 seconds
+
+
+268!       * 6/7 15719759 obs 2 col;
+269
+270  * Find / List all 13 2nd month of quarter values;
+271  PROC SQL NOPRINT;
+272  SELECT month INTO :qm2 separated by ' '
+273  FROM  raw.time_dim
+274  WHERE month_qrtr = 2;
+275  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.00 seconds
+
+
+276
+277  %PUT &qm2;
+01AUG19 01NOV19 01FEB20 01MAY20 01AUG20 01NOV20 01FEB21 01MAY21 01AUG21 01NOV21 01FEB22 01MAY22
+01AUG22 01NOV22 01FEB23 01MAY23
+278  %LET m2q1  = 01Aug2019; %LET m2q2  = 01Nov2019; %LET m2q3  = 01Feb2020; %LET m2q4  = 01May2020;
+279  %LET m2q5  = 01Aug2020; %LET m2q6  = 01Nov2020; %LET m2q7  = 01Feb2021; %LET m2q8  = 01May2021;
+280  %LET m2q9  = 01Aug2021; %LET m2q10 = 01Nov2021; %LET m2q11 = 01Feb2022; %LET m2q12 = 01May2022;
+281  %LET m2q13 = 01Aug2022; %LET m2q14 = 01Nov2022; %LET m2q15 = 01Feb2023; %LET m2q16 = 01May2023;
+282  DATA raw.age_dim;
+283  SET  raw.age_dim_00;
+284  IF time = 1 then do;  age = floor((intck('month', dob, "&m2q1"d)-(day("&m2q1"d)   <
+284! min(day(dob), day(intnx('month', "&m2q1"d, 1) -1))))  /12); END;
+285  IF time = 2 then do;  age = floor((intck('month', dob, "&m2q2"d)-(day("&m2q2"d)   <
+285! min(day(dob), day(intnx('month', "&m2q2"d, 1) -1))))  /12); END;
+286  IF time = 3 then do;  age = floor((intck('month', dob, "&m2q3"d)-(day("&m2q3"d)   <
+286! min(day(dob), day(intnx('month', "&m2q3"d, 1) -1))))  /12); END;
+287  IF time = 4 then do;  age = floor((intck('month', dob, "&m2q4"d)-(day("&m2q4"d)   <
+287! min(day(dob), day(intnx('month', "&m2q4"d, 1) -1))))  /12); END;
+288  IF time = 5 then do;  age = floor((intck('month', dob, "&m2q5"d)-(day("&m2q5"d)   <
+288! min(day(dob), day(intnx('month', "&m2q5"d, 1) -1))))  /12); END;
+289  IF time = 6 then do;  age = floor((intck('month', dob, "&m2q6"d)-(day("&m2q6"d)   <
+289! min(day(dob), day(intnx('month', "&m2q6"d, 1) -1))))  /12); END;
+290  IF time = 7 then do;  age = floor((intck('month', dob, "&m2q7"d)-(day("&m2q7"d)   <
+290! min(day(dob), day(intnx('month', "&m2q7"d, 1) -1))))  /12); END;
+291  IF time = 8 then do;  age = floor((intck('month', dob, "&m2q8"d)-(day("&m2q8"d)   <
+291! min(day(dob), day(intnx('month', "&m2q8"d, 1) -1))))  /12); END;
+292  IF time = 9 then do;  age = floor((intck('month', dob, "&m2q9"d)-(day("&m2q9"d)   <
+292! min(day(dob), day(intnx('month', "&m2q9"d, 1) -1))))  /12); END;
+293  IF time = 10 then do; age = floor((intck('month', dob, "&m2q10"d)-(day("&m2q10"d) <
+293! min(day(dob), day(intnx('month', "&m2q10"d, 1) -1)))) /12); END;
+294  IF time = 11 then do; age = floor((intck('month', dob, "&m2q11"d)-(day("&m2q11"d) <
+294! min(day(dob), day(intnx('month', "&m2q11"d, 1) -1)))) /12); END;
+295  IF time = 12 then do; age = floor((intck('month', dob, "&m2q12"d)-(day("&m2q12"d) <
+295! min(day(dob), day(intnx('month', "&m2q12"d, 1) -1)))) /12); END;
+296  IF time = 13 then do; age = floor((intck('month', dob, "&m2q13"d)-(day("&m2q13"d) <
+296! min(day(dob), day(intnx('month', "&m2q13"d, 1) -1)))) /12); END;
+297  IF time = 14 then do; age = floor((intck('month', dob, "&m2q14"d)-(day("&m2q14"d) <
+297! min(day(dob), day(intnx('month', "&m2q14"d, 1) -1)))) /12); END;
+298  IF time = 15 then do; age = floor((intck('month', dob, "&m2q15"d)-(day("&m2q15"d) <
+298! min(day(dob), day(intnx('month', "&m2q15"d, 1) -1)))) /12); END;
+299  IF time = 16 then do; age = floor((intck('month', dob, "&m2q16"d)-(day("&m2q16"d) <
+299! min(day(dob), day(intnx('month', "&m2q16"d, 1) -1)))) /12); END;
+300
+301  IF age ge 65 then DELETE;
+302  IF age lt 0  then DELETE;
+303  RUN;
+
+NOTE: There were 20057212 observations read from the data set RAW.AGE_DIM_00.
+NOTE: The data set RAW.AGE_DIM has 19283171 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           20.98 seconds
+      cpu time            9.51 seconds
+
+
+303!      *06/07 15124679;
+
+304  PROC FREQ DATA=raw.age_dim; tables time age; run;
+
+NOTE: There were 19283171 observations read from the data set RAW.AGE_DIM.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           8.22 seconds
+      cpu time            1.17 seconds
+
+
+
+305  DATA raw.age_dim;
+306  SET  raw.age_dim_00 (where=(time ne .));
+307  IF time = 1 then do;  age = floor((intck('month', dob, "&m2q1"d)-(day("&m2q1"d)   <
+307! min(day(dob), day(intnx('month', "&m2q1"d, 1) -1))))  /12); END;
+308  IF time = 2 then do;  age = floor((intck('month', dob, "&m2q2"d)-(day("&m2q2"d)   <
+308! min(day(dob), day(intnx('month', "&m2q2"d, 1) -1))))  /12); END;
+309  IF time = 3 then do;  age = floor((intck('month', dob, "&m2q3"d)-(day("&m2q3"d)   <
+309! min(day(dob), day(intnx('month', "&m2q3"d, 1) -1))))  /12); END;
+310  IF time = 4 then do;  age = floor((intck('month', dob, "&m2q4"d)-(day("&m2q4"d)   <
+310! min(day(dob), day(intnx('month', "&m2q4"d, 1) -1))))  /12); END;
+311  IF time = 5 then do;  age = floor((intck('month', dob, "&m2q5"d)-(day("&m2q5"d)   <
+311! min(day(dob), day(intnx('month', "&m2q5"d, 1) -1))))  /12); END;
+312  IF time = 6 then do;  age = floor((intck('month', dob, "&m2q6"d)-(day("&m2q6"d)   <
+312! min(day(dob), day(intnx('month', "&m2q6"d, 1) -1))))  /12); END;
+313  IF time = 7 then do;  age = floor((intck('month', dob, "&m2q7"d)-(day("&m2q7"d)   <
+313! min(day(dob), day(intnx('month', "&m2q7"d, 1) -1))))  /12); END;
+314  IF time = 8 then do;  age = floor((intck('month', dob, "&m2q8"d)-(day("&m2q8"d)   <
+314! min(day(dob), day(intnx('month', "&m2q8"d, 1) -1))))  /12); END;
+315  IF time = 9 then do;  age = floor((intck('month', dob, "&m2q9"d)-(day("&m2q9"d)   <
+315! min(day(dob), day(intnx('month', "&m2q9"d, 1) -1))))  /12); END;
+316  IF time = 10 then do; age = floor((intck('month', dob, "&m2q10"d)-(day("&m2q10"d) <
+316! min(day(dob), day(intnx('month', "&m2q10"d, 1) -1)))) /12); END;
+317  IF time = 11 then do; age = floor((intck('month', dob, "&m2q11"d)-(day("&m2q11"d) <
+317! min(day(dob), day(intnx('month', "&m2q11"d, 1) -1)))) /12); END;
+318  IF time = 12 then do; age = floor((intck('month', dob, "&m2q12"d)-(day("&m2q12"d) <
+318! min(day(dob), day(intnx('month', "&m2q12"d, 1) -1)))) /12); END;
+319  IF time = 13 then do; age = floor((intck('month', dob, "&m2q13"d)-(day("&m2q13"d) <
+319! min(day(dob), day(intnx('month', "&m2q13"d, 1) -1)))) /12); END;
+320  IF time = 14 then do; age = floor((intck('month', dob, "&m2q14"d)-(day("&m2q14"d) <
+320! min(day(dob), day(intnx('month', "&m2q14"d, 1) -1)))) /12); END;
+321  IF time = 15 then do; age = floor((intck('month', dob, "&m2q15"d)-(day("&m2q15"d) <
+321! min(day(dob), day(intnx('month', "&m2q15"d, 1) -1)))) /12); END;
+322  IF time = 16 then do; age = floor((intck('month', dob, "&m2q16"d)-(day("&m2q16"d) <
+322! min(day(dob), day(intnx('month', "&m2q16"d, 1) -1)))) /12); END;
+323
+324  IF age ge 65 then DELETE;
+325  IF age lt 0  then DELETE;
+326  RUN;
+
+NOTE: There were 20057212 observations read from the data set RAW.AGE_DIM_00.
+      WHERE time not = .;
+NOTE: The data set RAW.AGE_DIM has 19283171 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           22.07 seconds
+      cpu time            11.23 seconds
+
+
+326!      *06/07 15124679;
+
+327  DATA int.age_dim;
+328  SET  raw.age_dim_00 (where=(time ne .));
+329  IF time = 1 then do;  age = floor((intck('month', dob, "&m2q1"d)-(day("&m2q1"d)   <
+329! min(day(dob), day(intnx('month', "&m2q1"d, 1) -1))))  /12); END;
+330  IF time = 2 then do;  age = floor((intck('month', dob, "&m2q2"d)-(day("&m2q2"d)   <
+330! min(day(dob), day(intnx('month', "&m2q2"d, 1) -1))))  /12); END;
+331  IF time = 3 then do;  age = floor((intck('month', dob, "&m2q3"d)-(day("&m2q3"d)   <
+331! min(day(dob), day(intnx('month', "&m2q3"d, 1) -1))))  /12); END;
+332  IF time = 4 then do;  age = floor((intck('month', dob, "&m2q4"d)-(day("&m2q4"d)   <
+332! min(day(dob), day(intnx('month', "&m2q4"d, 1) -1))))  /12); END;
+333  IF time = 5 then do;  age = floor((intck('month', dob, "&m2q5"d)-(day("&m2q5"d)   <
+333! min(day(dob), day(intnx('month', "&m2q5"d, 1) -1))))  /12); END;
+334  IF time = 6 then do;  age = floor((intck('month', dob, "&m2q6"d)-(day("&m2q6"d)   <
+334! min(day(dob), day(intnx('month', "&m2q6"d, 1) -1))))  /12); END;
+335  IF time = 7 then do;  age = floor((intck('month', dob, "&m2q7"d)-(day("&m2q7"d)   <
+335! min(day(dob), day(intnx('month', "&m2q7"d, 1) -1))))  /12); END;
+336  IF time = 8 then do;  age = floor((intck('month', dob, "&m2q8"d)-(day("&m2q8"d)   <
+336! min(day(dob), day(intnx('month', "&m2q8"d, 1) -1))))  /12); END;
+337  IF time = 9 then do;  age = floor((intck('month', dob, "&m2q9"d)-(day("&m2q9"d)   <
+337! min(day(dob), day(intnx('month', "&m2q9"d, 1) -1))))  /12); END;
+338  IF time = 10 then do; age = floor((intck('month', dob, "&m2q10"d)-(day("&m2q10"d) <
+338! min(day(dob), day(intnx('month', "&m2q10"d, 1) -1)))) /12); END;
+339  IF time = 11 then do; age = floor((intck('month', dob, "&m2q11"d)-(day("&m2q11"d) <
+339! min(day(dob), day(intnx('month', "&m2q11"d, 1) -1)))) /12); END;
+340  IF time = 12 then do; age = floor((intck('month', dob, "&m2q12"d)-(day("&m2q12"d) <
+340! min(day(dob), day(intnx('month', "&m2q12"d, 1) -1)))) /12); END;
+341  IF time = 13 then do; age = floor((intck('month', dob, "&m2q13"d)-(day("&m2q13"d) <
+341! min(day(dob), day(intnx('month', "&m2q13"d, 1) -1)))) /12); END;
+342  IF time = 14 then do; age = floor((intck('month', dob, "&m2q14"d)-(day("&m2q14"d) <
+342! min(day(dob), day(intnx('month', "&m2q14"d, 1) -1)))) /12); END;
+343  IF time = 15 then do; age = floor((intck('month', dob, "&m2q15"d)-(day("&m2q15"d) <
+343! min(day(dob), day(intnx('month', "&m2q15"d, 1) -1)))) /12); END;
+344  IF time = 16 then do; age = floor((intck('month', dob, "&m2q16"d)-(day("&m2q16"d) <
+344! min(day(dob), day(intnx('month', "&m2q16"d, 1) -1)))) /12); END;
+345
+346  IF age ge 65 then DELETE;
+347  IF age lt 0  then DELETE;
+348  RUN;
+
+NOTE: There were 20057212 observations read from the data set RAW.AGE_DIM_00.
+      WHERE time not = .;
+NOTE: The data set INT.AGE_DIM has 19283171 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           21.51 seconds
+      cpu time            10.68 seconds
+
+
+349  PROC SQL;
+350  CREATE TABLE int.final_00 AS
+351  SELECT a.mcaid_id
+352       , a.time
+353       , a.FY
+354       , a.dt_qrtr
+355       , a.month
+356       , a.pcmp_loc_id
+357       , a.budget_group
+358       , a.sex
+359       , a.race
+360       , a.rae_person_new
+361       , b.age
+362  FROM int.qrylong_01    AS A
+363  INNER JOIN int.age_dim AS B ON (a.mcaid_id=b.mcaid_id AND a.time=b.time)
+364  WHERE rae_person_new ne .
+365  AND FY IN (2019, 2020, 2021, 2022) ;
+NOTE: Table INT.FINAL_00 created, with 56463912 rows and 11 columns.
+
+366  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           4:55.55
+      cpu time            51.76 seconds
+
+
+366!       *44202204 & checked freq's on util_02_checks;
+
+367  proc sql;
+367!           select count(distinct mcaid_id) as n_un_mcaid from int.final_00;
+367!                                                                            QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:46.90
+      cpu time            7.20 seconds
+
+
