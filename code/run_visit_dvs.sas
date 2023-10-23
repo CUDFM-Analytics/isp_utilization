@@ -21,9 +21,9 @@ CREATE TABLE data.cols_visit_dvs AS
 SELECT name, type, length, label
 FROM dictionary.columns 
 WHERE UPCASE(LIBNAME)="DATA" AND
-      UPCASE(MEMNAME)="ANALYSIS_FINAL" AND
-      (NAME LIKE "n_%" or
-      NAME LIKE "%_visit");
+      UPCASE(MEMNAME)="UTILIZATION" AND
+      (NAME LIKE "ind_visit%" or
+      NAME LIKE "visit%");
 QUIT; 
 
 PROC PRINT DATA = data.cols_visit_dvs; RUN; 
@@ -47,11 +47,12 @@ PROC PRINT DATA = data.cols_visit_dvs; RUN;
 *[DV: visit PC] 
 Ran on 08-23-2023 > Updated rows 95:100 to use int_imp instead of int======================;
 %LET outcome = pc;
-%LET dat = data.analysis;
-%hurdle  (dat=data.analysis_final, 
-          prob=ind_&outcome._visit, 
-          visits=n_&outcome._pm_r, 
-          dv=visits_pc
+%LET dat = data.utilization;
+%hurdle  (dat = &dat, 
+          prob= ind_visit_pc, 
+          visits=visits_pc, 
+          dv=visits_pc,
+          type=exch
           );
 
 %results (pmodel=visits_&outcome._pmodel, 

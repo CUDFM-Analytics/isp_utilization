@@ -32,8 +32,6 @@ Per Mark : Use mode for ref class vars budget_group & race if possible
 *[DV: Cost PC] 08-17-2023 =================================================================;
 %LET outcome = pc; 
 %hurdle  (dat=&dat, pvar=ind_cost_pc, cvar=cost_pc, dv=cost_pc, type=exch);
-DATA out.cost_pc_c_predout_exch; SET cost_pc_c_predout_exch; RUN; 
-PROC FREQ DATA = out.cost_pc_mean_exch; tables exposed; run;
 %hurdle  (dat=&dat, pvar=ind_cost_pc, cvar=cost_pc, dv=cost_pc, type=ind);
 
 %results (pmodel=cost_&outcome._pmodel, cmodel=cost_&outcome_cmodel, dv=cost_&outcome);

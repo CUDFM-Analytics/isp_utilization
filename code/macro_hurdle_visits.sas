@@ -14,7 +14,7 @@ The type3 option is used to get the multi-degree-of-freedom test of cat vars in 
 %macro hurdle(dat=,      /* data.utilization */
               prob=,     /* probability variable, starts wih `ind_`  */
               visits=,   /* visit DV var, start with `visits_` */
-              dv=,       /* just for some text in results field, not modeling*/
+              dv=,       /* used in ranks*/
               type=      /* correlation type (exch, ind were tested) */
               );
 
@@ -25,7 +25,7 @@ OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
 %LET script  = %qsubstr(%sysget(SAS_EXECFILENAME), 1,
                %length(%sysget(SAS_EXECFILENAME))-4); * remove .sas to use in log, pdf;
 %LET today = %SYSFUNC(today(), YYMMDD10.);
-%LET log   = &root&dv._&type._&today..log;
+%LET log   = &root.run_&dv._type_&type._&today..log;
 
 PROC PRINTTO LOG = "&log" NEW; RUN;
 
@@ -58,6 +58,7 @@ MODEL &prob(event='1') = int      int_imp     time
        adj_pd_total_19cat / DIST=binomial; 
 REPEATED SUBJECT = mcaid_id / type=&type ; 
 store out.&dv._pmodel_&type;
+output out = predout pred = pred;
 run;
 
 /*SECTION 03: POSITIVE VISIT MODEL*/
@@ -95,17 +96,8 @@ TITLE;
 
 /*SECTION 04: AGGREGATING ACTUAL, PREDICTED OUTCOMES W/ GROUP OF INTEREST*/
 * OUT:[intgroup]      IN :[&dat &dat]
-the group of interest (int, time-invariant intervention status) is set twice, 
-the top in the stack will be recoded as not participants (unexposed)
-the bottom group keeps the int=1  status------------------------------------------------ ;
-/*data intgroup;*/
-/*  set &dat &dat (in = b);*/
-/*  where int_imp = 1;*/
-/*  if ^b then int_imp = 0;*/
-/*  exposed = b;*/
-/*run;*/
 
-* the predictions for util and visit will be made for each person twice, once exposed and once unexposed;
+* the predictions for visits will be made for each person twice, once exposed and once unexposed;
 * OUT:[P_INTGROUP]      IN :[out=out.&dv._pmodel]
  prob of util------------------------------------------------ ;
 proc plm restore=out.&dv._pmodel_&type;
@@ -134,6 +126,17 @@ create table out.&dv._avp_&type as
   calculated visit_exposed - calculated visit_unexposed as visit_diff
   from out.&dv._mean_&type;
 quit;
+
+proc rank data = predout out = predgroup groups = 10;
+  var pred;
+  ranks predgroup;
+run;
+
+proc means data = predgroup   noprint nway;
+  var pred ind_&dv.;
+  class predgroup;
+  output out = out.&dv._meanout_&type mean = /autoname;
+run;
 
 PROC PRINTTO; RUN; 
 %mend;

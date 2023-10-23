@@ -14,16 +14,14 @@ variables listed on the class statement
 %macro hurdle(dat=,pvar=,cvar=,dv=,type=);
 
 /*SECTION 01: INTRO / CONFIG/ DOCUMENTATION*/
-OPTIONS 
+OPTIONS SOURCE;
 /*pageno=1 linesize=88 pagesize=60 */
-SOURCE;
 %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
              %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname)));
 %LET script  = %qsubstr(%sysget(SAS_EXECFILENAME), 1,
                %length(%sysget(SAS_EXECFILENAME))-4); * remove .sas to use in log, pdf;
 %LET today = %SYSFUNC(today(), YYMMDD10.);
-%LET log   = &root.results_&dv._type_&type._&today..log;
-%put &log;
+%LET log   = &root.run_&dv._type_&type._&today..log;
 
 PROC PRINTTO LOG = "&log"; RUN;
 
@@ -75,29 +73,12 @@ MODEL &cvar = int int_imp time season1 season2 season3 budget_grp_new race sex r
               adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / dist=gamma link=log ;
 REPEATED SUBJECT = mcaid_id / type = &type;
 store out.&dv._cmodel_&type;
-/*output out = out.&dv._c_predout_&type */
-/*  reschi = pearson_resid */
-/*  pred = predicted_cost  */
-/*  STDRESCHI = STDRESCHI */
-/*  xbeta=xbeta;*/
 RUN;
 TITLE; 
 
 /*SECTION 04: AGGREGATING ACTUAL, PREDICTED OUTCOMES W/ GROUP OF INTEREST*/
-* OUT:[intgroup]      IN :[&dat &dat]
-the group of interest is set twice, 
-the top in the stack will be recoded as not participants (unexposed)
-the bottom group keeps the int_imp=1  status------------------------------------------------ ;
-** 10-22 made separate dataset no need for it to populate every time - takes too long, and it doesn't change; 
 
-/*data intgroup;*/
-/*  set &dat &dat (in = b);*/
-/*  where int_imp = 1;*/
-/*  if ^b then int_imp = 0;*/
-/*  exposed = b;*/
-/*run;*/
-
-* the predictions for util and cost will be made for each person twice, once exposed and once unexposed;
+* the predictions for cost will be made for each person twice, once exposed and once unexposed;
 * OUT:[P_INTGROUP]      IN :[out=out.&dv._pmodel]
  prob of util------------------------------------------------ ;
 proc plm restore=out.&dv._pmodel_&type ;
@@ -135,7 +116,7 @@ run;
 proc means data = predgroup   noprint nway;
   var pred ind_&dv.;
   class predgroup;
-  output out = ctlp.&dv._meanout_&type mean = /autoname;
+  output out = out.&dv._meanout_&type mean = /autoname;
 run;
 
 PROC PRINTTO; RUN; 
