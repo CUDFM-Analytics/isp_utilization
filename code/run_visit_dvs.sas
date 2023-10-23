@@ -54,54 +54,27 @@ Ran on 08-23-2023 > Updated rows 95:100 to use int_imp instead of int===========
           dv=visits_pc,
           type=exch
           );
-
-%results (pmodel=visits_&outcome._pmodel, 
-          vmodel=visits_&outcome._vmodel, 
-          dv=visits_pc, 
-          prob_dv=ind_&outcome._visit, 
-          visit_dv=n_&outcome._pm_r);
-
 %deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
 
-*[DV: visit ED] 
-Last Ran 08-23-2023 > Updated rows 95:100 to use int_imp instead of int======================;
+*[DV: visit ED] type=exch
 %LET outcome = ed;
-%hurdle  (dat=data.analysis_final, 
-          prob=ind_&outcome._visit, 
-          visits=n_&outcome._pm_r, 
-          dv=visits_&outcome.);
-%results (pmodel=visits_&outcome._pmodel, vmodel=visits_&outcome._vmodel, dv=visits_&outcome., 
-          prob_dv=ind_&outcome._visit, 
-          visit_dv=n_&outcome._pm_r);
-
+%hurdle  (dat = &dat, 
+          prob= ind_visit_ed, 
+          visits=visits_ed, 
+          dv=visits_ed,
+          type=exch
+          );
 %deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
-
-*[DV: visit FFS BH] =========================================================================;
-/*%LET data = data.analysis;*/
-/*%hurdle  (dat=&data, */
-/*          prob=ind_ffs_bh_visit, */
-/*          visits=n_ffs_bh_pm_r, */
-/*          dv=visits_ffs_bh*/
-/*          );*/
-/**/
-/*%results (pmodel=visits_ffs_bh_pmodel, vmodel=visits_ffs_bh_vmodel, dv=visits_ffs_bh, */
-/*          prob_dv=ind_ffs_bh_visit, */
-/*          visit_dv=n_ffs_by_pm_r);*/
-/**/
-/*%deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);*/
 
 *[DV: visit TEL] =========================================================================;
-%LET outcome = tel; %LET data = data.analysis;
+%LET outcome = tel; 
 
-%hurdle  (dat=data.analysis, 
-          prob=ind_&outcome._visit, 
-          visits=n_&outcome._pm_r, 
-          dv=visits_&outcome.);
-%results (pmodel=visits_&outcome._pmodel, vmodel=visits_&outcome._vmodel, dv=visits_&outcome., 
-          prob_dv=ind_&outcome._visit, 
-          visit_dv=n_&outcome._pm_r);
-
+%hurdle  (dat = &dat, 
+          prob= ind_visit_tel, 
+          visits=visits_tel, 
+          dv=visits_tel,
+          type=exch
+          );
 %deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
-
 
 

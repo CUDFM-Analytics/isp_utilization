@@ -133,7 +133,7 @@ proc rank data = predout out = predgroup groups = 10;
 run;
 
 proc means data = predgroup   noprint nway;
-  var pred ind_&dv.;
+  var pred &prob;
   class predgroup;
   output out = out.&dv._meanout_&type mean = /autoname;
 run;
