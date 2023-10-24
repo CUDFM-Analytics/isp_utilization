@@ -606,12 +606,6 @@ RUN;
 
 PROC SORT DATA = int.final_06; BY FY; run; 
 
-/*PROC MEANS DATA = int.final_06 mean median max min p25 p50 p75 p95; */
-/*BY FY; */
-/*VAR adj_total_pmpq; *adj_pc_pmpq adj_rx_pmpq; */
-/*WHERE adj_total_pmpq > 0;*/
-/*RUN; */
-
 %pctl_2023(var = adj_total_pmpq,   out = int.adj_total_pctl,   pctlpre = adj_total_,  t_var = adj_total_95); 
 %pctl_2023(var = adj_pc_pmpq,      out = int.adj_pc_pctl,      pctlpre = adj_pc_,     t_var = adj_pc_95); 
 %pctl_2023(var = adj_rx_pmpq,      out = int.adj_rx_pctl,      pctlpre = adj_rx_,     t_var = adj_rx_95); 

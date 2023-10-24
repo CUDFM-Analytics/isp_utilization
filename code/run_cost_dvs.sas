@@ -18,7 +18,6 @@ Per Mark : Use mode for ref class vars budget_group & race if possible
 
 /*PROC CONTENTS DATA = data.utilization VARNUM; run; */
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_hurdle_costs.sas";
-%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_results.sas";
 
 * [NOTES %HURDLE] ==============================================================================
 1. [PARAMS] pvar: Indicator variable where 1 indicates cost>0, 0 indicates cost=0
@@ -32,37 +31,32 @@ Per Mark : Use mode for ref class vars budget_group & race if possible
 *[DV: Cost PC] 08-17-2023 =================================================================;
 %LET outcome = pc; 
 %hurdle  (dat=&dat, pvar=ind_cost_pc, cvar=cost_pc, dv=cost_pc, type=exch);
+proc datasets library=work kill; quit; 
 %hurdle  (dat=&dat, pvar=ind_cost_pc, cvar=cost_pc, dv=cost_pc, type=ind);
+proc datasets library=work kill; quit; 
 
-%results (pmodel=cost_&outcome._pmodel, cmodel=cost_&outcome_cmodel, dv=cost_&outcome);
-%deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
 
 *[DV: Cost Total] =======================================================================;
 %LET outcome = total; 
 * Generate point estimates with type::exch, then delete the temp datasets in work library; 
 %hurdle  (dat=&dat, pvar=ind_cost_total, cvar=cost_total, dv=cost_total, type=exch);
-%deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
+proc datasets library=work kill; quit; 
 * Generate point estimates with type::ind, then delete the temp datasets in work library; 
 %hurdle  (dat=&dat, pvar=ind_cost_total, cvar=cost_total, dv=cost_total, type=ind);
-%deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
-
-* Results: ; 
-%results (pmodel=cost_&outcome._pmodel, cmodel=cost_&outcome_cmodel, dv=cost_&outcome);
-
+proc datasets library=work kill; quit; 
 
 *[DV: Cost Rx] ==========================================================================;
 %LET outcome = rx; 
 %hurdle  (dat=&dat, pvar=ind_cost_rx, cvar=cost_rx, dv=cost_rx, type=exch);
-%deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
-
+proc datasets library=work kill; quit; 
 %hurdle  (dat=&dat, pvar=ind_cost_rx, cvar=cost_rx, dv=cost_rx, type=ind);
-%deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
+proc datasets library=work kill; quit; 
 
-
+* Results: ; 
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_hurdle_costs_results_v2.sas";
+%results (dv = cost_pc, pvar=ind_cost_pc, cvar=cost_pc);
 %results (pmodel=cost_&outcome._pmodel, cmodel=cost_&outcome_cmodel, dv=cost_&outcome);
-%deltable(tables=work.intgroup work.p_intgroup work.cp_intgroup);
-
-
+%results (pmodel=cost_&outcome._pmodel, cmodel=cost_&outcome_cmodel, dv=cost_&outcome);
 
 
 

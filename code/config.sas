@@ -35,12 +35,8 @@ LOG
         LIBNAME int "&int"; 
       %LET out = &data/out_hurdle; 
         LIBNAME out "&out"; 
-/*      %LET store = &out/hurdle_stored_prods; *store product output from hurdle models; */
-/*        LIBNAME store "&store";*/
-/*    %LET eda = &data/results_util_eda_tests;*/
-/*      LIBNAME eda "&eda";*/
-/*%LET out_boot = &util/data_boot_processed;*/
-/*LIBNAME boot "&out_boot";*/
+      %LET int2 = &data/interim_new;
+        LIBNAME tmp "&int2";
     * export folder for excel files output; 
       %LET report = &util/reports; 
 

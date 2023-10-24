@@ -251,3 +251,7 @@ PROC SORT DATA = int.final_05; by fy mcaid_id; run;
 PROC CONTENTS DATA = int.final_05 VARNUM; run; 
  
 PROC CONTENTS DATA = &dat VARNUM; RUN; 
+
+
+PROC PRINT DATA = data.utilization; where mcaid_id="A005875"; RUN; 
+PROC PRINT DATA = ana.qry_monthlyutilization; where mcaid_id="A005875"; RUN; 

@@ -1,0 +1,873 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.29 seconds
+      cpu time            0.93 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\out_hurdle
+NOTE: Libref TMP was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim_new
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.51 seconds
+      cpu time            0.23 seconds
+
+
+139  %hurdle  (dat = &dat, prob= ind_visit_pc, visits=visits_pc, dv=visits_pc, type=ind);
+     -
+     180
+WARNING: Apparent invocation of macro HURDLE not resolved.
+WARNING: Apparent symbolic reference DAT not resolved.
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+140  %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\out_hurdle
+NOTE: Libref TMP was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim_new
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT is already on the library WORK.FORMATS.
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+278  libname int clear;
+NOTE: Libref INT has been deassigned.
+279  * Macro for hurdle model and log;
+280  %INCLUDE
+280! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_hurdle_visits.sas";
+
+426  data _NULL_;
+427  /*SET  out.&dv._avp_&type; */
+428  SET out.visits_ed_avp_exch;
+429  put  visit_exposed= visit_unexposed= visit_diff=;
+430
+431  RUN;
+
+visit_exposed=0.2434884173 visit_unexposed=0.2758335458 visit_diff=-0.032345129
+NOTE: There were 1 observations read from the data set OUT.VISITS_ED_AVP_EXCH.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+
+
+432  data _NULL_;
+433  /*SET  out.&dv._meanout_&type;*/
+434  SET out.visits_pc_meanout_exch;
+435  put _all_;
+436  RUN;
+
+predgroup=0 _TYPE_=1 _FREQ_=1928316 pred_Mean=0.1164811969 ind_visit_pc_Mean=0.1209946917 _ERROR_=0
+_N_=1
+predgroup=1 _TYPE_=1 _FREQ_=1928320 pred_Mean=0.2058482611 ind_visit_pc_Mean=0.2054264852 _ERROR_=0
+_N_=2
+predgroup=2 _TYPE_=1 _FREQ_=1928316 pred_Mean=0.2733731864 ind_visit_pc_Mean=0.255721054 _ERROR_=0
+_N_=3
+predgroup=3 _TYPE_=1 _FREQ_=1928577 pred_Mean=0.3137390126 ind_visit_pc_Mean=0.3088759225 _ERROR_=0
+_N_=4
+predgroup=4 _TYPE_=1 _FREQ_=1928050 pred_Mean=0.3485970637 ind_visit_pc_Mean=0.3493394881 _ERROR_=0
+_N_=5
+predgroup=5 _TYPE_=1 _FREQ_=1928324 pred_Mean=0.3816171398 ind_visit_pc_Mean=0.3825555249 _ERROR_=0
+_N_=6
+predgroup=6 _TYPE_=1 _FREQ_=1928318 pred_Mean=0.4172644124 ind_visit_pc_Mean=0.4287902721 _ERROR_=0
+_N_=7
+predgroup=7 _TYPE_=1 _FREQ_=1928316 pred_Mean=0.4579564231 ind_visit_pc_Mean=0.4806426955 _ERROR_=0
+_N_=8
+predgroup=8 _TYPE_=1 _FREQ_=1928318 pred_Mean=0.5108906827 ind_visit_pc_Mean=0.5178663478 _ERROR_=0
+_N_=9
+predgroup=9 _TYPE_=1 _FREQ_=1928316 pred_Mean=0.6177720931 ind_visit_pc_Mean=0.622411472 _ERROR_=0
+_N_=10
+NOTE: There were 10 observations read from the data set OUT.VISITS_PC_MEANOUT_EXCH.
+NOTE: DATA statement used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.01 seconds
+
+
+437  data _NULL_;
+438  /*SET  out.&dv._meanout_&type;*/
+439  SET out.visits_pc_meanout_exch (DROP= _ERROR_ _N_ _TYPE_);
+ERROR: The variable _ERROR_ in the DROP, KEEP, or RENAME list has never been referenced.
+ERROR: The variable _N_ in the DROP, KEEP, or RENAME list has never been referenced.
+ERROR: Invalid DROP, KEEP, or RENAME option on file OUT.VISITS_PC_MEANOUT_EXCH.
+440  put _all_;
+441  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+442  data _NULL_;
+443  /*SET  out.&dv._meanout_&type;*/
+444  SET out.visits_pc_meanout_exch (DROP= _TYPE_);
+445  put _all_;
+446  RUN;
+
+predgroup=0 _FREQ_=1928316 pred_Mean=0.1164811969 ind_visit_pc_Mean=0.1209946917 _ERROR_=0 _N_=1
+predgroup=1 _FREQ_=1928320 pred_Mean=0.2058482611 ind_visit_pc_Mean=0.2054264852 _ERROR_=0 _N_=2
+predgroup=2 _FREQ_=1928316 pred_Mean=0.2733731864 ind_visit_pc_Mean=0.255721054 _ERROR_=0 _N_=3
+predgroup=3 _FREQ_=1928577 pred_Mean=0.3137390126 ind_visit_pc_Mean=0.3088759225 _ERROR_=0 _N_=4
+predgroup=4 _FREQ_=1928050 pred_Mean=0.3485970637 ind_visit_pc_Mean=0.3493394881 _ERROR_=0 _N_=5
+predgroup=5 _FREQ_=1928324 pred_Mean=0.3816171398 ind_visit_pc_Mean=0.3825555249 _ERROR_=0 _N_=6
+predgroup=6 _FREQ_=1928318 pred_Mean=0.4172644124 ind_visit_pc_Mean=0.4287902721 _ERROR_=0 _N_=7
+predgroup=7 _FREQ_=1928316 pred_Mean=0.4579564231 ind_visit_pc_Mean=0.4806426955 _ERROR_=0 _N_=8
+predgroup=8 _FREQ_=1928318 pred_Mean=0.5108906827 ind_visit_pc_Mean=0.5178663478 _ERROR_=0 _N_=9
+predgroup=9 _FREQ_=1928316 pred_Mean=0.6177720931 ind_visit_pc_Mean=0.622411472 _ERROR_=0 _N_=10
+NOTE: There were 10 observations read from the data set OUT.VISITS_PC_MEANOUT_EXCH.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+447  **********************************************************************************************
+448  AUTHOR   : KTW
+449  PROJECT  : ISP Utilization
+450  PURPOSE  : Macro, VISIT dv's
+451  VERSION  : 2023-10-22
+452           : -- added data.intgroup to row 111 ish (no need to do it over and over it is the same
+452!  each time)
+453  OUTPUT   : pdf & log file
+454
+455  https://stats.oarc.ucla.edu/sas/dae/negative-binomial-regression/
+456  The param=ref option changes the coding from effect coding (default) to reference coding (dummy
+456!  coding)
+457  The ref=first option changes the reference group to the first level of prog.
+458  The type3 option is used to get the multi-degree-of-freedom test of cat vars in class statement
+459  ***********************************************************************************************
+459! ;
+460  %macro hurdle(dat=,      /* data.utilization */
+461                prob=,     /* probability variable, starts wih `ind_`  */
+462                visits=,   /* visit DV var, start with `visits_` */
+463                dv=,       /* used in ranks*/
+464                type=      /* correlation type (exch, ind were tested) */
+465                );
+466
+467  /*SECTION 01: INTRO / CONFIG/ DOCUMENTATION*/
+468  OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+469  %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1,
+470               %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname)));
+471  %LET script  = %qsubstr(%sysget(SAS_EXECFILENAME), 1,
+472                 %length(%sysget(SAS_EXECFILENAME))-4); * remove .sas to use in log, pdf;
+473  %LET today = %SYSFUNC(today(), YYMMDD10.);
+474  %LET log   = &root.run_&dv._type_&type._&today..log;
+475
+476  PROC PRINTTO LOG = "&log" NEW; RUN;
+477
+478  /*SECTION 02: PROB MODEL*/
+479  PROC GENMOD DATA  = &dat;
+480  CLASS mcaid_id
+481         int(ref='0')         int_imp(ref='0')
+482         budget_grp_new(ref='MAGI Eligible Children')
+483         race(ref='non-Hispanic White/Caucasian')
+484         sex(ref='Female')
+485         rae_person_new(ref='3')
+486         age_cat(ref='ages 21-44')
+487         fqhc(ref ='0')
+488         bh_oth17(ref='0')    bh_oth18(ref='0')       bh_oth19(ref='0')
+489         bh_er17(ref='0')     bh_er18(ref='0')        bh_er19(ref='0')
+490         bh_hosp17(ref='0')   bh_hosp18(ref='0')      bh_hosp19(ref='0')
+491         adj_pd_total_17cat(ref='0')
+492         adj_pd_total_18cat(ref='0')
+493         adj_pd_total_19cat(ref='0')
+494         &prob;
+495  MODEL &prob(event='1') = int      int_imp     time
+496         season1         season2     season3
+497         budget_grp_new  race        sex         rae_person_new
+498         age_cat         fqhc
+499         bh_oth17        bh_oth18    bh_oth19
+500         bh_er17         bh_er18     bh_er19
+501         bh_hosp17       bh_hosp18   bh_hosp19
+502         adj_pd_total_17cat
+503         adj_pd_total_18cat
+504         adj_pd_total_19cat / DIST=binomial;
+505  REPEATED SUBJECT = mcaid_id / type=&type ;
+506  store out.&dv._pmodel_&type;
+507  output out = predout pred = pred;
+508  run;
+509
+510  /*SECTION 03: POSITIVE VISIT MODEL*/
+511  TITLE 'Visit Model';
+512  PROC GENMOD DATA  = &dat desc;
+513  WHERE &visits > 0;
+514  CLASS mcaid_id
+515         int(ref='0')         int_imp(ref='0')
+516         budget_grp_new(ref='MAGI Eligible Children')
+517         race(ref='non-Hispanic White/Caucasian')
+518         sex(ref='Female')
+519         rae_person_new(ref='3')
+520         age_cat(ref='ages 21-44')
+521         fqhc(ref ='0')
+522         bh_oth17(ref='0')    bh_oth18(ref='0')       bh_oth19(ref='0')
+523         bh_er17(ref='0')     bh_er18(ref='0')        bh_er19(ref='0')
+524         bh_hosp17(ref='0')   bh_hosp18(ref='0')      bh_hosp19(ref='0')
+525         adj_pd_total_17cat(ref='0')
+526         adj_pd_total_18cat(ref='0')
+527         adj_pd_total_19cat(ref='0') ;
+528  MODEL &visits = int      int_imp     time
+529         season1         season2     season3
+530         budget_grp_new  race        sex         rae_person_new
+531         age_cat         fqhc
+532         bh_oth17        bh_oth18    bh_oth19
+533         bh_er17         bh_er18     bh_er19
+534         bh_hosp17       bh_hosp18   bh_hosp19
+535         adj_pd_total_17cat
+536         adj_pd_total_18cat
+537         adj_pd_total_19cat  / dist=negbin link=log ;
+538  REPEATED SUBJECT = mcaid_id / type = &type;
+539  store out.&dv._vmodel_&type;
+540  RUN;
+541  TITLE;
+542
+543  /*SECTION 04: AGGREGATING ACTUAL, PREDICTED OUTCOMES W/ GROUP OF INTEREST*/
+544  * OUT:[intgroup]      IN :[&dat &dat]
+545
+546  * the predictions for visits will be made for each person twice, once exposed and once
+546! unexposed;
+547  * OUT:[P_INTGROUP]      IN :[out=out.&dv._pmodel]
+548   prob of util------------------------------------------------ ;
+549  proc plm restore=out.&dv._pmodel_&type;
+550  score data=data.intgroup out=p_intgroup predicted=p_prob / ilink;
+551  run;
+552
+553  * OUT:[VP_INTGROUP]     IN :[out=out.&dv._vmodel]
+554  prob of visit -------------------------------------------------;
+555  proc plm restore=out.&dv._vmodel_&type;
+556  score data=p_intgroup out=VP_intgroup predicted=p_visit / ilink;
+557  run;
+558
+559  * OUT:[out.&dv._mean_&type] IN:[VP_intgroup]
+560  Person average visit is calculated------------------------------;
+561  data out.&dv._mean_&type;
+562    set VP_intgroup;
+563    a_visit = p_prob*p_visit;* (1-p term = 0);
+564  run;
+565
+566  * OUT:[out.&dv._avp_&type] IN:[out.&dv._mean_&type]
+567  Group average visit is calculated and contrasted-----------------;
+568  proc sql;
+569  create table out.&dv._avp_&type as
+570    select mean(case when exposed=1 then a_visit else . end ) as visit_exposed,
+571           mean(case when exposed=0 then a_visit else . end ) as visit_unexposed,
+572    calculated visit_exposed - calculated visit_unexposed as visit_diff
+573    from out.&dv._mean_&type;
+574  quit;
+575
+576  * put AVP results in log for reference/ comparing results;
+577  data _NULL_;
+578  SET  out.&dv._avp_&type;
+579  put  visit_exposed= visit_unexposed= visit_diff=;
+580  RUN;
+581
+582  * DECILE CALIBRATION plot prep/data ==================================================;
+583
+584  proc rank data = predout out = predgroup groups = 10;
+585    var pred;
+586    ranks predgroup;
+587  run;
+588
+589  proc means data = predgroup   noprint nway;
+590    var pred &prob;
+591    class predgroup;
+592    output out = out.&dv._meanout_&type mean = /autoname;
+593  run;
+594
+595  * put results in log for reference in case you re-reun this;
+596  data _NULL_;
+597  SET  out.&dv._meanout_&type (DROP= _TYPE_);
+598  /*SET out.visits_pc_meanout_exch (DROP= _TYPE_); */
+599  put _all_;
+600  RUN;
+601
+602  PROC PRINTTO; RUN;
+603  %mend;
+
+604  **********************************************************************************************
+605  AUTHOR   : KTW
+606  PROJECT  : ISP Utilization
+607  PURPOSE  : Macro, VISIT dv's
+608  VERSION  : 2023-10-22
+609           : -- added data.intgroup to row 111 ish (no need to do it over and over it is the same
+609!  each time)
+610  OUTPUT   : pdf & log file
+611
+612  https://stats.oarc.ucla.edu/sas/dae/negative-binomial-regression/
+613  The param=ref option changes the coding from effect coding (default) to reference coding (dummy
+613!  coding)
+614  The ref=first option changes the reference group to the first level of prog.
+615  The type3 option is used to get the multi-degree-of-freedom test of cat vars in class statement
+616  ***********************************************************************************************
+616! ;
+617  %macro hurdle(dat=,      /* data.utilization */
+618                prob=,     /* probability variable, starts wih `ind_`  */
+619                visits=,   /* visit DV var, start with `visits_` */
+620                dv=,       /* used in ranks*/
+621                type=      /* correlation type (exch, ind were tested) */
+622                );
+623
+624  /*SECTION 01: INTRO / CONFIG/ DOCUMENTATION*/
+625  OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+626  %LET root  = %qsubstr(%sysget(SAS_EXECFILEPATH), 1,
+627               %length(%sysget(SAS_EXECFILEPATH))-%length(%sysget(SAS_EXECFILEname)));
+628  %LET script  = %qsubstr(%sysget(SAS_EXECFILENAME), 1,
+629                 %length(%sysget(SAS_EXECFILENAME))-4); * remove .sas to use in log, pdf;
+630  %LET today = %SYSFUNC(today(), YYMMDD10.);
+631  %LET log   = &root.run_&dv._type_&type._&today..log;
+632
+633  PROC PRINTTO LOG = "&log" NEW; RUN;
+634
+635  /*SECTION 02: PROB MODEL*/
+636  PROC GENMOD DATA  = &dat;
+637  CLASS mcaid_id
+638         int(ref='0')         int_imp(ref='0')
+639         budget_grp_new(ref='MAGI Eligible Children')
+640         race(ref='non-Hispanic White/Caucasian')
+641         sex(ref='Female')
+642         rae_person_new(ref='3')
+643         age_cat(ref='ages 21-44')
+644         fqhc(ref ='0')
+645         bh_oth17(ref='0')    bh_oth18(ref='0')       bh_oth19(ref='0')
+646         bh_er17(ref='0')     bh_er18(ref='0')        bh_er19(ref='0')
+647         bh_hosp17(ref='0')   bh_hosp18(ref='0')      bh_hosp19(ref='0')
+648         adj_pd_total_17cat(ref='0')
+649         adj_pd_total_18cat(ref='0')
+650         adj_pd_total_19cat(ref='0')
+651         &prob;
+652  MODEL &prob(event='1') = int      int_imp     time
+653         season1         season2     season3
+654         budget_grp_new  race        sex         rae_person_new
+655         age_cat         fqhc
+656         bh_oth17        bh_oth18    bh_oth19
+657         bh_er17         bh_er18     bh_er19
+658         bh_hosp17       bh_hosp18   bh_hosp19
+659         adj_pd_total_17cat
+660         adj_pd_total_18cat
+661         adj_pd_total_19cat / DIST=binomial;
+662  REPEATED SUBJECT = mcaid_id / type=&type ;
+663  store out.&dv._pmodel_&type;
+664  output out = predout pred = pred;
+665  run;
+666
+667  /*SECTION 03: POSITIVE VISIT MODEL*/
+668  TITLE 'Visit Model';
+669  PROC GENMOD DATA  = &dat desc;
+670  WHERE &visits > 0;
+671  CLASS mcaid_id
+672         int(ref='0')         int_imp(ref='0')
+673         budget_grp_new(ref='MAGI Eligible Children')
+674         race(ref='non-Hispanic White/Caucasian')
+675         sex(ref='Female')
+676         rae_person_new(ref='3')
+677         age_cat(ref='ages 21-44')
+678         fqhc(ref ='0')
+679         bh_oth17(ref='0')    bh_oth18(ref='0')       bh_oth19(ref='0')
+680         bh_er17(ref='0')     bh_er18(ref='0')        bh_er19(ref='0')
+681         bh_hosp17(ref='0')   bh_hosp18(ref='0')      bh_hosp19(ref='0')
+682         adj_pd_total_17cat(ref='0')
+683         adj_pd_total_18cat(ref='0')
+684         adj_pd_total_19cat(ref='0') ;
+685  MODEL &visits = int      int_imp     time
+686         season1         season2     season3
+687         budget_grp_new  race        sex         rae_person_new
+688         age_cat         fqhc
+689         bh_oth17        bh_oth18    bh_oth19
+690         bh_er17         bh_er18     bh_er19
+691         bh_hosp17       bh_hosp18   bh_hosp19
+692         adj_pd_total_17cat
+693         adj_pd_total_18cat
+694         adj_pd_total_19cat  / dist=negbin link=log ;
+695  REPEATED SUBJECT = mcaid_id / type = &type;
+696  store out.&dv._vmodel_&type;
+697  RUN;
+698  TITLE;
+699
+700  /*SECTION 04: AGGREGATING ACTUAL, PREDICTED OUTCOMES W/ GROUP OF INTEREST*/
+701  * OUT:[intgroup]      IN :[&dat &dat]
+702
+703  * the predictions for visits will be made for each person twice, once exposed and once
+703! unexposed;
+704  * OUT:[P_INTGROUP]      IN :[out=out.&dv._pmodel]
+705   prob of util------------------------------------------------ ;
+706  proc plm restore=out.&dv._pmodel_&type;
+707  score data=data.intgroup out=p_intgroup predicted=p_prob / ilink;
+708  run;
+709
+710  * OUT:[VP_INTGROUP]     IN :[out=out.&dv._vmodel]
+711  prob of visit -------------------------------------------------;
+712  proc plm restore=out.&dv._vmodel_&type;
+713  score data=p_intgroup out=VP_intgroup predicted=p_visit / ilink;
+714  run;
+715
+716  * OUT:[out.&dv._mean_&type] IN:[VP_intgroup]
+717  Person average visit is calculated------------------------------;
+718  data out.&dv._mean_&type;
+719    set VP_intgroup;
+720    a_visit = p_prob*p_visit;* (1-p term = 0);
+721  run;
+722
+723  * OUT:[out.&dv._avp_&type] IN:[out.&dv._mean_&type]
+724  Group average visit is calculated and contrasted-----------------;
+725  proc sql;
+726  create table out.&dv._avp_&type as
+727    select mean(case when exposed=1 then a_visit else . end ) as visit_exposed,
+728           mean(case when exposed=0 then a_visit else . end ) as visit_unexposed,
+729    calculated visit_exposed - calculated visit_unexposed as visit_diff
+730    from out.&dv._mean_&type;
+731  quit;
+732
+733  * put AVP results in log for reference/ comparing results;
+734  data _NULL_;
+735  SET  out.&dv._avp_&type;
+736  put  visit_exposed= visit_unexposed= visit_diff=;
+737  RUN;
+738
+739  * DECILE CALIBRATION plot prep/data ==================================================;
+740
+741  proc rank data = predout out = predgroup groups = 10;
+742    var pred;
+743    ranks predgroup;
+744  run;
+745
+746  proc means data = predgroup   noprint nway;
+747    var pred &prob;
+748    class predgroup;
+749    output out = out.&dv._meanout_&type mean = /autoname;
+750  run;
+751
+752  * print results to log for reference;
+753  data _NULL_;
+754  SET  out.&dv._meanout_&type (DROP= _TYPE_);
+755  /*SET out.visits_pc_meanout_exch (DROP= _TYPE_); */
+756  put _all_;
+757  RUN;
+758
+759  PROC PRINTTO; RUN;
+760  %mend;
+
+761  %LET dat = data.utilization;
+762  %INCLUDE
+762! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_hurdle_visits.sas";
+923  %LET dat = data.utilization;
+924  PROC SQL;
+925  CREATE TABLE data.cols_visit_dvs AS
+926  SELECT name, type, length, label
+927  FROM dictionary.columns
+928  WHERE UPCASE(LIBNAME)="DATA" AND
+929        UPCASE(MEMNAME)="UTILIZATION" AND
+930        (NAME LIKE "ind_visit%" or
+931        NAME LIKE "visit%");
+NOTE: Table DATA.COLS_VISIT_DVS created, with 8 rows and 4 columns.
+
+932  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.32 seconds
+      cpu time            0.00 seconds
+
+
+933
+934  PROC PRINT DATA = data.cols_visit_dvs; RUN;
+
+NOTE: There were 8 observations read from the data set DATA.COLS_VISIT_DVS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+
+935  %hurdle  (dat = &dat, prob= ind_visit_pc, visits=visits_pc, dv=visits_pc, type=ind);
+MLOGIC(HURDLE):  Beginning execution.
+MLOGIC(HURDLE):  Parameter DAT has value data.utilization
+MLOGIC(HURDLE):  Parameter PROB has value ind_visit_pc
+MLOGIC(HURDLE):  Parameter VISITS has value visits_pc
+MLOGIC(HURDLE):  Parameter DV has value visits_pc
+MLOGIC(HURDLE):  Parameter TYPE has value ind
+MPRINT(HURDLE):   OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+MLOGIC(HURDLE):  %LET (variable name is ROOT)
+MLOGIC(HURDLE):  %LET (variable name is SCRIPT)
+MPRINT(HURDLE):   * remove .sas to use in log, pdf;
+MLOGIC(HURDLE):  %LET (variable name is TODAY)
+MLOGIC(HURDLE):  %LET (variable name is LOG)
+MPRINT(HURDLE):   PROC PRINTTO LOG =
+"S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\run_visits_pc_type_ind
+_2023-10-24.log" NEW;
+MPRINT(HURDLE):   RUN;
+
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+MLOGIC(HURDLE):  Ending execution.
+
+936  proc datasets library=work kill;
+NOTE: Deleting WORK.FORMATS (memtype=CATALOG).
+NOTE: Deleting WORK.PREDGROUP (memtype=DATA).
+NOTE: Deleting WORK.PREDOUT (memtype=DATA).
+NOTE: Deleting WORK.P_INTGROUP (memtype=DATA).
+NOTE: Deleting WORK.SASMAC3 (memtype=CATALOG).
+NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
+NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
+NOTE: Deleting WORK.TEMPLAT (memtype=ITEMSTOR).
+NOTE: File WORK.TEMPLAT (memtype=ITEMSTOR) cannot be deleted because it is in use.
+NOTE: Deleting WORK.VP_INTGROUP (memtype=DATA).
+936!                                  quit;
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.50 seconds
+      cpu time            0.43 seconds
+
+
+937  %hurdle  (dat = &dat, prob= ind_visit_ed, visits=visits_ed, dv=visits_ed,type=ind);
+MLOGIC(HURDLE):  Beginning execution.
+MLOGIC(HURDLE):  Parameter DAT has value data.utilization
+MLOGIC(HURDLE):  Parameter PROB has value ind_visit_ed
+MLOGIC(HURDLE):  Parameter VISITS has value visits_ed
+MLOGIC(HURDLE):  Parameter DV has value visits_ed
+MLOGIC(HURDLE):  Parameter TYPE has value ind
+MPRINT(HURDLE):   OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+MLOGIC(HURDLE):  %LET (variable name is ROOT)
+MLOGIC(HURDLE):  %LET (variable name is SCRIPT)
+MPRINT(HURDLE):   * remove .sas to use in log, pdf;
+MLOGIC(HURDLE):  %LET (variable name is TODAY)
+MLOGIC(HURDLE):  %LET (variable name is LOG)
+MPRINT(HURDLE):   PROC PRINTTO LOG =
+"S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\run_visits_ed_type_ind
+_2023-10-24.log" NEW;
+MPRINT(HURDLE):   RUN;
+
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+MLOGIC(HURDLE):  Ending execution.
+
+938  proc datasets library=work kill;
+NOTE: Deleting WORK.PREDGROUP (memtype=DATA).
+NOTE: Deleting WORK.PREDOUT (memtype=DATA).
+NOTE: Deleting WORK.P_INTGROUP (memtype=DATA).
+NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
+NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
+NOTE: Deleting WORK.TEMPLAT (memtype=ITEMSTOR).
+NOTE: File WORK.TEMPLAT (memtype=ITEMSTOR) cannot be deleted because it is in use.
+NOTE: Deleting WORK.VP_INTGROUP (memtype=DATA).
+938!                                  quit;
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.45 seconds
+      cpu time            0.42 seconds
+
+
+939  %hurdle  (dat = &dat, prob= ind_visit_tel, visits=visits_tel,
+939! dv=visits_tel,type=ind);
+MLOGIC(HURDLE):  Beginning execution.
+MLOGIC(HURDLE):  Parameter DAT has value data.utilization
+MLOGIC(HURDLE):  Parameter PROB has value ind_visit_tel
+MLOGIC(HURDLE):  Parameter VISITS has value visits_tel
+MLOGIC(HURDLE):  Parameter DV has value visits_tel
+MLOGIC(HURDLE):  Parameter TYPE has value ind
+MPRINT(HURDLE):   OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+MLOGIC(HURDLE):  %LET (variable name is ROOT)
+MLOGIC(HURDLE):  %LET (variable name is SCRIPT)
+MPRINT(HURDLE):   * remove .sas to use in log, pdf;
+MLOGIC(HURDLE):  %LET (variable name is TODAY)
+MLOGIC(HURDLE):  %LET (variable name is LOG)
+MPRINT(HURDLE):   PROC PRINTTO LOG =
+"S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\run_visits_tel_type_in
+d_2023-10-24.log" NEW;
+MPRINT(HURDLE):   RUN;
+
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+MLOGIC(HURDLE):  Ending execution.
+
+940  proc datasets library=work kill;
+NOTE: Deleting WORK.PREDGROUP (memtype=DATA).
+NOTE: Deleting WORK.PREDOUT (memtype=DATA).
+NOTE: Deleting WORK.P_INTGROUP (memtype=DATA).
+NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
+NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
+NOTE: Deleting WORK.TEMPLAT (memtype=ITEMSTOR).
+NOTE: File WORK.TEMPLAT (memtype=ITEMSTOR) cannot be deleted because it is in use.
+NOTE: Deleting WORK.VP_INTGROUP (memtype=DATA).
+940!                                  quit;
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.50 seconds
+      cpu time            0.48 seconds
+
+
+941  %hurdle  (dat = &dat, prob= ind_visit_ffsbh, visits=visits_ffsbh,
+941! dv=visits_ffsbh,type=ind);
+MLOGIC(HURDLE):  Beginning execution.
+MLOGIC(HURDLE):  Parameter DAT has value data.utilization
+MLOGIC(HURDLE):  Parameter PROB has value ind_visit_ffsbh
+MLOGIC(HURDLE):  Parameter VISITS has value visits_ffsbh
+MLOGIC(HURDLE):  Parameter DV has value visits_ffsbh
+MLOGIC(HURDLE):  Parameter TYPE has value ind
+MPRINT(HURDLE):   OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
+MLOGIC(HURDLE):  %LET (variable name is ROOT)
+MLOGIC(HURDLE):  %LET (variable name is SCRIPT)
+MPRINT(HURDLE):   * remove .sas to use in log, pdf;
+MLOGIC(HURDLE):  %LET (variable name is TODAY)
+MLOGIC(HURDLE):  %LET (variable name is LOG)
+MPRINT(HURDLE):   PROC PRINTTO LOG =
+"S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\run_visits_ffsbh_type_
+ind_2023-10-24.log" NEW;
+MPRINT(HURDLE):   RUN;
+
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+MLOGIC(HURDLE):  Ending execution.
+942  proc datasets library=work kill;
+NOTE: Deleting WORK.PREDGROUP (memtype=DATA).
+NOTE: Deleting WORK.PREDOUT (memtype=DATA).
+NOTE: Deleting WORK.P_INTGROUP (memtype=DATA).
+NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
+NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
+NOTE: Deleting WORK.TEMPLAT (memtype=ITEMSTOR).
+NOTE: File WORK.TEMPLAT (memtype=ITEMSTOR) cannot be deleted because it is in use.
+NOTE: Deleting WORK.VP_INTGROUP (memtype=DATA).
+942!                                  quit;
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.88 seconds
+      cpu time            0.45 seconds
+
+
+943  DATA avps;
+944  SET  cost_pc_avp_exch indsname=indsname;
+ERROR: File WORK.COST_PC_AVP_EXCH.DATA does not exist.
+945  dsname=indsname;
+946  RUN;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.AVPS may be incomplete.  When this step was stopped there
+         were 0 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+947  DATA avps;
+948  SET  out.cost_pc_avp_exch indsname=indsname;
+949  dsname=indsname;
+950  RUN;
+
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_EXCH.
+NOTE: The data set WORK.AVPS has 1 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+951  DATA avps;
+952  SET  out.cost_pc_avp_exch indsname=indsname;
+953  SET out.cost_pc_avp_ind indsname=indsname;
+954  dsname=indsname;
+955  RUN;
+
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_EXCH.
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_IND.
+NOTE: The data set WORK.AVPS has 1 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.00 seconds
+
+
+956  proc PRINT data = avps; run;
+
+NOTE: There were 1 observations read from the data set WORK.AVPS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+
+957  DATA avps;
+958  SET  out.cost_pc_avp_exch indsname=source;
+959  SET out.cost_pc_avp_ind indsname=source;
+960  src=indsname;
+961  RUN;
+
+NOTE: Variable indsname is uninitialized.
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_EXCH.
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_IND.
+NOTE: The data set WORK.AVPS has 1 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.00 seconds
+
+
+962
+963  proc PRINT data = avps; run;
+
+NOTE: There were 1 observations read from the data set WORK.AVPS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+
+964  DATA avps;
+965  SET out.cost_pc_avp_exch out.cost_pc_avp_ind indsname=source;
+966  src=indsname;
+967  RUN;
+
+NOTE: Variable indsname is uninitialized.
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_EXCH.
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_IND.
+NOTE: The data set WORK.AVPS has 2 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+968
+969  proc PRINT data = avps; run;
+
+NOTE: There were 2 observations read from the data set WORK.AVPS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+
+970  DATA avps;
+971  SET out.cost_pc_avp_exch out.cost_pc_avp_ind indsname=source;
+972  dsname = scan(source,2,'.');
+973  RUN;
+
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_EXCH.
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_IND.
+NOTE: The data set WORK.AVPS has 2 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+974
+975  proc PRINT data = avps; run;
+
+NOTE: There were 2 observations read from the data set WORK.AVPS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+
+976  DATA avps;
+977  SET out.cost_pc_avp_exch
+978      out.cost_pc_avp_ind
+979      out.cost_rx_avp_ind
+980      out.cost_total_avp_exch
+981      out.cost_total_avp_ind
+982      out.visits_ed_avp_exch
+983      out.visits_ed_avp_ind
+984      out.visits_ffsbh_avp_ind
+985      out.visits_pc_avp_exch
+986      out.visits_pc_avp_ind
+987      out.visits_tel_avp_exch
+988      out.visits_tel_avp_ind     indsname=source;
+989  dsname = scan(source,2,'.');
+990  RUN;
+
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_EXCH.
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_IND.
+NOTE: There were 1 observations read from the data set OUT.COST_RX_AVP_IND.
+NOTE: There were 1 observations read from the data set OUT.COST_TOTAL_AVP_EXCH.
+NOTE: There were 1 observations read from the data set OUT.COST_TOTAL_AVP_IND.
+NOTE: There were 1 observations read from the data set OUT.VISITS_ED_AVP_EXCH.
+NOTE: There were 1 observations read from the data set OUT.VISITS_ED_AVP_IND.
+NOTE: There were 1 observations read from the data set OUT.VISITS_FFSBH_AVP_IND.
+NOTE: There were 1 observations read from the data set OUT.VISITS_PC_AVP_EXCH.
+NOTE: There were 1 observations read from the data set OUT.VISITS_PC_AVP_IND.
+NOTE: There were 1 observations read from the data set OUT.VISITS_TEL_AVP_EXCH.
+NOTE: There were 1 observations read from the data set OUT.VISITS_TEL_AVP_IND.
+NOTE: The data set WORK.AVPS has 12 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.42 seconds
+      cpu time            0.04 seconds
+
+
+991
+992  proc PRINT data = avps; run;
+
+NOTE: There were 12 observations read from the data set WORK.AVPS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+

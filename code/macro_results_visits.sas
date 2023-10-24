@@ -1,4 +1,4 @@
-%macro results(pmodel=,vmodel=,dv=,prob_dv=,visit_dv=);
+%macro results_visits(pmodel=,vmodel=,dv=,prob_dv=,visit_dv=);
 
 OPTIONS pageno=1 linesize=88 pagesize=60 SOURCE;
 %LET root    = %qsubstr(%sysget(SAS_EXECFILEPATH), 1, 
