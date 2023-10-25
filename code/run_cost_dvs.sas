@@ -15,8 +15,6 @@ Per Mark : Use mode for ref class vars budget_group & race if possible
 /*libname int clear; */
 
 %LET dat = data.utilization; 
-
-/*PROC CONTENTS DATA = data.utilization VARNUM; run; */
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_hurdle_costs.sas";
 
 * [NOTES %HURDLE] ==============================================================================
@@ -55,8 +53,8 @@ proc datasets library=work kill; quit;
 * Results: ; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_hurdle_costs_results_v2.sas";
 %results (dv = cost_pc, pvar=ind_cost_pc, cvar=cost_pc);
-%results (pmodel=cost_&outcome._pmodel, cmodel=cost_&outcome_cmodel, dv=cost_&outcome);
-%results (pmodel=cost_&outcome._pmodel, cmodel=cost_&outcome_cmodel, dv=cost_&outcome);
+%results (dv = cost_total, pvar=ind_cost_total, cvar=cost_total);
+%results (dv = cost_rx, pvar=ind_cost_rx, cvar=cost_rx);
 
 
 

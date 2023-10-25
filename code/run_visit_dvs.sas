@@ -74,3 +74,7 @@ proc datasets library=work kill; quit;
 proc datasets library=work kill; quit; 
 
 
+** RESULTS ===================================;
+%INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_results_visits.sas";
+%results_visits(dv=visits_pc, visittype=pc); 
+

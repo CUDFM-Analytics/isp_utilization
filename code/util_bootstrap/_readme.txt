@@ -4,6 +4,8 @@ The other three are called from 01_run_parallel
 STRATA: int (set in program_to_boot)
 ANALYSIS: int_imp (set in hurdle models and 02_boot_analysis)
 
+Logs prior to 10/24 in util_bootstrap weren't on final dataset; logs prior to 10/3 were with samprates backwards :(
+
 (1) 01_run_parallel executes (2) macro_parallel and (3) program_to_boot; 
 (3) program_to_boot executes macro_resample_v4
 (2) boot_analysis is then run (on int_imp)
@@ -14,7 +16,7 @@ TO SETUP the bootstrap, edit the following sas code files:
 	- 
 2. program_to_boot.sas
 	- set strata: INT
-	- set samprate (1, .2)
+	- set samprate (.2, 1)
 3. 02_boot_analysis.sas
 	- set compare, ... INT_IMP
 
