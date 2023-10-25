@@ -62,9 +62,8 @@ TITLE;
 %mend; 
 
 ***************************************************************;
-
 ODS PDF FILE = "&pdf" STARTPAGE = no;
-Title "ISP Utilization Dataset Summary (10/19/2023)";
+Title "ISP Utilization Dataset Summary &today";
 
 proc odstext;
 p "Date: &today";
