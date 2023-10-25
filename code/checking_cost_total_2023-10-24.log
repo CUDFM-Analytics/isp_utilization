@@ -1,0 +1,143 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.14 seconds
+      cpu time            0.64 seconds
+
+1    %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+2    libname in "&projRoot\data";
+NOTE: Libref IN was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
+3    * get formats;
+4    OPTIONS FMTSEARCH=(in);
+5
+6    * data to boot ;
+7    %let data = in.utilization;
+8
+9    /*PROC CONTENTS DATA = &data; RUN; */
+10   PROC FREQ DATA = &data; TABLES int; RUN;
+
+NOTE: Writing HTML Body file: sashtml.htm
+WARNING: Format pctfmt. failed to load!
+WARNING: Format pctfmt. failed to load!
+NOTE: There were 19283171 observations read from the data set IN.UTILIZATION.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           33.62 seconds
+      cpu time            1.25 seconds
+
+
+10 !                                          *INT = 0 13231202, 1=1893477;
+
+11   *Expectation Checks: ;
+12   libname out "&projRoot\data_boot_processed";
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
+
+13   PROC SQL;
+14   SELECT count(distinct bootunit)
+15   FROM out._resample_out_1
+16   group by replicate;
+17   QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           13:23.21
+      cpu time            1:34.04
+
+
+18   PROC SQL;
+19   SELECT int
+20        , count(distinct mcaid_id) as n_un_id
+21   FROM &data
+22   GROUP BY int;
+23   QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           35.38 seconds
+      cpu time            4.39 seconds
+
+
+24           LIBNAME tmp "&in/out_hurdle";
+WARNING: Apparent symbolic reference IN not resolved.
+NOTE: Library TMP does not exist.
+25   LIBNAME int "&projRoot/data/interim";
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data\interim
+
+26   PROC CONTENTS DATA = int.final_03 VARNUM; run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.01 seconds
+
+
+27   PROC CONTENTS DATA = int.qrylong_03 VARNUM; run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.00 seconds
+
+
+28   PROC FREQ DATA = int.qrylong_03; tables fy; run;
+
+WARNING: Format pctfmt. failed to load!
+WARNING: Format pctfmt. failed to load!
+NOTE: There were 81443895 observations read from the data set INT.QRYLONG_03.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1:53.50
+      cpu time            4.25 seconds
+
+
+
+29   PROC SQL;
+30   CREATE TABLE zz_final_03 AS
+31   SELECT mcaid_id month dt_qrtr FY time adj_total
+                     -----
+                     22
+                     76
+ERROR 22-322: Syntax error, expecting one of the following: a quoted string, !, !!, &, (, *, **, +,
+              ',', -, '.', /, <, <=, <>, =, >, >=, ?, AND, AS, BETWEEN, CONTAINS, EQ, EQT, FORMAT,
+              FROM, GE, GET, GT, GTT, IN, INFORMAT, INTO, IS, LABEL, LE, LEN, LENGTH, LET, LIKE,
+              LT, LTT, NE, NET, NOT, NOTIN, OR, TRANSCODE, ^, ^=, |, ||, ~, ~=.
+
+ERROR 76-322: Syntax error, statement will be ignored.
+
+32   FROM int.qrylong_03
+33   WHERE month ge '01JUL2019'd and month lt '01JUL2020'd;
+34   QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+35   PROC SQL;
+36   CREATE TABLE zz_final_03 AS
+37   SELECT mcaid_id, month, dt_qrtr, FY, time, adj_total
+38   FROM int.qrylong_03
+39   WHERE month ge '01JUL2019'd and month lt '01JUL2020'd;
+NOTE: Table WORK.ZZ_FINAL_03 created, with 11652655 rows and 6 columns.
+
+40   QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2:21.44
+      cpu time            5.86 seconds
+
+

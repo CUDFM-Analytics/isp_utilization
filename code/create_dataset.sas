@@ -3,7 +3,7 @@ AUTHOR   : KTW
 PROJECT  : ISP Utilization Analysis
 PURPOSE  : Gather, Process datasets from analytic subset dir, Create final analysis dataset and mini dataset
 VERSION  : 2023-10-18 Get updated datasets, up to and including June 2023 (less than July 01, 2023)
-            - 10-18 Details: Updated raw.time_dim to include q's through 16
+            - 10-18 Details: Updated raw.time_dim to include q's through 16 and updated month 2 age q's for updated quarters
             - 09-08 manually renamed data.analysis as data.analysis_prev, created minimized length data.utilization look for #UPDATE[09-08-2023] approx row 948
             - 06-06 to check on the BH's: added total var maybe some are wrong as I'm still getting Hessian errors
             - 06-05 to combine bh cat variables into 1 bh cat var
@@ -497,10 +497,19 @@ SET  int.qrylong_post_0 (KEEP = mcaid_id    month   dt_qrtr     time       FY
                                 n_ed        n_pc    n_ffsbh     n_tele   
                                 adj_total   adj_pc  adj_rx
                          WHERE = (month ge '01JUL2019'd)); 
-ARRAY dv(*) n_pc n_ed n_ffsbh n_tele adj_total adj_pc adj_rx;
-DO i=1 to dim(dv); 
-IF dv(i)=. THEN dv(i)=0; ELSE dv(i)=dv(i);
+ARRAY mult(*) n_ed n_pc n_ffsbh n_tele;
+DO i=1 to dim(mult); 
+mult(i)=mult(i)*6; 
 END;
+RUN; 
+
+*** OH MY GOD I FOUND IT- DON'T USE ABOVE!! Don't se the values to 0 before calculating the freaking avg, you idiot!!!; 
+DATA int.qrylong_post_1a (KEEP = mcaid_id month time FY n_ed n_pc n_ffsbh n_tele adj_total adj_pc adj_rx);
+SET  int.qrylong_post_0 (KEEP = mcaid_id    month   dt_qrtr     time       FY
+                                n_ed        n_pc    n_ffsbh     n_tele   
+                                adj_total   adj_pc  adj_rx
+                         WHERE = (month ge '01JUL2019'd)); 
+
 RUN; 
 
 DATA int.qrylong_post_2 (DROP=i);
@@ -531,9 +540,57 @@ FROM int.qrylong_post_2
 GROUP BY mcaid_id, time;
 QUIT; 
 
+PROC SQL;
+CREATE TABLE int.qrylong_post_3a as
+SELECT mcaid_id
+     , count(*) as n_months
+     , time
+     , FY
+     , avg(n_pc)       AS n_pc_pmpq
+     , avg(n_ed)       AS n_ed_pmpq
+     , avg(n_ffsbh)    AS n_ffsbh_pmpq
+     , avg(n_tele)     AS n_tel_pmpq
+     , avg(adj_total)  AS adj_total_pmpq
+     , avg(adj_pc)     AS adj_pc_pmpq
+     , avg(adj_rx)     AS adj_rx_pmpq
+FROM int.qrylong_post_1a
+GROUP BY mcaid_id, time;
+QUIT; 
+
+        PROC SORT DATA = int.qrylong_post_3a; BY FY; run; 
+
+        %macro pctl_test(var, out, pctlpre, t_var);
+            PROC UNIVARIATE DATA = int.qrylong_post_3a;
+            BY FY; 
+            WHERE &VAR gt 0; 
+            VAR   &VAR;
+            OUTPUT OUT=&out pctlpre=&pctlpre pctlpts=95;
+            RUN; 
+
+            PROC TRANSPOSE DATA = &out  
+            OUT=&out._a (DROP   = _name_ _label_
+                         RENAME = (col1 = &t_var.p_20
+                                   col2 = &t_var.p_21
+                                   col3 = &t_var.p_22
+                                   col4 = &t_var.p_23));
+            var &t_var ; 
+            RUN; 
+            %mend; 
+
+
+
+ARRAY dv(*) n_pc n_ed n_ffsbh n_tele adj_total adj_pc adj_rx;
+DO i=1 to dim(dv); 
+IF dv(i)=. THEN dv(i)=0; ELSE dv(i)=dv(i);
+END;
+
+
 %nodupkey(ds=int.qrylong_post_3, out=int.qrylong_2023); 
 * IT's OK THAT ITs HIGHER bc didn't subset bh, tele to memlist yet!!!; 
-
+ARRAY dv(*) n_pc n_ed n_ffsbh n_tele adj_total adj_pc adj_rx;
+DO i=1 to dim(dv); 
+IF dv(i)=. THEN dv(i)=0; ELSE dv(i)=dv(i);
+END;
 * [INT.FINAL_05];
 PROC SQL; 
 CREATE TABLE int.final_05 AS 
