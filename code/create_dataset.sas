@@ -663,16 +663,15 @@ QUIT;
 
 
 DATA int.final_06 (DROP = dt_qrtr elig: adj_pd_17pm adj_pd_18pm adj_pd_19pm);
-
 * Not yet setting length for time and mcaid_id bc they might get joined later; 
 LENGTH FY age_cat budget_group rae_person_new int int_imp &bhcols 3. sex $1. ;
-
 SET  int.final_05 (DROP = adj_rx_pmpq adj_pc_pmpq adj_total_pmpq n_months); 
+
 ARRAY dv(*) bho_n_hosp_17pm     bho_n_hosp_18pm     bho_n_hosp_19pm
             bho_n_er_17pm       bho_n_er_18pm       bho_n_er_19pm
             bho_n_other_17pm    bho_n_other_18pm    bho_n_other_19pm
             n_pc_pmpq           n_ed_pmpq           n_ffsbh_pmpq     n_tel_pmpq   
-            adj_pd_total_tc     adj_pd_total_tc     adj_pd_rx_tc;
+            adj_pd_total_tc     adj_pd_pc_tc     adj_pd_rx_tc;
 
 DO i=1 to dim(dv);
     IF dv(i)=. THEN dv(i)=0; 
@@ -697,8 +696,8 @@ RUN;
 * ANALYSIS_DATASET_ALLCOLS ==================================================================
 ===========================================================================================;
 *** Add quarter variables, one with text for readability ; 
-DATA int.final_08 ;
-SET  int.final_07 (RENAME=(bho_n_hosp_17pm  = BH_Hosp17
+DATA int.final_07 ;
+SET  int.final_06 (RENAME=(bho_n_hosp_17pm  = BH_Hosp17
                            bho_n_hosp_18pm  = BH_Hosp18
                            bho_n_hosp_19pm  = BH_Hosp19
                            bho_n_er_17pm    = BH_ER17
@@ -723,10 +722,9 @@ adj_pd_total_19cat = adj_pd_total_19cat + 1;
 
 RUN; 
 
-PROC SORT DATA = int.final_08; BY mcaid_id time; RUN; 
-
-* DATA.ANALYSIS ===========================================================================
-===========================================================================================;
+PROC SORT DATA = int.final_07; BY mcaid_id time; RUN; 
+PROC CONTENTS DATA = int.final_07 VARNUM; RUN; 
+* DATA.ANALYSIS ===========================================================================;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config_formats.sas"; 
 
 * Numeric vars that can be set to length=3 to reduce dataset in int.final_08 step ; 
@@ -735,17 +733,15 @@ PROC SORT DATA = int.final_08; BY mcaid_id time; RUN;
 
 DATA   data.utilization_large;
 LENGTH &len08 3 pcmp_loc_id 4;
-SET    int.final_08; 
+SET    int.final_07; 
 
 budget_grp_r = input(put(budget_group, budget_grp_r.), 12.);
 FORMAT budget_grp_r budget_grp_new_. race $race_rc_. age_cat age_cat_.; 
 
-
-
 RUN; 
 
 *[DATA.UTILIZATION];
-%LET drop   = n_months FY budget_group fyqrtr pcmp_loc_id;
+%LET drop   = FY budget_group fyqrtr pcmp_loc_id;
 
 %LET retain = mcaid_id time int int_imp season1 season2 season3 ind_cost_total cost_total ind_cost_pc cost_pc ind_cost_rx cost_rx 
               adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat 

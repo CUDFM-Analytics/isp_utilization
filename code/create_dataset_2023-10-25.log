@@ -1,0 +1,250 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.93 seconds
+      cpu time            0.64 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\out_hurdle
+NOTE: Libref TMP was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim_new
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.46 seconds
+      cpu time            0.23 seconds
+
+
+139  PROC SQL;
+140  SELECT name INTO :bhcols separated by ' ' FROM dictionary.columns
+141  WHERE memname='FINAL_05' AND substr(name, 1, 4)="bho_";
+142  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.03 seconds
+
+
+143  PROC CONTENTS DATA = int.final_05 VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+144  DATA int.final_06 (DROP = dt_qrtr elig: adj_pd_17pm adj_pd_18pm adj_pd_19pm);
+145
+146  * Not yet setting length for time and mcaid_id bc they might get joined later;
+147  LENGTH FY age_cat budget_group rae_person_new int int_imp &bhcols 3. sex $1. ;
+148
+149  SET  int.final_05 (DROP = adj_rx_pmpq adj_pc_pmpq adj_total_pmpq n_months);
+150  ARRAY dv(*) bho_n_hosp_17pm     bho_n_hosp_18pm     bho_n_hosp_19pm
+151              bho_n_er_17pm       bho_n_er_18pm       bho_n_er_19pm
+152              bho_n_other_17pm    bho_n_other_18pm    bho_n_other_19pm
+153              n_pc_pmpq           n_ed_pmpq           n_ffsbh_pmpq     n_tel_pmpq
+154              adj_pd_total_tc     adj_pd_total_tc     adj_pd_rx_tc;
+155
+156  DO i=1 to dim(dv);
+157      IF dv(i)=. THEN dv(i)=0;
+158      ELSE dv(i)=dv(i);
+159      END;
+160  DROP i;
+161
+162  * adj vars for 17-19cat, if not in ds then set to -1;
+163  adj_pd_total_17cat = coalesce(adj_pd_total_17cat, -1);
+164  adj_pd_total_18cat = coalesce(adj_pd_total_18cat, -1);
+165  adj_pd_total_19cat = coalesce(adj_pd_total_19cat, -1);
+166
+167  ind_visit_pc    = n_pc_pmpq       > 0;
+168  ind_visit_ed    = n_ed_pmpq       > 0;
+169  ind_visit_ffsbh = n_ffsbh_pmpq    > 0;
+170  ind_visit_tel   = n_tel_pmpq      > 0;
+171  ind_cost_total  = adj_pd_total_tc > 0;
+172  ind_cost_pc     = adj_pd_pc_tc    > 0;
+173  ind_cost_rx     = adj_pd_rx_tc    > 0;
+174  RUN;
+
+WARNING: Multiple lengths were specified for the variable FY by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable age_cat by input data set(s). This can
+         cause truncation of data.
+WARNING: Multiple lengths were specified for the variable budget_group by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable rae_person_new by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable int by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable int_imp by input data set(s). This can
+         cause truncation of data.
+WARNING: Multiple lengths were specified for the variable sex by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_hosp_17pm by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_hosp_18pm by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_hosp_19pm by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_er_17pm by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_er_18pm by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_er_19pm by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_other_17pm by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_other_18pm by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_other_19pm by input data set(s).
+         This can cause truncation of data.
+NOTE: There were 19283171 observations read from the data set INT.FINAL_05.
+NOTE: The data set INT.FINAL_06 has 19283171 observations and 38 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4:23.58
+      cpu time            17.23 seconds
+
+
+175
+176  DATA int.final_06 (DROP = dt_qrtr elig: adj_pd_17pm adj_pd_18pm adj_pd_19pm);
+177  * Not yet setting length for time and mcaid_id bc they might get joined later;
+178  LENGTH FY age_cat budget_group rae_person_new int int_imp &bhcols 3. sex $1. ;
+179  SET  int.final_05 (DROP = adj_rx_pmpq adj_pc_pmpq adj_total_pmpq n_months);
+180
+181  ARRAY dv(*) bho_n_hosp_17pm     bho_n_hosp_18pm     bho_n_hosp_19pm
+182              bho_n_er_17pm       bho_n_er_18pm       bho_n_er_19pm
+183              bho_n_other_17pm    bho_n_other_18pm    bho_n_other_19pm
+184              n_pc_pmpq           n_ed_pmpq           n_ffsbh_pmpq     n_tel_pmpq
+185              adj_pd_total_tc     adj_pd_pc_tc     adj_pd_rx_tc;
+186
+187  DO i=1 to dim(dv);
+188      IF dv(i)=. THEN dv(i)=0;
+189      ELSE dv(i)=dv(i);
+190      END;
+191  DROP i;
+192
+193  * adj vars for 17-19cat, if not in ds then set to -1;
+194  adj_pd_total_17cat = coalesce(adj_pd_total_17cat, -1);
+195  adj_pd_total_18cat = coalesce(adj_pd_total_18cat, -1);
+196  adj_pd_total_19cat = coalesce(adj_pd_total_19cat, -1);
+197
+198  ind_visit_pc    = n_pc_pmpq       > 0;
+199  ind_visit_ed    = n_ed_pmpq       > 0;
+200  ind_visit_ffsbh = n_ffsbh_pmpq    > 0;
+201  ind_visit_tel   = n_tel_pmpq      > 0;
+202  ind_cost_total  = adj_pd_total_tc > 0;
+203  ind_cost_pc     = adj_pd_pc_tc    > 0;
+204  ind_cost_rx     = adj_pd_rx_tc    > 0;
+205  RUN;
+
+WARNING: Multiple lengths were specified for the variable FY by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable age_cat by input data set(s). This can
+         cause truncation of data.
+WARNING: Multiple lengths were specified for the variable budget_group by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable rae_person_new by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable int by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable int_imp by input data set(s). This can
+         cause truncation of data.
+WARNING: Multiple lengths were specified for the variable sex by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_hosp_17pm by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_hosp_18pm by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_hosp_19pm by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_er_17pm by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_er_18pm by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_er_19pm by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_other_17pm by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_other_18pm by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable bho_n_other_19pm by input data set(s).
+         This can cause truncation of data.
+NOTE: There were 19283171 observations read from the data set INT.FINAL_05.
+NOTE: The data set INT.FINAL_06 has 19283171 observations and 38 variables.
+NOTE: DATA statement used (Total process time):
+      real time           8:10.73
+      cpu time            23.73 seconds
+
+
+206  DATA int.final_07 ;
+207  SET  int.final_06 (RENAME=(bho_n_hosp_17pm  = BH_Hosp17
+208                             bho_n_hosp_18pm  = BH_Hosp18
+209                             bho_n_hosp_19pm  = BH_Hosp19
+210                             bho_n_er_17pm    = BH_ER17
+211                             bho_n_er_18pm    = BH_ER18
+212                             bho_n_er_19pm    = BH_ER19
+213                             bho_n_other_17pm = BH_Oth17
+214                             bho_n_other_18pm = BH_Oth18
+215                             bho_n_other_19pm = BH_Oth19));
+216  * make binary;
+217  ARRAY bh(*) BH_Hosp17 BH_Hosp18 BH_Hosp19 BH_ER17 BH_ER18 BH_ER19 BH_Oth17 BH_Oth18 BH_Oth19;
+218  DO i=1 to dim(bh); IF bh(i)>0 THEN bh(i)=1; ELSE bh(i)=bh(i); END; DROP i;
+219
+220  fyqrtr     = input(time, fyqrtr_num.);
+221  IF fyqrtr  = 1 THEN season1 = 1; ELSE IF fyqrtr = 4 THEN season1 = -1; ELSE season1 = 0;
+222  IF fyqrtr  = 2 THEN season2 = 1; ELSE IF fyqrtr = 4 THEN season2 = -1; ELSE season2 = 0;
+223  IF fyqrtr  = 3 THEN season3 = 1; ELSE IF fyqrtr = 4 THEN season3 = -1; ELSE season3 = 0;
+224
+225  * rescale from 0-6 instead of -1 to 5;
+226  adj_pd_total_17cat = adj_pd_total_17cat + 1;
+227  adj_pd_total_18cat = adj_pd_total_18cat + 1;
+228  adj_pd_total_19cat = adj_pd_total_19cat + 1;
+229
+230  RUN;
+
+NOTE: Numeric values have been converted to character values at the places given by:
+      (Line):(Column).
+      220:20
+NOTE: There were 19283171 observations read from the data set INT.FINAL_06.
+NOTE: The data set INT.FINAL_07 has 19283171 observations and 42 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3:59.34
+      cpu time            18.53 seconds
+
+
