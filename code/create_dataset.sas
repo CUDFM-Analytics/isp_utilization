@@ -485,46 +485,27 @@ SELECT a.*
 FROM int.final_03           AS A
 LEFT JOIN int.qrylong_1719  AS B ON a.mcaid_id=b.mcaid_id;
 QUIT; 
-%nodupkey(ds = int.final_04, out=int.final_04); 
 
-* INT.qrylong_1922 ======================================================================
-DVs (n=7)
---VISITS (n=4): 1) n_ed = n_er+bho_n_er, 2) n_pc, 3) n_ffs_bh (rename to n_ffsbh later), 4) n_tele
---COST (n=3): 1) adj_pd_total, 2) adj_pd_pc, 3_ adj_pd_rx
-========================================================================================;
+PROC SORT DATA = int.final_04 NODUPKEY ; BY _ALL_  ; RUN;
+
+* INT.qrylong_2023 ======================================================================;
 DATA int.qrylong_post_1 (KEEP = mcaid_id month time FY n_ed n_pc n_ffsbh n_tele adj_total adj_pc adj_rx);
 SET  int.qrylong_post_0 (KEEP = mcaid_id    month   dt_qrtr     time       FY
                                 n_ed        n_pc    n_ffsbh     n_tele   
                                 adj_total   adj_pc  adj_rx
                          WHERE = (month ge '01JUL2019'd)); 
+
+* Multiple the visit values by 6 to capture whole number values ; 
 ARRAY mult(*) n_ed n_pc n_ffsbh n_tele;
 DO i=1 to dim(mult); 
 mult(i)=mult(i)*6; 
 END;
-RUN; 
 
-*** OH MY GOD I FOUND IT- DON'T USE ABOVE!! Don't se the values to 0 before calculating the freaking avg, you idiot!!!; 
-DATA int.qrylong_post_1a (KEEP = mcaid_id month time FY n_ed n_pc n_ffsbh n_tele adj_total adj_pc adj_rx);
-SET  int.qrylong_post_0 (KEEP = mcaid_id    month   dt_qrtr     time       FY
-                                n_ed        n_pc    n_ffsbh     n_tele   
-                                adj_total   adj_pc  adj_rx
-                         WHERE = (month ge '01JUL2019'd)); 
-
-RUN; 
-
-DATA int.qrylong_post_2 (DROP=i);
-SET  int.qrylong_post_1; 
-length month time FY n: 3.; 
-* Create multiplier for visits so you have integers when dividing;
-ARRAY mult(*) n_ed n_pc n_ffsbh n_tele;
-DO i=1 to dim(mult); 
-mult(i)=mult(i)*6; 
-END;
 RUN; 
 
 ** AVERAGE the quarter PM costs, then get 95th percentiles for FY's ; 
 PROC SQL;
-CREATE TABLE int.qrylong_post_3 as
+CREATE TABLE int.qrylong_post_2 as
 SELECT mcaid_id
      , count(*) as n_months
      , time
@@ -536,115 +517,15 @@ SELECT mcaid_id
      , avg(adj_total)  AS adj_total_pmpq
      , avg(adj_pc)     AS adj_pc_pmpq
      , avg(adj_rx)     AS adj_rx_pmpq
-FROM int.qrylong_post_2
+FROM int.qrylong_post_1
 GROUP BY mcaid_id, time;
 QUIT; 
 
-PROC SQL;
-CREATE TABLE int.qrylong_post_3a as
-SELECT mcaid_id
-     , count(*) as n_months
-     , time
-     , FY
-     , avg(n_pc)       AS n_pc_pmpq
-     , avg(n_ed)       AS n_ed_pmpq
-     , avg(n_ffsbh)    AS n_ffsbh_pmpq
-     , avg(n_tele)     AS n_tel_pmpq
-     , avg(adj_total)  AS adj_total_pmpq
-     , avg(adj_pc)     AS adj_pc_pmpq
-     , avg(adj_rx)     AS adj_rx_pmpq
-FROM int.qrylong_post_1a
-GROUP BY mcaid_id, time;
-QUIT; 
+PROC SORT DATA = int.qrylong_post_2 NODUPKEY OUT=int.qrylong_post_3; BY _ALL_; RUN; 
+PROC SORT DATA = int.qrylong_post_3; BY FY; RUN; 
 
-        PROC SORT DATA = int.qrylong_post_3a; BY FY; run; 
-
-        %macro pctl_test(var, out, pctlpre, t_var);
-            PROC UNIVARIATE DATA = int.qrylong_post_3a;
-            BY FY; 
-            WHERE &VAR gt 0; 
-            VAR   &VAR;
-            OUTPUT OUT=&out pctlpre=&pctlpre pctlpts=95;
-            RUN; 
-
-            PROC TRANSPOSE DATA = &out  
-            OUT=&out._a (DROP   = _name_ _label_
-                         RENAME = (col1 = &t_var.p_20
-                                   col2 = &t_var.p_21
-                                   col3 = &t_var.p_22
-                                   col4 = &t_var.p_23));
-            var &t_var ; 
-            RUN; 
-            %mend; 
-
-
-
-ARRAY dv(*) n_pc n_ed n_ffsbh n_tele adj_total adj_pc adj_rx;
-DO i=1 to dim(dv); 
-IF dv(i)=. THEN dv(i)=0; ELSE dv(i)=dv(i);
-END;
-
-
-%nodupkey(ds=int.qrylong_post_3, out=int.qrylong_2023); 
-* IT's OK THAT ITs HIGHER bc didn't subset bh, tele to memlist yet!!!; 
-ARRAY dv(*) n_pc n_ed n_ffsbh n_tele adj_total adj_pc adj_rx;
-DO i=1 to dim(dv); 
-IF dv(i)=. THEN dv(i)=0; ELSE dv(i)=dv(i);
-END;
-* [INT.FINAL_05];
-PROC SQL; 
-CREATE TABLE int.final_05 AS 
-SELECT a.*
-     , b.*
-     , c.fqhc
-FROM int.final_04            AS A
-LEFT JOIN int.qrylong_2023   AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time
-LEFT JOIN int.pcmp_dim       AS C ON a.pcmp_loc_id=c.pcmp_loc_id;
-QUIT; 
-
-* setting to 0 where . for variables not using elig category (adj 16-18 vars) 
-Create indicator variables for DV's where >0 (use when creating pctiles or just in gee but needed eventually anyway);
-
-*Get bh_col names; 
-PROC SQL; 
-SELECT name INTO :bhcols separated by ' ' FROM dictionary.columns 
-WHERE memname='FINAL_06' AND substr(name, 1, 4)="bho_";
-QUIT; 
-
-DATA int.final_06 (DROP = dt_qrtr elig: adj_pd_17pm adj_pd_18pm adj_pd_19pm);
-* Not yet setting length for time and mcaid_id bc they might get joined later; 
-LENGTH FY age_cat budget_group rae_person_new int int_imp &bhcols 3. sex $1. ;
-SET  int.final_05; 
-ARRAY dv(*) bho_n_hosp_17pm     bho_n_hosp_18pm     bho_n_hosp_19pm
-            bho_n_er_17pm       bho_n_er_18pm       bho_n_er_19pm
-            bho_n_other_17pm    bho_n_other_18pm    bho_n_other_19pm
-            n_pc_pmpq           n_ed_pmpq           n_ffsbh_pmpq     n_tel_pmpq   
-            adj_total_pmpq      adj_pc_pmpq         adj_rx_pmpq;
-DO i=1 to dim(dv);
-    IF dv(i)=. THEN dv(i)=0; 
-    ELSE dv(i)=dv(i);
-    END;
-DROP i; 
-
-* adj vars for 17-19cat, if not in ds then set to -1; 
-adj_pd_total_17cat = coalesce(adj_pd_total_17cat, -1);
-adj_pd_total_18cat = coalesce(adj_pd_total_18cat, -1);
-adj_pd_total_19cat = coalesce(adj_pd_total_19cat, -1);
-
-ind_visit_pc    = n_pc_pmpq      > 0;
-ind_visit_ed    = n_ed_pmpq      > 0;
-ind_visit_ffsbh = n_ffsbh_pmpq   > 0;
-ind_visit_tel   = n_tel_pmpq     > 0;
-ind_cost_total  = adj_total_pmpq > 0;
-ind_cost_pc     = adj_pc_pmpq    > 0;
-ind_cost_rx     = adj_rx_pmpq    > 0;
-RUN;  
-
-* INT.PCTL_2023 ===========================================================================
-Identifying 95th percentile and replacing values gt x w/mean
-===========================================================================================;
 %macro pctl_2023(var, out, pctlpre, t_var);
-PROC UNIVARIATE DATA = int.final_06;
+PROC UNIVARIATE DATA = int.qrylong_post_3;
 BY FY; 
 WHERE &VAR gt 0; 
 VAR   &VAR;
@@ -660,8 +541,6 @@ OUT=&out._a (DROP   = _name_ _label_
 var &t_var ; 
 RUN; 
 %mend; 
-
-PROC SORT DATA = int.final_06; BY FY; run; 
 
 %pctl_2023(var = adj_total_pmpq,   out = int.adj_total_pctl,   pctlpre = adj_total_,  t_var = adj_total_95); 
 %pctl_2023(var = adj_pc_pmpq,      out = int.adj_pc_pctl,      pctlpre = adj_pc_,     t_var = adj_pc_95); 
@@ -687,9 +566,11 @@ proc sql noprint;
   from int.pctl2023;
 quit;
 
+%put &col_names &mvar_names; 
+
 * Get mean where value gt 95th pctl value; 
 %MACRO means_95p(fy=,var=,gt=,out=,mean=);
-PROC UNIVARIATE NOPRINT DATA = int.final_06; 
+PROC UNIVARIATE NOPRINT DATA = int.qrylong_post_3; 
 WHERE FY=&FY 
 AND   &VAR gt &gt;
 VAR   &VAR;
@@ -732,8 +613,8 @@ proc sql noprint;
   from int.mu_pctl_2023;
 quit;
 
-DATA int.final_07;
-SET  int.final_06;
+DATA int.qrylong_post_4;
+SET  int.qrylong_post_3;
 
 * replace values >95p with mu95;
 IF      FY = 2020 AND adj_total_pmpq gt &adj_total_95p_20 THEN adj_pd_total_tc = &mu_total20; 
@@ -754,15 +635,70 @@ ELSE IF FY = 2022 AND adj_rx_pmpq    gt &adj_rx_95p_22    THEN adj_pd_rx_tc    =
 ELSE IF FY = 2023 AND adj_rx_pmpq    gt &adj_rx_95p_23    THEN adj_pd_rx_tc    = &mu_rx23;    
 ELSE adj_pd_rx_tc= adj_rx_pmpq;
 RUN; 
-PROC SORT DATA = int.final_07; by mcaid_id time; run; 
+PROC SORT DATA = int.qrylong_post_4; by mcaid_id time; run; 
 
+* [INT.FINAL_05];
+PROC SQL; 
+CREATE TABLE int.final_05 AS 
+SELECT a.*
+     , b.*
+     , c.fqhc
+FROM int.final_04            AS A
+LEFT JOIN int.qrylong_post_4 AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time
+LEFT JOIN int.pcmp_dim       AS C ON a.pcmp_loc_id=c.pcmp_loc_id;
+QUIT; 
+
+* CAN COMPARE TOP-CODED TO avgs in final_05; 
+PROC CONTENTS DATA = int.final_05 VARNUM; RUN; 
+
+* [INT.FINAL_06]===============================================================
+* setting to 0 where . for variables not using elig category (adj 16-18 vars) 
+Create indicator variables for DV's where >0 (use when creating pctiles or just in gee but needed eventually anyway);
+
+*Get bh_col names; 
+PROC SQL; 
+SELECT name INTO :bhcols separated by ' ' FROM dictionary.columns 
+WHERE memname='FINAL_05' AND substr(name, 1, 4)="bho_";
+QUIT; 
+
+
+DATA int.final_06 (DROP = dt_qrtr elig: adj_pd_17pm adj_pd_18pm adj_pd_19pm);
+
+* Not yet setting length for time and mcaid_id bc they might get joined later; 
+LENGTH FY age_cat budget_group rae_person_new int int_imp &bhcols 3. sex $1. ;
+
+SET  int.final_05 (DROP = adj_rx_pmpq adj_pc_pmpq adj_total_pmpq n_months); 
+ARRAY dv(*) bho_n_hosp_17pm     bho_n_hosp_18pm     bho_n_hosp_19pm
+            bho_n_er_17pm       bho_n_er_18pm       bho_n_er_19pm
+            bho_n_other_17pm    bho_n_other_18pm    bho_n_other_19pm
+            n_pc_pmpq           n_ed_pmpq           n_ffsbh_pmpq     n_tel_pmpq   
+            adj_pd_total_tc     adj_pd_total_tc     adj_pd_rx_tc;
+
+DO i=1 to dim(dv);
+    IF dv(i)=. THEN dv(i)=0; 
+    ELSE dv(i)=dv(i);
+    END;
+DROP i; 
+
+* adj vars for 17-19cat, if not in ds then set to -1; 
+adj_pd_total_17cat = coalesce(adj_pd_total_17cat, -1);
+adj_pd_total_18cat = coalesce(adj_pd_total_18cat, -1);
+adj_pd_total_19cat = coalesce(adj_pd_total_19cat, -1);
+
+ind_visit_pc    = n_pc_pmpq       > 0;
+ind_visit_ed    = n_ed_pmpq       > 0;
+ind_visit_ffsbh = n_ffsbh_pmpq    > 0;
+ind_visit_tel   = n_tel_pmpq      > 0;
+ind_cost_total  = adj_pd_total_tc > 0;
+ind_cost_pc     = adj_pd_pc_tc    > 0;
+ind_cost_rx     = adj_pd_rx_tc    > 0;
+RUN;  
 
 * ANALYSIS_DATASET_ALLCOLS ==================================================================
 ===========================================================================================;
 *** Add quarter variables, one with text for readability ; 
 DATA int.final_08 ;
-SET  int.final_07 (DROP = adj_total_pmpq adj_pc_pmpq adj_rx_pmpq
-                   RENAME=(bho_n_hosp_17pm  = BH_Hosp17
+SET  int.final_07 (RENAME=(bho_n_hosp_17pm  = BH_Hosp17
                            bho_n_hosp_18pm  = BH_Hosp18
                            bho_n_hosp_19pm  = BH_Hosp19
                            bho_n_er_17pm    = BH_ER17
@@ -779,6 +715,12 @@ fyqrtr     = input(time, fyqrtr_num.);
 IF fyqrtr  = 1 THEN season1 = 1; ELSE IF fyqrtr = 4 THEN season1 = -1; ELSE season1 = 0; 
 IF fyqrtr  = 2 THEN season2 = 1; ELSE IF fyqrtr = 4 THEN season2 = -1; ELSE season2 = 0;  
 IF fyqrtr  = 3 THEN season3 = 1; ELSE IF fyqrtr = 4 THEN season3 = -1; ELSE season3 = 0;  
+
+* rescale from 0-6 instead of -1 to 5; 
+adj_pd_total_17cat = adj_pd_total_17cat + 1; 
+adj_pd_total_18cat = adj_pd_total_18cat + 1; 
+adj_pd_total_19cat = adj_pd_total_19cat + 1; 
+
 RUN; 
 
 PROC SORT DATA = int.final_08; BY mcaid_id time; RUN; 
@@ -798,9 +740,7 @@ SET    int.final_08;
 budget_grp_r = input(put(budget_group, budget_grp_r.), 12.);
 FORMAT budget_grp_r budget_grp_new_. race $race_rc_. age_cat age_cat_.; 
 
-adj_pd_total_17cat = adj_pd_total_17cat + 1; 
-adj_pd_total_18cat = adj_pd_total_18cat + 1; 
-adj_pd_total_19cat = adj_pd_total_19cat + 1; 
+
 
 RUN; 
 

@@ -255,3 +255,21 @@ PROC CONTENTS DATA = &dat VARNUM; RUN;
 
 PROC PRINT DATA = data.utilization; where mcaid_id="A005875"; RUN; 
 PROC PRINT DATA = ana.qry_monthlyutilization; where mcaid_id="A005875"; RUN; 
+
+
+LIBNAME int "&projRoot/data/interim"; 
+PROC CONTENTS DATA = int.qrylong_03 VARNUM; run; 
+PROC FREQ DATA = int.qrylong_03; tables fy; run;
+PROC SQL; 
+CREATE TABLE zz_final_03 AS 
+SELECT mcaid_id, month, dt_qrtr, FY, time, adj_total
+FROM int.qrylong_03
+WHERE month ge '01JUL2019'd and month lt '01JUL2020'd; 
+QUIT; * matched what i got by fy freqs so that was right; 
+
+PROC SQL; 
+CREATE TABLE zz_qrylong_03b AS 
+SELECT mcaid_id, dt_qrtr, time, avg(adj_total) as pmpq_total
+FROM zz_final_03
+GROUP BY mcaid_id, time; 
+
