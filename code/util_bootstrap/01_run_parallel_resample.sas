@@ -29,23 +29,29 @@ libname in "&projRoot\data";
 * get formats; 
 OPTIONS FMTSEARCH=(in);
 
+
 * data to boot ;
-%let data = in.utilization;
+%let isp = in.utilization;
 
 /*PROC CONTENTS DATA = &data; RUN; */
-PROC FREQ DATA = &data; TABLES int; RUN; * Oct 3 INT = 0 13231202, 1=1893477;
+PROC FREQ DATA = &isp; TABLES int; RUN; * Oct 3 INT = 0 13231202, 1=1893477;
 
 PROC SQL; 
 SELECT int
      , count(distinct mcaid_id) as n_un_id
-FROM &data
+FROM &isp
 GROUP BY int;
 QUIT; 
 
 PROC SQL; 
-SELECT count(distinct bootunit)
+SELECT count(distinct replicate)
 FROM out._resample_out_1;
-/*GROUP BY replicate; */
+QUIT; 
+
+PROC SQL; 
+SELECT count(distinct bootunit)
+FROM out._resample_out_1
+WHERE replicate eq 1; 
 QUIT; 
 
 * See doc with updated values: they are perfect!

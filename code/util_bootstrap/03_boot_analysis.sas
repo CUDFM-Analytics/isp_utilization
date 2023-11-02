@@ -5,28 +5,26 @@ PURPOSE  : Part 3 of 3>  combine the parallel process results and analyze
 VERSION  : 2023-09-25
 HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 CHANGES  : [row 108] added _diff_ 
-PRE PROCESSING: COPY STORED PROCS INTO DV/FOLDER... 
 
-NOTE: CHANGE rows 16-xxx, rows 26-xxx!! 
+NOTE: CHANGE rows under 'MUTABLE CONFIGS'!! 
 ***********************************************************************************************;
-* for outputs by DV, reporting // Change 12, 13 then okay; 
-* %LET pdftitle = Cost_Total;
-%LET pdftitle = Cost_PC; 
 %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
 
-* %LET dv = cost_tot;  
-%LET dv = cost_pc;
+* MUTABLES: for outputs by DV, reporting // Update, comment previous, then run; 
+%LET pdftitle = Cost_Total;
+%LET dv = cost_tot; 
+LIBNAME cost_tot "&projRoot\data_boot_processed\cost_total";
+* %LET pdftitle = Cost_PC; 
+* %LET dv = cost_pc;
+/*LIBNAME cost_pc "&projRoot\data_boot_processed\cost_pc";*/
 
+* NONMUTABLES; 
 * pdf output; 
 %LET pdf      = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\reports\boot_se_&dv..pdf;
 
 **** BOOT ANALYSIS*******; 
 * stored bootstrap products -- ;
 LIBNAME dataPro "&projRoot\data_boot_processed";
-
-* Make this match row 16 name; 
-/*LIBNAME cost_tot "&projRoot\data_boot_processed\cost_total";*/
-LIBNAME cost_pc "&projRoot\data_boot_processed\cost_pc";
 
 * for format search; 
 libname data   "&projRoot\data";

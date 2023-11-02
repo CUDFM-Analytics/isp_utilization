@@ -1,0 +1,293 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.25 seconds
+      cpu time            0.79 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\out_hurdle
+NOTE: Library TMP does not exist.
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.47 seconds
+      cpu time            0.20 seconds
+
+
+139  LIBNAME tmp "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/data/out_tmp_nov";
+NOTE: Libref TMP was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data\out_tmp_nov
+
+140  %LET m2q1  = 01Aug2019; %LET m2q2  = 01Nov2019; %LET m2q3  = 01Feb2020; %LET m2q4  = 01May2020;
+141  %LET m2q5  = 01Aug2020; %LET m2q6  = 01Nov2020; %LET m2q7  = 01Feb2021; %LET m2q8  = 01May2021;
+142  %LET m2q9  = 01Aug2021; %LET m2q10 = 01Nov2021; %LET m2q11 = 01Feb2022; %LET m2q12 = 01May2022;
+143  %LET m2q13 = 01Aug2022; %LET m2q14 = 01Nov2022; %LET m2q15 = 01Feb2023; %LET m2q16 = 01May2023;
+144  DATA tmp.memlist;
+145  SET  tmp.age_dim_00 (where=(time ne .));
+146  IF time = 1 then do;  age = floor((intck('month', dob, "&m2q1"d)-(day("&m2q1"d)   <
+146! min(day(dob), day(intnx('month', "&m2q1"d, 1) -1))))  /12); END;
+147  IF time = 2 then do;  age = floor((intck('month', dob, "&m2q2"d)-(day("&m2q2"d)   <
+147! min(day(dob), day(intnx('month', "&m2q2"d, 1) -1))))  /12); END;
+148  IF time = 3 then do;  age = floor((intck('month', dob, "&m2q3"d)-(day("&m2q3"d)   <
+148! min(day(dob), day(intnx('month', "&m2q3"d, 1) -1))))  /12); END;
+149  IF time = 4 then do;  age = floor((intck('month', dob, "&m2q4"d)-(day("&m2q4"d)   <
+149! min(day(dob), day(intnx('month', "&m2q4"d, 1) -1))))  /12); END;
+150  IF time = 5 then do;  age = floor((intck('month', dob, "&m2q5"d)-(day("&m2q5"d)   <
+150! min(day(dob), day(intnx('month', "&m2q5"d, 1) -1))))  /12); END;
+151  IF time = 6 then do;  age = floor((intck('month', dob, "&m2q6"d)-(day("&m2q6"d)   <
+151! min(day(dob), day(intnx('month', "&m2q6"d, 1) -1))))  /12); END;
+152  IF time = 7 then do;  age = floor((intck('month', dob, "&m2q7"d)-(day("&m2q7"d)   <
+152! min(day(dob), day(intnx('month', "&m2q7"d, 1) -1))))  /12); END;
+153  IF time = 8 then do;  age = floor((intck('month', dob, "&m2q8"d)-(day("&m2q8"d)   <
+153! min(day(dob), day(intnx('month', "&m2q8"d, 1) -1))))  /12); END;
+154  IF time = 9 then do;  age = floor((intck('month', dob, "&m2q9"d)-(day("&m2q9"d)   <
+154! min(day(dob), day(intnx('month', "&m2q9"d, 1) -1))))  /12); END;
+155  IF time = 10 then do; age = floor((intck('month', dob, "&m2q10"d)-(day("&m2q10"d) <
+155! min(day(dob), day(intnx('month', "&m2q10"d, 1) -1)))) /12); END;
+156  IF time = 11 then do; age = floor((intck('month', dob, "&m2q11"d)-(day("&m2q11"d) <
+156! min(day(dob), day(intnx('month', "&m2q11"d, 1) -1)))) /12); END;
+157  IF time = 12 then do; age = floor((intck('month', dob, "&m2q12"d)-(day("&m2q12"d) <
+157! min(day(dob), day(intnx('month', "&m2q12"d, 1) -1)))) /12); END;
+158  IF time = 13 then do; age = floor((intck('month', dob, "&m2q13"d)-(day("&m2q13"d) <
+158! min(day(dob), day(intnx('month', "&m2q13"d, 1) -1)))) /12); END;
+159  IF time = 14 then do; age = floor((intck('month', dob, "&m2q14"d)-(day("&m2q14"d) <
+159! min(day(dob), day(intnx('month', "&m2q14"d, 1) -1)))) /12); END;
+160  IF time = 15 then do; age = floor((intck('month', dob, "&m2q15"d)-(day("&m2q15"d) <
+160! min(day(dob), day(intnx('month', "&m2q15"d, 1) -1)))) /12); END;
+161  IF time = 16 then do; age = floor((intck('month', dob, "&m2q16"d)-(day("&m2q16"d) <
+161! min(day(dob), day(intnx('month', "&m2q16"d, 1) -1)))) /12); END;
+162
+163  IF age lt 0  THEN DELETE;
+164  IF age gt 64 THEN DELETE;
+165
+166  IF            age <=  5 THEN age_cat = 1;
+167  ELSE IF  6 <= age <= 10 THEN age_cat = 2;
+168  ELSE IF 11 <= age <= 15 THEN age_cat = 3;
+169  ELSE IF 16 <= age <= 20 THEN age_cat = 4;
+170  ELSE IF 21 <= age <= 44 THEN age_cat = 5;
+171  ELSE                         age_cat = 6;
+172
+173  RUN;
+
+NOTE: There were 20359173 observations read from the data set TMP.AGE_DIM_00.
+      WHERE time not = .;
+NOTE: The data set TMP.MEMLIST has 19570774 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           24.56 seconds
+      cpu time            12.92 seconds
+
+
+174  PROC SQL;
+175  CREATE TABLE tmp.final_00 AS
+176  SELECT a.mcaid_id
+177       , a.month
+178       , a.dt_qrtr
+179       , a.time
+180       , a.FY
+181       , a.pcmp_loc_id
+182       , a.rae_person_new
+183       , a.fqhc
+184       , a.budget_group
+185       , a.sex
+186       , a.race
+187       , b.age_cat
+188  FROM tmp.qrylong_01    AS A
+189  INNER JOIN tmp.memlist AS B ON (a.mcaid_id=b.mcaid_id AND a.time=b.time)
+190  WHERE rae_person_new ne . AND month ge '01JUL2019'd;
+NOTE: Table TMP.FINAL_00 created, with 57298522 rows and 12 columns.
+
+191  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           3:24.19
+      cpu time            51.70 seconds
+
+
+192  DATA tmp.final_00a;
+193  SET  tmp.final_00 (WHERE=(pcmp_loc_id ne .)); RUN;
+
+NOTE: There were 56463912 observations read from the data set TMP.FINAL_00.
+      WHERE pcmp_loc_id not = .;
+NOTE: The data set TMP.FINAL_00A has 56463912 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:50.92
+      cpu time            10.89 seconds
+
+
+
+194  PROC SQL;
+195  CREATE TABLE tmp.memlist0 AS
+196  SELECT distinct(mcaid_id) as mcaid_id
+197       , dob
+198       , time
+199  FROM tmp.qrylong_01
+200  WHERE month ge '01JUL2019'd AND rae_person_new ne . and pcmp_loc_id ne .;
+NOTE: Table TMP.MEMLIST0 created, with 20057212 rows and 3 columns.
+
+201  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           1:56.26
+      cpu time            25.43 seconds
+
+
+202  %LET m2q1  = 01Aug2019; %LET m2q2  = 01Nov2019; %LET m2q3  = 01Feb2020; %LET m2q4  = 01May2020;
+203  %LET m2q5  = 01Aug2020; %LET m2q6  = 01Nov2020; %LET m2q7  = 01Feb2021; %LET m2q8  = 01May2021;
+204  %LET m2q9  = 01Aug2021; %LET m2q10 = 01Nov2021; %LET m2q11 = 01Feb2022; %LET m2q12 = 01May2022;
+205  %LET m2q13 = 01Aug2022; %LET m2q14 = 01Nov2022; %LET m2q15 = 01Feb2023; %LET m2q16 = 01May2023;
+206  PROC FREQ DATA = tmp.memlist0; tables time; run;
+
+NOTE: There were 20057212 observations read from the data set TMP.MEMLIST0.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           6.63 seconds
+      cpu time            0.71 seconds
+
+
+
+207  %LET m2q1  = 01Aug2019; %LET m2q2  = 01Nov2019; %LET m2q3  = 01Feb2020; %LET m2q4  = 01May2020;
+208  %LET m2q5  = 01Aug2020; %LET m2q6  = 01Nov2020; %LET m2q7  = 01Feb2021; %LET m2q8  = 01May2021;
+209  %LET m2q9  = 01Aug2021; %LET m2q10 = 01Nov2021; %LET m2q11 = 01Feb2022; %LET m2q12 = 01May2022;
+210  %LET m2q13 = 01Aug2022; %LET m2q14 = 01Nov2022; %LET m2q15 = 01Feb2023; %LET m2q16 = 01May2023;
+211  PROC MEANS DATA = tmp.memlist0 nmiss; run;
+
+NOTE: There were 20057212 observations read from the data set TMP.MEMLIST0.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           6.07 seconds
+      cpu time            1.29 seconds
+
+
+
+212  DATA tmp.memlist;
+213  SET  tmp.memlist0;
+214  IF time = 1 then do;  age = floor((intck('month', dob, "&m2q1"d)-(day("&m2q1"d)   <
+214! min(day(dob), day(intnx('month', "&m2q1"d, 1) -1))))  /12); END;
+215  IF time = 2 then do;  age = floor((intck('month', dob, "&m2q2"d)-(day("&m2q2"d)   <
+215! min(day(dob), day(intnx('month', "&m2q2"d, 1) -1))))  /12); END;
+216  IF time = 3 then do;  age = floor((intck('month', dob, "&m2q3"d)-(day("&m2q3"d)   <
+216! min(day(dob), day(intnx('month', "&m2q3"d, 1) -1))))  /12); END;
+217  IF time = 4 then do;  age = floor((intck('month', dob, "&m2q4"d)-(day("&m2q4"d)   <
+217! min(day(dob), day(intnx('month', "&m2q4"d, 1) -1))))  /12); END;
+218  IF time = 5 then do;  age = floor((intck('month', dob, "&m2q5"d)-(day("&m2q5"d)   <
+218! min(day(dob), day(intnx('month', "&m2q5"d, 1) -1))))  /12); END;
+219  IF time = 6 then do;  age = floor((intck('month', dob, "&m2q6"d)-(day("&m2q6"d)   <
+219! min(day(dob), day(intnx('month', "&m2q6"d, 1) -1))))  /12); END;
+220  IF time = 7 then do;  age = floor((intck('month', dob, "&m2q7"d)-(day("&m2q7"d)   <
+220! min(day(dob), day(intnx('month', "&m2q7"d, 1) -1))))  /12); END;
+221  IF time = 8 then do;  age = floor((intck('month', dob, "&m2q8"d)-(day("&m2q8"d)   <
+221! min(day(dob), day(intnx('month', "&m2q8"d, 1) -1))))  /12); END;
+222  IF time = 9 then do;  age = floor((intck('month', dob, "&m2q9"d)-(day("&m2q9"d)   <
+222! min(day(dob), day(intnx('month', "&m2q9"d, 1) -1))))  /12); END;
+223  IF time = 10 then do; age = floor((intck('month', dob, "&m2q10"d)-(day("&m2q10"d) <
+223! min(day(dob), day(intnx('month', "&m2q10"d, 1) -1)))) /12); END;
+224  IF time = 11 then do; age = floor((intck('month', dob, "&m2q11"d)-(day("&m2q11"d) <
+224! min(day(dob), day(intnx('month', "&m2q11"d, 1) -1)))) /12); END;
+225  IF time = 12 then do; age = floor((intck('month', dob, "&m2q12"d)-(day("&m2q12"d) <
+225! min(day(dob), day(intnx('month', "&m2q12"d, 1) -1)))) /12); END;
+226  IF time = 13 then do; age = floor((intck('month', dob, "&m2q13"d)-(day("&m2q13"d) <
+226! min(day(dob), day(intnx('month', "&m2q13"d, 1) -1)))) /12); END;
+227  IF time = 14 then do; age = floor((intck('month', dob, "&m2q14"d)-(day("&m2q14"d) <
+227! min(day(dob), day(intnx('month', "&m2q14"d, 1) -1)))) /12); END;
+228  IF time = 15 then do; age = floor((intck('month', dob, "&m2q15"d)-(day("&m2q15"d) <
+228! min(day(dob), day(intnx('month', "&m2q15"d, 1) -1)))) /12); END;
+229  IF time = 16 then do; age = floor((intck('month', dob, "&m2q16"d)-(day("&m2q16"d) <
+229! min(day(dob), day(intnx('month', "&m2q16"d, 1) -1)))) /12); END;
+230
+231  IF age lt 0  THEN DELETE;
+232  IF age gt 64 THEN DELETE;
+233
+234  IF            age <=  5 THEN age_cat = 1;
+235  ELSE IF  6 <= age <= 10 THEN age_cat = 2;
+236  ELSE IF 11 <= age <= 15 THEN age_cat = 3;
+237  ELSE IF 16 <= age <= 20 THEN age_cat = 4;
+238  ELSE IF 21 <= age <= 44 THEN age_cat = 5;
+239  ELSE                         age_cat = 6;
+240
+241  RUN;
+
+NOTE: There were 20057212 observations read from the data set TMP.MEMLIST0.
+NOTE: The data set TMP.MEMLIST has 19283171 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           23.33 seconds
+      cpu time            11.75 seconds
+
+
+242  PROC FREQ DATA = tmp.memlist; TABLES time; run;
+
+NOTE: There were 19283171 observations read from the data set TMP.MEMLIST.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           8.71 seconds
+      cpu time            0.81 seconds
+
+
+
+243  PROC SQL;
+244  CREATE TABLE tmp.final_00 AS
+245  SELECT a.mcaid_id
+246       , a.month
+247       , a.dt_qrtr
+248       , a.time
+249       , a.FY
+250       , a.pcmp_loc_id
+251       , a.rae_person_new
+252       , a.fqhc
+253       , a.budget_group
+254       , a.sex
+255       , a.race
+256       , b.age_cat
+257  FROM tmp.qrylong_01    AS A
+258  RIGHT JOIN tmp.memlist AS B ON (a.mcaid_id=b.mcaid_id AND a.time=b.time)
+259  WHERE rae_person_new ne . AND pcmp_loc_id ne . AND month ge '01JUL2019'd;
+NOTE: Table TMP.FINAL_00 created, with 56463912 rows and 12 columns.
+
+260  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           3:16.23
+      cpu time            1:07.86
+
+
+261  PROC MEANS DATA = tmp.final_00 nmiss; var rae_person_new pcmp_loc_id time; run;
+
+NOTE: There were 56463912 observations read from the data set TMP.FINAL_00.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           49.01 seconds
+      cpu time            6.78 seconds
+
+
+

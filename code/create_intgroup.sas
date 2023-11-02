@@ -1,3 +1,4 @@
+
 data data.intgroup;
   set data.utilization data.utilization (in = b);
   where int_imp = 1;

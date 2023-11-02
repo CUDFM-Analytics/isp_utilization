@@ -108,6 +108,12 @@ create table out.&dv._avp_&type as
   from out.&dv._mean_&type;
 quit;
 
+* put AVP results in log for reference/ comparing results;
+data _NULL_;
+SET  out.&dv._avp_&type; 
+put  cost_exposed= cost_unexposed= cost_diff=; 
+RUN; 
+
 proc rank data = predout out = predgroup groups = 10;
   var pred;
   ranks predgroup;
@@ -118,6 +124,12 @@ proc means data = predgroup   noprint nway;
   class predgroup;
   output out = out.&dv._meanout_&type mean = /autoname;
 run;
+
+data _NULL_;
+SET  out.&dv._meanout_&type (DROP= _TYPE_);
+/*SET out.visits_pc_meanout_exch (DROP= _TYPE_); */
+put _all_; 
+RUN;
 
 PROC PRINTTO; RUN; 
 %mend;

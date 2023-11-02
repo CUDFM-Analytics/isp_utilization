@@ -15,3 +15,12 @@ dsname = scan(source,2,'.');
 RUN; 
 
 proc PRINT data = avps; run; 
+
+/**/
+/*DATA avps;*/
+/*SET out.cost_pc_avp_exch */
+/*    out.cost_total_avp_exch*/
+/*    out.cost_rx_avp_exch     indsname=source;*/
+/*dsname = scan(source,2,'.');*/
+/*RUN; */
+/*proc PRINT data = avps; run; */
