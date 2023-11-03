@@ -40,9 +40,8 @@ LAST : 2023-10-18
    -- managedCare not 0
    NB: Can't subset to records with an RAE or where pcmp_loc_id is null since that would exclude FY16-18 records
 2. Create dt_qrtr: the first month of the quarter that the record was in
-TEST : zzz_scratch for months Jan 2023 to Jun 2023 n's, unique ID's
 ===========================================================================================;
-* 11/2 what pcmp_loc_ids might not be missing???
+* 11/3 what pcmp_loc_ids might not be missing???
 Removed managedCare=0 from here 11/2;
 DATA   tmp.qrylong_00;
 LENGTH mcaid_id $11; 
@@ -309,7 +308,7 @@ run;
 %create_qrtr(data=tmp.bh, set=tmp.bh_0, var = dt_qrtr, qrtr=time);
 
 **RUN / exec 02_get_prep_telehealth to get tmp.tel here; 
-PROC SORT data = int.tel OUT=tmp.tel; by mcaid_id month ; run; 
+/*PROC SORT data = int.tel OUT=tmp.tel; by mcaid_id month ; run; */
 
 * tmp.QRYLONG_04 ==============================================================================
 join bh and util to qrylong to get averages (all utils - monthly, bho, telehealth) to qrylong4
@@ -340,7 +339,7 @@ QUIT;  * 11/3: 92112457 // 11/2: 89694402;
 PROC CONTENTS DATA = tmp.qrylong_03 VARNUM; RUN; 
 
 DATA tmp.qrylong_pre_0  (KEEP=mcaid_id FY adj_total bho_n_hosp bho_n_other bho_n_er)
-     tmp.qrylong_post_0 (KEEP=mcaid_id month dt_qrtr FY time n_pc n_ed n_tele n_ffsbh adj_total adj_pc ); 
+     tmp.qrylong_post_0 (KEEP=mcaid_id month dt_qrtr FY time n_pc n_ed n_tele n_ffsbh adj_total adj_pc adj_rx); 
 SET  tmp.qrylong_03;
 IF month <  '01Jul2019'd THEN OUTPUT tmp.qrylong_pre_0;
 IF month >= '01JUL2019'd THEN OUTPUT tmp.qrylong_post_0;
@@ -435,6 +434,7 @@ proc sql noprint;
   select &COL_NAMES into &MVAR_NAMES
   from tmp.pctl1719;
 quit;
+%put &mvar_names &col_names; 
 
 %macro insert_pctile(ds_in,ds_out,year);
 DATA &ds_out; 
@@ -468,7 +468,7 @@ RUN;
 %insert_pctile(ds_in = adj0,              ds_out = adj1,             year = 18);
 %insert_pctile(ds_in = adj1,              ds_out = tmp.qrylong_1719, year = 19);
 
-PROC FREQ DATA = tmp.qrylong_1719; tables adj_pd_total_1: bh: elig: ; RUN; 
+PROC FREQ DATA = tmp.qrylong_1719; tables adj_pd_total_1: elig: ; RUN; 
 
 * [tmp.final_04] ==============================================================================
 Add FY1719 outcomes to final_03
@@ -484,12 +484,26 @@ QUIT; *19283171, 30 cols;
 * See which are empty after joining and check after coalescing with -1 at end of script; 
 PROC PRINT DATA = tmp.final_04 (obs=25); where adj_pd_17pm eq .; RUN; 
 PROC SQL; CREATE TABLE tmp.inel_2017 AS SELECT distinct mcaid_id from tmp.final_04 where elig2017 ne 1 ; QUIT; *771104;
-/*PROC SQL; CREATE TABLE tmp.inel_2018 AS SELECT distinct mcaid_id from tmp.final_04 where elig2018 ne 1 ; QUIT; *771104;*/
+PROC SQL; CREATE TABLE tmp.inel_2018 AS SELECT distinct mcaid_id from tmp.final_04 where elig2018 ne 1 ; QUIT; *771104;
 PROC SQL; CREATE TABLE tmp.inel_2019 AS SELECT distinct mcaid_id from tmp.final_04 where elig2019 ne 1 ; QUIT; *771104;
 
 * tmp.qrylong_post_1 ======================================================================;
-DATA tmp.qrylong_post_1 (KEEP = mcaid_id month time FY n_ed n_pc n_ffsbh n_tele adj_total adj_pc adj_rx);
-SET  tmp.qrylong_post_0 ; 
+PROC CONTENTS DATA = tmp.qrylong_post_0 VARNUM; RUN; 
+
+* Subset to memlist specs before calculating (don't keep all the rae_ null, pcmp nulls, managedCare=1 etc); 
+PROC SQL; 
+CREATE TABLE tmp.qrylong_post_1a AS 
+SELECT a.mcaid_id
+     , a.time
+     , b.*
+FROM tmp.memlist AS A
+LEFT JOIN tmp.qrylong_post_1 AS B on a.mcaid_id=b.mcaid_id AND a.time=b.time; 
+QUIT;
+
+PROC SQL; SELECT count(distinct mcaid_id) as n_un_ids from tmp.qrylong_post_1a; QUIT; 
+
+DATA tmp.qrylong_post_2a (KEEP = mcaid_id month time FY n_ed n_pc n_ffsbh n_tele adj_total adj_pc adj_rx); /*removes dt_qrtr*/
+SET  tmp.qrylong_post_1a ; 
 * Multiple the visit values by 6 to capture whole number values ; 
 ARRAY mult(*) n_ed n_pc n_ffsbh n_tele;
 DO i=1 to dim(mult); 
@@ -498,9 +512,8 @@ END;
 n_tele = coalesce(n_tele, 0);
 RUN; 
 
-** AVERAGE the quarter PM costs, then get 95th percentiles for FY's ; 
 PROC SQL;
-CREATE TABLE tmp.qrylong_post_2 as
+CREATE TABLE tmp.qrylong_post_3a as
 SELECT mcaid_id
      , count(*) as n_months
      , time
@@ -512,15 +525,19 @@ SELECT mcaid_id
      , avg(adj_total)  AS adj_total_pmpq
      , avg(adj_pc)     AS adj_pc_pmpq
      , avg(adj_rx)     AS adj_rx_pmpq
-FROM tmp.qrylong_post_1
+FROM tmp.qrylong_post_2a
 GROUP BY mcaid_id, time;
 QUIT; 
 
-PROC SORT DATA = tmp.qrylong_post_2 NODUPKEY OUT=tmp.qrylong_post_3; BY _ALL_; RUN; 
-PROC SORT DATA = tmp.qrylong_post_3; BY FY; RUN; 
+PROC SORT DATA = tmp.qrylong_post_3a NODUPKEY OUT=tmp.qrylong_post_4a; BY _ALL_; RUN; 
+PROC FREQ DATA = tmp.qrylong_post_3; tables time; run; 
+%check_ids_n16(in=tmp.qrylong_post_3, out=n_ids_post3); 
+PROC SQL; Select count(distinct mcaid_id) as n_ids FROM tmp.qrylong_post_3; QUIT; 
+/*PROC SQL; Select mcaid_id, time from tmp.qrylong_post_3  AS A*/
+/*where not exists (select mcaid_id, time FROM tmp.final_04 AS B where a.mcaid_id=b.mcaid_id and a.time=b.time); QUIT; */
 
 %macro pctl_2023(var, out, pctlpre, t_var);
-PROC UNIVARIATE DATA = tmp.qrylong_post_3;
+PROC UNIVARIATE DATA = tmp.qrylong_post_4a;
 BY FY; 
 WHERE &VAR gt 0; 
 VAR   &VAR;
@@ -536,6 +553,8 @@ OUT=&out._a (DROP   = _name_ _label_
 var &t_var ; 
 RUN; 
 %mend; 
+
+PROC SORT DATA = tmp.qrylong_post_4a; BY FY; RUN; 
 
 %pctl_2023(var = adj_total_pmpq,   out = tmp.adj_total_pctl,   pctlpre = adj_total_,  t_var = adj_total_95); 
 %pctl_2023(var = adj_pc_pmpq,      out = tmp.adj_pc_pctl,      pctlpre = adj_pc_,     t_var = adj_pc_95); 
@@ -565,7 +584,7 @@ quit;
 
 * Get mean where value gt 95th pctl value; 
 %MACRO means_95p(fy=,var=,gt=,out=,mean=);
-PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3; 
+PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_4a; 
 WHERE FY=&FY 
 AND   &VAR gt &gt;
 VAR   &VAR;
@@ -608,8 +627,8 @@ proc sql noprint;
   from tmp.mu_pctl_2023;
 quit;
 
-DATA tmp.qrylong_post_4;
-SET  tmp.qrylong_post_3;
+DATA tmp.qrylong_post_5a;
+SET  tmp.qrylong_post_4a;
 
 * replace values >95p with mu95;
 IF      FY = 2020 AND adj_total_pmpq gt &adj_total_95p_20 THEN adj_pd_total_tc = &mu_total20; 
@@ -637,21 +656,14 @@ CREATE TABLE tmp.final_05 AS
 SELECT a.*
      , b.*
      , c.fqhc
-FROM tmp.final_04            AS A
-LEFT JOIN tmp.qrylong_post_4 AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time
-LEFT JOIN tmp.pcmp_dim       AS C ON a.pcmp_loc_id=c.pcmp_loc_id;
+FROM tmp.final_04             AS A
+LEFT JOIN tmp.qrylong_post_5a AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time
+LEFT JOIN tmp.pcmp_dim        AS C ON a.pcmp_loc_id=c.pcmp_loc_id;
 QUIT; 
 
 * [tmp.FINAL_06]===============================================================
 * setting to 0 where . for variables not using elig category (adj 16-18 vars) 
 Create indicator variables for DV's where >0 (use when creating pctiles or just in gee but needed eventually anyway);
-
-*Get bh_col names; 
-PROC SQL; 
-SELECT name INTO :bhcols separated by ' ' FROM dictionary.columns 
-WHERE libname = 'TMP' AND memname='FINAL_05' AND substr(name, 1, 4)="bho_";
-QUIT; 
-
 
 DATA tmp.final_06 (DROP = dt_qrtr );
 * Not yet setting length for time and mcaid_id bc they might get joined later; 
@@ -662,7 +674,7 @@ ARRAY dv(*) bho_n_hosp_17pm     bho_n_hosp_18pm     bho_n_hosp_19pm
             bho_n_er_17pm       bho_n_er_18pm       bho_n_er_19pm
             bho_n_other_17pm    bho_n_other_18pm    bho_n_other_19pm
             n_pc_pmpq           n_ed_pmpq           n_ffsbh_pmpq     n_tel_pmpq   
-            adj_pd_total_tc     adj_pd_pc_tc     adj_pd_rx_tc;
+            adj_pd_total_tc     adj_pd_pc_tc        adj_pd_rx_tc;
 
 DO i=1 to dim(dv);
     IF dv(i)=. THEN dv(i)=0; 
@@ -682,11 +694,9 @@ ind_visit_tel   = n_tel_pmpq      > 0;
 ind_cost_total  = adj_pd_total_tc > 0;
 ind_cost_pc     = adj_pd_pc_tc    > 0;
 ind_cost_rx     = adj_pd_rx_tc    > 0;
-RUN;  
+RUN;  *19238171, 44 vars; 
 
 PROC FREQ DATA = tmp.final_06; tables adj_pd_total_1: elig: ; RUN; 
-%check_ids_n16(in=tmp.final_06, out=check_ids_final_06);
-PROC FREQ DATA = tmp.final_06 nlevels; tables time; RUN; 
 PROC MEANS DATA = tmp.final_06 nmiss; RUN; 
 PROC FREQ DATA = tmp.final_06; TABLES adj_pd_total_17cat*elig2017; RUN;
 PROC FREQ DATA = tmp.final_06; TABLES adj_pd_total_18cat*elig2018; RUN;
@@ -739,29 +749,34 @@ FORMAT budget_grp_r budget_grp_new_. race $race_rc_. age_cat age_cat_.;
 
 RUN; 
 
-*[DATA.UTILIZATION];
-%LET drop   = FY budget_group fyqrtr pcmp_loc_id;
+PROC CONTENTS DATA = data.utilization_large_nov VARNUM; RUN; 
 
+*[DATA.UTILIZATION];
 %LET retain = mcaid_id time int int_imp season1 season2 season3 ind_cost_total cost_total ind_cost_pc cost_pc ind_cost_rx cost_rx 
               adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat 
               ind_visit_pc visits_pc ind_visit_ed visits_ed ind_visit_ffsbh visits_ffsbh ind_visit_tel visits_tel
               bh_hosp17 bh_hosp18 bh_hosp19 bh_er17 bh_er18 bh_er19 bh_oth17 bh_oth18 bh_oth19
-              fqhc budget_grp_new age_cat rae_person_new  race sex 
-              ;
+              fqhc budget_grp_new age_cat rae_person_new  race sex pcmp_loc_id;
 
+%LET keep = mcaid_id time int int_imp season1 season2 season3 ind_cost_total adj_pd_total_tc ind_cost_pc adj_pd_pc_tc ind_cost_rx adj_pd_rx_tc 
+            adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat 
+            ind_visit_pc n_pc_pmpq ind_visit_ed n_ed_pmpq ind_visit_ffsbh n_ffsbh_pmpq ind_visit_tel n_tel_pmpq
+            bh_hosp17 bh_hosp18 bh_hosp19 bh_er17 bh_er18 bh_er19 bh_oth17 bh_oth18 bh_oth19
+            fqhc budget_grp_r age_cat rae_person_new  race sex pcmp_loc_id;
 * previous version had 39 cols; 
 DATA data.utilization ;
 RETAIN &retain;
 LENGTH budget_grp_new age_cat 3. mcaid_id $7. sex $1.;
-SET    data.utilization_large_nov (RENAME=(adj_pd_total_tc = cost_total
-                                       adj_pd_pc_tc    = cost_pc
-                                       adj_pd_rx_tc    = cost_rx
-                                       n_pc_pmpq       = visits_pc
-                                       n_ed_pmpq       = visits_ed
-                                       n_ffsbh_pmpq    = visits_ffsbh
-                                       n_tel_pmpq      = visits_tel
-                                       budget_grp_r    = budget_grp_new)
-                               DROP= &drop);
+SET    data.utilization_large_nov 
+       (RENAME=(adj_pd_total_tc = cost_total
+                adj_pd_pc_tc    = cost_pc
+                adj_pd_rx_tc    = cost_rx
+                n_pc_pmpq       = visits_pc
+                n_ed_pmpq       = visits_ed
+                n_ffsbh_pmpq    = visits_ffsbh
+                n_tel_pmpq      = visits_tel
+                budget_grp_r    = budget_grp_new)
+       KEEP= &keep);
 RUN; 
 
 /**/
@@ -776,7 +791,7 @@ SELECT name as variable
      , informat
 FROM sashelp.vcolumn
 WHERE LIBNAME = 'DATA' 
-AND   MEMNAME = 'UTILIZATION_NOV';
+AND   MEMNAME = 'UTILIZATION';
 quit;
 
 * 

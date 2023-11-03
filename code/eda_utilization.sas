@@ -112,6 +112,12 @@ quit;
 ods pdf startpage=now;
 TITLE "Frequencies, Categorical Vars";
 
+PROC SQL;
+CREATE TABLE memlist_ids_time AS 
+select count(distinct mcaid_id), time 
+FROM &dat 
+GROUP BY time; QUIT;
+
 PROC FREQ DATA = &dat;
 TABLES int &cat;
 RUN; 
@@ -122,6 +128,21 @@ TITLE "Frequencies, Categorical Vars Grouped by INT status";
 PROC FREQ DATA = &dat;
 TABLES (&cat)*int;
 RUN; 
+
+
+ods pdf startpage=now;
+TITLE "Frequencies, Categorical Vars Grouped by TIME";
+PROC FREQ DATA = &dat; 
+TABLES time*(int int_imp ind: adj_pd_total_1: fqhc budget_grp_new age_cat rae_person_new race sex); 
+RUN; 
+
+PROC SQL; 
+SELECT count(distinct pcmp_loc_id) 
+     , time
+FROM &dat
+GROUP BY TIME; 
+QUIT; 
+
 
 ods pdf startpage=now;
 TITLE "FYs20-23 Cost DV 95th pctls and means where above 0"; 
