@@ -17,7 +17,7 @@ Per Mark : Use mode for ref class vars budget_group & race if possible
 %LET dat = data.utilization; 
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_hurdle_costs.sas";
 
-*[EXCH] 10-25-2023 =================================================================;
+*[EXCH] 11-2-2023 =================================================================;
 %hurdle  (dat=&dat, pvar=ind_cost_pc, cvar=cost_pc, dv=cost_pc, type=exch);
 proc datasets library=work kill; quit; 
 %hurdle  (dat=&dat, pvar=ind_cost_total, cvar=cost_total, dv=cost_total, type=exch);
@@ -25,7 +25,7 @@ proc datasets library=work kill; quit;
 %hurdle  (dat=&dat, pvar=ind_cost_rx, cvar=cost_rx, dv=cost_rx, type=exch);
 proc datasets library=work kill; quit; 
 
-*[TYPE=IND] 10-25-2023 =================================================================;
+*[TYPE=IND] 11-2-2023 =================================================================;
 %hurdle  (dat=&dat, pvar=ind_cost_pc, cvar=cost_pc, dv=cost_pc, type=ind);
 proc datasets library=work kill; quit; 
 %hurdle  (dat=&dat, pvar=ind_cost_total, cvar=cost_total, dv=cost_total, type=ind);

@@ -1,5 +1,7 @@
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas"; 
 LIBNAME eda "&data/out_eda_checks"; 
+LIBNAME tmp "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/data/out_tmp_nov"; 
+
 %let dat = data.utilization; 
 
 /*%let all = data.analysis_allcols; */
@@ -71,7 +73,7 @@ p "Project Root: &root";
 p "Script: %sysget(SAS_EXECFILENAME)";
 p "Total Observations in Dataset: &nobs";
 p "Total unique medicaid IDs in Dataset: &nmem";
-p "Total medicaid ID's where int 1: &int"; 
+p "Total medicaid IDs where int 1: &int"; 
 p ""; 
 RUN; 
 
@@ -107,14 +109,12 @@ FROM dictionary.columns
 WHERE LIBNAME = 'DATA' AND MEMNAME='UTILIZATION';
 quit;
 
-
 ods pdf startpage=now;
 TITLE "Frequencies, Categorical Vars";
 
 PROC FREQ DATA = &dat;
 TABLES int &cat;
 RUN; 
-
 
 ods pdf startpage=now;
 TITLE "Frequencies, Categorical Vars Grouped by INT status";
@@ -123,37 +123,32 @@ PROC FREQ DATA = &dat;
 TABLES (&cat)*int;
 RUN; 
 
-
 ods pdf startpage=now;
 TITLE "FYs20-23 Cost DV 95th pctls and means where above 0"; 
 
-PROC TRANSPOSE DATA = int.mu_pctl_2023 OUT=int.mu_pctl_2023_long 
+PROC TRANSPOSE DATA = tmp.mu_pctl_2023 OUT=tmp.mu_pctl_2023_long 
 (rename=(_NAME_  = percentile 
          _LABEL_ = label
          COL1    = original_value));
 RUN; 
-
-PROC PRINT DATA = int.mu_pctl_2023_long; RUN; 
-
+PROC PRINT DATA = tmp.mu_pctl_2023_long; RUN; 
 
 ods pdf startpage=now;
 TITLE "Cost PC: Checking pre and post topcoding, Post Proc Univariate (where gt 0)"; 
-PROC ODSTEXT; p ""; p "cost_pc before and after topcoding, values GT 0 ";RUN; 
-PROC PRINT DATA = eda.cost_pc_tc_prepost_gt0 noobs; RUN; 
+/*PROC ODSTEXT; p ""; p "cost_pc before and after topcoding, values GT 0 ";RUN; */
+/*PROC PRINT DATA = eda.cost_pc_tc_prepost_gt0 noobs; RUN; */
 %univar_gt0(var=cost_pc, title = "Cost PC gt 0"); 
-
 
 ods pdf startpage=now;
 TITLE "Cost Rx, Checking pre and post topcoding, Post Proc Univariate (where gt 0)"; 
-PROC ODSTEXT; p ""; p "cost_rx before and after topcoding, values GT 0 ";RUN; 
-PROC PRINT DATA = eda.cost_rx_tc_prepost_gt0 noobs; RUN; 
+/*PROC ODSTEXT; p ""; p "cost_rx before and after topcoding, values GT 0 ";RUN; */
+/*PROC PRINT DATA = eda.cost_rx_tc_prepost_gt0 noobs; RUN; */
 %univar_gt0(var=cost_rx, title = "Cost Rx gt 0"); 
-
 
 ods pdf startpage=now;
 TITLE "Cost Total, Checking pre and post topcoding, Post Proc Univariate (where gt 0)"; 
-PROC ODSTEXT; p ""; p "cost_total before and after topoding, values GT 0 ";RUN; 
-PROC PRINT DATA = eda.cost_total_tc_prepost_gt0 noobs; RUN; 
+/*PROC ODSTEXT; p ""; p "cost_total before and after topoding, values GT 0 ";RUN; */
+/*PROC PRINT DATA = eda.cost_total_tc_prepost_gt0 noobs; RUN; */
 %univar_gt0(var=cost_total, title = "Cost Total gt 0"); 
 
 
@@ -192,12 +187,12 @@ RUN;
 PROC ODSTEXT;
 p "Percentiles,  Values for FY17-FY19 vars Prior to Top-Coding" /style = systemtitle;
 RUN; 
-PROC TRANSPOSE DATA = int.pctl1719 OUT=int.pctl1719_long (rename=(_NAME_  = percentile
+PROC TRANSPOSE DATA = tmp.pctl1719 OUT=tmp.pctl1719_long (rename=(_NAME_  = percentile
                                                                   _LABEL_ = label
                                                                   COL1    = original_value));
 RUN; 
 ods proclabel 'adj FY 1719: Percentiles, Mus'; RUN; 
-PROC PRINT DATA = int.pctl1719; RUN; 
+PROC PRINT DATA = tmp.pctl1719; RUN; 
 
 **************************************************************************************
 * ADJ means FY1618
@@ -207,7 +202,7 @@ p "Means for FY17-FY19 values by category, confirming max values and ranges" /st
 RUN; 
 
 %macro means_adj(FY);
-PROC MEANS DATA = int.qrylong_1719 stackodsoutput n mean std min max;
+PROC MEANS DATA = tmp.qrylong_1719 stackodsoutput n mean std min max;
 CLASS adj_pd_total_&fy.cat;
 VAR   adj_pd_&fy.pm;
 RUN; 

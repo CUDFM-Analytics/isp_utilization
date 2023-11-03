@@ -349,7 +349,7 @@ QUIT;  * 89694402;
 ===========================================================================================;
 PROC CONTENTS DATA = tmp.qrylong_03 VARNUM; RUN; 
 DATA tmp.qrylong_pre_0  (KEEP=mcaid_id FY adj_total bho_n_hosp bho_n_other bho_n_er)
-     tmp.qrylong_post_0 (KEEP=mcaid_id month dt_qrtr FY time n_pc n_ed n_tele n_ffsbh adj_total adj_pc adj_rx); 
+     tmp.qrylong_post_0 (KEEP=mcaid_id month dt_qrtr FY time n_pc n_ed n_tele n_ffsbh adj_total adj_pc ); 
 SET  tmp.qrylong_03;
 IF month <  '01Jul2019'd THEN OUTPUT tmp.qrylong_pre_0;
 IF month >= '01JUL2019'd THEN OUTPUT tmp.qrylong_post_0;
@@ -379,6 +379,8 @@ SELECT mcaid_id
 FROM tmp.qrylong_pre_0
 GROUP BY mcaid_id;
 QUIT; 
+
+PROC FREQ DATA=tmp.qrylong_pre_1; TABLES elig: ; RUN; 
 
 * change adj to if elig = 0, then adj var = -1 and set bh variables to 0 where .; 
 DATA tmp.qrylong_pre_2;
@@ -424,7 +426,6 @@ run;
 %pctl_1618(var = adj_pd_19pm, out = pd19pctle, pctlpre = p19_); 
 
 data tmp.pctl1719; merge pd17pctle pd18pctle pd19pctle ; run;
-
 PROC PRINT DATA = tmp.pctl1719; RUN; 
 
 * https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variable;
@@ -485,22 +486,18 @@ SELECT a.*
      , b.*
 FROM tmp.final_03           AS A
 LEFT JOIN tmp.qrylong_1719  AS B ON a.mcaid_id=b.mcaid_id;
-QUIT; *56463912, 30 cols; 
-
-PROC SORT DATA = tmp.final_04 NODUPKEY ; BY _ALL_  ; RUN; * removed 37180741 values: n=19283171 (same as before); 
+QUIT; *19283171, 30 cols; 
 
 * tmp.qrylong_post_1 ======================================================================;
 DATA tmp.qrylong_post_1 (KEEP = mcaid_id month time FY n_ed n_pc n_ffsbh n_tele adj_total adj_pc adj_rx);
-SET  tmp.qrylong_post_0 (KEEP = mcaid_id    month   dt_qrtr     time       FY
-                                n_ed        n_pc    n_ffsbh     n_tele   
-                                adj_total   adj_pc  adj_rx); 
+SET  tmp.qrylong_post_0 ; 
 * Multiple the visit values by 6 to capture whole number values ; 
 ARRAY mult(*) n_ed n_pc n_ffsbh n_tele;
 DO i=1 to dim(mult); 
 mult(i)=mult(i)*6; 
 END;
+n_tele = coalesce(n_tele, 0);
 RUN; 
-* 58163451;
 
 ** AVERAGE the quarter PM costs, then get 95th percentiles for FY's ; 
 PROC SQL;
@@ -634,7 +631,6 @@ ELSE IF FY = 2022 AND adj_rx_pmpq    gt &adj_rx_95p_22    THEN adj_pd_rx_tc    =
 ELSE IF FY = 2023 AND adj_rx_pmpq    gt &adj_rx_95p_23    THEN adj_pd_rx_tc    = &mu_rx23;    
 ELSE adj_pd_rx_tc= adj_rx_pmpq;
 RUN; 
-PROC SORT DATA = tmp.qrylong_post_4; by mcaid_id time; run; 
 
 * [tmp.FINAL_05];
 PROC SQL; 
@@ -647,9 +643,6 @@ LEFT JOIN tmp.qrylong_post_4 AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time
 LEFT JOIN tmp.pcmp_dim       AS C ON a.pcmp_loc_id=c.pcmp_loc_id;
 QUIT; 
 
-* CAN COMPARE TOP-CODED TO avgs in final_05; 
-PROC CONTENTS DATA = tmp.final_05 VARNUM; RUN; 
-
 * [tmp.FINAL_06]===============================================================
 * setting to 0 where . for variables not using elig category (adj 16-18 vars) 
 Create indicator variables for DV's where >0 (use when creating pctiles or just in gee but needed eventually anyway);
@@ -661,7 +654,7 @@ WHERE libname = 'TMP' AND memname='FINAL_05' AND substr(name, 1, 4)="bho_";
 QUIT; 
 
 
-DATA tmp.final_06 (DROP = dt_qrtr elig: adj_pd_17pm adj_pd_18pm adj_pd_19pm);
+DATA tmp.final_06 (DROP = dt_qrtr );
 * Not yet setting length for time and mcaid_id bc they might get joined later; 
 LENGTH FY age_cat budget_group rae_person_new int int_imp &bhcols 3. sex $1. ;
 SET  tmp.final_05 (DROP = adj_rx_pmpq adj_pc_pmpq adj_total_pmpq n_months); 
@@ -691,6 +684,8 @@ ind_cost_total  = adj_pd_total_tc > 0;
 ind_cost_pc     = adj_pd_pc_tc    > 0;
 ind_cost_rx     = adj_pd_rx_tc    > 0;
 RUN;  
+
+PROC FREQ DATA = tmp.final_06; tables adj_pd_total_1: elig: ; RUN; 
 
 * ANALYSIS_DATASET_ALLCOLS ==================================================================
 ===========================================================================================;
@@ -750,7 +745,7 @@ RUN;
               ;
 
 * previous version had 39 cols; 
-DATA data.utilization_nov ;
+DATA data.utilization ;
 RETAIN &retain;
 LENGTH budget_grp_new age_cat 3. mcaid_id $7. sex $1.;
 SET    data.utilization_large_nov (RENAME=(adj_pd_total_tc = cost_total
@@ -766,18 +761,18 @@ RUN;
 
 /**/
 /*** CREATE META DS  ====================================;*/
-/*PROC SQL; */
-/*CREATE TABLE data.UTILIZATION_meta AS */
-/*SELECT name as variable*/
-/*     , type*/
-/*     , length*/
-/*     , label*/
-/*     , format*/
-/*     , informat*/
-/*FROM sashelp.vcolumn*/
-/*WHERE LIBNAME = 'DATA' */
-/*AND   MEMNAME = 'UTILIZATION';*/
-/*quit;*/
+PROC SQL; 
+CREATE TABLE data.UTILIZATION_meta AS 
+SELECT name as variable
+     , type
+     , length
+     , label
+     , format
+     , informat
+FROM sashelp.vcolumn
+WHERE LIBNAME = 'DATA' 
+AND   MEMNAME = 'UTILIZATION_NOV';
+quit;
 
 * 
 DATA.MINI_DS ==============================================================================
