@@ -61,12 +61,12 @@ id_time_helper = CATX('_', mcaid_id, time);
 RUN; 
 %mend; 
 
- %macro check_ids_n16(ds=);
+ %macro check_ids_n16(in=, out=);
             proc sql; 
-            create table n_ids_&ds AS 
+            create table &out AS 
             select mcaid_id
                  , count(mcaid_id) as n_ids
-            FROM &ds
+            FROM &in
             GROUP BY mcaid_ID
             having n_ids>16;
             quit; 
