@@ -492,18 +492,18 @@ PROC CONTENTS DATA = tmp.qrylong_post_0 VARNUM; RUN;
 
 * Subset to memlist specs before calculating (don't keep all the rae_ null, pcmp nulls, managedCare=1 etc); 
 PROC SQL; 
-CREATE TABLE tmp.qrylong_post_1a AS 
+CREATE TABLE tmp.qrylong_post_1 AS 
 SELECT a.mcaid_id
      , a.time
      , b.*
 FROM tmp.memlist AS A
-LEFT JOIN tmp.qrylong_post_1 AS B on a.mcaid_id=b.mcaid_id AND a.time=b.time; 
+LEFT JOIN tmp.qrylong_post_0 AS B on a.mcaid_id=b.mcaid_id AND a.time=b.time; 
 QUIT;
 
-PROC SQL; SELECT count(distinct mcaid_id) as n_un_ids from tmp.qrylong_post_1a; QUIT; 
+PROC SQL; SELECT count(distinct mcaid_id) as n_un_ids from tmp.qrylong_post_1; QUIT; 
 
-DATA tmp.qrylong_post_2a (KEEP = mcaid_id month time FY n_ed n_pc n_ffsbh n_tele adj_total adj_pc adj_rx); /*removes dt_qrtr*/
-SET  tmp.qrylong_post_1a ; 
+DATA tmp.qrylong_post_2 (KEEP = mcaid_id month time FY n_ed n_pc n_ffsbh n_tele adj_total adj_pc adj_rx); /*removes dt_qrtr*/
+SET  tmp.qrylong_post_1 ; 
 * Multiple the visit values by 6 to capture whole number values ; 
 ARRAY mult(*) n_ed n_pc n_ffsbh n_tele;
 DO i=1 to dim(mult); 
@@ -513,7 +513,7 @@ n_tele = coalesce(n_tele, 0);
 RUN; 
 
 PROC SQL;
-CREATE TABLE tmp.qrylong_post_3a as
+CREATE TABLE tmp.qrylong_post_3 as
 SELECT mcaid_id
      , count(*) as n_months
      , time
@@ -525,19 +525,19 @@ SELECT mcaid_id
      , avg(adj_total)  AS adj_total_pmpq
      , avg(adj_pc)     AS adj_pc_pmpq
      , avg(adj_rx)     AS adj_rx_pmpq
-FROM tmp.qrylong_post_2a
+FROM tmp.qrylong_post_2
 GROUP BY mcaid_id, time;
 QUIT; 
 
-PROC SORT DATA = tmp.qrylong_post_3a NODUPKEY OUT=tmp.qrylong_post_4a; BY _ALL_; RUN; 
-PROC FREQ DATA = tmp.qrylong_post_3; tables time; run; 
-%check_ids_n16(in=tmp.qrylong_post_3, out=n_ids_post3); 
-PROC SQL; Select count(distinct mcaid_id) as n_ids FROM tmp.qrylong_post_3; QUIT; 
+PROC SORT DATA = tmp.qrylong_post_3 NODUPKEY OUT=tmp.qrylong_post_3; BY _ALL_; RUN; 
+/*PROC FREQ DATA = tmp.qrylong_post_3; tables time; run; */
+/*%check_ids_n16(in=tmp.qrylong_post_3, out=n_ids_post3); */
+/*PROC SQL; Select count(distinct mcaid_id) as n_ids FROM tmp.qrylong_post_3; QUIT; */
 /*PROC SQL; Select mcaid_id, time from tmp.qrylong_post_3  AS A*/
 /*where not exists (select mcaid_id, time FROM tmp.final_04 AS B where a.mcaid_id=b.mcaid_id and a.time=b.time); QUIT; */
 
 %macro pctl_2023(var, out, pctlpre, t_var);
-PROC UNIVARIATE DATA = tmp.qrylong_post_4a;
+PROC UNIVARIATE DATA = tmp.qrylong_post_3;
 BY FY; 
 WHERE &VAR gt 0; 
 VAR   &VAR;
@@ -554,7 +554,7 @@ var &t_var ;
 RUN; 
 %mend; 
 
-PROC SORT DATA = tmp.qrylong_post_4a; BY FY; RUN; 
+PROC SORT DATA = tmp.qrylong_post_3; BY FY; RUN; 
 
 %pctl_2023(var = adj_total_pmpq,   out = tmp.adj_total_pctl,   pctlpre = adj_total_,  t_var = adj_total_95); 
 %pctl_2023(var = adj_pc_pmpq,      out = tmp.adj_pc_pctl,      pctlpre = adj_pc_,     t_var = adj_pc_95); 
@@ -584,7 +584,7 @@ quit;
 
 * Get mean where value gt 95th pctl value; 
 %MACRO means_95p(fy=,var=,gt=,out=,mean=);
-PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_4a; 
+PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3; 
 WHERE FY=&FY 
 AND   &VAR gt &gt;
 VAR   &VAR;
@@ -627,8 +627,8 @@ proc sql noprint;
   from tmp.mu_pctl_2023;
 quit;
 
-DATA tmp.qrylong_post_5a;
-SET  tmp.qrylong_post_4a;
+DATA tmp.qrylong_post_4;
+SET  tmp.qrylong_post_3;
 
 * replace values >95p with mu95;
 IF      FY = 2020 AND adj_total_pmpq gt &adj_total_95p_20 THEN adj_pd_total_tc = &mu_total20; 
@@ -656,9 +656,9 @@ CREATE TABLE tmp.final_05 AS
 SELECT a.*
      , b.*
      , c.fqhc
-FROM tmp.final_04             AS A
-LEFT JOIN tmp.qrylong_post_5a AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time
-LEFT JOIN tmp.pcmp_dim        AS C ON a.pcmp_loc_id=c.pcmp_loc_id;
+FROM tmp.final_04            AS A
+LEFT JOIN tmp.qrylong_post_4 AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time
+LEFT JOIN tmp.pcmp_dim       AS C ON a.pcmp_loc_id=c.pcmp_loc_id;
 QUIT; 
 
 * [tmp.FINAL_06]===============================================================
