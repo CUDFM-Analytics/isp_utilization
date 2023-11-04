@@ -79,9 +79,21 @@ LEFT JOIN tmp.time_dim         AS D on a.dt_qrtr  = d.month
 WHERE SEX IN ('F','M');
 QUIT;   
 
+* [pcmp_dim table];
+DATA pcmp_dim0 (DROP=pcmp_loc_type_cd pcmp_type); 
+SET  tmp.qrylong_01 (KEEP=pcmp_loc_id pcmp_loc_type_cd); 
+pcmp_type = input(pcmp_loc_type_cd, best12.);
+IF   pcmp_type in (32 45 61 62) then fqhc = 1 ; else fqhc = 0 ;
+RUN; 
+PROC SORT DATA = pcmp_dim0 NODUPKEY; BY _ALL_; RUN;
+PROC SQL; 
+CREATE TABLE tmp.pcmp_dim AS SELECT distinct pcmp_loc_id, fqhc FROM pcmp_dim0
+GROUP BY pcmp_loc_id; 
+QUIT; *1507;
+
 * [tmp.memlist0] ==============================================================================
 -Extract mcaid_id, dob, and time to get age as of the 2nd month in each quarter to a) subset to ages, b) create age_cat
--WHERE rae_person_new not null, pcmp_loc_id not null, and managedCare =1
+-WHERE rae_person_new not null, pcmp_loc_id not null, and managedCare =0
 -Keep age for use in CTLP file
 ===========================================================================================;
 * Get distinct mcaid_id and dob, WHERE RAE_PERSON_NEW ne . AND pcmp ne . and managedCare=0 here ;
@@ -140,6 +152,7 @@ PROC SQL; CREATE TABLE memlist_ids_time AS select count(distinct mcaid_id), time
 * [tmp.QRYLONG_02] ==============================================================================
 Subset qrylong to memlist
 ===========================================================================================;
+* ;
 PROC SQL;
 CREATE TABLE tmp.qrylong_02 AS 
 SELECT mcaid_id
@@ -150,6 +163,14 @@ SELECT mcaid_id
 FROM tmp.qrylong_01
 WHERE mcaid_id IN (SELECT mcaid_id FROM tmp.memlist);
 QUIT; *92,112,457;
+
+        *11/4 unit test just to see if get same n this way as above tmp.qrylong_02; 
+        PROC SORT DATA = tmp.qrylong_01; by mcaid_id; RUN; 
+        DATA qrylong_02a;
+        MERGE tmp.qrylong_01 (in=a) tmp.memlist (in=b KEEP=mcaid_id);
+        BY mcaid_id; 
+        if a and b; 
+        RUN; *9211245 - same as above; 
 
 * [tmp.final_00] ==============================================================================
 Start final list where age in range based on FY's 19-22 and rae_ not missing
@@ -178,21 +199,6 @@ QUIT;
 
 PROC MEANS DATA = tmp.final_00 nmiss; var rae_person_new pcmp_loc_id time; run; * none are missing; 
 
-* [pcmp_dim table];
-DATA pcmp_dim0 (DROP=pcmp_loc_type_cd pcmp_type); 
-SET  tmp.qrylong_01 (KEEP=pcmp_loc_id pcmp_loc_type_cd); 
-pcmp_type = input(pcmp_loc_type_cd, best12.);
-IF   pcmp_type in (32 45 61 62) then fqhc = 1 ; else fqhc = 0 ;
-RUN; 
-
-PROC SORT DATA = pcmp_dim0 NODUPKEY; BY _ALL_; RUN;
-
-PROC SQL; 
-CREATE TABLE tmp.pcmp_dim AS 
-SELECT distinct pcmp_loc_id, fqhc
-FROM pcmp_dim0
-GROUP BY pcmp_loc_id; 
-QUIT; *1507;
 
 * [tmp.final_01] & [tmp.DEMO] =========================================================
 Get vars from qry_longitudinal that might have >1 value per quarter

@@ -35,8 +35,6 @@ LOG
         LIBNAME int "&int"; 
       %LET out = &data/out_hurdle; 
         LIBNAME out "&out"; 
-      %LET int2 = &data/interim_new;
-        LIBNAME tmp "&int2";
     * export folder for excel files output; 
       %LET report = &util/reports; 
 

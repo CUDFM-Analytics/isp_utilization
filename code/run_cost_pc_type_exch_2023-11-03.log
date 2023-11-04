@@ -1074,3 +1074,147 @@ NOTE: PROCEDURE GENMOD used (Total process time):
       real time           16:24.96
       cpu time            15:40.00
       
+
+MPRINT(HURDLE):   TITLE 'Cost Model';
+MPRINT(HURDLE):   PROC GENMOD DATA = data.utilization desc;
+MPRINT(HURDLE):   WHERE cost_pc > 0;
+MPRINT(HURDLE):   CLASS mcaid_id int(ref='0') int_imp(ref='0') budget_grp_new(ref='MAGI Eligible 
+Children') race(ref='non-Hispanic White/Caucasian') sex(ref='Female') rae_person_new(ref='3') 
+age_cat(ref='ages 21-44') fqhc(ref ='0') bh_oth17(ref='0') bh_oth18(ref='0') bh_oth19(ref='0') 
+bh_er17(ref='0') bh_er18(ref='0') bh_er19(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0') 
+bh_hosp19(ref='0') adj_pd_total_17cat(ref='0') adj_pd_total_18cat(ref='0') 
+adj_pd_total_19cat(ref='0') ;
+MPRINT(HURDLE):   MODEL cost_pc = int int_imp time season1 season2 season3 budget_grp_new race sex 
+rae_person_new age_cat fqhc bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 bh_er19 bh_hosp17 bh_hosp18 
+bh_hosp19 adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / dist=gamma link=log ;
+MPRINT(HURDLE):   REPEATED SUBJECT = mcaid_id / type = exch;
+MPRINT(HURDLE):   store out.cost_pc_cmodel_exch;
+MPRINT(HURDLE):   RUN;
+
+NOTE: The DESCENDING option applies only to the multinomial distribution with ordinal response.
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: Algorithm converged.
+NOTE: Algorithm converged.
+NOTE: The GENMOD procedure generated the model item store OUT.COST_PC_CMODEL_EXCH.
+NOTE: PROCEDURE GENMOD used (Total process time):
+      real time           8:39.32
+      cpu time            8:37.26
+      
+
+MPRINT(HURDLE):   TITLE;
+MPRINT(HURDLE):   * the predictions for cost will be made for each person twice, once exposed and 
+once unexposed;
+MPRINT(HURDLE):   * OUT:[P_INTGROUP] IN :[out=out.&dv._pmodel] prob of 
+util------------------------------------------------ ;
+MPRINT(HURDLE):   proc plm restore=out.cost_pc_pmodel_exch ;
+MPRINT(HURDLE):   score data=data.intgroup out=p_intgroup predicted=p_prob / ilink;
+MPRINT(HURDLE):   run;
+
+NOTE: The data set WORK.P_INTGROUP has 3653638 observations and 41 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           16.87 seconds
+      cpu time            8.61 seconds
+      
+
+MPRINT(HURDLE):   * OUT:[CP_INTGROUP] IN :[out=out.&dv._cmodel] prob of cost 
+-------------------------------------------------;
+MPRINT(HURDLE):   proc plm restore=out.cost_pc_cmodel_exch ;
+MPRINT(HURDLE):   score data=p_intgroup out=cp_intgroup predicted=p_cost / ilink;
+MPRINT(HURDLE):   run;
+
+NOTE: The data set WORK.CP_INTGROUP has 3653638 observations and 42 variables.
+NOTE: PROCEDURE PLM used (Total process time):
+      real time           8.04 seconds
+      cpu time            7.84 seconds
+      
+
+MPRINT(HURDLE):   * OUT:[out.&dv._mean] IN:[cp_intgroup] Person average cost is 
+calculated------------------------------;
+MPRINT(HURDLE):   data out.cost_pc_mean_exch ;
+MPRINT(HURDLE):   set cp_intgroup;
+MPRINT(HURDLE):   a_cost = p_prob*p_cost;
+MPRINT(HURDLE):  * (1-p term = 0);
+MPRINT(HURDLE):   run;
+
+NOTE: There were 3653638 observations read from the data set WORK.CP_INTGROUP.
+NOTE: The data set OUT.COST_PC_MEAN_EXCH has 3653638 observations and 43 variables.
+NOTE: DATA statement used (Total process time):
+      real time           12.53 seconds
+      cpu time            1.92 seconds
+      
+
+MPRINT(HURDLE):   * OUT:[out.&dv._avp] IN:[out.&dv._mean] Group average cost is calculated and 
+contrasted-----------------;
+MPRINT(HURDLE):   proc sql;
+MPRINT(HURDLE):   create table out.cost_pc_avp_exch as select mean(case when exposed=1 then a_cost 
+else . end ) as cost_exposed, mean(case when exposed=0 then a_cost else . end ) as cost_unexposed, 
+calculated cost_exposed - calculated cost_unexposed as cost_diff from out.cost_pc_mean_exch;
+NOTE: Table OUT.COST_PC_AVP_EXCH created, with 1 rows and 3 columns.
+
+MPRINT(HURDLE):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           8.60 seconds
+      cpu time            0.39 seconds
+      
+
+MPRINT(HURDLE):   * put AVP results in log for reference/ comparing results;
+MPRINT(HURDLE):   data _NULL_;
+MPRINT(HURDLE):   SET out.cost_pc_avp_exch;
+MPRINT(HURDLE):   put cost_exposed= cost_unexposed= cost_diff=;
+MPRINT(HURDLE):   RUN;
+
+cost_exposed=47.40125866 cost_unexposed=45.580114023 cost_diff=1.8211446377
+NOTE: There were 1 observations read from the data set OUT.COST_PC_AVP_EXCH.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(HURDLE):   proc rank data = predout out = predgroup groups = 10;
+MPRINT(HURDLE):   var pred;
+MPRINT(HURDLE):   ranks predgroup;
+MPRINT(HURDLE):   run;
+
+NOTE: The data set WORK.PREDGROUP has 19283171 observations and 42 variables.
+NOTE: PROCEDURE RANK used (Total process time):
+      real time           7.52 seconds
+      cpu time            7.23 seconds
+      
+
+MPRINT(HURDLE):   proc means data = predgroup noprint nway;
+MPRINT(HURDLE):   var pred ind_cost_pc;
+MPRINT(HURDLE):   class predgroup;
+MPRINT(HURDLE):   output out = out.cost_pc_meanout_exch mean = /autoname;
+MPRINT(HURDLE):   run;
+
+NOTE: There were 19283171 observations read from the data set WORK.PREDGROUP.
+NOTE: The data set OUT.COST_PC_MEANOUT_EXCH has 10 observations and 5 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           2.05 seconds
+      cpu time            4.01 seconds
+      
+
+MPRINT(HURDLE):   data _NULL_;
+MPRINT(HURDLE):   SET out.cost_pc_meanout_exch (DROP= _TYPE_);
+MPRINT(HURDLE):   put _all_;
+MPRINT(HURDLE):   RUN;
+
+predgroup=0 _FREQ_=1928313 pred_Mean=0.1120288373 ind_cost_pc_Mean=0.1133550414 _ERROR_=0 _N_=1
+predgroup=1 _FREQ_=1928321 pred_Mean=0.1972504001 ind_cost_pc_Mean=0.2075131682 _ERROR_=0 _N_=2
+predgroup=2 _FREQ_=1928317 pred_Mean=0.2603483328 ind_cost_pc_Mean=0.2510655665 _ERROR_=0 _N_=3
+predgroup=3 _FREQ_=1928175 pred_Mean=0.30292119 ind_cost_pc_Mean=0.2938939671 _ERROR_=0 _N_=4
+predgroup=4 _FREQ_=1928461 pred_Mean=0.3392919203 ind_cost_pc_Mean=0.335166747 _ERROR_=0 _N_=5
+predgroup=5 _FREQ_=1928304 pred_Mean=0.3736107951 ind_cost_pc_Mean=0.3717323617 _ERROR_=0 _N_=6
+predgroup=6 _FREQ_=1928327 pred_Mean=0.4097271094 ind_cost_pc_Mean=0.4163785499 _ERROR_=0 _N_=7
+predgroup=7 _FREQ_=1928321 pred_Mean=0.450732463 ind_cost_pc_Mean=0.4674102496 _ERROR_=0 _N_=8
+predgroup=8 _FREQ_=1927870 pred_Mean=0.5022950501 ind_cost_pc_Mean=0.5096889313 _ERROR_=0 _N_=9
+predgroup=9 _FREQ_=1928762 pred_Mean=0.6005554551 ind_cost_pc_Mean=0.6107829789 _ERROR_=0 _N_=10
+NOTE: There were 10 observations read from the data set OUT.COST_PC_MEANOUT_EXCH.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(HURDLE):   PROC PRINTTO;
+MPRINT(HURDLE):   RUN;
+

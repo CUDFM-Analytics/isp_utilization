@@ -55,9 +55,13 @@ WHERE replicate eq 1;
 QUIT; 
 
 * See doc with updated values: they are perfect!
+* 11/03 
+  Unique ID INT=0 : 1604443
+  Unique ID INT=1 : 319518
+  Expectation pre-run: ~640606 (x=.2(1604443)+319518, x=~320888+319518, x=~640406)
 * 10/03 
-  Unique ID INT=0 > 1476464
-  Unique ID INT=1 > 282511
+  Unique ID INT=0 : 1476464
+  Unique ID INT=1 : 282511
   Unique BootUnit in out._resample_1*replicate = 577804, which matches .2(1476464)+282511; 
 
 
