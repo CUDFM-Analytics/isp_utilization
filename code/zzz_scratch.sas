@@ -5,6 +5,10 @@
 
 *RAW.QRYLONG_00a;
    PROC CONTENTS DATA = raw.qrylong_00 VARNUM; RUN; 
+   PROC CONTENTS DATA = tmp.bh VARNUM; run;
+      PROC CONTENTS DATA = tmp.tel VARNUM; run;
+   PROC CONTENTS DATA = tmp.util VARNUM; run;
+
    PROC PRINT DATA = raw.qrylong_00a (obs=25); RUN; 
    PROC FREQ DATA = raw.qrylong_00a; tables MONTH; where month ge '01JAN2023'd; run; 
    PROC FREQ DATA = raw.qrylong_00a; tables FY; RUN; 

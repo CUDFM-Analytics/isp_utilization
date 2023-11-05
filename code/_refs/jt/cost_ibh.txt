@@ -1,0 +1,807 @@
+
+
+*****************  Get datasets needed  ********************;
+
+*Service county for provider;
+* connection to the BIDM data repo ;
+libname db odbc complete="driver=SQL Server; database=BIDM; server=SOMD-S-SQLDB.ucdenver.pvt" access=readonly schema="ro";/**/
+
+%let varlen = \\data.ucdenver.pvt\dept\SOM\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\queries\DBVarLengths;
+libname varlen "&varlen";
+%include "&varlen\MACRO_charLenMetadata.sas";
+%getlen(library=varlen, data=AllVarLengths);
+
+proc sql;
+create table provData as
+  select distinct 
+           PROV_LOC_ID length = &PROV_LOC_ID,
+		   SVC_CNTY_CD length = &SVC_CNTY_CD
+  from db.PROV_LOC_DIM_V
+  where CURR_REC_IND='Y' 
+    and SRC_REC_DEL_IND = 'N';
+quit;
+
+****county data with Rae;
+proc import 
+  datafile="J:\County mapping\Convert county.xlsx"
+  dbms=xlsx 
+  out=work.county_conv
+  replace;
+run;
+/*proc contents data=county_conv varnum; run;*/
+data county_conv; set county_conv; HCPF_County_Code_C=put(HCPF_County_Code,z2.); run;
+
+
+**Med long old;/*
+libname bhjt 'X:\HCPF_SqlServer\queries';
+libname moncost 'X:\HCPF_SqlServer\AnalyticSubset';
+options fmtsearch=(bhjt moncost);                         
+data medlong1; set bhjt.medicaidlong_bidm; run;  
+data meddemog1; set bhjt.medicaiddemog_bidm; run; */
+
+
+**Med long new;
+/*libname bhjt 'X:\HCPF_SqlServer\queries';*/
+libname moncost 'X:\HCPF_SqlServer\AnalyticSubset';  /* Need this here to put both format catalogues in next statement */
+/*libname backup 'X:\HCPF_SqlServer\AnalyticSubset\backup';*/
+options fmtsearch=(/*bhjt*/ moncost);                         /*formats on left take precedence over formats on right ...if duplicate occurs */                         
+data medlong1 (rename=(mcaid_id=clnt_id)); set moncost.qry_longitudinal; run;  
+data meddemog1 (rename=(mcaid_id=clnt_id)); set moncost.qry_demographics; run;
+/*proc contents data=medlong1 varnum; run;*/
+/*proc contents data=meddemog1 varnum; run;*/
+
+
+
+*Cost and utilization data (Carter creates);
+/*libname moncost 'X:\HCPF_SqlServer\AnalyticSubset';
+options fmtsearch=(moncost); */
+data moncost1; set moncost.qry_monthlyutilization; run;
+data monbhoUtil; set moncost.qry_bho_monthlyutilization /*moncost.qry_bho_monthlyutilization*/; run;  **no duplicates (by mcaid_id month) in this data;
+
+/*proc contents data=moncost1 varnum; run;
+proc freq data=moncost1; tables clmClass; run;
+proc contents data=monbhoUtil varnum; run;*/
+
+
+**Adjustment file;
+proc import 
+  datafile="X:\Jake\adjfile_excel.xlsx"
+  dbms=xlsx 
+  out=work.adj1
+  replace;
+run;
+/*proc contents data=adj1 ; run;*/
+/* old data below */
+/* libname adj 'X:\Jake';
+data adj1; set adj.adjfile; run; */
+
+
+
+
+********** Combine datasets and create variables needed ;
+
+
+data moncost2; set moncost1; where month ge '01Jul2016'd and month le '30Sep2022'd;
+quarter_beg=intnx('QTR', month, 0, 'BEGINNING'); format quarter_beg date9.;
+run;
+
+proc sql;
+create table moncost3 as
+select a.*, (a.pd_amt/b.divBY) as adj_pd_amount  /*divBY has no missing values*/
+from moncost2 as a
+left join adj1 as b on a.quarter_beg=b.quarter;
+quit;
+
+proc sort data=moncost3; by MCAID_ID month; run;
+
+proc sql;
+ create table moncost4 as
+ select
+ MCAID_ID,month,
+  sum(case when clmClass=1 then count else 0 end) as n_Hospitalizations,
+  sum(case when clmClass=4 then count else 0 end) as n_Primary_care,
+  sum(case when clmClass=3 then count else 0 end) as n_ER,
+  sum(case when clmClass=2 then count else 0 end) as n_Pharmacy,
+  sum(case when clmClass=5 then count else 0 end) as n_FFS_BH,
+  sum(case when clmClass=6 then count else 0 end) as n_Ancillary,
+  sum(case when clmClass=7 then count else 0 end) as n_HH_Therapy,
+  sum(case when clmClass=8 then count else 0 end) as n_Diagnostic_Procedures,
+  sum(case when clmClass=9 then count else 0 end) as n_Transportation,
+  sum(case when clmClass=10 then count else 0 end) as n_EE_Services,
+  sum(case when clmClass=10000 then count else 0 end) as n_Other,
+
+  sum(adj_pd_amount) as adj_pd_total,
+  sum(case when clmClass=1 then adj_pd_amount else 0 end) as adj_pd_Hospitalizations,
+  sum(case when clmClass=4 then adj_pd_amount else 0 end) as adj_pd_Primary_care,
+  sum(case when clmClass=3 then adj_pd_amount else 0 end) as adj_pd_ER,
+  sum(case when clmClass=2 then adj_pd_amount else 0 end) as adj_pd_Pharmacy,
+  sum(case when clmClass=5 then adj_pd_amount else 0 end) as adj_pd_FFS_BH,
+  sum(case when clmClass=6 then adj_pd_amount else 0 end) as adj_pd_Ancillary,
+  sum(case when clmClass=7 then adj_pd_amount else 0 end) as adj_pd_HH_Therapy,
+  sum(case when clmClass=8 then adj_pd_amount else 0 end) as adj_pd_Diagnostic_Procedures,
+  sum(case when clmClass=9 then adj_pd_amount else 0 end) as adj_pd_Transportation,
+  sum(case when clmClass=10 then adj_pd_amount else 0 end) as adj_pd_EE_Services,
+  sum(case when clmClass=10000 then adj_pd_amount else 0 end) as adj_pd_Other
+  
+from moncost3
+group by MCAID_ID,month;
+quit; 
+
+
+/*proc contents data=provData varnum; run;*/
+
+proc sql;
+create table medlong2 as
+select a.clnt_id, a.month, a.BUDGET_GROUP, a.enr_cnty, a.managedCare, a.pcmp_loc_ID, a.pcmp_loc_type_cd, b.dob, b.gender, b.race, c.SVC_CNTY_CD, d.RAE_ID as RAE_loc
+from medlong1 as a
+left join meddemog1 as b on a.clnt_id=b.clnt_id 
+left join provData as c on a.pcmp_loc_ID=c.PROV_LOC_ID
+left join county_conv as d on c.SVC_CNTY_CD=d.HCPF_County_Code_C 
+where a.pcmp_loc_ID ne ' ' and a.month ge '01Jul2016'd and a.month le '30Sep2022'd and a.managedCare=0 
+   and a.BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,);
+quit;
+
+data medlong3; set medlong2; 
+ fy6=year(intnx('year.7', month, 0, 'BEGINNING'));
+ date_end_fy=mdy(6,30,(fy6+1));
+ date_end_19y=mdy(6,30,2019);
+ age_endFY = floor( (intck('month', dob, date_end_fy) - (day(date_end_fy) < min(day(dob), day(intnx ('month', date_end_fy, 1) -1)))) /12 );
+ age_end19y = floor( (intck('month', dob, date_end_19y) - (day(date_end_19y) < min(day(dob), day(intnx ('month', date_end_19y, 1) -1)))) /12 );
+ if age_endFY ge 65 then delete;
+ if age_end19y ge 65 then delete;
+ format date_end_fy date_end_19y date9.;
+run;
+
+
+
+proc sql;
+ create table medlong4 as
+ select *, count(*) as n_loc_fy
+from medlong3
+group by clnt_id,fy6,pcmp_loc_ID;
+quit; 
+
+proc sort data=medlong4 nodupkey out=interv_idX (keep=clnt_id); 
+ where pcmp_loc_ID in ('164771','159567','167691','153211','164769','164768','164764') and fy6 in (2019,2020,2021,2022); 
+ by clnt_id; 
+run;
+proc sort data=medlong4 nodupkey out=compare_id1 (keep=clnt_id); 
+ where  RAE_loc in (3,5,6) and fy6 in (2019,2020,2021) and n_loc_fy ge 6; 
+ by clnt_id; 
+run; 
+data compare_id2; merge compare_id1 (in=a) interv_idX (in=b); by clnt_id; if a and not b; run;
+
+proc sort data=medlong4 nodupkey out=interv_id1 (keep=clnt_id); 
+ where pcmp_loc_ID in ('164771','159567','167691','153211','164769','164768','164764') and fy6 in (2019,2020,2021) and n_loc_fy ge 6; 
+ by clnt_id; 
+run;
+
+
+proc sort data=medlong4; by clnt_id month; run;
+data interv_full; merge interv_id1 (in=a) medlong4; by clnt_id; if a; intervention=1; run;
+data compare_full; merge compare_id2 (in=a) medlong4; by clnt_id; if a; intervention=0; run;
+
+data final1; set interv_full compare_full; run;
+
+
+proc sql;
+create table final2 as
+select a.*,b.*, c.bho_n_hosp, c.bho_n_er, c.bho_n_other
+from final1 as a
+left join moncost4 as b on a.clnt_id=b.MCAID_ID and a.month=b.month
+left join monbhoUtil as c on a.clnt_id=c.MCAID_ID and a.month=c.month ;
+quit;
+
+data final3; set final2 (drop=MCAID_ID);
+ array aa(*) n_Hospitalizations--bho_n_other;
+ do i=1 to dim(aa);
+ if aa(i)=. then aa(i)=0; 
+ end;
+ drop i;
+
+ quarter_beg=intnx('QTR', month, 0, 'BEGINNING'); format quarter_beg date9.;
+run;
+
+
+
+data lastyears1; set final3; where month ge '01Jul2019'd; run;
+
+proc sql; create table county_qrt as
+select clnt_id, quarter_beg, enr_cnty
+from (select *, max(month) as max_mon_by_cnt from (select *, count(enr_cnty) as count_cty from lastyears1 group by clnt_id, quarter_beg, enr_cnty) 
+    group by clnt_id, quarter_beg, count_cty)  
+group by clnt_id, quarter_beg   having max(count_cty)=count_cty and month=max_mon_by_cnt;
+quit;
+
+proc sql; create table budget_qrt as
+select clnt_id, quarter_beg, BUDGET_GROUP
+from (select *, max(month) as max_mon_by_cnt from (select *, count(BUDGET_GROUP) as count_bud from lastyears1 group by clnt_id, quarter_beg, BUDGET_GROUP) 
+    group by clnt_id, quarter_beg, count_bud)  
+group by clnt_id, quarter_beg   having max(count_bud)=count_bud and month=max_mon_by_cnt;
+quit;
+
+proc sql; create table pcmp_qrt as
+select clnt_id, quarter_beg, pcmp_loc_ID
+from (select *, max(month) as max_mon_by_cnt from (select *, count(pcmp_loc_ID) as count_pcmp from lastyears1 group by clnt_id, quarter_beg, pcmp_loc_ID) 
+    group by clnt_id, quarter_beg, count_pcmp)  
+group by clnt_id, quarter_beg   having max(count_pcmp)=count_pcmp and month=max_mon_by_cnt;
+quit;
+
+
+proc sql;
+ create table lastyears2 as
+ select
+ clnt_id, quarter_beg,
+  max(case when pcmp_loc_ID in ('164771','159567','167691','153211','164769','164768','164764') then 1 else 0 end) as IBH_plus_ind,
+  count(*) as months_elig_qrt,
+  max(age_endFY) as age_endFY,
+  max(gender) as gender,
+  max(race) as race,
+  max(intervention) as intervention,
+
+  avg(n_Hospitalizations) as n_Hospitalizations_pm,
+  avg(n_Primary_care) as n_Primary_care_pm,
+  avg(n_ER) as n_ER_pm,
+  avg(n_Pharmacy) as n_Pharmacy_pm,
+  avg(n_FFS_BH) as n_FFS_BH_pm,
+  avg(n_Ancillary) as n_Ancillary_pm,
+  avg(n_HH_Therapy) as n_HH_Therapy_pm,
+  avg(n_Diagnostic_Procedures) as n_Diagnostic_Procedures_pm,
+  avg(n_Transportation) as n_Transportation_pm,
+  avg(n_EE_Services) as n_EE_Services_pm,
+  avg(n_Other) as n_Other_pm,
+  avg(bho_n_hosp) as bho_n_hosp_pm,
+  avg(bho_n_er) as bho_n_er_pm,
+  avg(bho_n_other) as bho_n_other_pm,
+
+  avg(adj_pd_total) as adj_pd_total_pm,
+  avg(adj_pd_Hospitalizations) as adj_pd_Hospitalizations_pm,
+  avg(adj_pd_Primary_care) as adj_pd_Primary_care_pm,
+  avg(adj_pd_ER) as adj_pd_ER_pm,
+  avg(adj_pd_Pharmacy) as adj_pd_Pharmacy_pm,
+  avg(adj_pd_FFS_BH) as adj_pd_FFS_BH_pm,
+  avg(adj_pd_Ancillary) as adj_pd_Ancillary_pm,
+  avg(adj_pd_HH_Therapy) as adj_pd_HH_Therapy_pm,
+  avg(adj_pd_Diagnostic_Procedures) as adj_pd_Diagnostic_Procedures_pm,
+  avg(adj_pd_Transportation) as adj_pd_Transportation_pm,
+  avg(adj_pd_EE_Services) as adj_pd_EE_Services_pm,
+  avg(adj_pd_Other) as adj_pd_Other_pm
+
+from lastyears1
+group by clnt_id, quarter_beg;
+quit; 
+
+
+data firstyears1; set final3 (keep=clnt_id fy6 month adj_pd_total bho_n_hosp bho_n_er bho_n_other); where month lt '01Jul2019'd; run;
+proc sql;
+ create table firstyears2 as
+ select
+ clnt_id,
+ max(case when fy6=2016 then 1 else 0 end) as health_1st_CO16t, 
+ max(case when fy6=2017 then 1 else 0 end) as health_1st_CO17t,
+ max(case when fy6=2018 then 1 else 0 end) as health_1st_CO18t,
+
+ avg(case when fy6=2016 then adj_pd_total else 0 end) as adj_pd_total_16pm, 
+ avg(case when fy6=2017 then adj_pd_total else 0 end) as adj_pd_total_17pm, 
+ avg(case when fy6=2018 then adj_pd_total else 0 end) as adj_pd_total_18pm,
+
+ avg(case when fy6=2016 then bho_n_hosp else 0 end) as bho_n_hosp_16pm, 
+ avg(case when fy6=2017 then bho_n_hosp else 0 end) as bho_n_hosp_17pm, 
+ avg(case when fy6=2018 then bho_n_hosp else 0 end) as bho_n_hosp_18pm,
+ avg(case when fy6=2016 then bho_n_er else 0 end) as bho_n_er_16pm, 
+ avg(case when fy6=2017 then bho_n_er else 0 end) as bho_n_er_17pm, 
+ avg(case when fy6=2018 then bho_n_er else 0 end) as bho_n_er_18pm,
+ avg(case when fy6=2016 then bho_n_other else 0 end) as bho_n_other_16pm, 
+ avg(case when fy6=2017 then bho_n_other else 0 end) as bho_n_other_17pm, 
+ avg(case when fy6=2018 then bho_n_other else 0 end) as bho_n_other_18pm
+ from firstyears1
+ group by clnt_id;
+quit; 
+
+
+
+proc import 
+  datafile="X:\Jake\other\IBH\cost and utilization\go live psych visits econsults.xlsx"  /*quarters when Psych visits, telepsych, and eConsults started*/
+  dbms=xlsx 
+  out=work.golive1 replace;
+run;
+data golive2; set golive1; if pcmp_loc_id='abc' then delete; run;
+
+proc sort data=lastyears1 nodupkey out=pcmptype1; by pcmp_loc_ID pcmp_loc_type_cd; run;  /*pcmptype1 has unique pcmp locations, i.e. only 1 type per location*/
+proc sql;
+create table newfinal1 as
+select a.*,b.enr_cnty, c.BUDGET_GROUP, d.pcmp_loc_ID, e.RAE_ID as RAE_person, f.pcmp_loc_type_cd,
+ case when a.quarter_beg ge g.date_psych_visit and date_psych_visit ne . then 1 else 0 end as psych_visit_offer,
+ case when a.quarter_beg ge g.date_telepsych and date_telepsych ne . then 1 else 0 end as telepsych_offer,
+ case when a.quarter_beg ge g.date_econsults and date_econsults ne . then 1 else 0 end as eConsult_offer,
+ h.*
+from lastyears2 as a
+left join county_qrt as b on a.clnt_id=b.clnt_id and a.quarter_beg=b.quarter_beg
+left join budget_qrt as c on a.clnt_id=c.clnt_id and a.quarter_beg=c.quarter_beg
+left join pcmp_qrt as d on a.clnt_id=d.clnt_id and a.quarter_beg=d.quarter_beg
+left join county_conv as e on b.enr_cnty=e.HCPF_County_Code_C 
+left join pcmptype1 as f on d.pcmp_loc_ID=f.pcmp_loc_ID 
+left join golive2 as g on d.pcmp_loc_ID=g.pcmp_loc_id 
+
+left join firstyears2 as h on a.clnt_id=h.clnt_id ;
+quit;
+
+proc format;
+ value yesno 0='No' 1='Yes'; 
+ value age7cat 1="0-5" 2="6-10" 3="11-15" 4="16-20" 5="21-44" 6="45-64" 7="65+";
+ value budgrN 3="MAGI 69 - 133% FPL" 5="MAGI TO 68% FPL" 6="Disabled" 11="Foster Care" 12="MAGI Eligible Children" 14="Other";
+ value rae 3="3" 5="5" 6="6" 99="(1,2,4,7)"; 
+ value pdpre 0="No health 1st" 1="0" 2="0-50th pcntl" 3="50th to 75th pcntl" 4="75th to 90th pcntl" 5="90th to 95th pcntl" 6="> 95th pcntl";
+ value racej 1="Hispanic/Latino" 2="White/Caucasian" 3="Black/African American" 4="Asian" 5="Other People of Color" 6="Other/Unknown Race";
+run;
+/*proc contents data=newfinal1 varnum; run;*/
+
+/*                                    **need this code for 95 percentile cutoffs;
+data xx; set newfinal1; 
+adj_pd_Other2_pm=sum(adj_pd_EE_Services_pm, adj_pd_Other_pm);
+ if adj_pd_total_pm gt 0  then adj_pd_total_Pos=adj_pd_total_pm; else adj_pd_total_Pos=.;
+ if adj_pd_Hospitalizations_pm gt 0  then adj_pd_Hospitalizations_Pos=adj_pd_Hospitalizations_pm; else adj_pd_Hospitalizations_Pos=.;
+ if adj_pd_Primary_care_pm gt 0  then adj_pd_Primary_care_Pos=adj_pd_Primary_care_pm; else adj_pd_Primary_care_Pos=.;
+ if adj_pd_ER_pm gt 0  then adj_pd_ER_Pos=adj_pd_ER_pm; else adj_pd_ER_Pos=.;
+ if adj_pd_Pharmacy_pm gt 0  then adj_pd_Pharmacy_Pos=adj_pd_Pharmacy_pm; else adj_pd_Pharmacy_Pos=.;
+ if adj_pd_FFS_BH_pm gt 0  then adj_pd_FFS_BH_Pos=adj_pd_FFS_BH_pm; else adj_pd_FFS_BH_Pos=.;
+ if adj_pd_Ancillary_pm gt 0  then adj_pd_Ancillary_Pos=adj_pd_Ancillary_pm; else adj_pd_Ancillary_Pos=.;
+ if adj_pd_HH_Therapy_pm gt 0  then adj_pd_HH_Therapy_Pos=adj_pd_HH_Therapy_pm; else adj_pd_HH_Therapy_Pos=.;
+ if adj_pd_Diagnostic_Procedures_pm gt 0  then adj_pd_Diagnostic_Proc_Pos=adj_pd_Diagnostic_Procedures_pm; else adj_pd_Diagnostic_Proc_Pos=.;
+ if adj_pd_Transportation_pm gt 0  then adj_pd_Transportation_Pos=adj_pd_Transportation_pm; else adj_pd_Transportation_Pos=.;
+ if adj_pd_Other2_pm gt 0  then adj_pd_Other2_Pos=adj_pd_Other2_pm; else adj_pd_Other2_Pos=.;
+
+ if adj_pd_total_pm gt 0 and intervention=1  then inter_total_Pos=adj_pd_total_pm; else inter_total_Pos=.;
+ if adj_pd_Hospitalizations_pm gt 0 and intervention=1  then inter_Hospitalizations_Pos=adj_pd_Hospitalizations_pm; else inter_Hospitalizations_Pos=.;
+ if adj_pd_Primary_care_pm gt 0 and intervention=1  then inter_Primary_care_Pos=adj_pd_Primary_care_pm; else inter_Primary_care_Pos=.;
+ if adj_pd_ER_pm gt 0 and intervention=1  then inter_ER_Pos=adj_pd_ER_pm; else inter_ER_Pos=.;
+ if adj_pd_Pharmacy_pm gt 0 and intervention=1  then inter_Pharmacy_Pos=adj_pd_Pharmacy_pm; else inter_Pharmacy_Pos=.;
+ if adj_pd_FFS_BH_pm gt 0 and intervention=1  then inter_FFS_BH_Pos=adj_pd_FFS_BH_pm; else inter_FFS_BH_Pos=.;
+ if adj_pd_Ancillary_pm gt 0 and intervention=1  then inter_Ancillary_Pos=adj_pd_Ancillary_pm; else inter_Ancillary_Pos=.;
+ if adj_pd_HH_Therapy_pm gt 0 and intervention=1  then inter_HH_Therapy_Pos=adj_pd_HH_Therapy_pm; else inter_HH_Therapy_Pos=.;
+ if adj_pd_Diagnostic_Procedures_pm gt 0 and intervention=1  then inter_Diagnostic_Proc_Pos=adj_pd_Diagnostic_Procedures_pm; else inter_Diagnostic_Proc_Pos=.;
+ if adj_pd_Transportation_pm gt 0 and intervention=1  then inter_Transportation_Pos=adj_pd_Transportation_pm; else inter_Transportation_Pos=.;
+ if adj_pd_Other2_pm gt 0 and intervention=1  then inter_Other2_Pos=adj_pd_Other2_pm; else inter_Other2_Pos=.;
+
+ if adj_pd_total_pm gt 0 and intervention=0  then compare_total_Pos=adj_pd_total_pm; else compare_total_Pos=.;
+ if adj_pd_Hospitalizations_pm gt 0 and intervention=0  then compare_Hospitalizations_Pos=adj_pd_Hospitalizations_pm; else compare_Hospitalizations_Pos=.;
+ if adj_pd_Primary_care_pm gt 0 and intervention=0  then compare_Primary_care_Pos=adj_pd_Primary_care_pm; else compare_Primary_care_Pos=.;
+ if adj_pd_ER_pm gt 0 and intervention=0  then compare_ER_Pos=adj_pd_ER_pm; else compare_ER_Pos=.;
+ if adj_pd_Pharmacy_pm gt 0 and intervention=0  then compare_Pharmacy_Pos=adj_pd_Pharmacy_pm; else compare_Pharmacy_Pos=.;
+ if adj_pd_FFS_BH_pm gt 0 and intervention=0  then compare_FFS_BH_Pos=adj_pd_FFS_BH_pm; else compare_FFS_BH_Pos=.;
+ if adj_pd_Ancillary_pm gt 0 and intervention=0  then compare_Ancillary_Pos=adj_pd_Ancillary_pm; else compare_Ancillary_Pos=.;
+ if adj_pd_HH_Therapy_pm gt 0 and intervention=0  then compare_HH_Therapy_Pos=adj_pd_HH_Therapy_pm; else compare_HH_Therapy_Pos=.;
+ if adj_pd_Diagnostic_Procedures_pm gt 0 and intervention=0  then compare_Diagnostic_Proc_Pos=adj_pd_Diagnostic_Procedures_pm; else compare_Diagnostic_Proc_Pos=.;
+ if adj_pd_Transportation_pm gt 0 and intervention=0  then compare_Transportation_Pos=adj_pd_Transportation_pm; else compare_Transportation_Pos=.;
+ if adj_pd_Other2_pm gt 0 and intervention=0  then compare_Other2_Pos=adj_pd_Other2_pm; else compare_Other2_Pos=.;
+run;
+
+proc means data=xx n  p95  maxdec=1; var adj_pd_total_Pos adj_pd_Hospitalizations_Pos
+ adj_pd_Primary_care_Pos adj_pd_ER_Pos adj_pd_Pharmacy_Pos adj_pd_FFS_BH_Pos adj_pd_Ancillary_Pos
+ adj_pd_HH_Therapy_Pos adj_pd_Diagnostic_Proc_Pos adj_pd_Transportation_Pos adj_pd_Other2_Pos; 
+run;
+proc means data=xx n  p95  maxdec=1; var inter_total_Pos inter_Hospitalizations_Pos
+ inter_Primary_care_Pos inter_ER_Pos inter_Pharmacy_Pos inter_FFS_BH_Pos inter_Ancillary_Pos
+ inter_HH_Therapy_Pos inter_Diagnostic_Proc_Pos inter_Transportation_Pos inter_Other2_Pos; 
+run;
+proc means data=xx n  p95  maxdec=1; var compare_total_Pos compare_Hospitalizations_Pos
+ compare_Primary_care_Pos compare_ER_Pos compare_Pharmacy_Pos compare_FFS_BH_Pos compare_Ancillary_Pos
+ compare_HH_Therapy_Pos compare_Diagnostic_Proc_Pos compare_Transportation_Pos compare_Other2_Pos; 
+run;
+*/
+
+data newfinal2; set newfinal1;
+ if age_endFY ge 0 and age_endFY le 5 then age_cat7=1;
+ else if age_endFY ge 6 and age_endFY le 10 then age_cat7=2;
+ else if age_endFY ge 11 and age_endFY le 15 then age_cat7=3;
+ else if age_endFY ge 16 and age_endFY le 20 then age_cat7=4;
+ else if age_endFY ge 21 and age_endFY le 44 then age_cat7=5;
+ else if age_endFY ge 45 and age_endFY le 64 then age_cat7=6;
+ else if age_endFY ge 65 then age_cat7=7;
+
+ if adj_pd_total_pm gt 0 then pd_total_bin_qrt=1; else if adj_pd_total_pm=0 then pd_total_bin_qrt=0;
+
+ no_health_1st_16=(health_1st_CO16t lt 1); 
+ no_health_1st_17=(health_1st_CO17t lt 1);
+ no_health_1st_18=(health_1st_CO18t lt 1);
+
+ if no_health_1st_16=1 then do; adj_pd_total_16pm=0; bho_n_hosp_16pm=0; bho_n_er_16pm=0; bho_n_other_16pm=0; end; 
+ if no_health_1st_17=1 then do; adj_pd_total_17pm=0; bho_n_hosp_17pm=0; bho_n_er_17pm=0; bho_n_other_17pm=0; end; 
+ if no_health_1st_18=1 then do; adj_pd_total_18pm=0; bho_n_hosp_18pm=0; bho_n_er_18pm=0; bho_n_other_18pm=0; end; 
+
+ n_Other2_pm=sum(n_EE_Services_pm, n_Other_pm);
+ adj_pd_Other2_pm=sum(adj_pd_EE_Services_pm, adj_pd_Other_pm);
+ n_all_ER_pm=sum(n_ER_pm, bho_n_er_pm);
+
+ if pcmp_loc_type_cd in ('32','61','45') then FQHC_qrt=1; else FQHC_qrt=0;  /*32=FQHC, 61=IHS-FQHC, 45=Rural health clinic*/
+
+ array aa(*) n_Hospitalizations_pm n_Primary_care_pm n_ER_pm n_Pharmacy_pm n_FFS_BH_pm n_Ancillary_pm n_HH_Therapy_pm n_Diagnostic_Procedures_pm 
+             n_Transportation_pm n_Other2_pm bho_n_hosp_pm bho_n_er_pm bho_n_other_pm   n_all_ER_pm;
+ array bb(*) n_Hospitalizations_ZERO n_Primary_care_ZERO n_ER_ZERO n_Pharmacy_ZERO n_FFS_BH_ZERO n_Ancillary_ZERO n_HH_Therapy_ZERO n_Diagnostic_Procedures_ZERO 
+             n_Transportation_ZERO n_Other2_ZERO bho_n_hosp_ZERO bho_n_er_ZERO bho_n_other_ZERO   n_all_ER_ZERO;
+ do i=1 to dim(aa);
+ if aa(i)=0 then bb(i)=1; else bb(i)=0; 
+ end;
+ drop i;
+
+ if race in ('4','8','6','7','(BLANK)') then rethnic_new=6; 
+  else if race='1' then rethnic_new=1;
+  else if race='2' then rethnic_new=2;
+  else if race='3' then rethnic_new=3;
+  else if race='5' then rethnic_new=4;
+  else if race='9' then rethnic_new=5;
+ if RAE_person in (1,2,4,7) then RAE_person_new=99; else RAE_person_new=RAE_person;
+ if BUDGET_GROUP in (6,7,8,9,10) then Budget_grp_new=6; 
+  else if BUDGET_GROUP in (1,2,14) then Budget_grp_new=14; else Budget_grp_new=BUDGET_GROUP;
+
+if gender='U' then delete;
+if RAE_person=. then delete;
+drop race RAE_person BUDGET_GROUP;
+
+ /*if adj_pd_total_pm gt 0  then adj_pd_total_Pos=adj_pd_total_pm; else adj_pd_total_Pos=.;
+ if adj_pd_Hospitalizations_pm gt 0  then adj_pd_Hospitalizations_Pos=adj_pd_Hospitalizations_pm; else adj_pd_Hospitalizations_Pos=.;
+ if adj_pd_Primary_care_pm gt 0  then adj_pd_Primary_care_Pos=adj_pd_Primary_care_pm; else adj_pd_Primary_care_Pos=.;
+ if adj_pd_ER_pm gt 0  then adj_pd_ER_Pos=adj_pd_ER_pm; else adj_pd_ER_Pos=.;
+ if adj_pd_Pharmacy_pm gt 0  then adj_pd_Pharmacy_Pos=adj_pd_Pharmacy_pm; else adj_pd_Pharmacy_Pos=.;
+ if adj_pd_FFS_BH_pm gt 0  then adj_pd_FFS_BH_Pos=adj_pd_FFS_BH_pm; else adj_pd_FFS_BH_Pos=.;
+ if adj_pd_Ancillary_pm gt 0  then adj_pd_Ancillary_Pos=adj_pd_Ancillary_pm; else adj_pd_Ancillary_Pos=.;
+ if adj_pd_HH_Therapy_pm gt 0  then adj_pd_HH_Therapy_Pos=adj_pd_HH_Therapy_pm; else adj_pd_HH_Therapy_Pos=.;
+ if adj_pd_Diagnostic_Procedures_pm gt 0  then adj_pd_Diagnostic_Proc_Pos=adj_pd_Diagnostic_Procedures_pm; else adj_pd_Diagnostic_Proc_Pos=.;
+ if adj_pd_Transportation_pm gt 0  then adj_pd_Transportation_Pos=adj_pd_Transportation_pm; else adj_pd_Transportation_Pos=.;
+ if adj_pd_Other2_pm gt 0  then adj_pd_Other2_Pos=adj_pd_Other2_pm; else adj_pd_Other2_Pos=.;
+
+ if adj_pd_total_pm gt 3633.1 then adj_pd_total_pm95=adj_pd_total_pm; else adj_pd_total_pm95=.;
+ if adj_pd_Hospitalizations_pm gt 14668.4 then adj_pd_Hospitalizations_pm95=adj_pd_Hospitalizations_pm; else adj_pd_Hospitalizations_pm95=.;
+ if adj_pd_Primary_care_pm gt 269.5 then adj_pd_Primary_care_pm95=adj_pd_Primary_care_pm; else adj_pd_Primary_care_pm95=.;
+ if adj_pd_ER_pm gt 516.5 then adj_pd_ER_pm95=adj_pd_ER_pm; else adj_pd_ER_pm95=.;
+ if adj_pd_Pharmacy_pm gt 1039.1 then adj_pd_Pharmacy_pm95=adj_pd_Pharmacy_pm; else adj_pd_Pharmacy_pm95=.;
+ if adj_pd_FFS_BH_pm gt 6441 then adj_pd_FFS_BH_pm95=adj_pd_FFS_BH_pm; else adj_pd_FFS_BH_pm95=.;
+ if adj_pd_Ancillary_pm gt 10490.2 then adj_pd_Ancillary_pm95=adj_pd_Ancillary_pm; else adj_pd_Ancillary_pm95=.;
+ if adj_pd_HH_Therapy_pm gt 3191.2 then adj_pd_HH_Therapy_pm95=adj_pd_HH_Therapy_pm; else adj_pd_HH_Therapy_pm95=.;
+ if adj_pd_Diagnostic_Procedures_pm gt 486.6 then adj_pd_Diagnostic_Procedures95=adj_pd_Diagnostic_Procedures_pm; else adj_pd_Diagnostic_Procedures95=.;
+ if adj_pd_Transportation_pm gt 605.7 then adj_pd_Transportation_pm95=adj_pd_Transportation_pm; else adj_pd_Transportation_pm95=.;
+ if adj_pd_Other2_pm gt 1391.5 then adj_pd_Other2_pm95=adj_pd_Other2_pm; else adj_pd_Other2_pm95=.;  */
+
+ format age_cat7 age7cat. pd_total_bin_qrt FQHC_qrt yesno. rethnic_new racej. Budget_grp_new budgrN. RAE_person_new rae. ;
+ label
+ age_cat7="Age (years)" 
+ pd_total_bin_qrt="Paid > 0 in quarter"
+ FQHC_qrt="FQHC / Rural Health Clinic";
+run;
+
+
+
+proc univariate noprint data=newfinal2; where adj_pd_total_16pm gt 0; var adj_pd_total_16pm; output out=pd16pct pctlpre=P_p16_ pctlpts= 50, 75, 90, 95; run;
+proc univariate noprint data=newfinal2; where adj_pd_total_17pm gt 0; var adj_pd_total_17pm; output out=pd17pct pctlpre=P_p17_ pctlpts= 50, 75, 90, 95; run;
+proc univariate noprint data=newfinal2; where adj_pd_total_18pm gt 0; var adj_pd_total_18pm; output out=pd18pct pctlpre=P_p18_ pctlpts= 50, 75, 90, 95; run;
+/*proc contents data=pd16pct; run;*/
+proc univariate noprint data=newfinal2; where adj_pd_total_pm gt 0; var adj_pd_total_pm; output out=pdallpct pctlpre=P_allp_ pctlpts= 95; run;
+proc univariate noprint data=newfinal2; where adj_pd_Pharmacy_pm gt 0; var adj_pd_Pharmacy_pm; output out=phallpct pctlpre=P_ph_ pctlpts= 95; run;
+proc sql noprint; select P_allp_95 into :P_allp_95 from pdallpct; quit;
+proc sql noprint; select P_ph_95 into :P_ph_95 from phallpct; quit;
+proc univariate noprint data=newfinal2; where adj_pd_total_pm gt &P_allp_95; var adj_pd_total_pm; output out=pdallmean mean=meanall95; run;
+proc univariate noprint data=newfinal2; where adj_pd_Pharmacy_pm gt &P_ph_95; var adj_pd_Pharmacy_pm; output out=phallmean mean=meanph95; run;
+
+data macromerge; merge pd16pct pd17pct pd18pct pdallpct phallpct pdallmean phallmean; run;
+
+proc sql noprint;
+  select 
+    name, 
+    cats(':',name)
+  into 
+    :COL_NAMES separated by ',', 
+    :MVAR_NAMES separated by ','
+  from sashelp.vcolumn 
+  where 
+    libname = "WORK" 
+    and memname = "MACROMERGE"
+  ;
+  select &COL_NAMES into &MVAR_NAMES
+  from macromerge;
+quit;
+
+proc format; value bhonb 0='0' 1='>0'; value bhont 0='0' 1='(0-1]' 2='>1'; run;
+data newfinal2; set newfinal2;
+if adj_pd_total_pm gt &P_allp_95 then FFS_total_cost_top=&meanall95; else FFS_total_cost_top=adj_pd_total_pm; 
+if adj_pd_Pharmacy_pm gt &P_ph_95 then Pharmacy_cost_top=&meanph95; else Pharmacy_cost_top=adj_pd_Pharmacy_pm;
+
+if no_health_1st_16=1 then adj_pd_total_16cat=0;
+else if no_health_1st_16=0 and adj_pd_total_16pm=0 then adj_pd_total_16cat=1;
+else if no_health_1st_16=0 and adj_pd_total_16pm gt 0 and adj_pd_total_16pm le &P_p16_50 then adj_pd_total_16cat=2;
+else if no_health_1st_16=0 and adj_pd_total_16pm gt &P_p16_50 and adj_pd_total_16pm le &P_p16_75 then adj_pd_total_16cat=3;
+else if no_health_1st_16=0 and adj_pd_total_16pm gt &P_p16_75 and adj_pd_total_16pm le &P_p16_90 then adj_pd_total_16cat=4;
+else if no_health_1st_16=0 and adj_pd_total_16pm gt &P_p16_90 and adj_pd_total_16pm le &P_p16_95 then adj_pd_total_16cat=5;
+else if no_health_1st_16=0 and adj_pd_total_16pm gt &P_p16_95 then adj_pd_total_16cat=6;
+
+if no_health_1st_17=1 then adj_pd_total_17cat=0;
+else if no_health_1st_17=0 and adj_pd_total_17pm=0 then adj_pd_total_17cat=1;
+else if no_health_1st_17=0 and adj_pd_total_17pm gt 0 and adj_pd_total_17pm le &P_p17_50 then adj_pd_total_17cat=2;
+else if no_health_1st_17=0 and adj_pd_total_17pm gt &P_p17_50 and adj_pd_total_17pm le &P_p17_75 then adj_pd_total_17cat=3;
+else if no_health_1st_17=0 and adj_pd_total_17pm gt &P_p17_75 and adj_pd_total_17pm le &P_p17_90 then adj_pd_total_17cat=4;
+else if no_health_1st_17=0 and adj_pd_total_17pm gt &P_p17_90 and adj_pd_total_17pm le &P_p17_95 then adj_pd_total_17cat=5;
+else if no_health_1st_17=0 and adj_pd_total_17pm gt &P_p17_95 then adj_pd_total_17cat=6;
+
+if no_health_1st_18=1 then adj_pd_total_18cat=0;
+else if no_health_1st_18=0 and adj_pd_total_18pm=0 then adj_pd_total_18cat=1;
+else if no_health_1st_18=0 and adj_pd_total_18pm gt 0 and adj_pd_total_18pm le &P_p18_50 then adj_pd_total_18cat=2;
+else if no_health_1st_18=0 and adj_pd_total_18pm gt &P_p18_50 and adj_pd_total_18pm le &P_p18_75 then adj_pd_total_18cat=3;
+else if no_health_1st_18=0 and adj_pd_total_18pm gt &P_p18_75 and adj_pd_total_18pm le &P_p18_90 then adj_pd_total_18cat=4;
+else if no_health_1st_18=0 and adj_pd_total_18pm gt &P_p18_90 and adj_pd_total_18pm le &P_p18_95 then adj_pd_total_18cat=5;
+else if no_health_1st_18=0 and adj_pd_total_18pm gt &P_p18_95 then adj_pd_total_18cat=6;
+
+bho_n_hosp_16bin=(bho_n_hosp_16pm gt 0); bho_n_er_16bin=(bho_n_er_16pm gt 0);
+ if bho_n_other_16pm=0 then bho_n_other_16tri=0; else if bho_n_other_16pm gt 0 and bho_n_other_16pm le 1 then bho_n_other_16tri=1; 
+ else if bho_n_other_16pm gt 1 then bho_n_other_16tri=2; 
+bho_n_hosp_17bin=(bho_n_hosp_17pm gt 0); bho_n_er_17bin=(bho_n_er_17pm gt 0);
+ if bho_n_other_17pm=0 then bho_n_other_17tri=0; else if bho_n_other_17pm gt 0 and bho_n_other_17pm le 1 then bho_n_other_17tri=1; 
+ else if bho_n_other_17pm gt 1 then bho_n_other_17tri=2; 
+bho_n_hosp_18bin=(bho_n_hosp_18pm gt 0); bho_n_er_18bin=(bho_n_er_18pm gt 0);
+ if bho_n_other_18pm=0 then bho_n_other_18tri=0; else if bho_n_other_18pm gt 0 and bho_n_other_18pm le 1 then bho_n_other_18tri=1; 
+ else if bho_n_other_18pm gt 1 then bho_n_other_18tri=2; 
+
+ format adj_pd_total_16cat adj_pd_total_17cat adj_pd_total_18cat pdpre.  bho_n_hosp_16bin bho_n_hosp_17bin bho_n_hosp_18bin bho_n_er_16bin
+         bho_n_er_17bin bho_n_er_18bin  bhonb.  bho_n_other_16tri bho_n_other_17tri bho_n_other_18tri  bhont.;
+run;
+
+data newfinal2; set newfinal2; 
+ qrt_cnt = INTCK ('QTR', '01Jul2019'd, quarter_beg ) +1; 
+ if adj_pd_Pharmacy_pm gt 0 then pd_pharm_bin_qrt=1; else if adj_pd_Pharmacy_pm=0 then pd_pharm_bin_qrt=0; format pd_pharm_bin_qrt yesno.;
+ if n_Primary_care_pm gt 0 then n_PC_bin_qrt=1; else if n_Primary_care_pm=0 then n_PC_bin_qrt=0; 
+ if n_all_ER_pm gt 0 then n_ER_bin_qrt=1; else if n_all_ER_pm=0 then n_ER_bin_qrt=0; 
+ if bho_n_other_pm gt 0 then n_bho_other_bin_qrt=1; else if bho_n_other_pm=0 then n_bho_other_bin_qrt=0; 
+format n_PC_bin_qrt n_ER_bin_qrt n_bho_other_bin_qrt yesno.; 
+run;
+
+proc sort data=newfinal2; by clnt_id quarter_beg; run;
+data 'X:\Jake\other\IBH\cost and utilization\analytic dataset\analyze2'; set newfinal2; run;
+
+
+
+
+
+data newfinal_1stid; set newfinal2; by clnt_id; if first.clnt_id; run;
+
+
+/*proc sort data=compare_sumf nodupkey out=comp_un_pcmp; by pcmp_loc_ID; run;*/  /* 1014 */
+proc freq data=newfinal2; tables age_cat7 gender rethnic_new RAE_person_new Budget_grp_new; run;
+
+********* ALL data summary;
+options nodate nocenter nonumber leftmargin=1in rightmargin=1in topmargin=1in bottommargin=1in;
+ods noptitle;
+ods rtf file="X:\Jake\other\IBH\cost and utilization\Results\summary of variables_All 11-17-22.rtf" startpage=no ;
+
+title "Person level summary";
+proc freq data=newfinal_1stid; table intervention age_cat7 gender race; format race race.; run;
+
+ods startpage=now;
+title "Person-quarter level summary - demographics";
+proc freq data=newfinal2; table BUDGET_GROUP RAE_person pcmp_loc_type_cd FQHC_qrt; run;
+
+ods startpage=now;
+title "Person-quarter level summary -other";
+proc freq data=newfinal2; table pd_total_bin_qrt IBH_plus_ind psych_visit_offer telepsych_offer eConsult_offer no_health_1st_16 no_health_1st_17 no_health_1st_18; run;
+
+ods startpage=now;
+title "Person-quarter level summary -utilization and historical cost";
+proc means data=newfinal2 n min median max maxdec=1; var n_Hospitalizations_pm n_Primary_care_pm n_ER_pm n_Pharmacy_pm n_FFS_BH_pm n_Ancillary_pm
+ n_HH_Therapy_pm n_Diagnostic_Procedures_pm n_Transportation_pm n_Other2_pm bho_n_hosp_pm bho_n_er_pm bho_n_other_pm
+ adj_pd_total_16pm adj_pd_total_17pm adj_pd_total_18pm bho_n_hosp_16pm bho_n_hosp_17pm bho_n_hosp_18pm bho_n_er_16pm bho_n_er_17pm bho_n_er_18pm bho_n_other_16pm bho_n_other_17pm bho_n_other_18pm; 
+run;
+
+ods startpage=now;
+title "Person-quarter level summary for those with total costs > 0";
+proc means data=newfinal2 n min p5 p10 p25 p50 p75 p90 p95 max maxdec=1; var adj_pd_total_Pos adj_pd_Hospitalizations_Pos
+ adj_pd_Primary_care_Pos adj_pd_ER_Pos adj_pd_Pharmacy_Pos adj_pd_FFS_BH_Pos adj_pd_Ancillary_Pos
+ adj_pd_HH_Therapy_Pos adj_pd_Diagnostic_Proc_Pos adj_pd_Transportation_Pos adj_pd_Other2_Pos; 
+run;
+title ;
+ods rtf close;
+
+
+options nodate nocenter nonumber leftmargin=1in rightmargin=1in topmargin=1in bottommargin=1in;
+ods noptitle;
+ods rtf file="X:\Jake\other\IBH\cost and utilization\Results\summary of no utilization_All 11-17-22.rtf" startpage=no ;
+
+title "Person-quarter level summary -utilization, percent with none";
+proc freq data=newfinal2; table n_Hospitalizations_ZERO n_Primary_care_ZERO n_ER_ZERO n_Pharmacy_ZERO n_FFS_BH_ZERO n_Ancillary_ZERO n_HH_Therapy_ZERO 
+                       n_Diagnostic_Procedures_ZERO n_Transportation_ZERO n_Other2_ZERO bho_n_hosp_ZERO bho_n_er_ZERO bho_n_other_ZERO;
+run;
+title ;
+ods rtf close;
+
+
+
+********* Intervention data summary;
+data interv_sumf; set newfinal2 (drop=adj_pd_total_Pos adj_pd_Hospitalizations_Pos adj_pd_Primary_care_Pos adj_pd_ER_Pos adj_pd_Pharmacy_Pos adj_pd_FFS_BH_Pos 
+   adj_pd_Ancillary_Pos adj_pd_HH_Therapy_Pos adj_pd_Diagnostic_Proc_Pos adj_pd_Transportation_Pos adj_pd_Other2_Pos adj_pd_total_pm95 adj_pd_Hospitalizations_pm95
+   adj_pd_Primary_care_pm95 adj_pd_ER_pm95 adj_pd_Pharmacy_pm95 adj_pd_FFS_BH_pm95 
+   adj_pd_Ancillary_pm95 adj_pd_HH_Therapy_pm95 adj_pd_Diagnostic_Procedures95 adj_pd_Transportation_pm95 adj_pd_Other2_pm95); 
+ where intervention=1; 
+ if adj_pd_total_pm gt 0  then adj_pd_total_Pos=adj_pd_total_pm; else adj_pd_total_Pos=.;
+ if adj_pd_Hospitalizations_pm gt 0  then adj_pd_Hospitalizations_Pos=adj_pd_Hospitalizations_pm; else adj_pd_Hospitalizations_Pos=.;
+ if adj_pd_Primary_care_pm gt 0  then adj_pd_Primary_care_Pos=adj_pd_Primary_care_pm; else adj_pd_Primary_care_Pos=.;
+ if adj_pd_ER_pm gt 0  then adj_pd_ER_Pos=adj_pd_ER_pm; else adj_pd_ER_Pos=.;
+ if adj_pd_Pharmacy_pm gt 0  then adj_pd_Pharmacy_Pos=adj_pd_Pharmacy_pm; else adj_pd_Pharmacy_Pos=.;
+ if adj_pd_FFS_BH_pm gt 0  then adj_pd_FFS_BH_Pos=adj_pd_FFS_BH_pm; else adj_pd_FFS_BH_Pos=.;
+ if adj_pd_Ancillary_pm gt 0  then adj_pd_Ancillary_Pos=adj_pd_Ancillary_pm; else adj_pd_Ancillary_Pos=.;
+ if adj_pd_HH_Therapy_pm gt 0  then adj_pd_HH_Therapy_Pos=adj_pd_HH_Therapy_pm; else adj_pd_HH_Therapy_Pos=.;
+ if adj_pd_Diagnostic_Procedures_pm gt 0  then adj_pd_Diagnostic_Proc_Pos=adj_pd_Diagnostic_Procedures_pm; else adj_pd_Diagnostic_Proc_Pos=.;
+ if adj_pd_Transportation_pm gt 0  then adj_pd_Transportation_Pos=adj_pd_Transportation_pm; else adj_pd_Transportation_Pos=.;
+ if adj_pd_Other2_pm gt 0  then adj_pd_Other2_Pos=adj_pd_Other2_pm; else adj_pd_Other2_Pos=.;
+
+ if adj_pd_total_pm gt 5006.8 then adj_pd_total_pm95=adj_pd_total_pm; else adj_pd_total_pm95=.;
+ if adj_pd_Hospitalizations_pm gt 16773.4 then adj_pd_Hospitalizations_pm95=adj_pd_Hospitalizations_pm; else adj_pd_Hospitalizations_pm95=.;
+ if adj_pd_Primary_care_pm gt 232.5 then adj_pd_Primary_care_pm95=adj_pd_Primary_care_pm; else adj_pd_Primary_care_pm95=.;
+ if adj_pd_ER_pm gt 561.3 then adj_pd_ER_pm95=adj_pd_ER_pm; else adj_pd_ER_pm95=.;
+ if adj_pd_Pharmacy_pm gt 1382.4 then adj_pd_Pharmacy_pm95=adj_pd_Pharmacy_pm; else adj_pd_Pharmacy_pm95=.;
+ if adj_pd_FFS_BH_pm gt 5269.1 then adj_pd_FFS_BH_pm95=adj_pd_FFS_BH_pm; else adj_pd_FFS_BH_pm95=.;
+ if adj_pd_Ancillary_pm gt 10448.5 then adj_pd_Ancillary_pm95=adj_pd_Ancillary_pm; else adj_pd_Ancillary_pm95=.;
+ if adj_pd_HH_Therapy_pm gt 2846.5 then adj_pd_HH_Therapy_pm95=adj_pd_HH_Therapy_pm; else adj_pd_HH_Therapy_pm95=.;
+ if adj_pd_Diagnostic_Procedures_pm gt 613 then adj_pd_Diagnostic_Procedures95=adj_pd_Diagnostic_Procedures_pm; else adj_pd_Diagnostic_Procedures95=.;
+ if adj_pd_Transportation_pm gt 626.9 then adj_pd_Transportation_pm95=adj_pd_Transportation_pm; else adj_pd_Transportation_pm95=.;
+ if adj_pd_Other2_pm gt 1298.8 then adj_pd_Other2_pm95=adj_pd_Other2_pm; else adj_pd_Other2_pm95=.;
+run;
+data interv_demf; set newfinal_1stid (keep=clnt_id intervention age_cat7 gender race); where intervention=1; run;
+options nodate nocenter nonumber leftmargin=1in rightmargin=1in topmargin=1in bottommargin=1in;
+ods noptitle;
+ods rtf file="X:\Jake\other\IBH\cost and utilization\Results\summary of variables_Intervention 11-17-22.rtf" startpage=no ;
+
+title "Person level summary";
+proc freq data=interv_demf; table intervention age_cat7 gender race; format race race.; run;
+
+ods startpage=now;
+title "Person-quarter level summary - demographics";
+proc freq data=interv_sumf; table BUDGET_GROUP RAE_person pcmp_loc_type_cd FQHC_qrt; run;
+
+ods startpage=now;
+title "Person-quarter level summary -other";
+proc freq data=interv_sumf; table pd_total_bin_qrt IBH_plus_ind psych_visit_offer telepsych_offer eConsult_offer no_health_1st_16 no_health_1st_17 no_health_1st_18; run;
+
+ods startpage=now;
+title "Person-quarter level summary -utilization and historical cost";
+proc means data=interv_sumf n min median max maxdec=1; var n_Hospitalizations_pm n_Primary_care_pm n_ER_pm n_Pharmacy_pm n_FFS_BH_pm n_Ancillary_pm
+ n_HH_Therapy_pm n_Diagnostic_Procedures_pm n_Transportation_pm n_Other2_pm bho_n_hosp_pm bho_n_er_pm bho_n_other_pm
+ adj_pd_total_16pm adj_pd_total_17pm adj_pd_total_18pm bho_n_hosp_16pm bho_n_hosp_17pm bho_n_hosp_18pm bho_n_er_16pm bho_n_er_17pm bho_n_er_18pm bho_n_other_16pm bho_n_other_17pm bho_n_other_18pm; 
+run;
+
+ods startpage=now;
+title "Person-quarter level summary for those with costs (each variable) > 0";
+proc means data=interv_sumf n min p5 p10 p25 p50 p75 p90 p95 max maxdec=1; var adj_pd_total_Pos adj_pd_Hospitalizations_Pos
+ adj_pd_Primary_care_Pos adj_pd_ER_Pos adj_pd_Pharmacy_Pos adj_pd_FFS_BH_Pos adj_pd_Ancillary_Pos
+ adj_pd_HH_Therapy_Pos adj_pd_Diagnostic_Proc_Pos adj_pd_Transportation_Pos adj_pd_Other2_Pos; 
+run;
+title ;
+ods rtf close;
+
+
+options nodate nocenter nonumber leftmargin=1in rightmargin=1in topmargin=1in bottommargin=1in;
+ods noptitle;
+ods rtf file="X:\Jake\other\IBH\cost and utilization\Results\summary of no utilization_Intervention 11-17-22.rtf" startpage=no ;
+
+title "Person-quarter level summary -utilization, percent with none";
+proc freq data=interv_sumf; table n_Hospitalizations_ZERO n_Primary_care_ZERO n_ER_ZERO n_Pharmacy_ZERO n_FFS_BH_ZERO n_Ancillary_ZERO n_HH_Therapy_ZERO 
+                       n_Diagnostic_Procedures_ZERO n_Transportation_ZERO n_Other2_ZERO bho_n_hosp_ZERO bho_n_er_ZERO bho_n_other_ZERO;
+run;
+title ;
+ods rtf close;
+
+
+
+********* Comparison group data summary;
+data compare_sumf; set newfinal2 (drop=adj_pd_total_Pos adj_pd_Hospitalizations_Pos adj_pd_Primary_care_Pos adj_pd_ER_Pos adj_pd_Pharmacy_Pos adj_pd_FFS_BH_Pos 
+   adj_pd_Ancillary_Pos adj_pd_HH_Therapy_Pos adj_pd_Diagnostic_Proc_Pos adj_pd_Transportation_Pos adj_pd_Other2_Pos adj_pd_total_pm95 adj_pd_Hospitalizations_pm95
+   adj_pd_Primary_care_pm95 adj_pd_ER_pm95 adj_pd_Pharmacy_pm95 adj_pd_FFS_BH_pm95 
+   adj_pd_Ancillary_pm95 adj_pd_HH_Therapy_pm95 adj_pd_Diagnostic_Procedures95 adj_pd_Transportation_pm95 adj_pd_Other2_pm95); 
+ where intervention=0; 
+ if adj_pd_total_pm gt 0  then adj_pd_total_Pos=adj_pd_total_pm; else adj_pd_total_Pos=.;
+ if adj_pd_Hospitalizations_pm gt 0  then adj_pd_Hospitalizations_Pos=adj_pd_Hospitalizations_pm; else adj_pd_Hospitalizations_Pos=.;
+ if adj_pd_Primary_care_pm gt 0  then adj_pd_Primary_care_Pos=adj_pd_Primary_care_pm; else adj_pd_Primary_care_Pos=.;
+ if adj_pd_ER_pm gt 0  then adj_pd_ER_Pos=adj_pd_ER_pm; else adj_pd_ER_Pos=.;
+ if adj_pd_Pharmacy_pm gt 0  then adj_pd_Pharmacy_Pos=adj_pd_Pharmacy_pm; else adj_pd_Pharmacy_Pos=.;
+ if adj_pd_FFS_BH_pm gt 0  then adj_pd_FFS_BH_Pos=adj_pd_FFS_BH_pm; else adj_pd_FFS_BH_Pos=.;
+ if adj_pd_Ancillary_pm gt 0  then adj_pd_Ancillary_Pos=adj_pd_Ancillary_pm; else adj_pd_Ancillary_Pos=.;
+ if adj_pd_HH_Therapy_pm gt 0  then adj_pd_HH_Therapy_Pos=adj_pd_HH_Therapy_pm; else adj_pd_HH_Therapy_Pos=.;
+ if adj_pd_Diagnostic_Procedures_pm gt 0  then adj_pd_Diagnostic_Proc_Pos=adj_pd_Diagnostic_Procedures_pm; else adj_pd_Diagnostic_Proc_Pos=.;
+ if adj_pd_Transportation_pm gt 0  then adj_pd_Transportation_Pos=adj_pd_Transportation_pm; else adj_pd_Transportation_Pos=.;
+ if adj_pd_Other2_pm gt 0  then adj_pd_Other2_Pos=adj_pd_Other2_pm; else adj_pd_Other2_Pos=.;
+
+ if adj_pd_total_pm gt 3608.5 then adj_pd_total_pm95=adj_pd_total_pm; else adj_pd_total_pm95=.;
+ if adj_pd_Hospitalizations_pm gt 14645.1 then adj_pd_Hospitalizations_pm95=adj_pd_Hospitalizations_pm; else adj_pd_Hospitalizations_pm95=.;
+ if adj_pd_Primary_care_pm gt 270.2 then adj_pd_Primary_care_pm95=adj_pd_Primary_care_pm; else adj_pd_Primary_care_pm95=.;
+ if adj_pd_ER_pm gt 515.8 then adj_pd_ER_pm95=adj_pd_ER_pm; else adj_pd_ER_pm95=.;
+ if adj_pd_Pharmacy_pm gt 1031.8 then adj_pd_Pharmacy_pm95=adj_pd_Pharmacy_pm; else adj_pd_Pharmacy_pm95=.;
+ if adj_pd_FFS_BH_pm gt 6473.4 then adj_pd_FFS_BH_pm95=adj_pd_FFS_BH_pm; else adj_pd_FFS_BH_pm95=.;
+ if adj_pd_Ancillary_pm gt 10490.8 then adj_pd_Ancillary_pm95=adj_pd_Ancillary_pm; else adj_pd_Ancillary_pm95=.;
+ if adj_pd_HH_Therapy_pm gt 3195.8 then adj_pd_HH_Therapy_pm95=adj_pd_HH_Therapy_pm; else adj_pd_HH_Therapy_pm95=.;
+ if adj_pd_Diagnostic_Procedures_pm gt 484 then adj_pd_Diagnostic_Procedures95=adj_pd_Diagnostic_Procedures_pm; else adj_pd_Diagnostic_Procedures95=.;
+ if adj_pd_Transportation_pm gt 605.6 then adj_pd_Transportation_pm95=adj_pd_Transportation_pm; else adj_pd_Transportation_pm95=.;
+ if adj_pd_Other2_pm gt 1394 then adj_pd_Other2_pm95=adj_pd_Other2_pm; else adj_pd_Other2_pm95=.;
+run;
+data compare_demf; set newfinal_1stid (keep=clnt_id intervention age_cat7 gender race); where intervention=0; run;
+options nodate nocenter nonumber leftmargin=1in rightmargin=1in topmargin=1in bottommargin=1in;
+ods noptitle;
+ods rtf file="X:\Jake\other\IBH\cost and utilization\Results\summary of variables_Compare 11-17-22.rtf" startpage=no ;
+
+title "Person level summary";
+proc freq data=compare_demf; table intervention age_cat7 gender race; format race race.; run;
+
+ods startpage=now;
+title "Person-quarter level summary - demographics";
+proc freq data=compare_sumf; table BUDGET_GROUP RAE_person pcmp_loc_type_cd FQHC_qrt; run;
+
+ods startpage=now;
+title "Person-quarter level summary -other";
+proc freq data=compare_sumf; table pd_total_bin_qrt IBH_plus_ind psych_visit_offer telepsych_offer eConsult_offer no_health_1st_16 no_health_1st_17 no_health_1st_18; run;
+
+ods startpage=now;
+title "Person-quarter level summary -utilization and historical cost";
+proc means data=compare_sumf n min median max maxdec=1; var n_Hospitalizations_pm n_Primary_care_pm n_ER_pm n_Pharmacy_pm n_FFS_BH_pm n_Ancillary_pm
+ n_HH_Therapy_pm n_Diagnostic_Procedures_pm n_Transportation_pm n_Other2_pm bho_n_hosp_pm bho_n_er_pm bho_n_other_pm
+ adj_pd_total_16pm adj_pd_total_17pm adj_pd_total_18pm bho_n_hosp_16pm bho_n_hosp_17pm bho_n_hosp_18pm bho_n_er_16pm bho_n_er_17pm bho_n_er_18pm bho_n_other_16pm bho_n_other_17pm bho_n_other_18pm; 
+run;
+
+ods startpage=now;
+title "Person-quarter level summary for those with costs (each variable) > 0";
+proc means data=compare_sumf n min p5 p10 p25 p50 p75 p90 p95 max maxdec=1; var adj_pd_total_Pos adj_pd_Hospitalizations_Pos
+ adj_pd_Primary_care_Pos adj_pd_ER_Pos adj_pd_Pharmacy_Pos adj_pd_FFS_BH_Pos adj_pd_Ancillary_Pos
+ adj_pd_HH_Therapy_Pos adj_pd_Diagnostic_Proc_Pos adj_pd_Transportation_Pos adj_pd_Other2_Pos; 
+run;
+title ;
+ods rtf close;
+
+
+options nodate nocenter nonumber leftmargin=1in rightmargin=1in topmargin=1in bottommargin=1in;
+ods noptitle;
+ods rtf file="X:\Jake\other\IBH\cost and utilization\Results\summary of no utilization_Compare 11-17-22.rtf" startpage=no ;
+
+title "Person-quarter level summary -utilization, percent with none";
+proc freq data=compare_sumf; table n_Hospitalizations_ZERO n_Primary_care_ZERO n_ER_ZERO n_Pharmacy_ZERO n_FFS_BH_ZERO n_Ancillary_ZERO n_HH_Therapy_ZERO 
+                       n_Diagnostic_Procedures_ZERO n_Transportation_ZERO n_Other2_ZERO bho_n_hosp_ZERO bho_n_er_ZERO bho_n_other_ZERO;
+run;
+title ;
+ods rtf close;
+
+
+
+
+*Means above 95th percentile;
+**all data;
+options nodate nocenter nonumber leftmargin=1in rightmargin=1in topmargin=1in bottommargin=1in;
+ods noptitle;
+ods rtf file="X:\Jake\other\IBH\cost and utilization\Results\cost means above 95th pcnt _ALL 11-17-22.rtf" startpage=no ;
+title "Person-quarter level summary for those with costs (each variable) > 0. Means, above 95th percentile";
+proc means data=compare_sumf n nmiss mean maxdec=1; var adj_pd_total_pm95 adj_pd_Hospitalizations_pm95
+ adj_pd_Primary_care_pm95 adj_pd_ER_pm95 adj_pd_Pharmacy_pm95 adj_pd_FFS_BH_pm95 adj_pd_Ancillary_pm95
+ adj_pd_HH_Therapy_pm95 adj_pd_Diagnostic_Procedures95 adj_pd_Transportation_pm95 adj_pd_Other2_pm95; 
+run;
+title ;
+ods rtf close;
+
+**intervention;
+options nodate nocenter nonumber leftmargin=1in rightmargin=1in topmargin=1in bottommargin=1in;
+ods noptitle;
+ods rtf file="X:\Jake\other\IBH\cost and utilization\Results\cost means above 95th pcnt _INTERV 11-17-22.rtf" startpage=no ;
+title "Person-quarter level summary for those with costs (each variable) > 0. Means, above 95th percentile";
+proc means data=compare_sumf n nmiss mean maxdec=1; var adj_pd_total_pm95 adj_pd_Hospitalizations_pm95
+ adj_pd_Primary_care_pm95 adj_pd_ER_pm95 adj_pd_Pharmacy_pm95 adj_pd_FFS_BH_pm95 adj_pd_Ancillary_pm95
+ adj_pd_HH_Therapy_pm95 adj_pd_Diagnostic_Procedures95 adj_pd_Transportation_pm95 adj_pd_Other2_pm95; 
+run;
+title ;
+ods rtf close;
+
+**comparison group;
+options nodate nocenter nonumber leftmargin=1in rightmargin=1in topmargin=1in bottommargin=1in;
+ods noptitle;
+ods rtf file="X:\Jake\other\IBH\cost and utilization\Results\cost means above 95th pcnt _COMPARE 11-17-22.rtf" startpage=no ;
+title "Person-quarter level summary for those with costs (each variable) > 0. Means, above 95th percentile";
+proc means data=compare_sumf n nmiss mean maxdec=1; var adj_pd_total_pm95 adj_pd_Hospitalizations_pm95
+ adj_pd_Primary_care_pm95 adj_pd_ER_pm95 adj_pd_Pharmacy_pm95 adj_pd_FFS_BH_pm95 adj_pd_Ancillary_pm95
+ adj_pd_HH_Therapy_pm95 adj_pd_Diagnostic_Procedures95 adj_pd_Transportation_pm95 adj_pd_Other2_pm95; 
+run;
+title ;
+ods rtf close;
+
+
+
+
+

@@ -1,0 +1,161 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+MPRINT(HURDLE):   PROC GENMOD DATA = data.utilization;
+MPRINT(HURDLE):   CLASS mcaid_id int(ref='0') int_imp(ref='0') budget_grp_new(ref='MAGI Eligible 
+Children') race(ref='non-Hispanic White/Caucasian') sex(ref='Female') rae_person_new(ref='3') 
+age_cat(ref='ages 21-44') fqhc(ref ='0') bh_oth17(ref='0') bh_oth18(ref='0') bh_oth19(ref='0') 
+bh_er17(ref='0') bh_er18(ref='0') bh_er19(ref='0') bh_hosp17(ref='0') bh_hosp18(ref='0') 
+bh_hosp19(ref='0') adj_pd_total_17cat(ref='0') adj_pd_total_18cat(ref='0') 
+adj_pd_total_19cat(ref='0') ind_cost_total;
+MPRINT(HURDLE):   MODEL ind_cost_total(event='1') = int int_imp time season1 season2 season3 
+budget_grp_new race sex rae_person_new age_cat fqhc bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 
+bh_er19 bh_hosp17 bh_hosp18 bh_hosp19 adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat / 
+DIST=binomial;
+MPRINT(HURDLE):   REPEATED SUBJECT = mcaid_id / type=exch ;
+MPRINT(HURDLE):   store out.cost_total_pmodel_exch;
+MPRINT(HURDLE):   output out = predout pred = pred;
+MPRINT(HURDLE):   run;
+
+NOTE: Class levels for some variables were not printed due to excessive size.
+NOTE: PROC GENMOD is modeling the probability that ind_cost_total='1'. One way to change this to 
+      model the probability that ind_cost_total='0' is to specify the DESCENDING option in the PROC 
+      statement.
+NOTE: The GENMOD procedure deleted the model item store OUT.COST_TOTAL_PMODEL_EXCH because of 
+      incomplete information for a subsequent analysis.
+WARNING: The data set WORK.PREDOUT may be incomplete.  When this step was stopped there were 0 
+         observations and 41 variables.
+NOTE: PROCEDURE GENMOD used (Total process time):
+      real time           2:54.86
+      cpu time            2:12.60
+      
+
+348  
+349  
+350  ** RESULTS ===================================;
+351  %INCLUDE
+351! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_results_visits.sas";
+352  %results_visits(dv=visits_pc, visittype=pc);
+
+353  %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas";
+NOTE: Libref DATA was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\out_hurdle
+NOTE: Libref RAW was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+489  
+490  data data.intgroup;
+491    set data.utilization data.utilization (in = b);
+492    where int_imp = 1;
+493    if ^b then int_imp = 0;
+494    exposed = b;
+495  run;
+
+NOTE: There were 1826819 observations read from the data set DATA.UTILIZATION.
+      WHERE int_imp=1;
+NOTE: There were 1826819 observations read from the data set DATA.UTILIZATION.
+      WHERE int_imp=1;
+NOTE: The data set DATA.INTGROUP has 3653638 observations and 41 variables.
+NOTE: DATA statement used (Total process time):
+      real time           46.64 seconds
+      cpu time            4.04 seconds
+      
+
+496  **********************************************************************************************
+497  AUTHOR   : KTW
+498  PROJECT  : ISP Utilization
+499  PURPOSE  : Hurdle 1, using macro file , COST dv's
+500  VERSION  : 2023-08-24
+501           : 2023-08-17 INT_IMP: changed var of interest to int_imp per meeting
+502  OUTPUT   : pdf & log file
+503  LOG      : Changed data.analysis_final to data.analysis (moved the original data.analysis to
+503! int.analysis3, then renamed _final)
+504  RELATIONSHIPS : see include statements
+505  Per Mark : Use mode for ref class vars budget_group & race if possible
+506              - default for budget_grp_num_r is the mode
+507              - race = I didn't want to tempt fate so just let it choose since it ran w/ default
+507! (ok w Mark)
+508  ***********************************************************************************************
+508! ;
+509  %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas";
+NOTE: Libref DATA was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\out_hurdle
+NOTE: Libref RAW was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT is already on the library WORK.FORMATS.
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: Overwriting existing template/link: Base.Freq.OneWayList
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+      
+
+645  /*libname int clear; */
+646  
+647  %LET dat = data.utilization;
+648  %INCLUDE
+648! "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/macro_hurdle_costs.sas";
+787   
+788   *[EXCH] 11-2-2023 =================================================================;
+789   %hurdle  (dat=&dat, pvar=ind_cost_pc, cvar=cost_pc, dv=cost_pc, type=exch);
+MLOGIC(HURDLE):  Beginning execution.
+MLOGIC(HURDLE):  Parameter DAT has value data.utilization
+MLOGIC(HURDLE):  Parameter PVAR has value ind_cost_pc
+MLOGIC(HURDLE):  Parameter CVAR has value cost_pc
+MLOGIC(HURDLE):  Parameter DV has value cost_pc
+MLOGIC(HURDLE):  Parameter TYPE has value exch
+MPRINT(HURDLE):   OPTIONS SOURCE;
+MLOGIC(HURDLE):  %LET (variable name is ROOT)
+MLOGIC(HURDLE):  %LET (variable name is SCRIPT)
+MPRINT(HURDLE):   * remove .sas to use in log, pdf;
+MLOGIC(HURDLE):  %LET (variable name is TODAY)
+MLOGIC(HURDLE):  %LET (variable name is LOG)
+MPRINT(HURDLE):   PROC PRINTTO LOG = 
+"S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\code\run_cost_pc_type_exch_2023-11-04.l
+og";
+MPRINT(HURDLE):   RUN;
+

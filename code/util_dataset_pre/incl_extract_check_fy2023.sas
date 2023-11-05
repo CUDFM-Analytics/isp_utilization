@@ -34,7 +34,7 @@ QUIT;
 %mend;
 
 PROC SQL; 
-CREATE TABLE int.pcmp_attr_qrtr AS
+CREATE TABLE data.pcmp_attr_qrtr AS
 SELECT mcaid_id 
      , dt_qrtr
      , pcmp_loc_id

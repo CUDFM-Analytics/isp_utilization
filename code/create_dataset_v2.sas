@@ -32,7 +32,61 @@ PROC IMPORT FILE="&util./data/_raw/fy_q_dts_dim.csv"
     REPLACE;
 run; 
 
-* [QRYLONG_00_V2] ==============================================================================
+* tmp.util  ==============================================================================;
+DATA    util_0; 
+SET     ana.qry_monthlyutilization (WHERE=(month ge '01Jul2016'd AND month lt '01Jul2023'd));
+FORMAT  dt_qrtr date9.;
+dt_qrtr =intnx('QTR', month, 0, 'BEGINNING'); 
+FY      =year(intnx('year.7', month, 0, 'END'));
+run; 
+
+* UPDATED 10-19 to include 2023 values; 
+PROC SQL;
+CREATE TABLE util_1 as
+SELECT a.*
+     , (a.pd_amt/b.index_2021_1) AS adj_pd_amount 
+FROM   util_0      AS A
+LEFT JOIN int.adj      AS b    ON a.dt_qrtr=b.date;
+quit; * 11/4 79551877;
+
+PROC SQL;
+CREATE TABLE util_2 AS
+SELECT MCAID_ID
+      , FY
+      , dt_qrtr
+      , month
+      , sum(case when clmClass=4     then count else 0 end) as n_pc
+      , sum(case when clmClass=3     then count else 0 end) as n_er
+      , sum(case when clmClass=5     then count else 0 end) as n_ffsbh
+        
+      , sum(adj_pd_amount)                                          as adj_total
+      , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pc
+      , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_er
+      , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_rx
+FROM  util_1
+GROUP BY MCAID_ID,month;
+quit; *11/4 79551877 // 6/7 58207623; 
+
+%nodupkey(ds=util_2, out=tmp.util); *11/4 39307520 , 10/22: 33227472 // 6/7 28628763, 12; 
+
+* tmp.BH ==============================================================================
+Gets BH vars
+===========================================================================================;
+DATA bh_0;
+SET  ana.qry_bho_monthlyutilization; 
+format dt_qrtr month2 date9.; 
+dt_qrtr = intnx('quarter', month ,0,'b');
+month2  = month; DROP month; RENAME month2 = month; /* make numeric, for some reason month coming in as character*/
+WHERE   month ge '01Jul2016'd AND  month lt '01Jul2023'd;
+FY      = year(intnx('year.7', month, 0, 'END'));
+run; 
+
+%create_qrtr(data=tmp.bh, set=bh_0, var = dt_qrtr, qrtr=time);
+
+**RUN / exec 02_get_prep_telehealth to get tmp.tel here; 
+/*PROC SORT data = int.tel OUT=tmp.tel; by mcaid_id month ; run; */
+
+* [QRYLONG_00] ==============================================================================
 LAST : 2023-10-18
 1. SUBSET qry_longitudinal to timeframe (months le/ge) AND:
    -- budget_groups
@@ -43,9 +97,10 @@ LAST : 2023-10-18
 ===========================================================================================;
 * 11/3 what pcmp_loc_ids might not be missing???
 Removed managedCare=0 from here 11/2;
-DATA   tmp.qrylong_00;
+DATA   tmp.qrylong_00 (drop=managedCare);
 LENGTH mcaid_id $11; 
 SET    ana.qry_longitudinal (WHERE=(month ge '01Jul2016'd AND month lt '01Jul2023'd
+                                    AND managedCare=0
                                     AND BUDGET_GROUP not in (16,17,18,19,20,21,22,23,24,25,26,27,-1,)) 
                              DROP = FED_POV: DISBLD_IND aid_cd: title19: SPLM_SCRTY_INCM_IND
                                     SSI_: SS: dual eligGrp fost_aid_cd) ;  
@@ -53,7 +108,19 @@ format dt_qrtr date9.;
 dt_qrtr = intnx('quarter', month ,0,'b'); 
 FY      = year(intnx('year.7', month, 0, 'END'));
 PCMP2   = input(pcmp_loc_id, best12.); DROP pcmp_loc_id; RENAME pcmp2 = pcmp_loc_id; 
-RUN; *113,152,178; 
+RUN; *11/4: 101217155 with managedCare=0 / without managedCare=0 returns 113,152,178; 
+
+* [pcmp_dim table];
+DATA pcmp_dim0 (DROP=pcmp_loc_type_cd pcmp_type); 
+SET  tmp.qrylong_00 (KEEP=pcmp_loc_id pcmp_loc_type_cd); 
+pcmp_type = input(pcmp_loc_type_cd, best12.);
+IF   pcmp_type in (32 45 61 62) then fqhc = 1 ; else fqhc = 0 ;
+RUN; 
+PROC SORT DATA = pcmp_dim0 NODUPKEY; BY _ALL_; RUN;
+PROC SQL; 
+CREATE TABLE tmp.pcmp_dim AS SELECT distinct pcmp_loc_id, fqhc FROM pcmp_dim0
+GROUP BY pcmp_loc_id; 
+QUIT; *1507;
 
 * [tmp.qrylong_01]======================================================================
 Joins ana.qry_demographics and rae_dim
@@ -63,9 +130,20 @@ Purpose:
 3. Subset sex M, F
 4. Get dob to calculate ages (subsetting var)
 ===========================================================================================;
+PROC CONTENTS DATA = tmp.qrylong_00 VARNUM; RUN; 
+
+* Making sure records are unique by ID - should have 0 records returned if so; 
+PROC SQL; SELECT count(distinct mcaid_id) as n_id FROM ana.qry_demographics GROUP BY mcaid_id HAVING n_id >1; QUIT;
+
+* can drop rae_assign, enr_cnty; 
 PROC SQL; 
 CREATE TABLE tmp.qrylong_01 AS
-SELECT a.*
+SELECT a.mcaid_id
+     , a.month
+     , a.budget_group
+     , a.dt_qrtr
+     , a.FY
+     , a.pcmp_loc_id
      , b.dob
      , b.gender as sex
      , b.race
@@ -77,19 +155,7 @@ LEFT JOIN ana.qry_demographics AS B ON a.mcaid_id = b.mcaid_id
 LEFT JOIN int.rae_dim          AS C ON a.enr_cnty = c.hcpf_county_code_c
 LEFT JOIN tmp.time_dim         AS D on a.dt_qrtr  = d.month
 WHERE SEX IN ('F','M');
-QUIT;   
-
-* [pcmp_dim table];
-DATA pcmp_dim0 (DROP=pcmp_loc_type_cd pcmp_type); 
-SET  tmp.qrylong_01 (KEEP=pcmp_loc_id pcmp_loc_type_cd); 
-pcmp_type = input(pcmp_loc_type_cd, best12.);
-IF   pcmp_type in (32 45 61 62) then fqhc = 1 ; else fqhc = 0 ;
-RUN; 
-PROC SORT DATA = pcmp_dim0 NODUPKEY; BY _ALL_; RUN;
-PROC SQL; 
-CREATE TABLE tmp.pcmp_dim AS SELECT distinct pcmp_loc_id, fqhc FROM pcmp_dim0
-GROUP BY pcmp_loc_id; 
-QUIT; *1507;
+QUIT;   *11/4 101216654; 
 
 * [tmp.memlist0] ==============================================================================
 -Extract mcaid_id, dob, and time to get age as of the 2nd month in each quarter to a) subset to ages, b) create age_cat
@@ -98,12 +164,12 @@ QUIT; *1507;
 ===========================================================================================;
 * Get distinct mcaid_id and dob, WHERE RAE_PERSON_NEW ne . AND pcmp ne . and managedCare=0 here ;
 PROC SQL;
-CREATE TABLE tmp.memlist0 AS 
+CREATE TABLE memlist0 AS 
 SELECT distinct(mcaid_id) as mcaid_id
      , dob
      , time
 FROM tmp.qrylong_01 AS A
-WHERE a.month ge '01JUL2019'd AND rae_person_new ne . and pcmp_loc_id ne . and managedCare=0;
+WHERE a.month ge '01JUL2019'd AND rae_person_new ne . and pcmp_loc_id ne . ;
 QUIT; *11/2 20057212  ; 
        
 * I could not for the life of me find a way to do this from the macro values and had to get moving but I'm sure there's a better way to do this? ;
@@ -114,7 +180,7 @@ QUIT; *11/2 20057212  ;
  
 * WHERE TIME ne . subsets here; 
 DATA tmp.memlist;
-SET  tmp.memlist0;
+SET  memlist0;
 IF time = 1 then do;  age = floor((intck('month', dob, "&m2q1"d)-(day("&m2q1"d)   < min(day(dob), day(intnx('month', "&m2q1"d, 1) -1))))  /12); END;
 IF time = 2 then do;  age = floor((intck('month', dob, "&m2q2"d)-(day("&m2q2"d)   < min(day(dob), day(intnx('month', "&m2q2"d, 1) -1))))  /12); END;
 IF time = 3 then do;  age = floor((intck('month', dob, "&m2q3"d)-(day("&m2q3"d)   < min(day(dob), day(intnx('month', "&m2q3"d, 1) -1))))  /12); END;
@@ -142,7 +208,7 @@ ELSE IF 16 <= age <= 20 THEN age_cat = 4;
 ELSE IF 21 <= age <= 44 THEN age_cat = 5;
 ELSE                         age_cat = 6;
 
-RUN; 
+RUN; * 20057212; 
 
 PROC FREQ DATA = tmp.memlist; TABLES time; run; 
 PROC SQL; SELECT count(distinct mcaid_id) FROM tmp.memlist; QUIT; 
@@ -152,53 +218,26 @@ PROC SQL; CREATE TABLE memlist_ids_time AS select count(distinct mcaid_id), time
 * [tmp.QRYLONG_02] ==============================================================================
 Subset qrylong to memlist
 ===========================================================================================;
-* ;
-PROC SQL;
-CREATE TABLE tmp.qrylong_02 AS 
-SELECT mcaid_id
-     , time
-     , FY
-     , dt_qrtr
-     , month
-FROM tmp.qrylong_01
-WHERE mcaid_id IN (SELECT mcaid_id FROM tmp.memlist);
-QUIT; *92,112,457;
-
-        *11/4 unit test just to see if get same n this way as above tmp.qrylong_02; 
-        PROC SORT DATA = tmp.qrylong_01; by mcaid_id; RUN; 
-        DATA qrylong_02a;
-        MERGE tmp.qrylong_01 (in=a) tmp.memlist (in=b KEEP=mcaid_id);
-        BY mcaid_id; 
-        if a and b; 
-        RUN; *9211245 - same as above; 
+PROC SORT DATA = tmp.qrylong_01; by mcaid_id; RUN; 
+DATA qrylong_02;
+MERGE tmp.qrylong_01 (in=a) tmp.memlist (in=b KEEP=mcaid_id);
+BY mcaid_id; 
+if a and b; 
+RUN; * 11/4 89694402 //  9211245 - same as above; 
 
 * [tmp.final_00] ==============================================================================
 Start final list where age in range based on FY's 19-22 and rae_ not missing
 ===========================================================================================;
-PROC CONTENTS DATA = tmp.qrylong_01 VARNUM; RUN; 
 PROC SQL;
 CREATE TABLE tmp.final_00 AS 
-SELECT a.mcaid_id
-     , a.time
-     , a.month
-     , a.dt_qrtr
-     , a.time
-     , a.FY
-     , a.pcmp_loc_id
-     , a.pcmp_loc_type_cd
-     , a.rae_person_new
-     , a.budget_group
-     , a.sex
-     , a.race
-     , b.age_cat
-     , b.age
-FROM tmp.qrylong_01    AS A 
-RIGHT JOIN tmp.memlist AS B ON (a.mcaid_id=b.mcaid_id AND a.time=b.time)
+SELECT a.mcaid_id, a.time, a.age, a.age_cat
+     , b.month, b.dt_qrtr, b.time, b.FY, b.pcmp_loc_id, b.rae_person_new, b.budget_group, b.sex, b.race
+FROM tmp.memlist         AS A 
+LEFT JOIN tmp.qrylong_01 AS B ON (a.mcaid_id=b.mcaid_id AND a.time=b.time)
 WHERE rae_person_new ne . AND pcmp_loc_id ne . AND month ge '01JUL2019'd;
 QUIT; 
 
 PROC MEANS DATA = tmp.final_00 nmiss; var rae_person_new pcmp_loc_id time; run; * none are missing; 
-
 
 * [tmp.final_01] & [tmp.DEMO] =========================================================
 Get vars from qry_longitudinal that might have >1 value per quarter
@@ -206,7 +245,7 @@ Get vars from qry_longitudinal that might have >1 value per quarter
 DATA tmp.final_01  (KEEP = mcaid_id month dt_qrtr FY time age_cat race sex)
      tmp.demo      (KEEP = mcaid_id month dt_qrtr FY time rae_person_new pcmp_loc_id budget_group);
 SET  tmp.final_00 ; 
-RUN;  * both have 56463921; 
+RUN;  *11/4:    11/3 both have 56463921; 
 PROC SORT DATA=tmp.final_01; BY MCAID_ID FY TIME; RUN; 
 
 * %INCLUDE ==============================================================================
@@ -216,8 +255,8 @@ Creates table with max months' pcmp. In case of ties, takes most recent
 ===========================================================================================;
 %LET ds = tmp.demo;
 %INCLUDE "&util/code/util_dataset_pre/incl_extract_check_fy2023.sas"; * creates tmp.pcmp_attr_qrtr too; 
-%demo(var=budget_group,   ds=&ds);
-%demo(var=rae_person_new, ds=&ds);
+%demo(var=budget_group,   ds=&ds); *19283171;
+%demo(var=rae_person_new, ds=&ds); *19283171;
 
 *macro to find instances where n_ids >16 (should be 0 // in 00_config) VERY fast!; 
 %check_ids_n16(ds=budget_group);      *0;
@@ -233,7 +272,7 @@ RUN;
 * Created helper var for joins (was taking a long time and creating rows without id, 
 idk why, so did this as quick fix for now); 
 %concat_id_time(ds=tmp.final_01);
-%concat_id_time(ds=tmp.memlist);
+/*%concat_id_time(ds=tmp.memlist);*/
 
 PROC SQL ; 
 CREATE TABLE tmp.final_02 AS 
@@ -249,89 +288,24 @@ SELECT a.*
 FROM tmp.final_01                    AS A
 LEFT JOIN budget_group               AS B   ON A.id_time_helper = B.id_time_helper
 LEFT JOIN rae_person_new             AS C   ON A.id_time_helper = C.id_time_helper
-LEFT JOIN int.pcmp_attr_qrtr         AS D   ON A.id_time_helper = D.id_time_helper
+LEFT JOIN data.pcmp_attr_qrtr        AS D   ON A.id_time_helper = D.id_time_helper
 LEFT JOIN int.isp_un_pcmp_dtstart    AS F   ON D.pcmp_loc_id    = F.pcmp_loc_id    
 ;
 QUIT ;  
+*Table TMP.FINAL_02 created, with 56463912 rows and 15 columns.;
 
-DATA  tmp.final_03;
-SET   tmp.final_02   (DROP=time_start_isp month id_time_helper);
-RUN;
-
+*[TMP.FINAL_03];
+DATA  tmp.final_03; SET tmp.final_02 (DROP=time_start_isp month id_time_helper); RUN;
 PROC SORT DATA = tmp.final_03 NODUPKEY; BY _ALL_; RUN; 
-
-* tmp.util  ==============================================================================;
-DATA    tmp.util_0; 
-SET     ana.qry_monthlyutilization (WHERE=(month ge '01Jul2016'd AND month lt '01Jul2023'd));
-FORMAT  dt_qrtr date9.;
-dt_qrtr =intnx('QTR', month, 0, 'BEGINNING'); 
-FY      =year(intnx('year.7', month, 0, 'END'));
-run; 
-
-* UPDATED 10-19 to include 2023 values; 
-PROC SQL;
-CREATE TABLE tmp.util_1 as
-SELECT a.*
-     , (a.pd_amt/b.index_2021_1) AS adj_pd_amount 
-FROM   tmp.util_0      AS A
-LEFT JOIN int.adj      AS b    ON a.dt_qrtr=b.date
-WHERE mcaid_id IN (SELECT mcaid_id FROM tmp.memlist);
-quit; 
-
-PROC SQL;
-CREATE TABLE tmp.util_2 AS
-SELECT MCAID_ID
-      , FY
-      , dt_qrtr
-      , month
-      , sum(case when clmClass=4     then count else 0 end) as n_pc
-      , sum(case when clmClass=3     then count else 0 end) as n_er
-      , sum(case when clmClass=5     then count else 0 end) as n_ffsbh
-        
-      , sum(adj_pd_amount)                                          as adj_total
-      , sum(case when clmClass=4     then adj_pd_amount else 0 end) as adj_pc
-      , sum(case when clmClass=3     then adj_pd_amount else 0 end) as adj_er
-      , sum(case when clmClass=2     then adj_pd_amount else 0 end) as adj_rx
-/*      , sum(case when clmClass=5     then adj_pd_amount else 0 end) as adj_ffsbh*/
-FROM  tmp.util_1
-GROUP BY MCAID_ID,month;
-quit; *6/7 58207623; 
-
-%nodupkey(ds=tmp.util_2, out=tmp.util); *10/22: 33227472 // 6/7 28628763, 12; 
-
-* tmp.BH1 ==============================================================================
-Gets BH vars
-===========================================================================================;
-DATA tmp.bh_0;
-SET  ana.qry_bho_monthlyutilization; 
-format dt_qrtr month2 date9.; 
-dt_qrtr = intnx('quarter', month ,0,'b');
-month2  = month; DROP month; RENAME month2 = month; /* make numeric, for some reason month coming in as character*/
-WHERE   month ge '01Jul2016'd AND  month le '01Jul2023'd;
-FY      = year(intnx('year.7', month, 0, 'END'));
-run; 
-
-%create_qrtr(data=tmp.bh, set=tmp.bh_0, var = dt_qrtr, qrtr=time);
-
-**RUN / exec 02_get_prep_telehealth to get tmp.tel here; 
-/*PROC SORT data = int.tel OUT=tmp.tel; by mcaid_id month ; run; */
 
 * tmp.QRYLONG_04 ==============================================================================
 join bh and util to qrylong to get averages (all utils - monthly, bho, telehealth) to qrylong4
 ===========================================================================================;
 PROC SQL; 
 CREATE TABLE tmp.qrylong_03 AS 
-SELECT a.mcaid_id, a.month, a.dt_qrtr, a.FY, a.time
-     , b.bho_n_hosp
-     , b.bho_n_er
-     , b.bho_n_other
-     , c.n_pc
-     , c.n_er
-     , c.n_ffsbh
-     , c.adj_total
-     , c.adj_pc
-     , c.adj_er
-     , c.adj_rx
+SELECT a.mcaid_id, a.month, a.dt_qrtr, a.FY, a.time,
+     , b.bho_n_hosp, b.bho_n_er, b.bho_n_other
+     , c.n_pc, c.n_er, c.n_ffsbh, c.adj_total, c.adj_pc, c.adj_er, c.adj_rx
      , d.n_tele
      , coalesce(b.bho_n_er, 0) + coalesce(c.n_er, 0) as n_ed
 FROM tmp.qrylong_02  AS A
@@ -340,16 +314,11 @@ LEFT JOIN tmp.util   AS C ON a.mcaid_id=C.mcaid_id AND a.month=C.month
 LEFT JOIN tmp.tel    AS D ON a.mcaid_id=D.mcaid_id AND a.month=D.month;
 QUIT;  * 11/3: 92112457 // 11/2: 89694402; 
 
-* [tmp.qrylong_pre_0] [tmp.qrylong_post_0]
-===========================================================================================;
-PROC CONTENTS DATA = tmp.qrylong_03 VARNUM; RUN; 
-
-DATA tmp.qrylong_pre_0  (KEEP=mcaid_id FY adj_total bho_n_hosp bho_n_other bho_n_er)
-     tmp.qrylong_post_0 (KEEP=mcaid_id month dt_qrtr FY time n_pc n_ed n_tele n_ffsbh adj_total adj_pc adj_rx); 
-SET  tmp.qrylong_03;
-IF month <  '01Jul2019'd THEN OUTPUT tmp.qrylong_pre_0;
-IF month >= '01JUL2019'd THEN OUTPUT tmp.qrylong_post_0;
+* [tmp.qrylong_pre_0] ========================================================================================;
+DATA tmp.qrylong_pre_0;
+SET  tmp.qrylong_03 (WHERE=(month < '01JUL2019'd) KEEP=mcaid_id month FY adj_total bho_n_hosp bho_n_other bho_n_er);
 RUN;  
+* 32750234, 7; 
 
 PROC SQL;
 CREATE TABLE tmp.qrylong_pre_1 as
@@ -476,41 +445,31 @@ RUN;
 
 PROC FREQ DATA = tmp.qrylong_1719; tables adj_pd_total_1: elig: ; RUN; 
 
-* [tmp.final_04] ==============================================================================
-Add FY1719 outcomes to final_03
-===========================================================================================;
+* [tmp.qrylong_post_1] ======================================================================;
+DATA tmp.qrylong_post_0; SET  tmp.final_01 (KEEP=mcaid_id time month); RUN; *56463912;
+
 PROC SQL;
-CREATE TABLE tmp.final_04 AS 
-SELECT a.*
-     , b.*
-FROM tmp.final_03           AS A
-LEFT JOIN tmp.qrylong_1719  AS B ON a.mcaid_id=b.mcaid_id;
-QUIT; *19283171, 30 cols; 
-
-* See which are empty after joining and check after coalescing with -1 at end of script; 
-PROC PRINT DATA = tmp.final_04 (obs=25); where adj_pd_17pm eq .; RUN; 
-PROC SQL; CREATE TABLE tmp.inel_2017 AS SELECT distinct mcaid_id from tmp.final_04 where elig2017 ne 1 ; QUIT; *771104;
-PROC SQL; CREATE TABLE tmp.inel_2018 AS SELECT distinct mcaid_id from tmp.final_04 where elig2018 ne 1 ; QUIT; *771104;
-PROC SQL; CREATE TABLE tmp.inel_2019 AS SELECT distinct mcaid_id from tmp.final_04 where elig2019 ne 1 ; QUIT; *771104;
-
-* tmp.qrylong_post_1 ======================================================================;
-PROC CONTENTS DATA = tmp.qrylong_post_0 VARNUM; RUN; 
-
-* Subset to memlist specs before calculating (don't keep all the rae_ null, pcmp nulls, managedCare=1 etc); 
-PROC SQL; 
-CREATE TABLE tmp.qrylong_post_1 AS 
+CREATE TABLE tmp.qrylong_post_1 AS
 SELECT a.mcaid_id
      , a.time
-     , b.*
-FROM tmp.memlist AS A
-LEFT JOIN tmp.qrylong_post_0 AS B on a.mcaid_id=b.mcaid_id AND a.time=b.time; 
-QUIT;
+     , a.month
+     , b.FY
+     , b.n_pc
+     , b.n_ed
+     , b.n_ffsbh
+     , b.n_tele
+     , b.adj_pc
+     , b.adj_rx
+     , b.adj_total
+FROM tmp.qrylong_post_0 AS A
+LEFT JOIN tmp.qrylong_03 AS B ON a.mcaid_id=b.mcaid_id AND a.month=b.month; 
+QUIT; *56463912;
 
-PROC SQL; SELECT count(distinct mcaid_id) as n_un_ids from tmp.qrylong_post_1; QUIT; 
+PROC SQL; SELECT count(distinct mcaid_id) as n_un_ids from tmp.qrylong_post_1; QUIT; *1735256;
 
-DATA tmp.qrylong_post_2 (KEEP = mcaid_id month time FY n_ed n_pc n_ffsbh n_tele adj_total adj_pc adj_rx); /*removes dt_qrtr*/
-SET  tmp.qrylong_post_1 ; 
-* Multiple the visit values by 6 to capture whole number values ; 
+DATA tmp.qrylong_post_2;
+SET  tmp.qrylong_post_1; 
+* Rescale visit DVs: Multiply by 6 to get whole number values when averaging; 
 ARRAY mult(*) n_ed n_pc n_ffsbh n_tele;
 DO i=1 to dim(mult); 
 mult(i)=mult(i)*6; 
@@ -521,7 +480,7 @@ RUN;
 PROC SQL;
 CREATE TABLE tmp.qrylong_post_3 as
 SELECT mcaid_id
-     , count(*) as n_months
+/*     , count(*) as n_months*/
      , time
      , FY
      , avg(n_pc)       AS n_pc_pmpq
@@ -656,25 +615,30 @@ ELSE IF FY = 2023 AND adj_rx_pmpq    gt &adj_rx_95p_23    THEN adj_pd_rx_tc    =
 ELSE adj_pd_rx_tc= adj_rx_pmpq;
 RUN; 
 
-* [tmp.FINAL_05];
-PROC SQL; 
-CREATE TABLE tmp.final_05 AS 
+
+* [tmp.final_04] ==============================================================================
+Add FY1719 outcomes to final_03
+===========================================================================================;
+PROC SQL;
+CREATE TABLE tmp.final_04 AS 
 SELECT a.*
      , b.*
-     , c.fqhc
-FROM tmp.final_04            AS A
-LEFT JOIN tmp.qrylong_post_4 AS B ON a.mcaid_id=b.mcaid_id AND a.time=b.time
-LEFT JOIN tmp.pcmp_dim       AS C ON a.pcmp_loc_id=c.pcmp_loc_id;
-QUIT; 
+     , c.*
+     , d.fqhc
+FROM tmp.final_03            AS A
+LEFT JOIN tmp.qrylong_1719   AS B ON a.mcaid_id=b.mcaid_id
+LEFT JOIN tmp.qrylong_post_4 AS C ON a.mcaid_id=c.mcaid_id AND a.time=c.time
+LEFT JOIN tmp.pcmp_dim       AS D ON a.pcmp_loc_id=d.pcmp_loc_id;
+QUIT; *19283171, 41 cols; 
 
-* [tmp.FINAL_06]===============================================================
+* [tmp.FINAL_05]===============================================================
 * setting to 0 where . for variables not using elig category (adj 16-18 vars) 
 Create indicator variables for DV's where >0 (use when creating pctiles or just in gee but needed eventually anyway);
 
-DATA tmp.final_06 (DROP = dt_qrtr );
+DATA tmp.final_05;
 * Not yet setting length for time and mcaid_id bc they might get joined later; 
 LENGTH FY age_cat budget_group rae_person_new int int_imp 3. sex $1. ;
-SET  tmp.final_05 (DROP = adj_rx_pmpq adj_pc_pmpq adj_total_pmpq n_months); 
+SET  tmp.final_04 (DROP = adj_rx_pmpq adj_pc_pmpq adj_total_pmpq); 
 
 ARRAY dv(*) bho_n_hosp_17pm     bho_n_hosp_18pm     bho_n_hosp_19pm
             bho_n_er_17pm       bho_n_er_18pm       bho_n_er_19pm
@@ -702,17 +666,14 @@ ind_cost_pc     = adj_pd_pc_tc    > 0;
 ind_cost_rx     = adj_pd_rx_tc    > 0;
 RUN;  *19238171, 44 vars; 
 
-PROC FREQ DATA = tmp.final_06; tables adj_pd_total_1: elig: ; RUN; 
-PROC MEANS DATA = tmp.final_06 nmiss; RUN; 
-PROC FREQ DATA = tmp.final_06; TABLES adj_pd_total_17cat*elig2017; RUN;
-PROC FREQ DATA = tmp.final_06; TABLES adj_pd_total_18cat*elig2018; RUN;
-PROC FREQ DATA = tmp.final_06; TABLES adj_pd_total_19cat*elig2019; RUN;
+PROC FREQ DATA = tmp.final_05; tables adj_pd_total_1: ; RUN; 
+PROC MEANS DATA = tmp.final_05 nmiss; RUN; 
 
 * ANALYSIS_DATASET_ALLCOLS ==================================================================
 ===========================================================================================;
 *** Add quarter variables, one with text for readability ; 
-DATA tmp.final_07 ;
-SET  tmp.final_06 (RENAME=(bho_n_hosp_17pm  = BH_Hosp17
+DATA tmp.final_06 ;
+SET  tmp.final_05 (RENAME=(bho_n_hosp_17pm  = BH_Hosp17
                            bho_n_hosp_18pm  = BH_Hosp18
                            bho_n_hosp_19pm  = BH_Hosp19
                            bho_n_er_17pm    = BH_ER17
@@ -737,25 +698,24 @@ adj_pd_total_19cat = adj_pd_total_19cat + 1;
 
 RUN; 
 
-PROC SORT DATA = tmp.final_07; BY mcaid_id time; RUN; 
-PROC CONTENTS DATA = tmp.final_07 VARNUM; RUN; 
+PROC CONTENTS DATA = tmp.final_06 VARNUM; RUN; 
 * DATA.ANALYSIS ===========================================================================;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config_formats.sas"; 
 
 * Numeric vars that can be set to length=3 to reduce dataset in tmp.final_08 step ; 
-%LET len08 = time fqhc season1 season2 season3 adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat 
+%LET len06 = time fqhc season1 season2 season3 adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat 
              ind_visit_pc ind_visit_ed ind_visit_ffsbh ind_visit_tel ind_cost_total ind_cost_pc ind_cost_rx; 
 
-DATA   data.utilization_large_nov;
-LENGTH &len08 3 pcmp_loc_id 4;
-SET    tmp.final_07; 
+DATA   data.utilization_large;
+LENGTH &len06 3 pcmp_loc_id 4;
+SET    tmp.final_06; 
 
 budget_grp_r = input(put(budget_group, budget_grp_r.), 12.);
 FORMAT budget_grp_r budget_grp_new_. race $race_rc_. age_cat age_cat_.; 
 
 RUN; 
 
-PROC CONTENTS DATA = data.utilization_large_nov VARNUM; RUN; 
+PROC CONTENTS DATA = data.utilization_large VARNUM; RUN; 
 
 *[DATA.UTILIZATION];
 %LET retain = mcaid_id time int int_imp season1 season2 season3 ind_cost_total cost_total ind_cost_pc cost_pc ind_cost_rx cost_rx 
@@ -773,7 +733,7 @@ PROC CONTENTS DATA = data.utilization_large_nov VARNUM; RUN;
 DATA data.utilization ;
 RETAIN &retain;
 LENGTH budget_grp_new age_cat 3. mcaid_id $7. sex $1.;
-SET    data.utilization_large_nov 
+SET    data.utilization_large 
        (RENAME=(adj_pd_total_tc = cost_total
                 adj_pd_pc_tc    = cost_pc
                 adj_pd_rx_tc    = cost_rx
