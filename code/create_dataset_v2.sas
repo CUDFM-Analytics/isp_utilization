@@ -130,8 +130,6 @@ Purpose:
 3. Subset sex M, F
 4. Get dob to calculate ages (subsetting var)
 ===========================================================================================;
-PROC CONTENTS DATA = tmp.qrylong_00 VARNUM; RUN; 
-
 * Making sure records are unique by ID - should have 0 records returned if so; 
 PROC SQL; SELECT count(distinct mcaid_id) as n_id FROM ana.qry_demographics GROUP BY mcaid_id HAVING n_id >1; QUIT;
 
@@ -215,15 +213,6 @@ PROC SQL; SELECT count(distinct mcaid_id) FROM tmp.memlist; QUIT;
 %check_ids_n16(in=tmp.memlist, out=check_ids_memlist);
 PROC SQL; CREATE TABLE memlist_ids_time AS select count(distinct mcaid_id), time FROM tmp.memlist GROUP BY time; QUIT; 
 
-* [tmp.QRYLONG_02] ==============================================================================
-Subset qrylong to memlist
-===========================================================================================;
-PROC SORT DATA = tmp.qrylong_01; by mcaid_id; RUN; 
-DATA qrylong_02;
-MERGE tmp.qrylong_01 (in=a) tmp.memlist (in=b KEEP=mcaid_id);
-BY mcaid_id; 
-if a and b; 
-RUN; * 11/4 89694402 //  9211245 - same as above; 
 
 * [tmp.final_00] ==============================================================================
 Start final list where age in range based on FY's 19-22 and rae_ not missing
@@ -298,12 +287,22 @@ QUIT ;
 DATA  tmp.final_03; SET tmp.final_02 (DROP=time_start_isp month id_time_helper); RUN;
 PROC SORT DATA = tmp.final_03 NODUPKEY; BY _ALL_; RUN; 
 
-* tmp.QRYLONG_04 ==============================================================================
-join bh and util to qrylong to get averages (all utils - monthly, bho, telehealth) to qrylong4
+* [tmp.QRYLONG_02] ==============================================================================
+Subset qrylong to memlist
+===========================================================================================;
+PROC SORT DATA = tmp.qrylong_01; by mcaid_id; RUN; 
+DATA tmp.qrylong_02;
+MERGE tmp.qrylong_01 (in=a) tmp.memlist (in=b KEEP=mcaid_id);
+BY mcaid_id; 
+if a and b; 
+RUN; * 11/4 89694402 //  9211245 - same as above; 
+
+* [tmp.QRYLONG_03] ==============================================================================
+Add DV's to qrylong
 ===========================================================================================;
 PROC SQL; 
 CREATE TABLE tmp.qrylong_03 AS 
-SELECT a.mcaid_id, a.month, a.dt_qrtr, a.FY, a.time,
+SELECT a.mcaid_id, a.month, a.dt_qrtr, a.FY, a.time, a.pcmp_loc_id
      , b.bho_n_hosp, b.bho_n_er, b.bho_n_other
      , c.n_pc, c.n_er, c.n_ffsbh, c.adj_total, c.adj_pc, c.adj_er, c.adj_rx
      , d.n_tele
@@ -312,11 +311,26 @@ FROM tmp.qrylong_02  AS A
 LEFT JOIN tmp.bh     AS B ON a.mcaid_id=B.mcaid_id AND a.month=B.month
 LEFT JOIN tmp.util   AS C ON a.mcaid_id=C.mcaid_id AND a.month=C.month
 LEFT JOIN tmp.tel    AS D ON a.mcaid_id=D.mcaid_id AND a.month=D.month;
-QUIT;  * 11/3: 92112457 // 11/2: 89694402; 
+QUIT;  *11/5 89694402 11/3: 92112457 (didn't run from right one)// 11/2: 89694402; 
+
+        PROC MEANS DATA = tmp.qrylong_03 nmiss; var pcmp_loc_id; RUN; 
+
+        * What is difference if subset to pcmp not na? ; 
+        DATA tmp.qrylong_02_pcmpnotna;
+        SET  tmp.qrylong_02 (WHERE = (pcmp_loc_id ne .)); 
+        RUN; *81443895 - about 8250507 fewer than qrylong_02;
+        proc sql;
+        create table antijoin as
+        select * from tmp.qrylong_02
+        except all 
+        select * from tmp.qrylong_02_pcmpnotna;
+        quit; *8250507; 
+        PROC FREQ DATA = antijoin; tables FY; run; 
 
 * [tmp.qrylong_pre_0] ========================================================================================;
+* kept pcmp here in case needed later but not subset to anything; 
 DATA tmp.qrylong_pre_0;
-SET  tmp.qrylong_03 (WHERE=(month < '01JUL2019'd) KEEP=mcaid_id month FY adj_total bho_n_hosp bho_n_other bho_n_er);
+SET  tmp.qrylong_03 (WHERE=(month < '01JUL2019'd) KEEP=mcaid_id month FY pcmp_loc_id adj_total bho_n_hosp bho_n_other bho_n_er);
 RUN;  
 * 32750234, 7; 
 
@@ -446,6 +460,8 @@ RUN;
 PROC FREQ DATA = tmp.qrylong_1719; tables adj_pd_total_1: elig: ; RUN; 
 
 * [tmp.qrylong_post_1] ======================================================================;
+* Get tmp.final_01 just minimized so faster - 
+don't need all the other columns to topcode, but can't be sourced from qrylong's bc they aren't subset to all later year specs; 
 DATA tmp.qrylong_post_0; SET  tmp.final_01 (KEEP=mcaid_id time month); RUN; *56463912;
 
 PROC SQL;
@@ -698,7 +714,6 @@ adj_pd_total_19cat = adj_pd_total_19cat + 1;
 
 RUN; 
 
-PROC CONTENTS DATA = tmp.final_06 VARNUM; RUN; 
 * DATA.ANALYSIS ===========================================================================;
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config_formats.sas"; 
 
@@ -706,7 +721,7 @@ PROC CONTENTS DATA = tmp.final_06 VARNUM; RUN;
 %LET len06 = time fqhc season1 season2 season3 adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat 
              ind_visit_pc ind_visit_ed ind_visit_ffsbh ind_visit_tel ind_cost_total ind_cost_pc ind_cost_rx; 
 
-DATA   data.utilization_large;
+DATA   data.utilization_large_nov5;
 LENGTH &len06 3 pcmp_loc_id 4;
 SET    tmp.final_06; 
 
@@ -715,7 +730,7 @@ FORMAT budget_grp_r budget_grp_new_. race $race_rc_. age_cat age_cat_.;
 
 RUN; 
 
-PROC CONTENTS DATA = data.utilization_large VARNUM; RUN; 
+PROC CONTENTS DATA = data.utilization_large_nov5 VARNUM; RUN; 
 
 *[DATA.UTILIZATION];
 %LET retain = mcaid_id time int int_imp season1 season2 season3 ind_cost_total cost_total ind_cost_pc cost_pc ind_cost_rx cost_rx 
@@ -733,7 +748,7 @@ PROC CONTENTS DATA = data.utilization_large VARNUM; RUN;
 DATA data.utilization ;
 RETAIN &retain;
 LENGTH budget_grp_new age_cat 3. mcaid_id $7. sex $1.;
-SET    data.utilization_large 
+SET    data.utilization_large_nov5
        (RENAME=(adj_pd_total_tc = cost_total
                 adj_pd_pc_tc    = cost_pc
                 adj_pd_rx_tc    = cost_rx
@@ -789,3 +804,4 @@ RUN;
   int=1 pct 12.52% (100-87.48%); 
 
 
+proc printto; run; 

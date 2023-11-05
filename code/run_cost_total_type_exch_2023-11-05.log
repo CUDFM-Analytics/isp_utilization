@@ -28,8 +28,8 @@ NOTE: Algorithm converged.
 NOTE: The GENMOD procedure generated the model item store OUT.COST_TOTAL_PMODEL_EXCH.
 NOTE: The data set WORK.PREDOUT has 19283171 observations and 41 variables.
 NOTE: PROCEDURE GENMOD used (Total process time):
-      real time           16:28.56
-      cpu time            15:07.21
+      real time           17:29.94
+      cpu time            15:01.29
       
 
 MPRINT(HURDLE):   TITLE 'Cost Model';
@@ -54,8 +54,8 @@ NOTE: Algorithm converged.
 NOTE: Algorithm converged.
 NOTE: The GENMOD procedure generated the model item store OUT.COST_TOTAL_CMODEL_EXCH.
 NOTE: PROCEDURE GENMOD used (Total process time):
-      real time           19:57.16
-      cpu time            19:54.40
+      real time           19:49.73
+      cpu time            19:48.25
       
 
 MPRINT(HURDLE):   TITLE;
@@ -69,8 +69,8 @@ MPRINT(HURDLE):   run;
 
 NOTE: The data set WORK.P_INTGROUP has 3653638 observations and 42 variables.
 NOTE: PROCEDURE PLM used (Total process time):
-      real time           24.94 seconds
-      cpu time            9.14 seconds
+      real time           15.95 seconds
+      cpu time            8.14 seconds
       
 
 MPRINT(HURDLE):   * OUT:[CP_INTGROUP] IN :[out=out.&dv._cmodel] prob of cost 
@@ -81,8 +81,8 @@ MPRINT(HURDLE):   run;
 
 NOTE: The data set WORK.CP_INTGROUP has 3653638 observations and 43 variables.
 NOTE: PROCEDURE PLM used (Total process time):
-      real time           7.88 seconds
-      cpu time            7.68 seconds
+      real time           7.91 seconds
+      cpu time            7.71 seconds
       
 
 MPRINT(HURDLE):   * OUT:[out.&dv._mean] IN:[cp_intgroup] Person average cost is 
@@ -96,8 +96,8 @@ MPRINT(HURDLE):   run;
 NOTE: There were 3653638 observations read from the data set WORK.CP_INTGROUP.
 NOTE: The data set OUT.COST_TOTAL_MEAN_EXCH has 3653638 observations and 44 variables.
 NOTE: DATA statement used (Total process time):
-      real time           11.96 seconds
-      cpu time            1.62 seconds
+      real time           12.25 seconds
+      cpu time            1.86 seconds
       
 
 MPRINT(HURDLE):   * OUT:[out.&dv._avp] IN:[out.&dv._mean] Group average cost is calculated and 
@@ -111,8 +111,8 @@ NOTE: Table OUT.COST_TOTAL_AVP_EXCH created, with 1 rows and 3 columns.
 
 MPRINT(HURDLE):   quit;
 NOTE: PROCEDURE SQL used (Total process time):
-      real time           8.20 seconds
-      cpu time            0.42 seconds
+      real time           8.25 seconds
+      cpu time            0.39 seconds
       
 
 MPRINT(HURDLE):   * put AVP results in log for reference/ comparing results;
@@ -121,7 +121,7 @@ MPRINT(HURDLE):   SET out.cost_total_avp_exch;
 MPRINT(HURDLE):   put cost_exposed= cost_unexposed= cost_diff=;
 MPRINT(HURDLE):   RUN;
 
-cost_exposed=437.43528729 cost_unexposed=437.83313888 cost_diff=-0.39785159
+cost_exposed=437.52296525 cost_unexposed=437.89868375 cost_diff=-0.375718498
 NOTE: There were 1 observations read from the data set OUT.COST_TOTAL_AVP_EXCH.
 NOTE: DATA statement used (Total process time):
       real time           0.01 seconds
@@ -135,8 +135,8 @@ MPRINT(HURDLE):   run;
 
 NOTE: The data set WORK.PREDGROUP has 19283171 observations and 42 variables.
 NOTE: PROCEDURE RANK used (Total process time):
-      real time           7.57 seconds
-      cpu time            7.50 seconds
+      real time           7.61 seconds
+      cpu time            7.25 seconds
       
 
 MPRINT(HURDLE):   proc means data = predgroup noprint nway;
@@ -148,8 +148,8 @@ MPRINT(HURDLE):   run;
 NOTE: There were 19283171 observations read from the data set WORK.PREDGROUP.
 NOTE: The data set OUT.COST_TOTAL_MEANOUT_EXCH has 10 observations and 5 variables.
 NOTE: PROCEDURE MEANS used (Total process time):
-      real time           2.25 seconds
-      cpu time            3.96 seconds
+      real time           1.97 seconds
+      cpu time            3.95 seconds
       
 
 MPRINT(HURDLE):   data _NULL_;
@@ -157,16 +157,16 @@ MPRINT(HURDLE):   SET out.cost_total_meanout_exch (DROP= _TYPE_);
 MPRINT(HURDLE):   put _all_;
 MPRINT(HURDLE):   RUN;
 
-predgroup=0 _FREQ_=1928303 pred_Mean=0.1941631007 ind_cost_total_Mean=0.2009513028 _ERROR_=0 _N_=1
-predgroup=1 _FREQ_=1928330 pred_Mean=0.3312109866 ind_cost_total_Mean=0.3444706041 _ERROR_=0 _N_=2
-predgroup=2 _FREQ_=1928498 pred_Mean=0.424320704 ind_cost_total_Mean=0.4040196049 _ERROR_=0 _N_=3
-predgroup=3 _FREQ_=1928135 pred_Mean=0.4747276146 ind_cost_total_Mean=0.4675704761 _ERROR_=0 _N_=4
-predgroup=4 _FREQ_=1928320 pred_Mean=0.5140414807 ind_cost_total_Mean=0.5237434658 _ERROR_=0 _N_=5
-predgroup=5 _FREQ_=1928307 pred_Mean=0.5489090389 ind_cost_total_Mean=0.5581751246 _ERROR_=0 _N_=6
-predgroup=6 _FREQ_=1928261 pred_Mean=0.5884194485 ind_cost_total_Mean=0.5976805007 _ERROR_=0 _N_=7
-predgroup=7 _FREQ_=1928383 pred_Mean=0.6371576229 ind_cost_total_Mean=0.6401046887 _ERROR_=0 _N_=8
-predgroup=8 _FREQ_=1928312 pred_Mean=0.709237081 ind_cost_total_Mean=0.7083729189 _ERROR_=0 _N_=9
-predgroup=9 _FREQ_=1928322 pred_Mean=0.8409539206 ind_cost_total_Mean=0.8635279792 _ERROR_=0 _N_=10
+predgroup=0 _FREQ_=1928305 pred_Mean=0.1838958345 ind_cost_total_Mean=0.1934336114 _ERROR_=0 _N_=1
+predgroup=1 _FREQ_=1928352 pred_Mean=0.3284265197 ind_cost_total_Mean=0.3449147251 _ERROR_=0 _N_=2
+predgroup=2 _FREQ_=1928294 pred_Mean=0.4267322523 ind_cost_total_Mean=0.405989958 _ERROR_=0 _N_=3
+predgroup=3 _FREQ_=1929284 pred_Mean=0.4769247277 ind_cost_total_Mean=0.4699416986 _ERROR_=0 _N_=4
+predgroup=4 _FREQ_=1927353 pred_Mean=0.5155546706 ind_cost_total_Mean=0.5259264909 _ERROR_=0 _N_=5
+predgroup=5 _FREQ_=1928316 pred_Mean=0.5497791205 ind_cost_total_Mean=0.5585168613 _ERROR_=0 _N_=6
+predgroup=6 _FREQ_=1928317 pred_Mean=0.5890395312 ind_cost_total_Mean=0.5971694488 _ERROR_=0 _N_=7
+predgroup=7 _FREQ_=1928313 pred_Mean=0.6375618293 ind_cost_total_Mean=0.6401071818 _ERROR_=0 _N_=8
+predgroup=8 _FREQ_=1928320 pred_Mean=0.7092900842 ind_cost_total_Mean=0.7088947892 _ERROR_=0 _N_=9
+predgroup=9 _FREQ_=1928317 pred_Mean=0.840539803 ind_cost_total_Mean=0.8637469877 _ERROR_=0 _N_=10
 NOTE: There were 10 observations read from the data set OUT.COST_TOTAL_MEANOUT_EXCH.
 NOTE: DATA statement used (Total process time):
       real time           0.01 seconds

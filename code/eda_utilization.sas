@@ -1,5 +1,5 @@
 %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas"; 
-LIBNAME eda "&data/out_eda_checks"; 
+/*LIBNAME eda "&data/out_eda_checks"; */
 LIBNAME tmp "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/data/out_tmp_nov"; 
 
 %let dat = data.utilization; 

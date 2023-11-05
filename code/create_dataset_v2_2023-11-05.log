@@ -1,0 +1,1483 @@
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7)
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           1.42 seconds
+      cpu time            0.71 seconds
+
+1    %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config.sas";
+NOTE: Libref DATA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data
+NOTE: Libref INT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\interim
+NOTE: Libref OUT was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\out_hurdle
+NOTE: Libref RAW was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\Kim\isp\isp_utilization\data\_raw
+NOTE: Libref ANA was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_Data_files_SECURE\HCPF_SqlServer\AnalyticSubset
+NOTE: Format PCTFMT has been output.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: TABLE 'Base.Freq.OneWayList' has been saved to: WORK.TEMPLAT
+NOTE: PROCEDURE TEMPLATE used (Total process time):
+      real time           0.49 seconds
+      cpu time            0.21 seconds
+
+
+137  LIBNAME tmp "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/data/out_tmp_nov";
+NOTE: Libref TMP was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data\out_tmp_nov
+
+138  PROC SORT DATA = tmp.qrylong_01; by mcaid_id; RUN;
+
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.01 seconds
+
+
+
+139  DATA tmp.qrylong_02;
+140  MERGE tmp.qrylong_01 (in=a) tmp.memlist (in=b KEEP=mcaid_id);
+141  BY mcaid_id;
+142  if a and b;
+143  RUN;
+
+NOTE: MERGE statement has more than one data set with repeats of BY values.
+NOTE: There were 101216654 observations read from the data set TMP.QRYLONG_01.
+NOTE: There were 19283171 observations read from the data set TMP.MEMLIST.
+NOTE: The data set TMP.QRYLONG_02 has 89694402 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3:54.61
+      cpu time            17.93 seconds
+
+
+143!      * 11/4 89694402 //  9211245 - same as above;
+
+144  PROC SQL;
+145  CREATE TABLE tmp.qrylong_03 AS
+146  SELECT a.mcaid_id, a.month, a.dt_qrtr, a.FY, a.time,
+147       , b.bho_n_hosp, b.bho_n_er, b.bho_n_other
+          -
+          22
+ERROR 22-322: Syntax error, expecting one of the following: a name, a quoted string,
+              a numeric constant, a datetime constant, a missing value, *, BTRIM, INPUT, PUT,
+              SUBSTRING, USER.
+
+148       , c.n_pc, c.n_er, c.n_ffsbh, c.adj_total, c.adj_pc, c.adj_er, c.adj_rx
+149       , d.n_tele
+150       , coalesce(b.bho_n_er, 0) + coalesce(c.n_er, 0) as n_ed
+151  FROM tmp.qrylong_02  AS A
+152  LEFT JOIN tmp.bh     AS B ON a.mcaid_id=B.mcaid_id AND a.month=B.month
+153  LEFT JOIN tmp.util   AS C ON a.mcaid_id=C.mcaid_id AND a.month=C.month
+154  LEFT JOIN tmp.tel    AS D ON a.mcaid_id=D.mcaid_id AND a.month=D.month;
+155  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+156  PROC SQL;
+157  CREATE TABLE tmp.qrylong_03 AS
+158  SELECT a.mcaid_id, a.month, a.dt_qrtr, a.FY, a.time
+159       , b.bho_n_hosp, b.bho_n_er, b.bho_n_other
+160       , c.n_pc, c.n_er, c.n_ffsbh, c.adj_total, c.adj_pc, c.adj_er, c.adj_rx
+161       , d.n_tele
+162       , coalesce(b.bho_n_er, 0) + coalesce(c.n_er, 0) as n_ed
+163  FROM tmp.qrylong_02  AS A
+164  LEFT JOIN tmp.bh     AS B ON a.mcaid_id=B.mcaid_id AND a.month=B.month
+165  LEFT JOIN tmp.util   AS C ON a.mcaid_id=C.mcaid_id AND a.month=C.month
+166  LEFT JOIN tmp.tel    AS D ON a.mcaid_id=D.mcaid_id AND a.month=D.month;
+ERROR: User asked for termination.
+
+167  QUIT;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2:57.29
+      cpu time            28.75 seconds
+
+168  PROC SQL;
+169  CREATE TABLE tmp.qrylong_03 AS
+170  SELECT a.mcaid_id, a.month, a.dt_qrtr, a.FY, a.time, a.pcmp_loc_id
+171       , b.bho_n_hosp, b.bho_n_er, b.bho_n_other
+172       , c.n_pc, c.n_er, c.n_ffsbh, c.adj_total, c.adj_pc, c.adj_er, c.adj_rx
+173       , d.n_tele
+174       , coalesce(b.bho_n_er, 0) + coalesce(c.n_er, 0) as n_ed
+175  FROM tmp.qrylong_02  AS A
+176  LEFT JOIN tmp.bh     AS B ON a.mcaid_id=B.mcaid_id AND a.month=B.month
+177  LEFT JOIN tmp.util   AS C ON a.mcaid_id=C.mcaid_id AND a.month=C.month
+178  LEFT JOIN tmp.tel    AS D ON a.mcaid_id=D.mcaid_id AND a.month=D.month;
+NOTE: Table TMP.QRYLONG_03 created, with 89694402 rows and 18 columns.
+
+179  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           4:56.06
+      cpu time            1:15.20
+
+
+179!        * 11/3: 92112457 // 11/2: 89694402;
+180
+181  PROC MEANS DATA = tmp.qrylong_03 nmiss; var pcmp_loc_id; RUN;
+
+NOTE: There were 89694402 observations read from the data set TMP.QRYLONG_03.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           2:02.18
+      cpu time            7.29 seconds
+
+
+
+182  DATA tmp.qrylong_02_pcmpnotna;
+183  SET  tmp.qrylong_02 (WHERE = (pcmp_loc_id ne .));
+184  RUN;
+
+NOTE: There were 81443895 observations read from the data set TMP.QRYLONG_02.
+      WHERE pcmp_loc_id not = .;
+NOTE: The data set TMP.QRYLONG_02_PCMPNOTNA has 81443895 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           3:00.79
+      cpu time            16.78 seconds
+
+
+185  PROC SQL;
+185!           create table qry02_antijoin as select * from tmp.qrylong_02
+186  where mcaid_id NOT IN (SELECT mcaid_id from tmp.qrylong_02_pcmpnotna);
+NOTE: Table WORK.QRY02_ANTIJOIN created, with 0 rows and 12 columns.
+
+186!                                                                        QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           3:21.22
+      cpu time            27.23 seconds
+
+
+187  PROC SQL;
+187!           create table qry02_antijoin as select * from tmp.qrylong_02
+188  where mcaid_id, month NOT IN (SELECT mcaid_id, month from tmp.qrylong_02_pcmpnotna);
+                   -
+                   79
+ERROR 79-322: Expecting a (.
+
+188! where mcaid_id, month NOT IN (SELECT mcaid_id, month from tmp.qrylong_02_pcmpnotna);
+                                                                                        -
+                                                                                        79
+ERROR 79-322: Expecting a ).
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+
+189  proc sql;
+190  create table antijoin as
+191  select * from tmp.qrylong_02
+192  except all
+193  select * from tmp.qrylong_02_pcmpnotna;
+NOTE: Table WORK.ANTIJOIN created, with 8250507 rows and 12 columns.
+
+194  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           4:29.55
+      cpu time            2:00.53
+
+
+195  PROC FREQ DATA = antijoin; tables FY; run;
+
+NOTE: There were 8250507 observations read from the data set WORK.ANTIJOIN.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.53 seconds
+      cpu time            0.39 seconds
+
+
+
+196  DATA tmp.qrylong_pre_0;
+197  SET  tmp.qrylong_03 (WHERE=(month < '01JUL2019'd) KEEP=mcaid_id month FY pcmp_loc_id adj_total
+197! bho_n_hosp bho_n_other bho_n_er);
+198  RUN;
+
+NOTE: There were 31530951 observations read from the data set TMP.QRYLONG_03.
+      WHERE month<'01JUL2019'D;
+NOTE: The data set TMP.QRYLONG_PRE_0 has 31530951 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:38.74
+      cpu time            8.57 seconds
+
+
+199  * 32750234, 7;
+200
+201  PROC SQL;
+202  CREATE TABLE tmp.qrylong_pre_1 as
+203  SELECT mcaid_id
+204       , max(case when FY = 2017 then 1 else 0 end) as elig2017
+205       , max(case when FY = 2018 then 1 else 0 end) as elig2018
+206       , max(case when FY = 2019 then 1 else 0 end) as elig2019
+207
+208       , avg(case when FY = 2017 then adj_total else . end) as adj_pd_17pm
+209       , avg(case when FY = 2018 then adj_total else . end) as adj_pd_18pm
+210       , avg(case when FY = 2019 then adj_total else . end) as adj_pd_19pm
+211
+212       , avg(case when FY = 2017 then bho_n_hosp  else . end) as bho_n_hosp_17pm
+213       , avg(case when FY = 2018 then bho_n_hosp  else . end) as bho_n_hosp_18pm
+214       , avg(case when FY = 2019 then bho_n_hosp  else . end) as bho_n_hosp_19pm
+215       , avg(case when FY = 2017 then bho_n_er    else . end) as bho_n_er_17pm
+216       , avg(case when FY = 2018 then bho_n_er    else . end) as bho_n_er_18pm
+217       , avg(case when FY = 2019 then bho_n_er    else . end) as bho_n_er_19pm
+218       , avg(case when FY = 2017 then bho_n_other else . end) as bho_n_other_17pm
+219       , avg(case when FY = 2018 then bho_n_other else . end) as bho_n_other_18pm
+220       , avg(case when FY = 2019 then bho_n_other else . end) as bho_n_other_19pm
+221
+222  FROM tmp.qrylong_pre_0
+223  GROUP BY mcaid_id;
+NOTE: Table TMP.QRYLONG_PRE_1 created, with 1210067 rows and 16 columns.
+
+224  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           31.71 seconds
+      cpu time            15.95 seconds
+
+
+225
+226  PROC FREQ DATA=tmp.qrylong_pre_1; TABLES elig: ; RUN;
+
+NOTE: There were 1210067 observations read from the data set TMP.QRYLONG_PRE_1.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.78 seconds
+      cpu time            0.07 seconds
+
+
+227
+228  * change adj to if elig = 0, then adj var = -1 and set bh variables to 0 where .;
+229  DATA tmp.qrylong_pre_2;
+230  SET  tmp.qrylong_pre_1;
+231
+232  IF      elig2017 = 0 THEN adj_pd_17pm = -1;
+233  ELSE IF elig2017 = 1 AND  adj_pd_17pm = .   THEN adj_pd_17pm = 0;
+234  ELSE adj_pd_17pm = adj_pd_17pm;
+235
+236  IF      elig2018 = 0 THEN adj_pd_18pm = -1;
+237  ELSE IF elig2018 = 1 AND  adj_pd_18pm = .   THEN adj_pd_18pm = 0;
+238  ELSE adj_pd_18pm = adj_pd_18pm;
+239
+240  IF      elig2019 = 0 THEN adj_pd_19pm = -1;
+241  ELSE IF elig2019 = 1 AND  adj_pd_19pm = .   THEN adj_pd_19pm = 0;
+242  ELSE adj_pd_19pm = adj_pd_19pm;
+243
+244  ARRAY bh(*) bho_n_hosp_17pm  bho_n_hosp_18pm  bho_n_hosp_19pm
+245              bho_n_er_17pm    bho_n_er_18pm    bho_n_er_19pm
+246              bho_n_other_17pm bho_n_other_18pm bho_n_other_19pm;
+247
+248  DO i=1 to dim(bh);
+249      IF bh(i)=. THEN bh(i)=0;
+250      ELSE bh(i)=bh(i);
+251      END;
+252  DROP i;
+253
+254  RUN;
+
+NOTE: There were 1210067 observations read from the data set TMP.QRYLONG_PRE_1.
+NOTE: The data set TMP.QRYLONG_PRE_2 has 1210067 observations and 16 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.71 seconds
+      cpu time            0.42 seconds
+
+
+254!      *6/8 1138252 : 16;
+255
+256  ** GET PERCENTILES FOR ALL & TOP CODE DV's FOR MEMBERS ONLY ;
+257  * 1618;
+258  %macro pctl_1618(var,out,pctlpre);
+259  proc univariate noprint data=tmp.qrylong_pre_2;
+260  where &var gt 0;
+261  var &var;
+262  output out=&out pctlpre=&pctlpre pctlpts= 50, 75, 90, 95;
+263  run;
+264  %mend;
+265
+266  ** SEE UTIL_02_CHECKS for code to investigate the values and check percentiles;
+267  %pctl_1618(var = adj_pd_17pm, out = pd17pctle, pctlpre = p17_);
+MLOGIC(PCTL_1618):  Beginning execution.
+MLOGIC(PCTL_1618):  Parameter VAR has value adj_pd_17pm
+MLOGIC(PCTL_1618):  Parameter OUT has value pd17pctle
+MLOGIC(PCTL_1618):  Parameter PCTLPRE has value p17_
+MPRINT(PCTL_1618):   proc univariate noprint data=tmp.qrylong_pre_2;
+MPRINT(PCTL_1618):   where adj_pd_17pm gt 0;
+MPRINT(PCTL_1618):   var adj_pd_17pm;
+MPRINT(PCTL_1618):   output out=pd17pctle pctlpre=p17_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCTL_1618):   run;
+
+NOTE: The data set WORK.PD17PCTLE has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           2.29 seconds
+      cpu time            0.92 seconds
+
+
+MLOGIC(PCTL_1618):  Ending execution.
+268  %pctl_1618(var = adj_pd_18pm, out = pd18pctle, pctlpre = p18_);
+MLOGIC(PCTL_1618):  Beginning execution.
+MLOGIC(PCTL_1618):  Parameter VAR has value adj_pd_18pm
+MLOGIC(PCTL_1618):  Parameter OUT has value pd18pctle
+MLOGIC(PCTL_1618):  Parameter PCTLPRE has value p18_
+MPRINT(PCTL_1618):   proc univariate noprint data=tmp.qrylong_pre_2;
+MPRINT(PCTL_1618):   where adj_pd_18pm gt 0;
+MPRINT(PCTL_1618):   var adj_pd_18pm;
+MPRINT(PCTL_1618):   output out=pd18pctle pctlpre=p18_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCTL_1618):   run;
+
+NOTE: The data set WORK.PD18PCTLE has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1.09 seconds
+      cpu time            1.09 seconds
+
+
+MLOGIC(PCTL_1618):  Ending execution.
+269  %pctl_1618(var = adj_pd_19pm, out = pd19pctle, pctlpre = p19_);
+MLOGIC(PCTL_1618):  Beginning execution.
+MLOGIC(PCTL_1618):  Parameter VAR has value adj_pd_19pm
+MLOGIC(PCTL_1618):  Parameter OUT has value pd19pctle
+MLOGIC(PCTL_1618):  Parameter PCTLPRE has value p19_
+MPRINT(PCTL_1618):   proc univariate noprint data=tmp.qrylong_pre_2;
+MPRINT(PCTL_1618):   where adj_pd_19pm gt 0;
+MPRINT(PCTL_1618):   var adj_pd_19pm;
+MPRINT(PCTL_1618):   output out=pd19pctle pctlpre=p19_ pctlpts= 50, 75, 90, 95;
+MPRINT(PCTL_1618):   run;
+
+NOTE: The data set WORK.PD19PCTLE has 1 observations and 4 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           1.07 seconds
+      cpu time            1.07 seconds
+
+
+MLOGIC(PCTL_1618):  Ending execution.
+270
+271  data tmp.pctl1719; merge pd17pctle pd18pctle pd19pctle ; run;
+
+NOTE: There were 1 observations read from the data set WORK.PD17PCTLE.
+NOTE: There were 1 observations read from the data set WORK.PD18PCTLE.
+NOTE: There were 1 observations read from the data set WORK.PD19PCTLE.
+NOTE: The data set TMP.PCTL1719 has 1 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.04 seconds
+
+
+272  PROC PRINT DATA = tmp.pctl1719; RUN;
+
+NOTE: There were 1 observations read from the data set TMP.PCTL1719.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+273
+274  *
+274! https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variab
+274! le;
+275  proc sql noprint;
+276    select
+277      name,
+278      cats(':',name)
+279    into
+280      :COL_NAMES separated by ',',
+281      :MVAR_NAMES separated by ','
+282    from sashelp.vcolumn
+283    where
+284      libname = "TMP"
+285      and memname = "PCTL1719"
+286    ;
+287    select &COL_NAMES into &MVAR_NAMES
+288    from tmp.pctl1719;
+289  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+290  %put &mvar_names &col_names;
+:p17_50,:p17_75,:p17_90,:p17_95,:p18_50,:p18_75,:p18_90,:p18_95,:p19_50,:p19_75,:p19_90,:p19_95
+p17_50,p17_75,p17_90,p17_95,p18_50,p18_75,p18_90,p18_95,p19_50,p19_75,p19_90,p19_95
+291
+292  %macro insert_pctile(ds_in,ds_out,year);
+293  DATA &ds_out;
+294  SET  &ds_in;
+295      * For values 0, -1, retain original value;
+296      IF      adj_pd_&year.pm le 0            THEN adj_pd_total_&year.cat = adj_pd_&year.pm;
+297
+298      * Values > 0 but <= 50th p = category 1;
+299      ELSE IF adj_pd_&year.pm gt 0
+300          AND adj_pd_&year.pm le &&p&year._50 THEN adj_pd_total_&year.cat=1;
+301
+302      * Values > 50thp but <= 75th p = category 2;
+303      ELSE IF adj_pd_&year.pm gt &&p&year._50
+304          AND adj_pd_&year.pm le &&p&year._75 THEN adj_pd_total_&year.cat=2;
+305
+306      * Values > 75thp but <= 90th p = category 3;
+307      ELSE IF adj_pd_&year.pm gt &&p&year._75
+308          AND adj_pd_&year.pm le &&p&year._90 THEN adj_pd_total_&year.cat=3;
+309
+310      * Values > 90thp but <= 95th p = category 4;
+311      ELSE IF adj_pd_&year.pm gt &&p&year._90
+312          AND adj_pd_&year.pm le &&p&year._95 THEN adj_pd_total_&year.cat=4;
+313
+314      * Values > 95thp = category 5;
+315      ELSE IF adj_pd_&year.pm gt &&p&year._95 THEN adj_pd_total_&year.cat=5;
+316  RUN;
+317  %mend;
+318
+319  * Made separate ds's for testing but merge if poss later, save final to int/;
+320  %insert_pctile(ds_in = tmp.qrylong_pre_2, ds_out = adj0,             year = 17);
+MLOGIC(INSERT_PCTILE):  Beginning execution.
+MLOGIC(INSERT_PCTILE):  Parameter DS_IN has value tmp.qrylong_pre_2
+MLOGIC(INSERT_PCTILE):  Parameter DS_OUT has value adj0
+MLOGIC(INSERT_PCTILE):  Parameter YEAR has value 17
+MPRINT(INSERT_PCTILE):   DATA adj0;
+MPRINT(INSERT_PCTILE):   SET tmp.qrylong_pre_2;
+MPRINT(INSERT_PCTILE):   * For values 0, -1, retain original value;
+MPRINT(INSERT_PCTILE):   IF adj_pd_17pm le 0 THEN adj_pd_total_17cat = adj_pd_17pm;
+MPRINT(INSERT_PCTILE):   * Values > 0 but <= 50th p = category 1;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_17pm gt 0 AND adj_pd_17pm le 272.7175 THEN
+adj_pd_total_17cat=1;
+MPRINT(INSERT_PCTILE):   * Values > 50thp but <= 75th p = category 2;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_17pm gt 272.7175 AND adj_pd_17pm le 536.7943 THEN
+adj_pd_total_17cat=2;
+MPRINT(INSERT_PCTILE):   * Values > 75thp but <= 90th p = category 3;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_17pm gt 536.7943 AND adj_pd_17pm le 1259.837 THEN
+adj_pd_total_17cat=3;
+MPRINT(INSERT_PCTILE):   * Values > 90thp but <= 95th p = category 4;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_17pm gt 1259.837 AND adj_pd_17pm le 2258.939 THEN
+adj_pd_total_17cat=4;
+MPRINT(INSERT_PCTILE):   * Values > 95thp = category 5;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_17pm gt 2258.939 THEN adj_pd_total_17cat=5;
+MPRINT(INSERT_PCTILE):   RUN;
+
+NOTE: There were 1210067 observations read from the data set TMP.QRYLONG_PRE_2.
+NOTE: The data set WORK.ADJ0 has 1210067 observations and 17 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.15 seconds
+
+
+MLOGIC(INSERT_PCTILE):  Ending execution.
+321  %insert_pctile(ds_in = adj0,              ds_out = adj1,             year = 18);
+MLOGIC(INSERT_PCTILE):  Beginning execution.
+MLOGIC(INSERT_PCTILE):  Parameter DS_IN has value adj0
+MLOGIC(INSERT_PCTILE):  Parameter DS_OUT has value adj1
+MLOGIC(INSERT_PCTILE):  Parameter YEAR has value 18
+MPRINT(INSERT_PCTILE):   DATA adj1;
+MPRINT(INSERT_PCTILE):   SET adj0;
+MPRINT(INSERT_PCTILE):   * For values 0, -1, retain original value;
+MPRINT(INSERT_PCTILE):   IF adj_pd_18pm le 0 THEN adj_pd_total_18cat = adj_pd_18pm;
+MPRINT(INSERT_PCTILE):   * Values > 0 but <= 50th p = category 1;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_18pm gt 0 AND adj_pd_18pm le 276.0329 THEN
+adj_pd_total_18cat=1;
+MPRINT(INSERT_PCTILE):   * Values > 50thp but <= 75th p = category 2;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_18pm gt 276.0329 AND adj_pd_18pm le 541.0003 THEN
+adj_pd_total_18cat=2;
+MPRINT(INSERT_PCTILE):   * Values > 75thp but <= 90th p = category 3;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_18pm gt 541.0003 AND adj_pd_18pm le 1294.795 THEN
+adj_pd_total_18cat=3;
+MPRINT(INSERT_PCTILE):   * Values > 90thp but <= 95th p = category 4;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_18pm gt 1294.795 AND adj_pd_18pm le 2401.077 THEN
+adj_pd_total_18cat=4;
+MPRINT(INSERT_PCTILE):   * Values > 95thp = category 5;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_18pm gt 2401.077 THEN adj_pd_total_18cat=5;
+MPRINT(INSERT_PCTILE):   RUN;
+
+NOTE: There were 1210067 observations read from the data set WORK.ADJ0.
+NOTE: The data set WORK.ADJ1 has 1210067 observations and 18 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.16 seconds
+      cpu time            0.17 seconds
+
+
+MLOGIC(INSERT_PCTILE):  Ending execution.
+322  %insert_pctile(ds_in = adj1,              ds_out = tmp.qrylong_1719, year = 19);
+MLOGIC(INSERT_PCTILE):  Beginning execution.
+MLOGIC(INSERT_PCTILE):  Parameter DS_IN has value adj1
+MLOGIC(INSERT_PCTILE):  Parameter DS_OUT has value tmp.qrylong_1719
+MLOGIC(INSERT_PCTILE):  Parameter YEAR has value 19
+MPRINT(INSERT_PCTILE):   DATA tmp.qrylong_1719;
+MPRINT(INSERT_PCTILE):   SET adj1;
+MPRINT(INSERT_PCTILE):   * For values 0, -1, retain original value;
+MPRINT(INSERT_PCTILE):   IF adj_pd_19pm le 0 THEN adj_pd_total_19cat = adj_pd_19pm;
+MPRINT(INSERT_PCTILE):   * Values > 0 but <= 50th p = category 1;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_19pm gt 0 AND adj_pd_19pm le 281.1787 THEN
+adj_pd_total_19cat=1;
+MPRINT(INSERT_PCTILE):   * Values > 50thp but <= 75th p = category 2;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_19pm gt 281.1787 AND adj_pd_19pm le 563.0048 THEN
+adj_pd_total_19cat=2;
+MPRINT(INSERT_PCTILE):   * Values > 75thp but <= 90th p = category 3;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_19pm gt 563.0048 AND adj_pd_19pm le 1405.457 THEN
+adj_pd_total_19cat=3;
+MPRINT(INSERT_PCTILE):   * Values > 90thp but <= 95th p = category 4;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_19pm gt 1405.457 AND adj_pd_19pm le 2688.449 THEN
+adj_pd_total_19cat=4;
+MPRINT(INSERT_PCTILE):   * Values > 95thp = category 5;
+MPRINT(INSERT_PCTILE):   ELSE IF adj_pd_19pm gt 2688.449 THEN adj_pd_total_19cat=5;
+MPRINT(INSERT_PCTILE):   RUN;
+
+NOTE: There were 1210067 observations read from the data set WORK.ADJ1.
+NOTE: The data set TMP.QRYLONG_1719 has 1210067 observations and 19 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.91 seconds
+      cpu time            0.20 seconds
+
+
+MLOGIC(INSERT_PCTILE):  Ending execution.
+
+323  PROC FREQ DATA = tmp.qrylong_1719; tables adj_pd_total_1: elig: ; RUN;
+
+NOTE: There were 1210067 observations read from the data set TMP.QRYLONG_1719.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.96 seconds
+      cpu time            0.23 seconds
+
+
+
+324  DATA tmp.qrylong_post_0; SET  tmp.final_01 (KEEP=mcaid_id time month); RUN;
+
+NOTE: There were 56463912 observations read from the data set TMP.FINAL_01.
+NOTE: The data set TMP.QRYLONG_POST_0 has 56463912 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:35.17
+      cpu time            6.98 seconds
+
+
+324!                                                                             *56463912;
+325
+326  PROC SQL;
+327  CREATE TABLE tmp.qrylong_post_1 AS
+328  SELECT a.mcaid_id
+329       , a.time
+330       , a.month
+331       , b.FY
+332       , b.n_pc
+333       , b.n_ed
+334       , b.n_ffsbh
+335       , b.n_tele
+336       , b.adj_pc
+337       , b.adj_rx
+338       , b.adj_total
+339  FROM tmp.qrylong_post_0 AS A
+340  LEFT JOIN tmp.qrylong_03 AS B ON a.mcaid_id=b.mcaid_id AND a.month=b.month;
+NOTE: Table TMP.QRYLONG_POST_1 created, with 56463912 rows and 11 columns.
+
+341  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           3:28.99
+      cpu time            34.76 seconds
+
+
+341!       *56463912;
+342
+343  PROC SQL;
+343!           SELECT count(distinct mcaid_id) as n_un_ids from tmp.qrylong_post_1;
+343!                                                                                QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           54.58 seconds
+      cpu time            6.60 seconds
+
+
+343!                                                                                      *1735256;
+344
+345  DATA tmp.qrylong_post_2;
+346  SET  tmp.qrylong_post_1;
+347  * Rescale visit DVs: Multiply by 6 to get whole number values when averaging;
+348  ARRAY mult(*) n_ed n_pc n_ffsbh n_tele;
+349  DO i=1 to dim(mult);
+350  mult(i)=mult(i)*6;
+351  END;
+352  n_tele = coalesce(n_tele, 0);
+353  RUN;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      127667312 at 350:16
+NOTE: There were 56463912 observations read from the data set TMP.QRYLONG_POST_1.
+NOTE: The data set TMP.QRYLONG_POST_2 has 56463912 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:14.14
+      cpu time            16.20 seconds
+
+
+354
+355  PROC SQL;
+356  CREATE TABLE tmp.qrylong_post_3 as
+357  SELECT mcaid_id
+358  /*     , count(*) as n_months*/
+359       , time
+360       , FY
+361       , avg(n_pc)       AS n_pc_pmpq
+362       , avg(n_ed)       AS n_ed_pmpq
+363       , avg(n_ffsbh)    AS n_ffsbh_pmpq
+364       , avg(n_tele)     AS n_tel_pmpq
+365       , avg(adj_total)  AS adj_total_pmpq
+366       , avg(adj_pc)     AS adj_pc_pmpq
+367       , avg(adj_rx)     AS adj_rx_pmpq
+368  FROM tmp.qrylong_post_2
+369  GROUP BY mcaid_id, time;
+NOTE: The query requires remerging summary statistics back with the original data.
+NOTE: Table TMP.QRYLONG_POST_3 created, with 56463912 rows and 10 columns.
+
+370  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2:11.95
+      cpu time            37.18 seconds
+
+
+371
+372  PROC SORT DATA = tmp.qrylong_post_3 NODUPKEY OUT=tmp.qrylong_post_3; BY _ALL_; RUN;
+
+NOTE: There were 56463912 observations read from the data set TMP.QRYLONG_POST_3.
+NOTE: 37180741 observations with duplicate key values were deleted.
+NOTE: The data set TMP.QRYLONG_POST_3 has 19283171 observations and 10 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           1:13.76
+      cpu time            24.28 seconds
+
+
+373  /*PROC FREQ DATA = tmp.qrylong_post_3; tables time; run; */
+374  /*%check_ids_n16(in=tmp.qrylong_post_3, out=n_ids_post3); */
+375  /*PROC SQL; Select count(distinct mcaid_id) as n_ids FROM tmp.qrylong_post_3; QUIT; */
+376  /*PROC SQL; Select mcaid_id, time from tmp.qrylong_post_3  AS A*/
+377  /*where not exists (select mcaid_id, time FROM tmp.final_04 AS B where a.mcaid_id=b.mcaid_id
+377! and a.time=b.time); QUIT; */
+378
+379  %macro pctl_2023(var, out, pctlpre, t_var);
+380  PROC UNIVARIATE DATA = tmp.qrylong_post_3;
+381  BY FY;
+382  WHERE &VAR gt 0;
+383  VAR   &VAR;
+384  OUTPUT OUT=&out pctlpre=&pctlpre pctlpts=95;
+385  RUN;
+386
+387  PROC TRANSPOSE DATA = &out
+388  OUT=&out._a (DROP   = _name_ _label_
+389               RENAME = (col1 = &t_var.p_20
+390                         col2 = &t_var.p_21
+391                         col3 = &t_var.p_22
+392                         col4 = &t_var.p_23));
+393  var &t_var ;
+394  RUN;
+395  %mend;
+396
+397  PROC SORT DATA = tmp.qrylong_post_3; BY FY; RUN;
+
+NOTE: There were 19283171 observations read from the data set TMP.QRYLONG_POST_3.
+NOTE: The data set TMP.QRYLONG_POST_3 has 19283171 observations and 10 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           39.84 seconds
+      cpu time            8.89 seconds
+
+
+398
+399  %pctl_2023(var = adj_total_pmpq,   out = tmp.adj_total_pctl,   pctlpre = adj_total_,  t_var =
+399! adj_total_95);
+MLOGIC(PCTL_2023):  Beginning execution.
+MLOGIC(PCTL_2023):  Parameter VAR has value adj_total_pmpq
+MLOGIC(PCTL_2023):  Parameter OUT has value tmp.adj_total_pctl
+MLOGIC(PCTL_2023):  Parameter PCTLPRE has value adj_total_
+MLOGIC(PCTL_2023):  Parameter T_VAR has value adj_total_95
+MPRINT(PCTL_2023):   PROC UNIVARIATE DATA = tmp.qrylong_post_3;
+MPRINT(PCTL_2023):   BY FY;
+MPRINT(PCTL_2023):   WHERE adj_total_pmpq gt 0;
+MPRINT(PCTL_2023):   VAR adj_total_pmpq;
+MPRINT(PCTL_2023):   OUTPUT OUT=tmp.adj_total_pctl pctlpre=adj_total_ pctlpts=95;
+MPRINT(PCTL_2023):   RUN;
+
+NOTE: The data set TMP.ADJ_TOTAL_PCTL has 4 observations and 2 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           27.56 seconds
+      cpu time            13.43 seconds
+
+
+MPRINT(PCTL_2023):   PROC TRANSPOSE DATA = tmp.adj_total_pctl OUT=tmp.adj_total_pctl_a (DROP =
+_name_ _label_ RENAME = (col1 = adj_total_95p_20 col2 = adj_total_95p_21 col3 = adj_total_95p_22
+col4 = adj_total_95p_23));
+MPRINT(PCTL_2023):   var adj_total_95 ;
+MPRINT(PCTL_2023):   RUN;
+
+NOTE: There were 4 observations read from the data set TMP.ADJ_TOTAL_PCTL.
+NOTE: The data set TMP.ADJ_TOTAL_PCTL_A has 1 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.35 seconds
+      cpu time            0.06 seconds
+
+
+MLOGIC(PCTL_2023):  Ending execution.
+400  %pctl_2023(var = adj_pc_pmpq,      out = tmp.adj_pc_pctl,      pctlpre = adj_pc_,     t_var =
+400! adj_pc_95);
+MLOGIC(PCTL_2023):  Beginning execution.
+MLOGIC(PCTL_2023):  Parameter VAR has value adj_pc_pmpq
+MLOGIC(PCTL_2023):  Parameter OUT has value tmp.adj_pc_pctl
+MLOGIC(PCTL_2023):  Parameter PCTLPRE has value adj_pc_
+MLOGIC(PCTL_2023):  Parameter T_VAR has value adj_pc_95
+MPRINT(PCTL_2023):   PROC UNIVARIATE DATA = tmp.qrylong_post_3;
+MPRINT(PCTL_2023):   BY FY;
+MPRINT(PCTL_2023):   WHERE adj_pc_pmpq gt 0;
+MPRINT(PCTL_2023):   VAR adj_pc_pmpq;
+MPRINT(PCTL_2023):   OUTPUT OUT=tmp.adj_pc_pctl pctlpre=adj_pc_ pctlpts=95;
+MPRINT(PCTL_2023):   RUN;
+
+NOTE: The data set TMP.ADJ_PC_PCTL has 4 observations and 2 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           6.12 seconds
+      cpu time            5.85 seconds
+
+
+MPRINT(PCTL_2023):   PROC TRANSPOSE DATA = tmp.adj_pc_pctl OUT=tmp.adj_pc_pctl_a (DROP = _name_
+_label_ RENAME = (col1 = adj_pc_95p_20 col2 = adj_pc_95p_21 col3 = adj_pc_95p_22 col4 =
+adj_pc_95p_23));
+MPRINT(PCTL_2023):   var adj_pc_95 ;
+MPRINT(PCTL_2023):   RUN;
+
+NOTE: There were 4 observations read from the data set TMP.ADJ_PC_PCTL.
+NOTE: The data set TMP.ADJ_PC_PCTL_A has 1 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.29 seconds
+      cpu time            0.06 seconds
+
+
+MLOGIC(PCTL_2023):  Ending execution.
+401  %pctl_2023(var = adj_rx_pmpq,      out = tmp.adj_rx_pctl,      pctlpre = adj_rx_,     t_var =
+401! adj_rx_95);
+MLOGIC(PCTL_2023):  Beginning execution.
+MLOGIC(PCTL_2023):  Parameter VAR has value adj_rx_pmpq
+MLOGIC(PCTL_2023):  Parameter OUT has value tmp.adj_rx_pctl
+MLOGIC(PCTL_2023):  Parameter PCTLPRE has value adj_rx_
+MLOGIC(PCTL_2023):  Parameter T_VAR has value adj_rx_95
+MPRINT(PCTL_2023):   PROC UNIVARIATE DATA = tmp.qrylong_post_3;
+MPRINT(PCTL_2023):   BY FY;
+MPRINT(PCTL_2023):   WHERE adj_rx_pmpq gt 0;
+MPRINT(PCTL_2023):   VAR adj_rx_pmpq;
+MPRINT(PCTL_2023):   OUTPUT OUT=tmp.adj_rx_pctl pctlpre=adj_rx_ pctlpts=95;
+MPRINT(PCTL_2023):   RUN;
+
+NOTE: The data set TMP.ADJ_RX_PCTL has 4 observations and 2 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           6.20 seconds
+      cpu time            5.87 seconds
+
+
+MPRINT(PCTL_2023):   PROC TRANSPOSE DATA = tmp.adj_rx_pctl OUT=tmp.adj_rx_pctl_a (DROP = _name_
+_label_ RENAME = (col1 = adj_rx_95p_20 col2 = adj_rx_95p_21 col3 = adj_rx_95p_22 col4 =
+adj_rx_95p_23));
+MPRINT(PCTL_2023):   var adj_rx_95 ;
+MPRINT(PCTL_2023):   RUN;
+
+NOTE: There were 4 observations read from the data set TMP.ADJ_RX_PCTL.
+NOTE: The data set TMP.ADJ_RX_PCTL_A has 1 observations and 4 variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.40 seconds
+      cpu time            0.06 seconds
+
+
+MLOGIC(PCTL_2023):  Ending execution.
+402
+403  data tmp.pctl2023; merge tmp.adj_total_pctl_a tmp.adj_pc_pctl_a tmp.adj_rx_pctl_a ; run;
+
+NOTE: There were 1 observations read from the data set TMP.ADJ_TOTAL_PCTL_A.
+NOTE: There were 1 observations read from the data set TMP.ADJ_PC_PCTL_A.
+NOTE: There were 1 observations read from the data set TMP.ADJ_RX_PCTL_A.
+NOTE: The data set TMP.PCTL2023 has 1 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.39 seconds
+      cpu time            0.09 seconds
+
+
+404
+405  PROC PRINT DATA = tmp.pctl2023; RUN;
+
+NOTE: There were 1 observations read from the data set TMP.PCTL2023.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+406  PROC PRINT DATA = tmp.adj_total_pctl;
+
+NOTE: There were 4 observations read from the data set TMP.ADJ_TOTAL_PCTL.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+407  PROC PRINT DATA = tmp.adj_pc_pctl;
+
+NOTE: There were 4 observations read from the data set TMP.ADJ_PC_PCTL.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+408  PROC PRINT DATA = tmp.adj_rx_pctl; RUN;
+
+NOTE: There were 4 observations read from the data set TMP.ADJ_RX_PCTL.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+409
+410  *
+410! https://stackoverflow.com/questions/60097941/sas-calculate-percentiles-and-save-to-macro-variab
+410! le;
+411  proc sql noprint;
+412    select name, cats(':',name)
+413    into
+414      :COL_NAMES separated by ',',
+415      :MVAR_NAMES separated by ','
+416    from sashelp.vcolumn
+417    where libname = "TMP"
+418      and memname = "PCTL2023";
+419    select &COL_NAMES into &MVAR_NAMES
+420    from tmp.pctl2023;
+421  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+422
+423  %put &col_names &mvar_names;
+adj_total_95p_20,adj_total_95p_21,adj_total_95p_22,adj_total_95p_23,adj_pc_95p_20,adj_pc_95p_21,adj_
+pc_95p_22,adj_pc_95p_23,adj_rx_95p_20,adj_rx_95p_21,adj_rx_95p_22,adj_rx_95p_23
+:adj_total_95p_20,:adj_total_95p_21,:adj_total_95p_22,:adj_total_95p_23,:adj_pc_95p_20,:adj_pc_95p_2
+1,:adj_pc_95p_22,:adj_pc_95p_23,:adj_rx_95p_20,:adj_rx_95p_21,:adj_rx_95p_22,:adj_rx_95p_23
+424
+425  * Get mean where value gt 95th pctl value;
+426  %MACRO means_95p(fy=,var=,gt=,out=,mean=);
+427  PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+428  WHERE FY=&FY
+429  AND   &VAR gt &gt;
+430  VAR   &VAR;
+431  OUTPUT OUT=&out MEAN=&mean; RUN;
+432  %MEND;
+433
+434  * tried with proc means to compare to macro and got exact same results;
+435  %means_95p(FY=2020, var=adj_total_pmpq, gt=&adj_total_95p_20, out=mu_total_20, MEAN=Mu_total20)
+435! ;
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2020
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_total_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 3970.375
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_total_20
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_total20
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2020 AND adj_total_pmpq gt 3970.375;
+MPRINT(MEANS_95P):   VAR adj_total_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_total_20 MEAN=Mu_total20;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_TOTAL_20 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.25 seconds
+      cpu time            0.25 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+436  %means_95p(FY=2021, var=adj_total_pmpq, gt=&adj_total_95p_21, out=mu_total_21, MEAN=Mu_total21)
+436! ;
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2021
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_total_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 3731.834
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_total_21
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_total21
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2021 AND adj_total_pmpq gt 3731.834;
+MPRINT(MEANS_95P):   VAR adj_total_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_total_21 MEAN=Mu_total21;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_TOTAL_21 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.46 seconds
+      cpu time            0.46 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+437  %means_95p(FY=2022, var=adj_total_pmpq, gt=&adj_total_95p_22, out=mu_total_22, MEAN=Mu_total22)
+437! ;
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2022
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_total_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 3644.039
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_total_22
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_total22
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2022 AND adj_total_pmpq gt 3644.039;
+MPRINT(MEANS_95P):   VAR adj_total_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_total_22 MEAN=Mu_total22;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_TOTAL_22 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.56 seconds
+      cpu time            0.54 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+438  %means_95p(FY=2023, var=adj_total_pmpq, gt=&adj_total_95p_23, out=mu_total_23, MEAN=Mu_total23)
+438! ;
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2023
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_total_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 3982.621
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_total_23
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_total23
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2023 AND adj_total_pmpq gt 3982.621;
+MPRINT(MEANS_95P):   VAR adj_total_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_total_23 MEAN=Mu_total23;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_TOTAL_23 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.73 seconds
+      cpu time            0.73 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+439
+440  %means_95p(FY=2020, var=adj_pc_pmpq,    gt=&adj_pc_95p_20,    out=mu_pc_20,    MEAN=Mu_pc20);
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2020
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_pc_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 362.9976
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_pc_20
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_pc20
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2020 AND adj_pc_pmpq gt 362.9976;
+MPRINT(MEANS_95P):   VAR adj_pc_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_pc_20 MEAN=Mu_pc20;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_PC_20 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.21 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+441  %means_95p(FY=2021, var=adj_pc_pmpq,    gt=&adj_pc_95p_21,    out=mu_pc_21,    MEAN=Mu_pc21);
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2021
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_pc_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 349.0853
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_pc_21
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_pc21
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2021 AND adj_pc_pmpq gt 349.0853;
+MPRINT(MEANS_95P):   VAR adj_pc_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_pc_21 MEAN=Mu_pc21;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_PC_21 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.35 seconds
+      cpu time            0.35 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+442  %means_95p(FY=2022, var=adj_pc_pmpq,    gt=&adj_pc_95p_22,    out=mu_pc_22,    MEAN=Mu_pc22);
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2022
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_pc_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 339.6598
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_pc_22
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_pc22
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2022 AND adj_pc_pmpq gt 339.6598;
+MPRINT(MEANS_95P):   VAR adj_pc_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_pc_22 MEAN=Mu_pc22;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_PC_22 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.53 seconds
+      cpu time            0.53 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+443  %means_95p(FY=2023, var=adj_pc_pmpq,    gt=&adj_pc_95p_23,    out=mu_pc_23,    MEAN=Mu_pc23);
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2023
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_pc_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 331.7506
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_pc_23
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_pc23
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2023 AND adj_pc_pmpq gt 331.7506;
+MPRINT(MEANS_95P):   VAR adj_pc_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_pc_23 MEAN=Mu_pc23;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_PC_23 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.68 seconds
+      cpu time            0.67 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+444
+445  %means_95p(FY=2020, var=adj_rx_pmpq,    gt=&adj_rx_95p_20,    out=mu_rx_20,    MEAN=Mu_rx20);
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2020
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_rx_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 1079.455
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_rx_20
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_rx20
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2020 AND adj_rx_pmpq gt 1079.455;
+MPRINT(MEANS_95P):   VAR adj_rx_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_rx_20 MEAN=Mu_rx20;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_RX_20 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.21 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+446  %means_95p(FY=2021, var=adj_rx_pmpq,    gt=&adj_rx_95p_21,    out=mu_rx_21,    MEAN=Mu_rx21);
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2021
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_rx_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 1153.148
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_rx_21
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_rx21
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2021 AND adj_rx_pmpq gt 1153.148;
+MPRINT(MEANS_95P):   VAR adj_rx_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_rx_21 MEAN=Mu_rx21;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_RX_21 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.36 seconds
+      cpu time            0.34 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+447  %means_95p(FY=2022, var=adj_rx_pmpq,    gt=&adj_rx_95p_22,    out=mu_rx_22,    MEAN=Mu_rx22);
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2022
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_rx_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 1164.017
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_rx_22
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_rx22
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2022 AND adj_rx_pmpq gt 1164.017;
+MPRINT(MEANS_95P):   VAR adj_rx_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_rx_22 MEAN=Mu_rx22;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_RX_22 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.51 seconds
+      cpu time            0.50 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+448  %means_95p(FY=2023, var=adj_rx_pmpq,    gt=&adj_rx_95p_23,    out=mu_rx_23,    MEAN=Mu_rx23);
+MLOGIC(MEANS_95P):  Beginning execution.
+MLOGIC(MEANS_95P):  Parameter FY has value 2023
+MLOGIC(MEANS_95P):  Parameter VAR has value adj_rx_pmpq
+MLOGIC(MEANS_95P):  Parameter GT has value 1206.743
+MLOGIC(MEANS_95P):  Parameter OUT has value mu_rx_23
+MLOGIC(MEANS_95P):  Parameter MEAN has value Mu_rx23
+MPRINT(MEANS_95P):   PROC UNIVARIATE NOPRINT DATA = tmp.qrylong_post_3;
+MPRINT(MEANS_95P):   WHERE FY=2023 AND adj_rx_pmpq gt 1206.743;
+MPRINT(MEANS_95P):   VAR adj_rx_pmpq;
+MPRINT(MEANS_95P):   OUTPUT OUT=mu_rx_23 MEAN=Mu_rx23;
+MPRINT(MEANS_95P):   RUN;
+
+NOTE: The data set WORK.MU_RX_23 has 1 observations and 1 variables.
+NOTE: PROCEDURE UNIVARIATE used (Total process time):
+      real time           0.67 seconds
+      cpu time            0.67 seconds
+
+
+MLOGIC(MEANS_95P):  Ending execution.
+449
+450  data tmp.mu_pctl_2023;
+451  merge mu_total_20       mu_total_21     mu_total_22     mu_total_23
+452        mu_pc_20          mu_pc_21        mu_pc_22        mu_pc_23
+453        mu_rx_20          mu_rx_21        mu_rx_22        mu_rx_23
+454        tmp.adj_total_pctl_a  tmp.adj_pc_pctl_a   tmp.adj_rx_pctl_a;
+455  RUN;
+
+NOTE: There were 1 observations read from the data set WORK.MU_TOTAL_20.
+NOTE: There were 1 observations read from the data set WORK.MU_TOTAL_21.
+NOTE: There were 1 observations read from the data set WORK.MU_TOTAL_22.
+NOTE: There were 1 observations read from the data set WORK.MU_TOTAL_23.
+NOTE: There were 1 observations read from the data set WORK.MU_PC_20.
+NOTE: There were 1 observations read from the data set WORK.MU_PC_21.
+NOTE: There were 1 observations read from the data set WORK.MU_PC_22.
+NOTE: There were 1 observations read from the data set WORK.MU_PC_23.
+NOTE: There were 1 observations read from the data set WORK.MU_RX_20.
+NOTE: There were 1 observations read from the data set WORK.MU_RX_21.
+NOTE: There were 1 observations read from the data set WORK.MU_RX_22.
+NOTE: There were 1 observations read from the data set WORK.MU_RX_23.
+NOTE: There were 1 observations read from the data set TMP.ADJ_TOTAL_PCTL_A.
+NOTE: There were 1 observations read from the data set TMP.ADJ_PC_PCTL_A.
+NOTE: There were 1 observations read from the data set TMP.ADJ_RX_PCTL_A.
+NOTE: The data set TMP.MU_PCTL_2023 has 1 observations and 24 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.25 seconds
+      cpu time            0.09 seconds
+
+
+456  PROC PRINT DATA = tmp.mu_pctl_2023; RUN;
+
+NOTE: There were 1 observations read from the data set TMP.MU_PCTL_2023.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.03 seconds
+
+
+457
+458  proc sql noprint;
+459    select name, cats(':',name)
+460    into
+461      :COL_NAMES separated by ',',
+462      :MVAR_NAMES separated by ','
+463    from sashelp.vcolumn
+464    where libname = "TMP"
+465      and memname = "MU_PCTL_2023";
+466    select &COL_NAMES into &MVAR_NAMES
+467    from tmp.mu_pctl_2023;
+468  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+469
+470  DATA tmp.qrylong_post_4;
+471  SET  tmp.qrylong_post_3;
+472
+473  * replace values >95p with mu95;
+474  IF      FY = 2020 AND adj_total_pmpq gt &adj_total_95p_20 THEN adj_pd_total_tc = &mu_total20;
+475  ELSE IF FY = 2021 AND adj_total_pmpq gt &adj_total_95p_21 THEN adj_pd_total_tc = &mu_total21;
+476  ELSE IF FY = 2022 AND adj_total_pmpq gt &adj_total_95p_22 THEN adj_pd_total_tc = &mu_total22;
+477  ELSE IF FY = 2023 AND adj_total_pmpq gt &adj_total_95p_23 THEN adj_pd_total_tc = &mu_total23;
+478  ELSE adj_pd_total_tc= adj_total_pmpq;
+479
+480  IF      FY = 2020 AND adj_pc_pmpq    gt &adj_pc_95p_20    THEN adj_pd_pc_tc    = &mu_pc20;
+481  ELSE IF FY = 2021 AND adj_pc_pmpq    gt &adj_pc_95p_21    THEN adj_pd_pc_tc    = &mu_pc21;
+482  ELSE IF FY = 2022 AND adj_pc_pmpq    gt &adj_pc_95p_22    THEN adj_pd_pc_tc    = &mu_pc22;
+483  ELSE IF FY = 2023 AND adj_pc_pmpq    gt &adj_pc_95p_23    THEN adj_pd_pc_tc    = &mu_pc23;
+484  ELSE adj_pd_pc_tc= adj_pc_pmpq;
+485
+486  IF      FY = 2020 AND adj_rx_pmpq    gt &adj_rx_95p_20    THEN adj_pd_rx_tc    = &mu_rx20;
+487  ELSE IF FY = 2021 AND adj_rx_pmpq    gt &adj_rx_95p_21    THEN adj_pd_rx_tc    = &mu_rx21;
+488  ELSE IF FY = 2022 AND adj_rx_pmpq    gt &adj_rx_95p_22    THEN adj_pd_rx_tc    = &mu_rx22;
+489  ELSE IF FY = 2023 AND adj_rx_pmpq    gt &adj_rx_95p_23    THEN adj_pd_rx_tc    = &mu_rx23;
+490  ELSE adj_pd_rx_tc= adj_rx_pmpq;
+491  RUN;
+
+NOTE: There were 19283171 observations read from the data set TMP.QRYLONG_POST_3.
+NOTE: The data set TMP.QRYLONG_POST_4 has 19283171 observations and 13 variables.
+NOTE: DATA statement used (Total process time):
+      real time           30.08 seconds
+      cpu time            4.73 seconds
+
+
+492
+493
+494  * [tmp.final_04] ==============================================================================
+495  Add FY1719 outcomes to final_03
+496  ===========================================================================================;
+497  PROC SQL;
+498  CREATE TABLE tmp.final_04 AS
+499  SELECT a.*
+500       , b.*
+501       , c.*
+502       , d.fqhc
+503  FROM tmp.final_03            AS A
+504  LEFT JOIN tmp.qrylong_1719   AS B ON a.mcaid_id=b.mcaid_id
+505  LEFT JOIN tmp.qrylong_post_4 AS C ON a.mcaid_id=c.mcaid_id AND a.time=c.time
+506  LEFT JOIN tmp.pcmp_dim       AS D ON a.pcmp_loc_id=d.pcmp_loc_id;
+WARNING: Variable mcaid_id already exists on file TMP.FINAL_04.
+WARNING: Variable mcaid_id already exists on file TMP.FINAL_04.
+WARNING: Variable time already exists on file TMP.FINAL_04.
+WARNING: Variable FY already exists on file TMP.FINAL_04.
+NOTE: Table TMP.FINAL_04 created, with 19283171 rows and 41 columns.
+
+507  QUIT;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           2:25.46
+      cpu time            52.90 seconds
+
+
+507!       *19283171, 41 cols;
+
+508  DATA tmp.final_05;
+509  * Not yet setting length for time and mcaid_id bc they might get joined later;
+510  LENGTH FY age_cat budget_group rae_person_new int int_imp 3. sex $1. ;
+511  SET  tmp.final_04 (DROP = adj_rx_pmpq adj_pc_pmpq adj_total_pmpq);
+512
+513  ARRAY dv(*) bho_n_hosp_17pm     bho_n_hosp_18pm     bho_n_hosp_19pm
+514              bho_n_er_17pm       bho_n_er_18pm       bho_n_er_19pm
+515              bho_n_other_17pm    bho_n_other_18pm    bho_n_other_19pm
+516              n_pc_pmpq           n_ed_pmpq           n_ffsbh_pmpq     n_tel_pmpq
+517              adj_pd_total_tc     adj_pd_pc_tc        adj_pd_rx_tc;
+518
+519  DO i=1 to dim(dv);
+520      IF dv(i)=. THEN dv(i)=0;
+521      ELSE dv(i)=dv(i);
+522      END;
+523  DROP i;
+524
+525  * adj vars for 17-19cat, if not in ds then set to -1;
+526  adj_pd_total_17cat = coalesce(adj_pd_total_17cat, -1);
+527  adj_pd_total_18cat = coalesce(adj_pd_total_18cat, -1);
+528  adj_pd_total_19cat = coalesce(adj_pd_total_19cat, -1);
+529
+530  ind_visit_pc    = n_pc_pmpq       > 0;
+531  ind_visit_ed    = n_ed_pmpq       > 0;
+532  ind_visit_ffsbh = n_ffsbh_pmpq    > 0;
+533  ind_visit_tel   = n_tel_pmpq      > 0;
+534  ind_cost_total  = adj_pd_total_tc > 0;
+535  ind_cost_pc     = adj_pd_pc_tc    > 0;
+536  ind_cost_rx     = adj_pd_rx_tc    > 0;
+537  RUN;
+
+WARNING: Multiple lengths were specified for the variable age_cat by input data set(s). This can
+         cause truncation of data.
+WARNING: Multiple lengths were specified for the variable FY by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable sex by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable budget_group by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable rae_person_new by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable int by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable int_imp by input data set(s). This can
+         cause truncation of data.
+NOTE: There were 19283171 observations read from the data set TMP.FINAL_04.
+NOTE: The data set TMP.FINAL_05 has 19283171 observations and 45 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:10.77
+      cpu time            15.68 seconds
+
+
+538  PROC FREQ DATA = tmp.final_05; tables adj_pd_total_1: ; RUN;
+
+NOTE: There were 19283171 observations read from the data set TMP.FINAL_05.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           57.30 seconds
+      cpu time            2.23 seconds
+
+
+KW MANUAL note: I didn't run final_06 the first time, but went back and reran from final_06 through end and log didn't save boo... so this part after isn't the most recent. :(
+
+
+
+547
+548  PROC CONTENTS DATA = data.utilization_large_nov5 VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+
+
+549  %INCLUDE "S:/FHPC/DATA/HCPF_DATA_files_SECURE/Kim/isp/isp_utilization/code/config_formats.sas";
+NOTE: Format FYQRTR_CAT is already on the library DATA.FORMATS.
+NOTE: Format FYQRTR_CAT has been written to DATA.FORMATS.
+NOTE: Informat FYQRTR_NUM is already on the library DATA.FORMATS.
+NOTE: Informat FYQRTR_NUM has been output.
+NOTE: Format BUDGET_GRP_R is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_R has been written to DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GRP_NEW_ has been written to DATA.FORMATS.
+NOTE: Format BUDGET_GROUP_RC_ is already on the library DATA.FORMATS.
+NOTE: Format BUDGET_GROUP_RC_ has been written to DATA.FORMATS.
+NOTE: Format $RACE_RC_ is already on the library DATA.FORMATS.
+NOTE: Format $RACE_RC_ has been written to DATA.FORMATS.
+NOTE: Format AGE_CAT_ is already on the library DATA.FORMATS.
+NOTE: Format AGE_CAT_ has been written to DATA.FORMATS.
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+
+
+635
+636   * Numeric vars that can be set to length=3 to reduce dataset in tmp.final_08 step ;
+637   %LET len06 = time fqhc season1 season2 season3 adj_pd_total_17cat adj_pd_total_18cat
+637 ! adj_pd_total_19cat
+638                ind_visit_pc ind_visit_ed ind_visit_ffsbh ind_visit_tel ind_cost_total
+638 ! ind_cost_pc ind_cost_rx;
+639
+640   DATA   data.utilization_large_nov5;
+641   LENGTH &len06 3 pcmp_loc_id 4;
+642   SET    tmp.final_06;
+643
+644   budget_grp_r = input(put(budget_group, budget_grp_r.), 12.);
+645   FORMAT budget_grp_r budget_grp_new_. race $race_rc_. age_cat age_cat_.;
+646
+647   RUN;
+
+WARNING: Multiple lengths were specified for the variable time by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable pcmp_loc_id by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable adj_pd_total_17cat by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable adj_pd_total_18cat by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable adj_pd_total_19cat by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable fqhc by input data set(s). This can cause
+         truncation of data.
+WARNING: Multiple lengths were specified for the variable ind_visit_pc by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable ind_visit_ed by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable ind_visit_ffsbh by input data set(s).
+         This can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable ind_visit_tel by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable ind_cost_total by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable ind_cost_pc by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable ind_cost_rx by input data set(s). This
+         can cause truncation of data.
+WARNING: Multiple lengths were specified for the variable season1 by input data set(s). This can
+         cause truncation of data.
+WARNING: Multiple lengths were specified for the variable season2 by input data set(s). This can
+         cause truncation of data.
+WARNING: Multiple lengths were specified for the variable season3 by input data set(s). This can
+         cause truncation of data.
+NOTE: There were 19283171 observations read from the data set TMP.FINAL_06.
+NOTE: The data set DATA.UTILIZATION_LARGE_NOV5 has 19283171 observations and 50 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2:21.41
+      cpu time            8.76 seconds
+
+
+648
+649   PROC CONTENTS DATA = data.utilization_large_nov5 VARNUM; RUN;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+650   %LET retain = mcaid_id time int int_imp season1 season2 season3 ind_cost_total cost_total
+650 ! ind_cost_pc cost_pc ind_cost_rx cost_rx
+651                 adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat
+652                 ind_visit_pc visits_pc ind_visit_ed visits_ed ind_visit_ffsbh visits_ffsbh
+652 ! ind_visit_tel visits_tel
+653                 bh_hosp17 bh_hosp18 bh_hosp19 bh_er17 bh_er18 bh_er19 bh_oth17 bh_oth18 bh_oth19
+654                 fqhc budget_grp_new age_cat rae_person_new  race sex pcmp_loc_id;
+655
+656   %LET keep = mcaid_id time int int_imp season1 season2 season3 ind_cost_total adj_pd_total_tc
+656 ! ind_cost_pc adj_pd_pc_tc ind_cost_rx adj_pd_rx_tc
+657               adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat
+658               ind_visit_pc n_pc_pmpq ind_visit_ed n_ed_pmpq ind_visit_ffsbh n_ffsbh_pmpq
+658 ! ind_visit_tel n_tel_pmpq
+659               bh_hosp17 bh_hosp18 bh_hosp19 bh_er17 bh_er18 bh_er19 bh_oth17 bh_oth18 bh_oth19
+660               fqhc budget_grp_r age_cat rae_person_new  race sex pcmp_loc_id;
+661   DATA data.utilization ;
+662   RETAIN &retain;
+663   LENGTH budget_grp_new age_cat 3. mcaid_id $7. sex $1.;
+664   SET    data.utilization_large_nov5
+665          (RENAME=(adj_pd_total_tc = cost_total
+666                   adj_pd_pc_tc    = cost_pc
+667                   adj_pd_rx_tc    = cost_rx
+668                   n_pc_pmpq       = visits_pc
+669                   n_ed_pmpq       = visits_ed
+670                   n_ffsbh_pmpq    = visits_ffsbh
+671                   n_tel_pmpq      = visits_tel
+672                   budget_grp_r    = budget_grp_new)
+673          KEEP= &keep);
+674   RUN;
+
+WARNING: Multiple lengths were specified for the variable mcaid_id by input data set(s). This can
+         cause truncation of data.
+WARNING: Multiple lengths were specified for the variable budget_grp_new by input data set(s). This
+         can cause truncation of data.
+NOTE: There were 19283171 observations read from the data set DATA.UTILIZATION_LARGE_NOV5.
+NOTE: The data set DATA.UTILIZATION has 19283171 observations and 40 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1:36.88
+      cpu time            5.87 seconds
+
+
+675
+676   /**/
+677   /*** CREATE META DS  ====================================;*/
+678   PROC SQL;
+679   CREATE TABLE data.UTILIZATION_meta AS
+680   SELECT name as variable
+681        , type
+682        , length
+683        , label
+684        , format
+685        , informat
+686   FROM sashelp.vcolumn
+687   WHERE LIBNAME = 'DATA'
+688   AND   MEMNAME = 'UTILIZATION';
+NOTE: Table DATA.UTILIZATION_META created, with 40 rows and 6 columns.
+
+689   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.01 seconds
+
+
+690
+691   data data.intgroup;
+692     set data.utilization data.utilization (in = b);
+693     where int_imp = 1;
+694     if ^b then int_imp = 0;
+695     exposed = b;
+696   run;
+
+NOTE: There were 1826819 observations read from the data set DATA.UTILIZATION.
+      WHERE int_imp=1;
+NOTE: There were 1826819 observations read from the data set DATA.UTILIZATION.
+      WHERE int_imp=1;
+NOTE: The data set DATA.INTGROUP has 3653638 observations and 41 variables.
+NOTE: DATA statement used (Total process time):
+      real time           49.51 seconds
+      cpu time            3.92 seconds
+
+
+
