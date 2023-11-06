@@ -1,5 +1,5 @@
 NOTE: PROCEDURE PRINTTO used (Total process time):
-      real time           0.03 seconds
+      real time           0.02 seconds
       cpu time            0.00 seconds
       
 
@@ -9,44 +9,44 @@ Eligible Children') race(ref='non-Hispanic White/Caucasian') sex(ref='Female')
 rae_person_new(ref='3') age_cat(ref='ages 21-44') fqhc(ref ='0') bh_oth17(ref='0') 
 bh_oth18(ref='0') bh_oth19(ref='0') bh_er17(ref='0') bh_er18(ref='0') bh_er19(ref='0') 
 bh_hosp17(ref='0') bh_hosp18(ref='0') bh_hosp19(ref='0') adj_pd_total_17cat(ref='0') 
-adj_pd_total_18cat(ref='0') adj_pd_total_19cat(ref='0') ind_visit_pc;
-MPRINT(HURDLE):   MODEL ind_visit_pc(event='1') = int int_imp time season1 season2 
+adj_pd_total_18cat(ref='0') adj_pd_total_19cat(ref='0') ind_visit_ed;
+MPRINT(HURDLE):   MODEL ind_visit_ed(event='1') = int int_imp time season1 season2 
 season3 budget_grp_new race sex rae_person_new age_cat fqhc bh_oth17 bh_oth18 bh_oth19 
 bh_er17 bh_er18 bh_er19 bh_hosp17 bh_hosp18 bh_hosp19 adj_pd_total_17cat 
 adj_pd_total_18cat adj_pd_total_19cat / DIST=binomial;
-MPRINT(HURDLE):   REPEATED SUBJECT = mcaid_id / type=ind ;
-MPRINT(HURDLE):   store out.visits_pc_pmodel_ind;
+MPRINT(HURDLE):   REPEATED SUBJECT = mcaid_id / type=exch ;
+MPRINT(HURDLE):   store out.visits_ed_pmodel_exch;
 MPRINT(HURDLE):   output out = predout pred = pred;
 MPRINT(HURDLE):   run;
 
 NOTE: Class levels for some variables were not printed due to excessive size.
-NOTE: PROC GENMOD is modeling the probability that ind_visit_pc='1'. One way to change 
-      this to model the probability that ind_visit_pc='0' is to specify the DESCENDING 
+NOTE: PROC GENMOD is modeling the probability that ind_visit_ed='1'. One way to change 
+      this to model the probability that ind_visit_ed='0' is to specify the DESCENDING 
       option in the PROC statement.
 NOTE: Algorithm converged.
 NOTE: Algorithm converged.
-NOTE: The GENMOD procedure generated the model item store OUT.VISITS_PC_PMODEL_IND.
+NOTE: The GENMOD procedure generated the model item store OUT.VISITS_ED_PMODEL_EXCH.
 NOTE: The data set WORK.PREDOUT has 19283171 observations and 41 variables.
 NOTE: PROCEDURE GENMOD used (Total process time):
-      real time           10:18.60
-      cpu time            8:54.28
+      real time           16:31.44
+      cpu time            15:25.29
       
 
 MPRINT(HURDLE):   TITLE 'Visit Model';
 MPRINT(HURDLE):   PROC GENMOD DATA = data.utilization desc;
-MPRINT(HURDLE):   WHERE visits_pc > 0;
+MPRINT(HURDLE):   WHERE visits_ed > 0;
 MPRINT(HURDLE):   CLASS mcaid_id int(ref='0') int_imp(ref='0') budget_grp_new(ref='MAGI 
 Eligible Children') race(ref='non-Hispanic White/Caucasian') sex(ref='Female') 
 rae_person_new(ref='3') age_cat(ref='ages 21-44') fqhc(ref ='0') bh_oth17(ref='0') 
 bh_oth18(ref='0') bh_oth19(ref='0') bh_er17(ref='0') bh_er18(ref='0') bh_er19(ref='0') 
 bh_hosp17(ref='0') bh_hosp18(ref='0') bh_hosp19(ref='0') adj_pd_total_17cat(ref='0') 
 adj_pd_total_18cat(ref='0') adj_pd_total_19cat(ref='0') ;
-MPRINT(HURDLE):   MODEL visits_pc = int int_imp time season1 season2 season3 
+MPRINT(HURDLE):   MODEL visits_ed = int int_imp time season1 season2 season3 
 budget_grp_new race sex rae_person_new age_cat fqhc bh_oth17 bh_oth18 bh_oth19 bh_er17 
 bh_er18 bh_er19 bh_hosp17 bh_hosp18 bh_hosp19 adj_pd_total_17cat adj_pd_total_18cat 
 adj_pd_total_19cat / dist=negbin link=log ;
-MPRINT(HURDLE):   REPEATED SUBJECT = mcaid_id / type = ind;
-MPRINT(HURDLE):   store out.visits_pc_vmodel_ind;
+MPRINT(HURDLE):   REPEATED SUBJECT = mcaid_id / type = exch;
+MPRINT(HURDLE):   store out.visits_ed_vmodel_exch;
 MPRINT(HURDLE):   RUN;
 
 NOTE: The DESCENDING option applies only to the multinomial distribution with ordinal 
@@ -54,10 +54,10 @@ NOTE: The DESCENDING option applies only to the multinomial distribution with or
 NOTE: Class levels for some variables were not printed due to excessive size.
 NOTE: Algorithm converged.
 NOTE: Algorithm converged.
-NOTE: The GENMOD procedure generated the model item store OUT.VISITS_PC_VMODEL_IND.
+NOTE: The GENMOD procedure generated the model item store OUT.VISITS_ED_VMODEL_EXCH.
 NOTE: PROCEDURE GENMOD used (Total process time):
-      real time           3:57.32
-      cpu time            3:56.75
+      real time           4:43.22
+      cpu time            4:42.70
       
 
 MPRINT(HURDLE):   TITLE;
@@ -65,66 +65,66 @@ MPRINT(HURDLE):   * OUT:[intgroup] IN :[&dat &dat] * the predictions for visits 
 made for each person twice, once exposed and once unexposed;
 MPRINT(HURDLE):   * OUT:[P_INTGROUP] IN :[out=out.&dv._pmodel] prob of 
 util------------------------------------------------ ;
-MPRINT(HURDLE):   proc plm restore=out.visits_pc_pmodel_ind;
+MPRINT(HURDLE):   proc plm restore=out.visits_ed_pmodel_exch;
 MPRINT(HURDLE):   score data=data.intgroup out=p_intgroup predicted=p_prob / ilink;
 MPRINT(HURDLE):   run;
 
 NOTE: The data set WORK.P_INTGROUP has 3653638 observations and 42 variables.
 NOTE: PROCEDURE PLM used (Total process time):
-      real time           16.71 seconds
-      cpu time            8.48 seconds
+      real time           15.89 seconds
+      cpu time            8.53 seconds
       
 
 MPRINT(HURDLE):   * OUT:[VP_INTGROUP] IN :[out=out.&dv._vmodel] prob of visit 
 -------------------------------------------------;
-MPRINT(HURDLE):   proc plm restore=out.visits_pc_vmodel_ind;
+MPRINT(HURDLE):   proc plm restore=out.visits_ed_vmodel_exch;
 MPRINT(HURDLE):   score data=p_intgroup out=VP_intgroup predicted=p_visit / ilink;
 MPRINT(HURDLE):   run;
 
 NOTE: The data set WORK.VP_INTGROUP has 3653638 observations and 43 variables.
 NOTE: PROCEDURE PLM used (Total process time):
-      real time           7.93 seconds
-      cpu time            7.84 seconds
+      real time           7.65 seconds
+      cpu time            7.53 seconds
       
 
 MPRINT(HURDLE):   * OUT:[out.&dv._mean_&type] IN:[VP_intgroup] Person average visit is 
 calculated------------------------------;
-MPRINT(HURDLE):   data out.visits_pc_mean_ind;
+MPRINT(HURDLE):   data out.visits_ed_mean_exch;
 MPRINT(HURDLE):   set VP_intgroup;
 MPRINT(HURDLE):   a_visit = p_prob*p_visit;
 MPRINT(HURDLE):  * (1-p term = 0);
 MPRINT(HURDLE):   run;
 
 NOTE: There were 3653638 observations read from the data set WORK.VP_INTGROUP.
-NOTE: The data set OUT.VISITS_PC_MEAN_IND has 3653638 observations and 44 variables.
+NOTE: The data set OUT.VISITS_ED_MEAN_EXCH has 3653638 observations and 44 variables.
 NOTE: DATA statement used (Total process time):
-      real time           14.95 seconds
-      cpu time            1.96 seconds
+      real time           14.45 seconds
+      cpu time            1.79 seconds
       
 
 MPRINT(HURDLE):   * OUT:[out.&dv._avp_&type] IN:[out.&dv._mean_&type] Group average 
 visit is calculated and contrasted-----------------;
 MPRINT(HURDLE):   proc sql;
-MPRINT(HURDLE):   create table out.visits_pc_avp_ind as select mean(case when exposed=1 
-then a_visit else . end ) as visit_exposed, mean(case when exposed=0 then a_visit else 
-. end ) as visit_unexposed, calculated visit_exposed - calculated visit_unexposed as 
-visit_diff from out.visits_pc_mean_ind;
-NOTE: Table OUT.VISITS_PC_AVP_IND created, with 1 rows and 3 columns.
+MPRINT(HURDLE):   create table out.visits_ed_avp_exch as select mean(case when 
+exposed=1 then a_visit else . end ) as visit_exposed, mean(case when exposed=0 then 
+a_visit else . end ) as visit_unexposed, calculated visit_exposed - calculated 
+visit_unexposed as visit_diff from out.visits_ed_mean_exch;
+NOTE: Table OUT.VISITS_ED_AVP_EXCH created, with 1 rows and 3 columns.
 
 MPRINT(HURDLE):   quit;
 NOTE: PROCEDURE SQL used (Total process time):
-      real time           8.55 seconds
-      cpu time            0.57 seconds
+      real time           8.29 seconds
+      cpu time            0.61 seconds
       
 
 MPRINT(HURDLE):   * put AVP results in log for reference/ comparing results;
 MPRINT(HURDLE):   data _NULL_;
-MPRINT(HURDLE):   SET out.visits_pc_avp_ind;
+MPRINT(HURDLE):   SET out.visits_ed_avp_exch;
 MPRINT(HURDLE):   put visit_exposed= visit_unexposed= visit_diff=;
 MPRINT(HURDLE):   RUN;
 
-visit_exposed=2.3302630409 visit_unexposed=2.3769222049 visit_diff=-0.046659164
-NOTE: There were 1 observations read from the data set OUT.VISITS_PC_AVP_IND.
+visit_exposed=0.2437244612 visit_unexposed=0.2760542247 visit_diff=-0.032329764
+NOTE: There were 1 observations read from the data set OUT.VISITS_ED_AVP_EXCH.
 NOTE: DATA statement used (Total process time):
       real time           0.01 seconds
       cpu time            0.00 seconds
@@ -139,50 +139,50 @@ MPRINT(HURDLE):   run;
 
 NOTE: The data set WORK.PREDGROUP has 19283171 observations and 42 variables.
 NOTE: PROCEDURE RANK used (Total process time):
-      real time           7.54 seconds
+      real time           7.51 seconds
       cpu time            7.50 seconds
       
 
 MPRINT(HURDLE):   proc means data = predgroup noprint nway;
-MPRINT(HURDLE):   var pred ind_visit_pc;
+MPRINT(HURDLE):   var pred ind_visit_ed;
 MPRINT(HURDLE):   class predgroup;
-MPRINT(HURDLE):   output out = out.visits_pc_meanout_ind mean = /autoname;
+MPRINT(HURDLE):   output out = out.visits_ed_meanout_exch mean = /autoname;
 MPRINT(HURDLE):   run;
 
 NOTE: There were 19283171 observations read from the data set WORK.PREDGROUP.
-NOTE: The data set OUT.VISITS_PC_MEANOUT_IND has 10 observations and 5 variables.
+NOTE: The data set OUT.VISITS_ED_MEANOUT_EXCH has 10 observations and 5 variables.
 NOTE: PROCEDURE MEANS used (Total process time):
-      real time           1.93 seconds
-      cpu time            4.00 seconds
+      real time           2.25 seconds
+      cpu time            4.29 seconds
       
 
 MPRINT(HURDLE):   * print results to log for reference;
 MPRINT(HURDLE):   data _NULL_;
-MPRINT(HURDLE):   SET out.visits_pc_meanout_ind (DROP= _TYPE_);
+MPRINT(HURDLE):   SET out.visits_ed_meanout_exch (DROP= _TYPE_);
 MPRINT(HURDLE):   put _all_;
 MPRINT(HURDLE):   RUN;
 
-predgroup=0 _FREQ_=1928319 pred_Mean=0.1115739711 ind_visit_pc_Mean=0.1112896777
+predgroup=0 _FREQ_=1928317 pred_Mean=0.0379033743 ind_visit_ed_Mean=0.0338279443
 _ERROR_=0 _N_=1
-predgroup=1 _FREQ_=1928363 pred_Mean=0.2020880565 ind_visit_pc_Mean=0.211483004
+predgroup=1 _FREQ_=1928316 pred_Mean=0.0546018402 ind_visit_ed_Mean=0.0547342863
 _ERROR_=0 _N_=2
-predgroup=2 _FREQ_=1928271 pred_Mean=0.2656074831 ind_visit_pc_Mean=0.2561813148
+predgroup=2 _FREQ_=1928496 pred_Mean=0.0667028152 ind_visit_ed_Mean=0.066001174
 _ERROR_=0 _N_=3
-predgroup=3 _FREQ_=1928314 pred_Mean=0.3087900189 ind_visit_pc_Mean=0.3007352537
+predgroup=3 _FREQ_=1928161 pred_Mean=0.0771210332 ind_visit_ed_Mean=0.0756819581
 _ERROR_=0 _N_=4
-predgroup=4 _FREQ_=1927897 pred_Mean=0.3471488526 ind_visit_pc_Mean=0.343016769
+predgroup=4 _FREQ_=1928379 pred_Mean=0.0868671248 ind_visit_ed_Mean=0.0855578701
 _ERROR_=0 _N_=5
-predgroup=5 _FREQ_=1928831 pred_Mean=0.3846952517 ind_visit_pc_Mean=0.3831802786
+predgroup=5 _FREQ_=1928234 pred_Mean=0.0970959618 ind_visit_ed_Mean=0.0963238902
 _ERROR_=0 _N_=6
-predgroup=6 _FREQ_=1928223 pred_Mean=0.4249268242 ind_visit_pc_Mean=0.4345871821
-_ERROR_=0 _N_=7
-predgroup=7 _FREQ_=1928319 pred_Mean=0.4716160391 ind_visit_pc_Mean=0.4861036996
+predgroup=6 _FREQ_=1928317 pred_Mean=0.10898137 ind_visit_ed_Mean=0.1103402604 _ERROR_=0
+_N_=7
+predgroup=7 _FREQ_=1928317 pred_Mean=0.1240329766 ind_visit_ed_Mean=0.1304894372
 _ERROR_=0 _N_=8
-predgroup=8 _FREQ_=1928317 pred_Mean=0.5267864369 ind_visit_pc_Mean=0.5240678789
+predgroup=8 _FREQ_=1928318 pred_Mean=0.147367803 ind_visit_ed_Mean=0.1514003396
 _ERROR_=0 _N_=9
-predgroup=9 _FREQ_=1928317 pred_Mean=0.6291314614 ind_visit_pc_Mean=0.6217188356
+predgroup=9 _FREQ_=1928316 pred_Mean=0.2105594458 ind_visit_ed_Mean=0.2088163973
 _ERROR_=0 _N_=10
-NOTE: There were 10 observations read from the data set OUT.VISITS_PC_MEANOUT_IND.
+NOTE: There were 10 observations read from the data set OUT.VISITS_ED_MEANOUT_EXCH.
 NOTE: DATA statement used (Total process time):
       real time           0.01 seconds
       cpu time            0.00 seconds
