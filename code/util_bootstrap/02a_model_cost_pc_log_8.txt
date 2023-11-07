@@ -1,4 +1,4 @@
-1                                                          The SAS System                           13:15 Thursday, October 26, 2023
+1                                                          The SAS System                             17:08 Sunday, November 5, 2023
 
 NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
 NOTE: All registry changes will be lost at the end of the session.
@@ -27,8 +27,8 @@ NOTE: Additional host information:
  X64_10PRO WIN 10.0.19041  Workstation
 
 NOTE: SAS initialization used:
-      real time           0.31 seconds
-      cpu time            0.26 seconds
+      real time           0.25 seconds
+      cpu time            0.28 seconds
       
 1          *****************************************************************************************
 1        ! *****
@@ -54,7 +54,7 @@ NOTE: Libref OUT was successfully assigned as follows:
       S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed\cost_pc
 16         * location of input data to boot (where resampled sets are);
 17         libname in "&projRoot\data_boot_processed";
-2                                          The SAS System           13:15 Thursday, October 26, 2023
+2                                          The SAS System             17:08 Sunday, November 5, 2023
 
 NOTE: Libref IN was successfully assigned as follows: 
       Engine:        V9 
@@ -110,7 +110,7 @@ NOTE: Libref UTIL was successfully assigned as follows:
 167        ODS SELECT ALL; OPTIONS NOTES;
 168        
 169        * cost model - UPDATE DV in WHERE statement and MODEL statements;
-3                                          The SAS System           13:15 Thursday, October 26, 2023
+3                                          The SAS System             17:08 Sunday, November 5, 2023
 
 170        ODS SELECT NONE; OPTIONS NONOTES;
 171        PROC GENMOD DATA = in._resample_out_&i  ;
@@ -145,6 +145,6 @@ NOTE: Libref UTIL was successfully assigned as follows:
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           16:49:13.77
-      cpu time            4:30:42.95
+      real time           16:56:40.20
+      cpu time            4:18:09.34
       

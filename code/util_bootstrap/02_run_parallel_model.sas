@@ -12,7 +12,7 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 %INCLUDE "&projRoot./code/util_bootstrap/MACRO_parallel.sas";
 
 *COST_PC // 10/28 ;
-*
+
 %parallel(
     folder  = &projRoot/code/util_bootstrap     
     , progName= 02a_model_cost_pc.sas
@@ -24,7 +24,7 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 );
 
 * 
-COST TOTAL // 10/29/2023 started;
+COST TOTAL // 10/29/2023 started
 %parallel(
     folder    = &projRoot/code/util_bootstrap     /* data, program location */
     , progName= 02b_model_cost_total.sas          /* name of the program that will act on the data   */
