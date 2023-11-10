@@ -11,17 +11,16 @@ NOTE: CHANGE rows under 'MUTABLE CONFIGS'!!
 %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
 
 * MUTABLES: for outputs by DV, reporting // Update, comment previous, then run; 
-%LET pdftitle = Cost_PC; 
-%LET dv = cost_pc;
-LIBNAME cost_pc "&projRoot\data_boot_processed\cost_pc";
-/*%LET pdftitle = Cost_Total;*/
-/*%LET dv = cost_tot; */
-/*LIBNAME cost_tot "&projRoot\data_boot_processed\cost_total";*/
-
+/*%LET pdftitle = Cost_PC; */
+/*%LET dv = cost_pc;*/
+/*LIBNAME cost_pc "&projRoot\data_boot_processed\cost_pc";*/
+%LET pdftitle = Cost_Total;
+%LET dv = cost_tot; 
+LIBNAME cost_tot "&projRoot\data_boot_processed\cost_total";
 
 * NONMUTABLES; 
 * pdf output; 
-%LET pdf      = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\reports\boot_se_&dv..pdf;
+%LET pdf = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\reports\boot_se_&dv..pdf;
 %INCLUDE "&projRoot./code/util_bootstrap/MACRO_parallel.sas";
 
 **** BOOT ANALYSIS*******; 
@@ -140,14 +139,20 @@ ods pdf file="&pdf" STARTPAGE=no; TITLE &pdftitle;
 %LET today = %SYSFUNC(today(), YYMMDD10.); %put &today;
 
 TITLE  'Bootstrap Standard Error:' &pdftitle ;
+ods pdf text = "Where m_cost is EXPOSED and m_cost_2 is UNEXPOSED"; 
 proc means data = &dv.._diff_  n nmiss mean median stddev;
-  var diff;
+  var diff m_cost m_cost_2;
 run;
 
-title 'Bootstrap distribution';
+ods pdf text = "Overall mean (no groups)"; 
+proc means data = &dv.._allpred_ ; var m_cost; run; 
+
+title 'Bootstrap distribution, difference';
 proc sgplot data = &dv.._diff_;
   histogram diff;
 run;
 title;
 
 ODS PDF CLOSE; 
+
+PROC SQL; SELECT count(distinct bootunit) from datapro._resample_out_1; QUIT; 
