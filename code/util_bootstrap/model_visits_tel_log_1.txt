@@ -1,0 +1,147 @@
+1                                                          The SAS System                           10:31 Tuesday, November 14, 2023
+
+NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
+NOTE: All registry changes will be lost at the end of the session.
+
+WARNING: Unable to copy SASUSER registry to WORK registry. Because of this, you will not see registry customizations during this 
+         session.
+NOTE: Unable to open SASUSER.PROFILE. WORK.PROFILE will be opened instead.
+NOTE: All profile changes will be lost at the end of the session.
+NOTE: Copyright (c) 2016 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M7) 
+      Licensed to UNIVERSITY OF COLORADO SYSTEM - SFA - T&R, Site 70082279.
+NOTE: This session is executing on the X64_10PRO  platform.
+
+
+
+NOTE: Analytical products:
+      
+      SAS/STAT 15.2
+      SAS/ETS 15.2
+      SAS/OR 15.2
+      SAS/IML 15.2
+      SAS/QC 15.2
+
+NOTE: Additional host information:
+
+ X64_10PRO WIN 10.0.19041  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.45 seconds
+      cpu time            0.37 seconds
+      
+1          *****************************************************************************************
+1        ! *****
+2          AUTHOR   : Carter Sevick (adapted KW)
+3          PROJECT  : ISP
+4          PURPOSE  : define the bootstrap process to parallelize
+5          VERSION  : 2023-11-13 / creation, cost_pc started
+6          HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
+7                   : 2023-11-14 didn't run the gamma part of the models - ??
+8          *****************************************************************************************
+8        ! ******;
+9          %LET projRoot = S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization;
+10         
+11         * location of input data to boot (where resampled sets are);
+12         * location for bootstrap products ;
+13         libname out "&projRoot\data_boot_processed\visits_tel";
+NOTE: Libref OUT was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: 
+      S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed\visits_tel
+14         * location of input data to boot (where resampled sets are);
+15         libname in "&projRoot\data_boot_processed";
+NOTE: Libref IN was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data_boot_processed
+2                                          The SAS System           10:31 Tuesday, November 14, 2023
+
+16         * get formats;
+17         libname util "&projRoot\data";
+NOTE: Libref UTIL was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: S:\FHPC\DATA\HCPF_DATA_files_SECURE\Kim\isp\isp_utilization\data
+18         OPTIONS FMTSEARCH=(in, util);
+19         
+20         * include macro programs;
+21         %INCLUDE "&projRoot\code\util_bootstrap\MACRO_resample_V4.sas";
+128        
+129        * get process parameters ;
+130        ** process number ;
+131        %LET   i = %scan(&SYSPARM,1,%str( ));
+132        ** seed number ;
+133        %LET   seed = %scan(&SYSPARM,2,%str( ));
+134        ** N bootstrap samples ;
+135        %LET    N = %scan(&SYSPARM,3,%str( ));
+136        
+137        * run models and output store objects ;
+138        * probability model ;
+139        ODS SELECT NONE; OPTIONS NONOTES;
+140        PROC GENMOD DATA = in._resample_out_&i desc;
+141        BY    replicate;
+142        CLASS bootunit
+143              int(ref='0')
+144              int_imp(ref='0')
+145              bh_oth17(ref='0') bh_oth18(ref='0') bh_oth19(ref='0')
+146              bh_er17(ref='0') bh_er18(ref='0') bh_er19(ref='0')
+147              bh_hosp17(ref='0') bh_hosp18(ref='0') bh_hosp19(ref='0')
+148              adj_pd_total_17cat(ref='0')
+149              adj_pd_total_18cat(ref='0')
+150              adj_pd_total_19cat(ref='0')
+151              fqhc(ref ='0')
+152              budget_grp_new(ref='MAGI Eligible Children')
+153              age_cat(ref='ages 21-44')
+154              rae_person_new(ref='3')
+155              race(ref='non-Hispanic White/Caucasian')
+156              sex(ref='Female')
+157              ind_visit_tel(ref='0');
+158        MODEL ind_visit_tel = time int int_imp season1 season2 season3
+159                            bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 bh_er19 bh_hosp17
+159      ! bh_hosp18 bh_hosp19
+160                            adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat
+161                            fqhc budget_grp_new age_cat rae_person_new race sex / DIST=binomial
+161      ! LINK=logit;
+162        REPEATED SUBJECT = bootunit / type=ind;
+163        STORE out.prob_stored_&i;
+164        RUN;
+165        ODS SELECT ALL; OPTIONS NOTES;
+166        
+167        ODS SELECT NONE; OPTIONS NONOTES;
+168        PROC GENMOD DATA = in._resample_out_&i  ;
+169        BY    replicate;
+170        WHERE visits_tel > 0;
+3                                          The SAS System           10:31 Tuesday, November 14, 2023
+
+171        CLASS bootunit
+172              int(ref='0')
+173              int_imp(ref='0')
+174              bh_oth17(ref='0') bh_oth18(ref='0') bh_oth19(ref='0')
+175              bh_er17(ref='0') bh_er18(ref='0') bh_er19(ref='0')
+176              bh_hosp17(ref='0') bh_hosp18(ref='0') bh_hosp19(ref='0')
+177              adj_pd_total_17cat(ref='0')
+178              adj_pd_total_18cat(ref='0')
+179              adj_pd_total_19cat(ref='0')
+180              fqhc(ref ='0')
+181              budget_grp_new(ref='MAGI Eligible Children')
+182              age_cat(ref='ages 21-44')
+183              rae_person_new(ref='3')
+184              race(ref='non-Hispanic White/Caucasian')
+185              sex(ref='Female') ;
+186        MODEL visits_tel = time int int_imp season1 season2 season3
+187                        bh_oth17 bh_oth18 bh_oth19 bh_er17 bh_er18 bh_er19 bh_hosp17 bh_hosp18
+187      ! bh_hosp19
+188                        adj_pd_total_17cat adj_pd_total_18cat adj_pd_total_19cat
+189                        fqhc budget_grp_new age_cat rae_person_new race sex / DIST = negbin LINK
+189      ! = log;
+190        REPEATED SUBJECT = bootunit / type=ind;
+191        STORE out.visits_stored_&i;
+192        RUN;
+193        ODS SELECT ALL; OPTIONS NOTES;
+194        
+195        
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           21:38:47.47
+      cpu time            3:45:31.13
+      

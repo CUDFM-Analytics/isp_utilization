@@ -43,7 +43,7 @@ OPTIONS FMTSEARCH = (dataPro, data, &dv);
 %macro combineAndScore(data=                /*list datasets to combine and score*/,
                        lib = dataPro       /*libname for the data location */,
                        prob= prob_stored_   /*prefix of the store objects for the probability model */,
-                       cost= cost_stored_   /*prefix of the store objects for the cost model */,
+                       cost= visit_stored_   /*prefix of the store objects for the cost model */,
                        subset=              /* subset of the data to score */,
                        exposure =           /* define exposure */,
                        compare =            /* define comparison */,
@@ -85,7 +85,7 @@ OPTIONS FMTSEARCH = (dataPro, data, &dv);
 
   * predicted cost ;
   proc plm restore=&dv..&cost&i;
-     score data=p_tmp_&i out=cp_tmp_&i predicted=pred_cost / ilink;
+     score data=p_tmp_&i out=cp_tmp_&i predicted=pred_visit / ilink;
   run;
   ods select all;
 
@@ -93,7 +93,7 @@ OPTIONS FMTSEARCH = (dataPro, data, &dv);
   proc sql;
   create table _calcCost_&i as
     select  &i as p_set, /* tracker for the parallel run */ 
-            replicate, _score_group_,  mean(pred_prob*pred_cost) as m_cost
+            replicate, _score_group_,  mean(pred_prob*pred_visit) as m_visit
     from cp_tmp_&i
     group by p_set, replicate, _score_group_
     order by p_set, replicate, _score_group_;
@@ -108,14 +108,14 @@ RUN;
 
 * contrast the risk groups ;
 DATA &out;
-  MERGE _allPred_(keep =  m_cost _score_group_  p_set replicate  
+  MERGE _allPred_(keep =  m_visit _score_group_  p_set replicate  
                   where = (_score_group_ = 1))
-        _allPred_(keep =  m_cost _score_group_ p_set replicate  
-                  rename = (m_cost = m_cost_2)
+        _allPred_(keep =  m_visit _score_group_ p_set replicate  
+                  rename = (m_visit = m_visit_2)
                   where = (_score_group_ = 2));
   BY p_set replicate ;
 
-  DIFF = m_cost - m_cost_2;
+  DIFF = m_visit - m_visit_2;
 
   DROP _score_group_;
 RUN;
@@ -128,7 +128,7 @@ option mprint;
     data     = _resample_out_1 _resample_out_2 _resample_out_3 _resample_out_4 _resample_out_5 _resample_out_6 _resample_out_7 _resample_out_8 /*list datasets to combine and score*/,
     lib      = dataPro              /*libname for the data location */,
     prob     = prob_stored_         /*prefix of the store objects for the probability model */,
-    cost     = cost_stored_         /*prefix of the store objects for the cost model */,
+    cost     = visit_stored_         /*prefix of the store objects for the cost model */,
     subset   = %str(int_imp = 1)    /* subset of the data to score */,
     exposure = %str(int_imp = 1;)   /* define exposure */,
     compare  = %str(int_imp = 0;)   /* define comparison */,
@@ -146,13 +146,13 @@ ods pdf file="&pdf" STARTPAGE=no; TITLE &pdftitle;
 %LET today = %SYSFUNC(today(), YYMMDD10.); %put &today;
 
 TITLE  'Bootstrap Standard Error:' &pdftitle ;
-ods pdf text = "Where m_cost is EXPOSED and m_cost_2 is UNEXPOSED"; 
+ods pdf text = "Where m_visit is EXPOSED and m_visit_2 is UNEXPOSED"; 
 proc means data = &dv.._diff_  n nmiss mean median stddev;
-  var diff m_cost m_cost_2;
+  var diff m_visit m_visit_2;
 run;
 
 ods pdf text = "Overall mean (no groups)"; 
-proc means data = &dv.._allpred_ ; var m_cost; run; 
+proc means data = &dv.._allpred_ ; var m_visit; run; 
 
 title 'Bootstrap distribution, difference';
 proc sgplot data = &dv.._diff_;

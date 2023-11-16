@@ -21,7 +21,8 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
     , topseed = 1000000000 
 );
 
-* COST TOTAL // 11/7 finished  
+* COST TOTAL // 11/7 finished  ;
+* 
 %parallel(
     folder    = &projRoot/code/util_bootstrap     /* data, program location */
     , progName= model_cost_total.sas          /* name of the program that will act on the data   */
@@ -32,7 +33,8 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
     , topseed = 1000000000                        /* largest possible seed  */
 );
 
-*
+* COST RX ; 
+* 
 %parallel(
     folder  = &projRoot/code/util_bootstrap     /* data, program location */
     , progName= model_cost_rx.sas  /* name of the program that will act on the data  */
@@ -43,5 +45,16 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
     , topseed = 1000000000                        /* largest possible seed */
 );
  
+* VISITS tel ;
+%parallel(
+    folder  = &projRoot/code/util_bootstrap     /* data, program location */
+    , progName= model_visits_tel.sas  /* name of the program that will act on the data  */
+    , taskName= mytask                            /*, place holder names for the individual tasks */
+    , nprocess= 8                                 /* number of processes to activate */
+    , nboot   = 500                               /* total number of bootstrap iterations*/
+    , seed    = 837567                            /* a seed value for replicability */
+    , topseed = 1000000000                        /* largest possible seed */
+);
+
 
  
