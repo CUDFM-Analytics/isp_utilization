@@ -10,27 +10,28 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
 *include macro program ;
 %INCLUDE "&projRoot./code/util_bootstrap/MACRO_parallel.sas";
 
-*COST_PC // 11/6 done (and finished boot_analysis) ;
-*%parallel(
-    folder  = &projRoot/code/util_bootstrap     
-    , progName= model_cost_pc.sas
-    , taskName= mytask
-    , nprocess= 8
-    , nboot   = 500
-    , seed    = 837567
-    , topseed = 1000000000 
+* Macro invocations appear in order of most recent; 
+
+* VISITS ffsbh // start 11-16 am; 
+%parallel(
+    folder  = &projRoot/code/util_bootstrap     /* data, program location */
+    , progName= model_visits_ffsbh.sas  /* name of the program that will act on the data  */
+    , taskName= mytask                            /*, place holder names for the individual tasks */
+    , nprocess= 8                                 /* number of processes to activate */
+    , nboot   = 500                               /* total number of bootstrap iterations*/
+    , seed    = 837567                            /* a seed value for replicability */
+    , topseed = 1000000000                        /* largest possible seed */
 );
 
-* COST TOTAL // 11/7 finished  ;
-* 
+* VISITS tel // finished 11-16; *
 %parallel(
-    folder    = &projRoot/code/util_bootstrap     /* data, program location */
-    , progName= model_cost_total.sas          /* name of the program that will act on the data   */
-    , taskName= mytask                            /*, place holder names for the individual tasks  */
-    , nprocess= 8                                 /* number of processes to activate  */
-    , nboot   = 500                               /* total number of bootstrap iterations */
-    , seed    = 837567                            /* a seed value for replicability  */
-    , topseed = 1000000000                        /* largest possible seed  */
+    folder  = &projRoot/code/util_bootstrap     /* data, program location */
+    , progName= model_visits_tel.sas  /* name of the program that will act on the data  */
+    , taskName= mytask                            /*, place holder names for the individual tasks */
+    , nprocess= 8                                 /* number of processes to activate */
+    , nboot   = 500                               /* total number of bootstrap iterations*/
+    , seed    = 837567                            /* a seed value for replicability */
+    , topseed = 1000000000                        /* largest possible seed */
 );
 
 * COST RX ; 
@@ -45,16 +46,31 @@ HISTORY  : copied on 08-24-2023 from Carter/Examples/boot total cost/
     , topseed = 1000000000                        /* largest possible seed */
 );
  
-* VISITS tel ;
+* COST TOTAL // 11/7 finished  ;
+* 
 %parallel(
-    folder  = &projRoot/code/util_bootstrap     /* data, program location */
-    , progName= model_visits_tel.sas  /* name of the program that will act on the data  */
-    , taskName= mytask                            /*, place holder names for the individual tasks */
-    , nprocess= 8                                 /* number of processes to activate */
-    , nboot   = 500                               /* total number of bootstrap iterations*/
-    , seed    = 837567                            /* a seed value for replicability */
-    , topseed = 1000000000                        /* largest possible seed */
+    folder    = &projRoot/code/util_bootstrap     /* data, program location */
+    , progName= model_cost_total.sas          /* name of the program that will act on the data   */
+    , taskName= mytask                            /*, place holder names for the individual tasks  */
+    , nprocess= 8                                 /* number of processes to activate  */
+    , nboot   = 500                               /* total number of bootstrap iterations */
+    , seed    = 837567                            /* a seed value for replicability  */
+    , topseed = 1000000000                        /* largest possible seed  */
 );
+
+
+*COST_PC // 11/6 done (and finished boot_analysis) ;
+*%parallel(
+    folder  = &projRoot/code/util_bootstrap     
+    , progName= model_cost_pc.sas
+    , taskName= mytask
+    , nprocess= 8
+    , nboot   = 500
+    , seed    = 837567
+    , topseed = 1000000000 
+);
+
+
 
 
  
